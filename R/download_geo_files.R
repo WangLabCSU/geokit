@@ -1,12 +1,29 @@
 download_inform <- function(urls, file_paths) {
-    tryCatch(
-        download.file(urls, file_paths, mode = "wb"),
-        error = rlang::inform(c(
-            paste0("Download failed for file ", basename(urls), "."),
-            paste0("Check URL(", urls, ") manually if in doubt")
-        ))
+    .mapply(
+        function(url, file_path) {
+            if (!file.exists(file_path)) {
+                res <- download.file(url, file_path, mode = "wb")
+                if (res) {
+                    if (file.exists(file_path)) {
+                        file.remove(file_path)
+                    }
+                    rlang::abort(c(
+                        paste0("Download failed for file ", basename(url), "."),
+                        paste0("Check URL(", url, ") manually if in doubt")
+                    ))
+                }
+            } else {
+                rlang::inform(
+                    paste0(
+                        "File ", basename(url),
+                        " is already downloaded at ",
+                        file_path
+                    )
+                )
+            }
+        },
+        list(urls, file_paths), NULL
     )
-
     invisible(urls)
 }
 
