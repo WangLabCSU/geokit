@@ -1,3 +1,35 @@
+download_geo_files <- function(ids, dest_dir, file_type) {
+    file_type <- match.arg(
+        tolower(file_type),
+        c("soft", "soft_full", "annot", "miniml")
+    )
+    urls <- build_geo_ftp_urls(ids = ids, file_type = file_type)
+    file_paths <- file.path(dest_dir, basename(urls))
+    download_inform(urls, file_paths)
+    invisible(file_paths)
+}
+
+# Return a list of file paths for each ids.
+#' @noMd  
+download_geo_suppl_files_or_gse_matrix <- function(ids, dest_dir, file_type) {
+    url_list <- list_geo_file_urls(ids = ids, file_type)
+    file_path_list <- lapply(url_list, function(urls) {
+        file_paths <- file.path(dest_dir, basename(urls))
+        download_inform(urls, file_paths)
+        file_paths
+    })
+    invisible(file_path_list)
+}
+
+download_geo_suppl_files <- function(ids, dest_dir) {
+    download_geo_suppl_files_or_gse_matrix(ids, dest_dir, file_type = "suppl")
+}
+
+download_geo_gse_matrix <- function(ids, dest_dir) {
+    download_geo_suppl_files_or_gse_matrix(ids, dest_dir, file_type = "matrixx")
+}
+
+
 download_inform <- function(urls, file_paths) {
     .mapply(
         function(url, file_path) {
@@ -15,8 +47,8 @@ download_inform <- function(urls, file_paths) {
             } else {
                 rlang::inform(
                     paste0(
-                        "File ", basename(url),
-                        " is already downloaded at ",
+                        "Using locally cached version of ", basename(url),
+                        " found here: ",
                         file_path
                     )
                 )
@@ -25,25 +57,4 @@ download_inform <- function(urls, file_paths) {
         list(urls, file_paths), NULL
     )
     invisible(urls)
-}
-
-download_geo_files <- function(ids, dest_dir = getwd(), file_type) {
-    file_type <- match.arg(
-        tolower(file_type),
-        c("soft", "soft_full", "annot", "miniml", "matrix")
-    )
-    urls <- build_geo_ftp_urls(ids = ids, file_type = file_type)
-    file_paths <- file.path(dest_dir, basename(urls))
-    download_inform(urls, file_paths)
-    invisible(file_paths)
-}
-
-download_geo_suppl_files <- function(ids, dest_dir = getwd()) {
-    urls <- list_geo_suppl_file_urls_multi(ids = ids)
-    file_paths <- lapply(urls, function(url) {
-        file_path <- file.path(dest_dir, basename(url))
-        download_inform(url, file_path)
-        file_path
-    })
-    invisible(file_paths)
 }
