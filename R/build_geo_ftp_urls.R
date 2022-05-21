@@ -58,7 +58,7 @@ parse_file_names <- function(ids, file_type, geo_type) {
             GSE = switch(file_type,
                 soft = "_family.soft.gz",
                 miniml = "_family.xml.tgz",
-                matrix = "_series_matrx.txt.gz",
+                matrix = "/",
                 suppl = "/"
             ),
             GPL = switch(file_type,
@@ -71,10 +71,10 @@ parse_file_names <- function(ids, file_type, geo_type) {
         )
     if (is.null(file_suffix)) {
         rlang::abort(
-            paste0(parse_geo_type(geo_type), "never own ", file_type, " file")
+            paste0(parse_geo_type(geo_type), " never own ", file_type, " file")
         )
     }
-    if (!identical(file_type, "suppl")) {
+    if (!identical(file_suffix, "/")) {
         paste0(ids, file_suffix)
     } else {
         file_suffix
