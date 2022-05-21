@@ -4,9 +4,16 @@ get_geo_gse <- function(ids, dest_dir = getwd()) {
         file_type = "matrix"
     )
     res <- lapply(file_path_list, function(file_paths) {
-        lapply(file_paths, parse_geo_gse)
+        es_res <- lapply(file_paths, parse_geo_gse)
+        if (identical(length(es_res), 1L)) {
+            es_res[[1]]
+        } else {
+            es_res
+        }
     })
-    if (identical(length(res), 1L)) res[[1]] else res
+    if (identical(length(res), 1L)) {
+        res[[1]]
+    } else res
 }
 
 parse_geo_gse <- function(file) {
@@ -14,7 +21,7 @@ parse_geo_gse <- function(file) {
 
     # extract series matrix data
     .matrix_data <- data.table::fread(
-        text = file_text[!grepl("^!", file_text, fixed = FALSE)],
+        text = file_text[!grepl("^!", file_text, fixed = FALSE, perl = TRUE)],
         sep = "\t", header = TRUE, blank.lines.skip = TRUE,
         na.strings = c("NA", "null", "NULL", "Null")
     )
@@ -73,7 +80,9 @@ parse_geo_gpl <- function(file) {
 
     # extract feature data
     .fdata <- data.table::fread(
-        text = file_text[!grepl("^[!#]", file_text, fixed = FALSE)],
+        text = file_text[
+            !grepl("^[!#]", file_text, fixed = FALSE, perl = TRUE)
+        ],
         sep = "\t", header = TRUE, blank.lines.skip = TRUE,
         na.strings = c("NA", "null", "NULL", "Null")
     )
@@ -104,7 +113,7 @@ parse_geo_gpl <- function(file) {
 extract_geo_meta_and_column_data <- function(file_text, pattern = "^(!|#)\\w*?", sub_pattern = NULL) {
     .metadata <- data.table::fread(
         text = file_text[
-            grepl(pattern, file_text, fixed = FALSE)
+            grepl(pattern, file_text, fixed = FALSE, perl = TRUE)
         ], sep = "\t", header = FALSE, blank.lines.skip = TRUE,
         na.strings = c("NA", "null", "NULL", "Null")
     )
@@ -150,7 +159,8 @@ extract_geo_gse_meta_data <- function(file_text) {
         if (x %in% names(meta_data$Series)) {
             meta_data$Series[[x]] <- strsplit(
                 meta_data$Series[[x]],
-                split = ";?+ ", fixed = FALSE
+                split = ";?+ ", fixed = FALSE,
+                perl = TRUE
             )[[1]]
         }
     }
