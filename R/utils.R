@@ -1,3 +1,8 @@
+#' @import data.table 
+#' @import rlang
+#' @import Biobase
+NULL
+
 str_extract_all <- function(string, pattern) {
     regmatches(
         string,
@@ -17,4 +22,3 @@ read_lines <- function(file) {
         colClasses = "character"
     )[[1]]
 }
-
