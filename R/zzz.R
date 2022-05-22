@@ -1,6 +1,6 @@
 if (getRversion() >= "2.15.1") {
     utils::globalVariables(
-        c( # run_absolute
+        c( # data.table
             "V1", ".SD", ":="
         )
     )
