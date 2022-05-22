@@ -1,0 +1,11 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^README\.Rmd$
+^LICENSE\.md$
+^pkgdown$
+^_pkgdown\.yml$
+^\.github$
+^\.vscode$
+^\.radian_history$
+^\.gitignore$
+^Scratch\.RConsole$
