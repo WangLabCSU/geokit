@@ -1,4 +1,4 @@
-#' @import data.table 
+#' @import data.table
 #' @import rlang
 #' @import Biobase
 NULL
@@ -21,4 +21,15 @@ read_lines <- function(file) {
         file = file, sep = "", header = FALSE,
         colClasses = "character"
     )[[1]]
+}
+
+check_ids <- function(ids) {
+    geotype <- unique(substr(ids, 1L, 3L))
+    id_test <- length(unique(geotype)) > 1L || 
+        any(!geotype %in% c("GSE", "GPL", "GSM", "GDS"))
+    if (id_test) {
+        rlang::abort(
+            c("`ids` should representing the same GEO identity (One of GSE, GDS, GSM and GPL).")
+        )
+    }
 }
