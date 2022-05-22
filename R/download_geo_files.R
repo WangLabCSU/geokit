@@ -1,39 +1,33 @@
 #' Return a character vector, the length of it is the same with `ids`.
 #' @noRd
-download_geo_files <- function(ids, dest_dir, file_type) {
+download_geo_file <- function(id, dest_dir, file_type) {
     file_type <- match.arg(
         tolower(file_type),
         c("soft", "soft_full", "annot", "miniml")
     )
-    urls <- build_geo_ftp_urls(ids = ids, file_type = file_type)
-    file_paths <- file.path(dest_dir, basename(urls))
-    download_inform(urls, file_paths)
+    url <- build_geo_ftp_url(id = id, file_type = file_type)
+    file_path <- file.path(dest_dir, basename(url))
+    download_inform(url, file_path)
 }
 
 #' Return a list of file paths for each ids.
 #' @noRd
-download_geo_suppl_files_or_gse_matrix <- function(ids, dest_dir, file_type) {
+download_geo_suppl_files_or_gse_matrix <- function(id, dest_dir, file_type) {
     file_type <- match.arg(
         tolower(file_type),
         c("suppl", "matrix")
     )
-    url_list <- list_geo_file_urls(ids = ids, file_type)
-    file_path_list <- lapply(url_list, function(urls) {
-        if (is.null(urls)) {
-            return(NULL)
-        }
-        file_paths <- file.path(dest_dir, basename(urls))
-        download_inform(urls, file_paths)
-    })
-    invisible(file_path_list)
+    urls <- list_geo_file_url(id = id, file_type)
+    file_paths <- file.path(dest_dir, basename(urls))
+    download_inform(urls, file_paths)
 }
 
-download_geo_suppl_files <- function(ids, dest_dir) {
-    download_geo_suppl_files_or_gse_matrix(ids, dest_dir, file_type = "suppl")
+download_geo_suppl_files <- function(id, dest_dir) {
+    download_geo_suppl_files_or_gse_matrix(id, dest_dir, file_type = "suppl")
 }
 
-download_geo_gse_matrix <- function(ids, dest_dir) {
-    download_geo_suppl_files_or_gse_matrix(ids, dest_dir, file_type = "matrix")
+download_geo_gse_matrix <- function(id, dest_dir) {
+    download_geo_suppl_files_or_gse_matrix(id, dest_dir, file_type = "matrix")
 }
 
 #' Download utils function with good message.
@@ -67,8 +61,7 @@ download_inform <- function(urls, file_paths) {
                 )
                 file_path
             }
-        },
-        list(urls, file_paths), NULL
+        }, list(urls, file_paths), NULL
     )
     invisible(file_paths)
 }

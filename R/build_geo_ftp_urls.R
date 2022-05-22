@@ -1,11 +1,11 @@
-build_geo_ftp_urls <- function(ids, file_type) {
-    geo_type <- unique(substr(ids, 1L, 3L))
-    super_ids <- sub("\\d{1,3}$", "nnn", ids, perl = TRUE)
+build_geo_ftp_url <- function(id, file_type) {
+    geo_type <- unique(substr(id, 1L, 3L))
+    super_id <- sub("\\d{1,3}$", "nnn", id, perl = TRUE)
     file.path(
         geo_ftp,
         parse_geo_type(geo_type),
-        super_ids, ids, file_type,
-        parse_file_names(ids, file_type, geo_type)
+        super_id, id, file_type,
+        parse_file_name(id, file_type, geo_type)
     )
 }
 
@@ -32,7 +32,7 @@ parse_geo_type <- function(x) {
 #' |     Annotation (annot)     |  x  |  x  |  o  |  x  |
 #' | Supplementaryfiles (suppl) |  x  |  o  |  o  |  o  |
 #' @rdname get_geo
-parse_file_names <- function(ids, file_type, geo_type) {
+parse_file_name <- function(id, file_type, geo_type) {
     file_suffix <-
         switch(geo_type,
             GDS = switch(file_type,
@@ -59,7 +59,7 @@ parse_file_names <- function(ids, file_type, geo_type) {
         )
     }
     if (!identical(file_suffix, "/")) {
-        paste0(ids, file_suffix)
+        paste0(id, file_suffix)
     } else {
         file_suffix
     }
