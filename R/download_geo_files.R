@@ -37,6 +37,9 @@ download_inform <- function(urls, file_paths) {
     .mapply(
         function(url, file_path) {
             if (!file.exists(file_path)) {
+                if (!dir.exists(dirname(file_path))) {
+                    dir.create(dirname(file_path), recursive = TRUE)
+                }
                 rlang::inform(paste0("Downloading ", basename(url), ":"))
                 h <- curl::new_handle()
                 curl::handle_setopt(h, buffersize = 33554432, upload_buffersize = 33554432)
