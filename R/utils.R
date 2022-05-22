@@ -33,3 +33,9 @@ check_ids <- function(ids) {
         )
     }
 }
+
+`%null%` <- function(x, y) if (!is.null(x)) x else y
+
+#' @importFrom curl new_handle handle_setopt
+h <- curl::new_handle()
+curl::handle_setopt(h, buffersize = 33554432)
