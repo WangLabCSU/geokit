@@ -31,16 +31,19 @@ download_geo_gse_matrix <- function(id, dest_dir) {
 }
 
 #' Download utils function with good message.
-#' @importFrom curl curl_download
+#' @importFrom curl curl_download new_handle handle_setopt
 #' @noRd
 download_inform <- function(urls, file_paths) {
     .mapply(
         function(url, file_path) {
             if (!file.exists(file_path)) {
                 rlang::inform(paste0("Downloading ", basename(url), ":"))
+                h <- curl::new_handle()
+                curl::handle_setopt(h, buffersize = 33554432, upload_buffersize = 33554432)
                 curl::curl_download(
                     url, file_path,
-                    mode = "wb", quiet = FALSE
+                    mode = "wb", quiet = FALSE,
+                    handle = h
                 )
                 # if (res) {
                 #     if (file.exists(file_path)) {
