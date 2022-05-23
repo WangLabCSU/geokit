@@ -14,8 +14,7 @@ Imports:
     rlang (>= 0.4.11),
     xml2,
     curl,
-    Biobase,
-    BiocGenerics
+    Biobase
 Suggests: 
     roxygen2,
     testthat (>= 3.0.0)
