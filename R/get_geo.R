@@ -122,7 +122,7 @@ get_geo_switch <- function(id, dest_dir = getwd(), gse_matrix = TRUE, add_gpl = 
         } else {
             "series"
         },
-        GPL = "platforms",
+        GPL = get_gpl(id, dest_dir = dest_dir),
         GSM = "samples",
         GDS = "datasets"
     )
@@ -197,4 +197,23 @@ construct_gse_matrix_est <- function(matrix_data, pheno_data, experiment_data, g
         .ns = "Biobase"
     )
     rlang::eval_bare(expr)
+}
+
+get_gpl <- function(id, dest_dir = getwd()) {
+    file_path <- download_gpl_file(id, dest_dir)
+    file_text <- read_lines(file_path)
+    gpl_data <- parse_gpl(file_text)
+    if (!is.null(gpl_data$data_table)) {
+        Biobase::AnnotatedDataFrame(
+            gpl_data$data_table,
+            varMetadata = data.frame(
+                labelDescription = unname(
+                    gpl_data$column[colnames(gpl_data$data_table)]
+                ),
+                row.names = colnames(gpl_data$data_table)
+            )
+        )
+    } else {
+        NULL
+    }
 }
