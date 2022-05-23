@@ -1,6 +1,5 @@
 #' @import data.table
 #' @import rlang
-#' @import Biobase
 NULL
 
 str_extract_all <- function(string, pattern) {
