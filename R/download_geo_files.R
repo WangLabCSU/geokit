@@ -45,7 +45,7 @@ download_with_acc <- function(id, dest_dir, scope = "self", amount = "data", for
         xml = "xml"
     )
     download_inform(url,
-        file.path(dest_dir, file_name),
+        file.path(dest_dir, paste(id, file_name, sep = ".")),
         method = "acc"
     )
 }
