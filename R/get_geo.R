@@ -1,168 +1,186 @@
-get_geo_gse <- function(ids, dest_dir = getwd()) {
-    file_path_list <- download_geo_suppl_files_or_gse_matrix(
-        ids = ids, dest_dir = dest_dir,
-        file_type = "matrix"
-    )
-    res <- lapply(file_path_list, function(file_paths) {
-        es_res <- lapply(file_paths, parse_geo_gse)
-        if (identical(length(es_res), 1L)) {
-            es_res[[1]]
-        } else {
-            es_res
-        }
-    })
-    if (identical(length(res), 1L)) {
-        res[[1]]
-    } else res
-}
-
-parse_geo_gse <- function(file) {
-    file_text <- read_lines(file)
-
-    # extract series matrix data
-    .matrix_data <- data.table::fread(
-        text = file_text[!grepl("^!", file_text, fixed = FALSE, perl = TRUE)],
-        sep = "\t", header = TRUE, blank.lines.skip = TRUE,
-        na.strings = c("NA", "null", "NULL", "Null")
-    )
-    data.table::setDF(.matrix_data)
-    .matrix_data <- as.matrix(column_to_rownames(.matrix_data, 1))
-
-    # extract series and sample meta data
-    meta_data <- extract_geo_gse_meta_data(file_text)
-
-    # fetch GPL data
-    gpl_id <- unique(meta_data$Sample[[grep(
-        "platform_id", colnames(meta_data$Sample),
-        ignore.case = TRUE, value = TRUE
-    )]])
-    gpl_data <- get_geo_gpl(gpl_id)[[1]]
-
-    Biobase::ExpressionSet(
-        assayData = .matrix_data,
-        phenoData = Biobase::AnnotatedDataFrame(
-            data = meta_data$Sample[colnames(.matrix_data), , drop = FALSE]
-        ),
-        featureData = gpl_data$fdata[
-            rownames(.matrix_data), ,
-            drop = FALSE
-        ],
-        experimentData = Biobase::MIAME(
-            other = c(meta_data$Series, gpl_data$gpl_meta)
-        ),
-        annotation = gpl_id
-    )
-}
-
-get_geo_gpl <- function(ids, dest_dir = getwd()) {
-    lapply(ids, function(id) {
-        file_path <- tryCatch(
-            download_geo_files(
-                ids = id, dest_dir = dest_dir,
-                file_type = "annot"
-            ),
-            error = function(error) {
-                rlang::inform(
-                    "Annotation for ", id, " is not available, so will use GPL SOFT file instead."
-                )
-                download_geo_files(
-                    ids = id, dest_dir = dest_dir,
-                    file_type = "soft"
+#' Get a GEO object from GEO FTP site
+#'
+#' This function is the main user-level function in the `rgeo` package.  It
+#' directs the downloading and parsing of GEO files into an R data
+#' structure.
+#'
+#' get_geo functions to download and parse information available from [NCBI
+#' GEO](http://www.ncbi.nlm.nih.gov/geo). Here are some details about what
+#' is avaible from GEO.  All entity types are handled by get_geo and essentially
+#' any information in the GEO SOFT format is reflected in the resulting data
+#' structure.
+#'
+#' From the GEO website:
+#'
+#' The Gene Expression Omnibus (GEO) from NCBI serves as a public repository
+#' for a wide range of high-throughput experimental data. These data include
+#' single and dual channel microarray-based experiments measuring mRNA, genomic
+#' DNA, and protein abundance, as well as non-array techniques such as serial
+#' analysis of gene expression (SAGE), and mass spectrometry proteomic data. At
+#' the most basic level of organization of GEO, there are three entity types
+#' that may be supplied by users: Platforms, Samples, and Series.
+#' Additionally, there is a curated entity called a GEO dataset.
+#'
+#' A Platform record describes the list of elements on the array (e.g., cDNAs,
+#' oligonucleotide probesets, ORFs, antibodies) or the list of elements that
+#' may be detected and quantified in that experiment (e.g., SAGE tags,
+#' peptides). Each Platform record is assigned a unique and stable GEO
+#' accession number (GPLxxx). A Platform may reference many Samples that have
+#' been submitted by multiple submitters.
+#'
+#' A Sample record describes the conditions under which an individual Sample
+#' was handled, the manipulations it underwent, and the abundance measurement
+#' of each element derived from it. Each Sample record is assigned a unique and
+#' stable GEO accession number (GSMxxx). A Sample entity must reference only
+#' one Platform and may be included in multiple Series.
+#'
+#' A Series record defines a set of related Samples considered to be part of a
+#' group, how the Samples are related, and if and how they are ordered. A
+#' Series provides a focal point and description of the experiment as a whole.
+#' Series records may also contain tables describing extracted data, summary
+#' conclusions, or analyses. Each Series record is assigned a unique and stable
+#' GEO accession number (GSExxx).
+#'
+#' GEO DataSets (GDSxxx) are curated sets of GEO Sample data. A GDS record
+#' represents a collection of biologically and statistically comparable GEO
+#' Samples and forms the basis of GEO's suite of data display and analysis
+#' tools. Samples within a GDS refer to the same Platform, that is, they share
+#' a common set of probe elements. Value measurements for each Sample within a
+#' GDS are assumed to be calculated in an equivalent manner, that is,
+#' considerations such as background processing and normalization are
+#' consistent across the dataset. Information reflecting experimental design is
+#' provided through GDS subsets.
+#'
+#' @param ids A character vector representing the GEO identity for downloading
+#' and parsing.  (eg., 'GDS505','GSE2','GSM2','GPL96')
+#' @param dest_dir The destination directory for any downloads.  Defaults to
+#' current working dir.
+#' @param gse_matrix A logical value indicates whether to retrieve Series Matrix
+#' files when fetching a `GSE` GEO identity.
+#' @param add_gpl A logical value indicates whether to add **platform**
+#' information (the [featureData][Biobase::featureData] in
+#' [ExpressionSet][Biobase::ExpressionSet] Object) when fetching a `GSE` GEO
+#' identity with `gse_matrix` option `TRUE`.
+#' @return An object of the appropriate class (GDS, GPL, GSM, or GSE) is
+#' returned. If the gse_matrix (`TRUE`) option is used with a `GSE` GEO
+#' identity, then a [ExpressionSet][Biobase::ExpressionSet] Object or a list of
+#' [ExpressionSet][Biobase::ExpressionSet] Objects is
+#' returned, one for each SeriesMatrix file associated with the GSE accesion.  
+#' @section Warning : Some of the files that are downloaded, particularly those
+#' associated with GSE entries from GEO are absolutely ENORMOUS and parsing
+#' them can take quite some time and memory.  So, particularly when working
+#' with large GSE entries, expect that you may need a good chunk of memory and
+#' that coffee may be involved when parsing....
+#' @references
+#' * https://www.ncbi.nlm.nih.gov/geo/info/download.html
+#' * https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi
+#' * Programmatic access to GEO FTP site-[README](https://ftp.ncbi.nlm.nih.gov/geo/README.txt)
+#' @rdname get_geo
+#' @examples
+#' gse <- get_geo("GSE10", tempdir())
+#'
+#' @export
+get_geo <- function(ids, dest_dir = getwd(), gse_matrix = TRUE, add_gpl = TRUE) {
+    check_ids(ids)
+    res <- lapply(ids, function(id) {
+        rlang::try_fetch(
+            get_geo_singular(id, dest_dir = dest_dir, gse_matrix = gse_matrix, add_gpl = add_gpl),
+            error = function(err) {
+                rlang::abort(
+                    paste0("Error when fetching GEO data of ", id, "."),
+                    parent = err
                 )
             }
         )
-        parse_geo_gpl(file_path)
     })
-}
-
-parse_geo_gpl <- function(file) {
-    file_text <- read_lines(file)
-
-    # extract feature data
-    .fdata <- data.table::fread(
-        text = file_text[
-            !grepl("^[!#]", file_text, fixed = FALSE, perl = TRUE)
-        ],
-        sep = "\t", header = TRUE, blank.lines.skip = TRUE,
-        na.strings = c("NA", "null", "NULL", "Null")
-    )
-    data.table::setDF(.fdata)
-    rownames(.fdata) <- .fdata[["ID"]]
-
-    # extract meta data and column data
-    .column_data <- extract_geo_meta_and_column_data(
-        file_text = file_text, pattern = "^#\\w*?",
-        sub_pattern = "#"
-    )
-    .meta_data <- extract_geo_meta_and_column_data(
-        file_text = file_text, pattern = "^!\\w*?",
-        sub_pattern = "!"
-    )
-    list(
-        fdata = Biobase::AnnotatedDataFrame(
-            data = .fdata,
-            varMetadata = data.frame(
-                labelDescription = unname(.column_data[colnames(.fdata)]),
-                row.names = colnames(.fdata)
-            )
-        ),
-        gpl_meta = .meta_data
-    )
-}
-
-extract_geo_meta_and_column_data <- function(file_text, pattern = "^(!|#)\\w*?", sub_pattern = NULL) {
-    .metadata <- data.table::fread(
-        text = file_text[
-            grepl(pattern, file_text, fixed = FALSE, perl = TRUE)
-        ], sep = "\t", header = FALSE, blank.lines.skip = TRUE,
-        na.strings = c("NA", "null", "NULL", "Null")
-    )
-    # if there only have one column, it should contain "=" string to split this
-    # character into names and values, Otherwise, the first column should be the
-    # names of these meta data
-    if (identical(ncol(.metadata), 1L)) {
-        .metadata <- .metadata[[1]][
-            grepl("=", .metadata[[1]], perl = TRUE)
-        ]
-        meta_data <- data.table::tstrsplit(.metadata, "\\s*=\\s*", perl = TRUE)
-        if (is.null(sub_pattern)) sub_pattern <- "^(!|#)"
-        structure(meta_data[[2]], names = sub(sub_pattern, "", meta_data[[1]]))
+    if (identical(length(res), 1L)) {
+        res[[1L]]
     } else {
-        if (is.null(sub_pattern)) sub_pattern <- pattern
-        .metadata <- .metadata[, V1 := sub(pattern, "", V1)]
-        data.table::dcast(
-            data.table::melt(
-                .metadata,
-                id.vars = "V1",
-                variable.name = "variable"
-            ), variable ~ V1,
-            fun.aggregate = paste0, collapse = "; "
-        )[, .SD, .SDcols = !"variable"]
+        names(res) <- ids
+        res
     }
 }
 
-extract_geo_gse_meta_data <- function(file_text) {
-    meta_data <- c("Series", "Sample")
-    names(meta_data) <- meta_data
-    meta_data <- lapply(
-        meta_data, function(x) {
-            extract_geo_meta_and_column_data(
-                file_text,
-                pattern = paste0("^!", x, "_")
+get_geo_singular <- function(id, dest_dir = getwd(), gse_matrix = TRUE, add_gpl = TRUE) {
+    switch(unique(substr(id, 1L, 3L)),
+        GSE = if (gse_matrix) {
+            get_gse_matrix(id, dest_dir = dest_dir, add_gpl = add_gpl)
+        } else {
+            "series"
+        },
+        GPL = "platforms",
+        GSM = "samples",
+        GDS = "datasets"
+    )
+}
+
+get_gse_matrix <- function(id, dest_dir = getwd(), add_gpl = TRUE) {
+    file_paths <- download_geo_suppl_or_gse_matrix_files(
+        id = id, dest_dir = dest_dir,
+        file_type = "matrix"
+    )
+    res <- lapply(file_paths, function(file) {
+        gse_matrix_data <- parse_gse_matrix(read_lines(file))
+        rlang::exec(
+            "construct_gse_matrix_est",
+            !!!gse_matrix_data,
+            add_gpl = add_gpl,
+            dest_dir = dest_dir
+        )
+    })
+    if (identical(length(res), 1L)) {
+        res[[1L]]
+    } else {
+        names(res) <- basename(file_paths)
+        res
+    }
+}
+
+construct_gse_matrix_est <- function(matrix_data, pheno_data, experiment_data, gpl_id, add_gpl, dest_dir) {
+    construct_param_list <- list(
+        assayData = matrix_data,
+        phenoData = pheno_data,
+        experimentData = experiment_data,
+        annotation = gpl_id
+    )
+    if (add_gpl) {
+        gpl_file_path <- download_gpl_file(gpl_id, dest_dir)
+        gpl_file_text <- read_lines(gpl_file_path)
+        gpl_data <- parse_gpl(gpl_file_text)
+        if (!is.null(gpl_data$data_table)) {
+            # NCBI GEO uses case-insensitive matching between platform
+            # IDs and series ID Refs
+            feature_data <- gpl_data$data_table[
+                match(
+                    tolower(rownames(matrix_data)),
+                    tolower(rownames(gpl_data$data_table))
+                ), ,
+                drop = FALSE
+            ]
+            rownames(feature_data) <- rownames(matrix_data)
+            feature_data <- Biobase::AnnotatedDataFrame(
+                feature_data,
+                varMetadata = data.frame(
+                    labelDescription = unname(
+                        gpl_data$column[colnames(feature_data)]
+                    ),
+                    row.names = colnames(feature_data)
+                )
+            )
+        } else {
+            feature_data <- Biobase::AnnotatedDataFrame(
+                data.frame(row.names = rownames(matrix_data))
             )
         }
-    )
-    data.table::setDF(meta_data$Sample)
-    rownames(meta_data$Sample) <- meta_data$Sample[["geo_accession"]]
-    meta_data$Series <- as.list(meta_data$Series)
-    for (x in c("sample_id", "pubmed_id", "platform_id")) {
-        if (x %in% names(meta_data$Series)) {
-            meta_data$Series[[x]] <- strsplit(
-                meta_data$Series[[x]],
-                split = ";?+ ", fixed = FALSE,
-                perl = TRUE
-            )[[1]]
-        }
+        construct_param_list <- c(
+            construct_param_list,
+            featureData = feature_data
+        )
     }
-    meta_data
+    expr <- rlang::call2(
+        "ExpressionSet", 
+        !!!construct_param_list,
+        .ns = "Biobase"
+    )
+    rlang::eval_bare(expr)
 }
