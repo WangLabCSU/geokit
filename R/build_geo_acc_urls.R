@@ -1,6 +1,5 @@
 #' Construct a URL to retrieve data from GEO Accession Display Bar
 #'
-#' @param id  a valid GEO accession i.e., gplxxx, gsmxxx or gsexxx
 #' @param scope A character string in one of "self", "gsm", "gpl", "gse" or
 #' "all". allows you to display the GEO accession(s) which you wish to target
 #' for display. You may display the GEO accession which is typed into the text
@@ -18,9 +17,7 @@
 #' you to display the GEO accession in human readable, linked "HTML" form, or in
 #' machine readable, "SOFT" form. SOFT stands for "simple omnibus format in
 #' text".
-#' @references
-#' * https://www.ncbi.nlm.nih.gov/geo/info/download.html
-#' * https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi
+#' @noRd
 build_geo_acc_url <- function(id, scope = "self", amount = "data", format = "text") {
     sprintf(
         "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=%s&targ=%s&view=%s&form=%s", 
@@ -34,7 +31,7 @@ build_geo_acc_url <- function(id, scope = "self", amount = "data", format = "tex
             c("brief", "quick", "data", "full.")
         ),
         match.arg(
-            tolower(amount),
+            tolower(format),
             c("text", "html", "xml")
         )
     )

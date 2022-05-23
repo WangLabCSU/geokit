@@ -1,5 +1,15 @@
-build_geo_ftp_url <- function(id, file_type) {
+#' Construct a FTP URL to retrieve data from GEO FTP Site
+#'
+#' @param file_type A character string in one of "soft", "soft_full", "annot",
+#' "miniml" or "suppl".
+#' @noRd
+build_geo_ftp_url <- function(id, file_type = "soft") {
+    id <- toupper(id)
     geo_type <- unique(substr(id, 1L, 3L))
+    file_type <- match.arg(
+        tolower(file_type),
+        c("soft", "soft_full", "annot", "miniml", "suppl", "matrix")
+    )
     super_id <- sub("\\d{1,3}$", "nnn", id, perl = TRUE)
     file.path(
         geo_ftp,
@@ -9,8 +19,6 @@ build_geo_ftp_url <- function(id, file_type) {
     )
 }
 
-#' @references Programmatic access to GEO-[help](https://ftp.ncbi.nlm.nih.gov/geo/README.txt)
-#' @rdname get_geo
 geo_ftp <- "ftp://ftp.ncbi.nlm.nih.gov/geo/"
 
 parse_geo_type <- function(x) {
@@ -31,7 +39,7 @@ parse_geo_type <- function(x) {
 #' |      Matrix (matrix)       |  x  |  o  |  x  |  x  |
 #' |     Annotation (annot)     |  x  |  x  |  o  |  x  |
 #' | Supplementaryfiles (suppl) |  x  |  o  |  o  |  o  |
-#' @rdname get_geo
+#' @noRd
 parse_file_name <- function(id, file_type, geo_type) {
     file_suffix <-
         switch(geo_type,
