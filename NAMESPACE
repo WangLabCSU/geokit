@@ -2,6 +2,7 @@
 
 export(get_geo)
 import(Biobase)
+import(R.utils)
 import(data.table)
 import(rlang)
 import(xml2)
