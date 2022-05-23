@@ -65,7 +65,7 @@
 #' returned. If the gse_matrix (`TRUE`) option is used with a `GSE` GEO
 #' identity, then a [ExpressionSet][Biobase::ExpressionSet] Object or a list of
 #' [ExpressionSet][Biobase::ExpressionSet] Objects is
-#' returned, one for each SeriesMatrix file associated with the GSE accesion.  
+#' returned, one for each SeriesMatrix file associated with the GSE accesion.
 #' @section Warning : Some of the files that are downloaded, particularly those
 #' associated with GSE entries from GEO are absolutely ENORMOUS and parsing
 #' them can take quite some time and memory.  So, particularly when working
@@ -81,10 +81,24 @@
 #'
 #' @export
 get_geo <- function(ids, dest_dir = getwd(), gse_matrix = TRUE, add_gpl = TRUE) {
+    ids <- toupper(ids)
     check_ids(ids)
+    get_geo_multi(
+        ids = ids, dest_dir = dest_dir,
+        gse_matrix = gse_matrix,
+        add_gpl = add_gpl
+    )
+}
+
+get_geo_multi <- function(ids, dest_dir = getwd(), gse_matrix = TRUE, add_gpl = TRUE) {
     res <- lapply(ids, function(id) {
         rlang::try_fetch(
-            get_geo_singular(id, dest_dir = dest_dir, gse_matrix = gse_matrix, add_gpl = add_gpl),
+            get_geo_switch(
+                id,
+                dest_dir = dest_dir,
+                gse_matrix = gse_matrix,
+                add_gpl = add_gpl
+            ),
             error = function(err) {
                 rlang::abort(
                     paste0("Error when fetching GEO data of ", id, "."),
@@ -101,7 +115,7 @@ get_geo <- function(ids, dest_dir = getwd(), gse_matrix = TRUE, add_gpl = TRUE) 
     }
 }
 
-get_geo_singular <- function(id, dest_dir = getwd(), gse_matrix = TRUE, add_gpl = TRUE) {
+get_geo_switch <- function(id, dest_dir = getwd(), gse_matrix = TRUE, add_gpl = TRUE) {
     switch(unique(substr(id, 1L, 3L)),
         GSE = if (gse_matrix) {
             get_gse_matrix(id, dest_dir = dest_dir, add_gpl = add_gpl)
@@ -178,7 +192,7 @@ construct_gse_matrix_est <- function(matrix_data, pheno_data, experiment_data, g
         )
     }
     expr <- rlang::call2(
-        "ExpressionSet", 
+        "ExpressionSet",
         !!!construct_param_list,
         .ns = "Biobase"
     )

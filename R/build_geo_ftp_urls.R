@@ -4,7 +4,6 @@
 #' "miniml" or "suppl".
 #' @noRd
 build_geo_ftp_url <- function(id, file_type = "soft") {
-    id <- toupper(id)
     geo_type <- unique(substr(id, 1L, 3L))
     file_type <- match.arg(
         tolower(file_type),
