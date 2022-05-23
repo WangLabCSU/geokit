@@ -30,7 +30,7 @@ test_that("GSE/GPL with integer64 columns handled correctly", {
     gse <- rgeo::get_geo("GSE7864", tempdir())
     fdata <- Biobase::fData(gse)
     expect_s3_class(fdata$ID, "integer64")
-    expect_is(rownames(fdata), "character")
+    expect_type(rownames(fdata), "character")
 })
 
 testthat::test_that("GSE populates experimentData as much as possible", {
