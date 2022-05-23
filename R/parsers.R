@@ -10,11 +10,11 @@ parse_gse_matrix <- function(file_text) {
     meta_data <- parse_gse_matrix_meta(file_text)
     # Construct ExpressionSet Object element
     experiment_data <- Biobase::MIAME(
-        name = meta_data$Series$contact_name %null% "",
+        name = meta_data$Series$contact_name %||% "",
         title = meta_data$Series$title,
-        contact = meta_data$Series$contact_email %null% "",
-        pubMedIds = meta_data$Series$pubmed_id %null% "",
-        abstract = meta_data$Series$summary %null% "",
+        contact = meta_data$Series$contact_email %||% "",
+        pubMedIds = meta_data$Series$pubmed_id %||% "",
+        abstract = meta_data$Series$summary %||% "",
         url = if (!is.null(meta_data$Series$web_link)) {
             meta_data$Series$web_link
         } else if (!is.null(meta_data$Series$geo_accession)) {

@@ -28,13 +28,12 @@ read_lines <- function(file) {
 
 check_ids <- function(ids) {
     geotype <- unique(substr(ids, 1L, 3L))
-    id_test <- length(unique(geotype)) > 1L || 
-        any(!geotype %in% c("GSE", "GPL", "GSM", "GDS"))
+    id_test <- any(!geotype %in% c("GSE", "GPL", "GSM", "GDS"))
     if (id_test) {
         rlang::abort(
-            c("`ids` should representing the same GEO identity (One of GSE, GDS, GSM and GPL).")
+            c("`ids` should representing the GEO identity (One of GSE, GDS, GSM and GPL). Please check the `ids` provided is correct.")
         )
     }
 }
 
-`%null%` <- function(x, y) if (!is.null(x)) x else y
+`%||%` <- function(x, y) if (!is.null(x)) x else y
