@@ -17,6 +17,7 @@ Imports:
     R.utils,
     Biobase
 Suggests: 
+    bit64,
     roxygen2,
     testthat (>= 3.0.0)
 ByteCompile: true
