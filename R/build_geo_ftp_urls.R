@@ -18,7 +18,9 @@ build_geo_ftp_url <- function(id, file_type = "soft") {
     )
 }
 
-geo_ftp <- "ftp://ftp.ncbi.nlm.nih.gov/geo/"
+# Use https to connect GEO FTP site
+# When connecting GEO FTP site directly, it often failed to derive data.
+geo_ftp <- "https://ftp.ncbi.nlm.nih.gov/geo/"
 
 parse_geo_type <- function(x) {
     switch(x,

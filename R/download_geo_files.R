@@ -50,17 +50,30 @@ download_with_acc <- function(id, dest_dir, scope = "self", amount = "data", for
     )
 }
 
-#' @import xml2
+#' @importFrom xml2 read_html xml_text xml_find_all
 list_file_helper <- function(url) {
     xml_doc <- xml2::read_html(url)
-    file_name <- str_extract_all(
-        xml2::xml_text(xml_doc),
-        "G\\S++"
+    # file_name <- str_extract_all(
+    #     xml2::xml_text(xml_doc),
+    #     "G\\S++"
+    # )
+    # if (identical(length(file_name), 1L) && !length(file_name[[1L]])) {
+    #     return(NULL)
+    # }
+
+    # use HTTPS to connect GEO FTP site
+    # See https://github.com/seandavi/GEOquery/blob/master/R/getGEOSuppFiles.R
+    file_name <- grep(
+        "^G",
+        xml2::xml_text(xml2::xml_find_all(
+            xml_doc, "//a/@href"
+        )),
+        perl = TRUE, value = TRUE
     )
-    if (identical(length(file_name), 1L) && !length(file_name[[1L]])) {
+    if (!length(file_name)) {
         return(NULL)
     }
-    file.path(url, file_name[[1L]])
+    file.path(url, file_name)
 }
 list_geo_file_url <- function(id, file_type) {
     url <- build_geo_ftp_url(id, file_type)
@@ -85,13 +98,15 @@ download_inform <- function(urls, file_paths, method = "ftp") {
                 }
                 rlang::inform(paste0("Downloading ", basename(url), ":"))
                 h <- curl::new_handle()
-                if (identical(method, "ftp")) {
-                    curl::handle_setopt(
-                        h,
-                        buffersize = 33554432L,
-                        upload_buffersize = 33554432L
-                    )
-                }
+                # For we use HTTPs to link GEO FTP site,
+                # No need to follow GEO FTP buffersie recommendations
+                # if (identical(method, "ftp")) {
+                #     curl::handle_setopt(
+                #         h,
+                #         buffersize = 33554432L,
+                #         upload_buffersize = 33554432L
+                #     )
+                # }
                 curl::handle_setopt(h, timeout_ms = 120L * 1000L)
                 curl::curl_download(
                     url, file_path,
