@@ -76,6 +76,7 @@
 #' * https://www.ncbi.nlm.nih.gov/geo/info/download.html
 #' * https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi
 #' * Programmatic access to GEO FTP site-[README](https://ftp.ncbi.nlm.nih.gov/geo/README.txt)
+#' @keywords IO database
 #' @rdname get_geo
 #' @examples
 #' gse <- get_geo("GSE10", tempdir())

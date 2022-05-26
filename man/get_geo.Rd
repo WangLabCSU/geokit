@@ -100,3 +100,5 @@ gse <- get_geo("GSE10", tempdir())
 \item Programmatic access to GEO FTP site-\href{https://ftp.ncbi.nlm.nih.gov/geo/README.txt}{README}
 }
 }
+\keyword{IO}
+\keyword{database}
