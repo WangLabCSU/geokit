@@ -14,10 +14,11 @@ and parsing.  (eg., 'GDS505','GSE2','GSM2','GPL96')}
 current working dir.}
 
 \item{gse_matrix}{A logical value indicates whether to retrieve Series Matrix
-files when fetching a \code{GSE} GEO identity.}
+files when fetching a \code{GSE} GEO identity. When set to \code{TRUE}, a
+\link[Biobase:class.ExpressionSet]{ExpressionSet} Object will be returned}
 
 \item{add_gpl}{A logical value indicates whether to add \strong{platform}
-information (the \link[Biobase:featureData]{featureData} in
+information (namely the \link[Biobase:featureData]{featureData} slot in
 \link[Biobase:class.ExpressionSet]{ExpressionSet} Object) when fetching a \code{GSE} GEO
 identity with \code{gse_matrix} option \code{TRUE}.}
 }

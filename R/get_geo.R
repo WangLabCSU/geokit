@@ -56,9 +56,10 @@
 #' @param dest_dir The destination directory for any downloads.  Defaults to
 #' current working dir.
 #' @param gse_matrix A logical value indicates whether to retrieve Series Matrix
-#' files when fetching a `GSE` GEO identity.
+#' files when fetching a `GSE` GEO identity. When set to `TRUE`, a
+#' [ExpressionSet][Biobase::ExpressionSet] Object will be returned
 #' @param add_gpl A logical value indicates whether to add **platform**
-#' information (the [featureData][Biobase::featureData] in
+#' information (namely the [featureData][Biobase::featureData] slot in
 #' [ExpressionSet][Biobase::ExpressionSet] Object) when fetching a `GSE` GEO
 #' identity with `gse_matrix` option `TRUE`.
 #' @return An object of the appropriate class (GDS, GPL, GSM, or GSE) is
