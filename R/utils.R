@@ -1,5 +1,4 @@
-#' @import data.table
-#' @import rlang
+#' @import rlang data.table
 NULL
 
 #' To read gz and bz2 files directly for fread()
