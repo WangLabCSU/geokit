@@ -73,9 +73,9 @@
 #' with large GSE entries, expect that you may need a good chunk of memory and
 #' that coffee may be involved when parsing....
 #' @references
-#' * https://www.ncbi.nlm.nih.gov/geo/info/download.html
-#' * https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi
-#' * Programmatic access to GEO FTP site-[README](https://ftp.ncbi.nlm.nih.gov/geo/README.txt)
+#' * [https://www.ncbi.nlm.nih.gov/geo/info/download.html]
+#' * [https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi]
+#' * [Programmatic access to GEO FTP site](https://ftp.ncbi.nlm.nih.gov/geo/README.txt)
 #' @keywords IO database
 #' @rdname get_geo
 #' @examples
