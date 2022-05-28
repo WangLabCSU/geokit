@@ -138,7 +138,7 @@ get_gse_matrix <- function(id, dest_dir = getwd(), add_gpl = TRUE) {
     res <- lapply(file_paths, function(file) {
         gse_matrix_data <- parse_gse_matrix(read_lines(file))
         rlang::exec(
-            "construct_gse_matrix_est",
+            "construct_gse_matrix_expressionset",
             !!!gse_matrix_data,
             add_gpl = add_gpl,
             dest_dir = dest_dir
@@ -152,7 +152,7 @@ get_gse_matrix <- function(id, dest_dir = getwd(), add_gpl = TRUE) {
     }
 }
 
-construct_gse_matrix_est <- function(matrix_data, pheno_data, experiment_data, gpl_id, add_gpl, dest_dir) {
+construct_gse_matrix_expressionset <- function(matrix_data, pheno_data, experiment_data, gpl_id, add_gpl, dest_dir) {
     construct_param_list <- list(
         assayData = matrix_data,
         phenoData = pheno_data,
