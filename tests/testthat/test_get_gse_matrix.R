@@ -2,8 +2,8 @@ test_that("empty GSE is handled correctly", {
     gse <- rgeo::get_geo("GSE11413", tempdir())
 
     expect_s4_class(gse, "ExpressionSet")
-    expect_equal(nrow(pData(gse)), 12)
-    expect_equal(nrow(fData(gse)), 0)
+    expect_equal(nrow(Biobase::pData(gse)), 12)
+    expect_equal(nrow(Biobase::fData(gse)), 0)
 })
 
 test_that("case-mismatched IDs in GSEs handled correctly", {

@@ -50,7 +50,6 @@ download_with_acc <- function(id, dest_dir, scope = "self", amount = "data", for
     )
 }
 
-#' @importFrom xml2 read_html xml_text xml_find_all
 list_file_helper <- function(url) {
     xml_doc <- xml2::read_html(url)
     # file_name <- str_extract_all(
@@ -87,7 +86,6 @@ list_geo_file_url <- function(id, file_type) {
 }
 
 #' Download utils function with good message.
-#' @importFrom curl curl_download new_handle handle_setopt
 #' @noRd
 download_inform <- function(urls, file_paths, method = "ftp") {
     mapply(

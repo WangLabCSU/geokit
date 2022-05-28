@@ -1,5 +1,4 @@
 #' all parsers return a list
-#' @import Biobase
 #' @noRd
 parse_gse_matrix <- function(file_text) {
 

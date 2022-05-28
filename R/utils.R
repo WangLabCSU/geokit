@@ -1,11 +1,3 @@
-#' @import rlang data.table
-NULL
-
-#' To read gz and bz2 files directly for fread()
-#' @import R.utils
-#' @noRd
-NULL
-
 str_extract_all <- function(string, pattern) {
     regmatches(
         string,
