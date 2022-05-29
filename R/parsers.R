@@ -127,9 +127,6 @@ parse_column <- function(file_text) {
     } else {
         column_text <- data[[1]]
     }
-    column_text <- column_text[
-        grepl("=", column_text, perl = TRUE)
-    ]
     column_text <- data.table::tstrsplit(
         column_text, "\\s*=\\s*",
         perl = TRUE
