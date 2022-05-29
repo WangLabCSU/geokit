@@ -52,12 +52,10 @@
 #' provided through GDS subsets.
 #'
 #' @param ids A character vector representing the GEO identity for downloading
-#' and parsing.  (eg., 'GDS505','GSE2','GSM2','GPL96')
+#' and parsing. ('GDS505','GSE2','GSM2','GPL96' eg.). Currently, `rgeo` only
+#' support GSE identity.
 #' @param dest_dir The destination directory for any downloads.  Defaults to
 #' current working dir.
-#' @param gse_matrix A logical value indicates whether to retrieve Series Matrix
-#' files when fetching a `GSE` GEO identity. When set to `TRUE`, a
-#' [ExpressionSet][Biobase::ExpressionSet] Object will be returned
 #' @param add_gpl A logical value indicates whether to add **platform**
 #' information (namely the [featureData][Biobase::featureData] slot in
 #' [ExpressionSet][Biobase::ExpressionSet] Object) when fetching a `GSE` GEO
@@ -82,16 +80,20 @@
 #' gse <- get_geo("GSE10", tempdir())
 #'
 #' @export
-get_geo <- function(ids, dest_dir = getwd(), gse_matrix = TRUE, add_gpl = TRUE) {
+get_geo <- function(ids, dest_dir = getwd(), add_gpl = TRUE) {
     ids <- toupper(ids)
     check_ids(ids)
     get_geo_multi(
         ids = ids, dest_dir = dest_dir,
-        gse_matrix = gse_matrix,
+        gse_matrix = TRUE,
         add_gpl = add_gpl
     )
 }
 
+#' @param gse_matrix A logical value indicates whether to retrieve Series Matrix
+#' files when fetching a `GSE` GEO identity. When set to `TRUE`, a
+#' [ExpressionSet][Biobase::ExpressionSet] Object will be returned
+#' @noRd 
 get_geo_multi <- function(ids, dest_dir = getwd(), gse_matrix = TRUE, add_gpl = TRUE) {
     res <- lapply(ids, function(id) {
         rlang::try_fetch(

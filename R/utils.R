@@ -21,9 +21,20 @@ read_lines <- function(file) {
 check_ids <- function(ids) {
     geotype <- unique(substr(ids, 1L, 3L))
     id_test <- any(!geotype %in% c("GSE", "GPL", "GSM", "GDS"))
+    if (any(geotype %in% c("GPL", "GSM", "GDS"))) {
+        rlang::abort(
+            c(
+                "Sorry, Current `rgeo` only support parse GSE matrix.",
+                "Please check the `ids` provided is correct."
+            )
+        )
+    }
     if (id_test) {
         rlang::abort(
-            c("`ids` should representing the GEO identity (One of GSE, GDS, GSM and GPL). Please check the `ids` provided is correct.")
+            c(
+                "`ids` should representing the GEO GSE identity.",
+                "Please check the `ids` provided is correct."
+            )
         )
     }
 }
@@ -31,8 +42,8 @@ check_ids <- function(ids) {
 wrap_cat <- function(label, names) {
     label <- sprintf("%s:", label)
     total <- length(names)
-    
-    ext <-if (identical(total, 0L)) {
+
+    ext <- if (identical(total, 0L)) {
         "none"
     } else if (total <= 6L) {
         paste(names, collapse = " ")
