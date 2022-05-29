@@ -16,7 +16,7 @@ download_gpl_file <- function(id, dest_dir = getwd()) {
         ),
         error = function(error) {
             rlang::inform(
-                paste0("Annotation file in FTP site for ", id, " is not available, so will use data format from GEO Accession Site instead.")
+                paste0("\nAnnotation file in FTP site for ", id, " is not available, so will use data format from GEO Accession Site instead.")
             )
             download_with_acc(
                 id = id, dest_dir = dest_dir,
@@ -117,7 +117,7 @@ download_inform <- function(urls, file_paths, method = "ftp") {
                 #     )
                 # }
                 curl::handle_setopt(h, timeout_ms = 120L * 1000L)
-                curl::curl_download(
+                file_path <- curl::curl_download(
                     url, file_path,
                     mode = switch(method,
                         ftp = "wb",
@@ -126,6 +126,8 @@ download_inform <- function(urls, file_paths, method = "ftp") {
                     quiet = FALSE,
                     handle = h
                 )
+                cat("\n")
+                file_path
             } else {
                 rlang::inform(
                     paste0(
