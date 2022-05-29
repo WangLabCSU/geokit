@@ -15,7 +15,8 @@ Imports:
     xml2,
     curl,
     R.utils,
-    Biobase
+    Biobase,
+    methods
 Suggests: 
     bit64,
     roxygen2,
