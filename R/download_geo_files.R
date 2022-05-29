@@ -16,7 +16,7 @@ download_gpl_file <- function(id, dest_dir = getwd()) {
         ),
         error = function(error) {
             rlang::inform(
-                paste0("Annotation file in FTP site for ", id, " is not available, so will use data table from GEO Accession Display Bar instead.")
+                paste0("Annotation file in FTP site for ", id, " is not available, so will use data format from GEO Accession Site instead.")
             )
             download_with_acc(
                 id = id, dest_dir = dest_dir,
@@ -94,7 +94,18 @@ download_inform <- function(urls, file_paths, method = "ftp") {
                 if (!dir.exists(dirname(file_path))) {
                     dir.create(dirname(file_path), recursive = TRUE)
                 }
-                rlang::inform(paste0("Downloading ", basename(url), ":"))
+                rlang::inform(
+                    paste0(
+                        "Downloading ",
+                        basename(file_path),
+                        " From ",
+                        switch(method,
+                            ftp = "FTP site",
+                            acc = "GEO Accession Site"
+                        ),
+                        ":"
+                    )
+                )
                 h <- curl::new_handle()
                 # For we use HTTPs to link GEO FTP site,
                 # No need to follow GEO FTP buffersie recommendations
