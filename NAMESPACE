@@ -3,6 +3,7 @@
 export(AnnotatedDataFrameWithMeta)
 export(get_geo)
 export(get_geo_suppl)
+exportMethods("meta<-")
 exportMethods(meta)
 exportMethods(show)
 importClassesFrom(Biobase,AnnotatedDataFrame)

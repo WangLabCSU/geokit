@@ -63,8 +63,8 @@ AnnotatedDataFrameWithMeta <- function(data, varMetadata, dimLabels = c("rowName
 methods::setGeneric("meta", function(object) {
     methods::makeStandardGeneric("meta")
 })
-methods::setGeneric("meta<-", function(object) {
-    methods::makeStandardGeneric("meta")
+methods::setGeneric("meta<-", function(object, value) {
+    methods::makeStandardGeneric("meta<-")
 })
 
 #' @export
@@ -72,10 +72,12 @@ methods::setGeneric("meta<-", function(object) {
 methods::setMethod("meta", "AnnotatedDataFrameWithMeta", function(object) {
     object@meta
 })
+
 #' @export
 #' @rdname AnnotatedDataFrameWithMeta
 methods::setMethod("meta<-", "AnnotatedDataFrameWithMeta", function(object, value) {
     object@meta <- value
+    methods::validObject(object)
     object
 })
 

@@ -4,6 +4,7 @@
 \alias{AnnotatedDataFrameWithMeta-Class}
 \alias{AnnotatedDataFrameWithMeta}
 \alias{meta,AnnotatedDataFrameWithMeta-method}
+\alias{meta<-,AnnotatedDataFrameWithMeta-method}
 \alias{show,AnnotatedDataFrameWithMeta-method}
 \title{SubClass of AnnotatedDataFrame wiht extra meta data}
 \usage{
@@ -15,6 +16,8 @@ AnnotatedDataFrameWithMeta(
 )
 
 \S4method{meta}{AnnotatedDataFrameWithMeta}(object)
+
+\S4method{meta}{AnnotatedDataFrameWithMeta}(object) <- value
 
 \S4method{show}{AnnotatedDataFrameWithMeta}(object)
 }
@@ -52,8 +55,8 @@ version numbers used to created the instance. Intended for developer use.}
 \code{AnnotatedDataFrameWithMeta(data, varMetadata, dimLabels=c("rowNames", "columnNames"), meta = list())}
 
 \code{AnnotatedDataFrameWithMeta} instances are created using
-\code{AnnotatedDataFrameWithMeta}. The function can take four arguments, data is a
-data.frame of the samples (rows) and measured variables (columns).
+\code{AnnotatedDataFrameWithMeta()}. The function can take four arguments, data is
+a data.frame of the samples (rows) and measured variables (columns).
 varMetadata is a data.frame with the number of rows equal to the number of
 columns of the data argument. varMetadata describes aspects of each measured
 variable. dimLabels provides aesthetic control for labeling rows and columns
