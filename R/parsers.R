@@ -54,7 +54,7 @@ parse_gse_matrix_meta <- function(file_text) {
                 fixed = FALSE, perl = TRUE
             )
             meta_data <- parse_meta(meta_text)
-            data.table::setnames(
+            rlang::set_names(
                 meta_data,
                 function(x) sub(paste0("^", group, "_"), "", x, perl = TRUE)
             )
@@ -62,7 +62,6 @@ parse_gse_matrix_meta <- function(file_text) {
     )
     data.table::setDF(meta_data$Sample)
     rownames(meta_data$Sample) <- meta_data$Sample[["geo_accession"]]
-    meta_data$Series <- as.list(meta_data$Series)
     for (x in c("sample_id", "pubmed_id", "platform_id")) {
         if (x %in% names(meta_data$Series)) {
             meta_data$Series[[x]] <- strsplit(
@@ -140,14 +139,14 @@ parse_column <- function(file_text) {
         names = sub("^#", "", column_text[[1L]], perl = TRUE)
     )
 }
-# the first column should be the names of these meta data; return a data.table
+# the first column should be the names of these meta data; return a list
 parse_meta <- function(file_text) {
     data <- read_meta(file_text)
     if (!nrow(data) || identical(ncol(data), 1L)) {
         return(NULL)
     }
     data <- data[, V1 := sub("^!", "", V1, perl = TRUE)]
-    data.table::dcast(
+    data <- data.table::dcast(
         data.table::melt(
             data,
             id.vars = "V1",
@@ -156,6 +155,7 @@ parse_meta <- function(file_text) {
         variable ~ V1,
         fun.aggregate = paste0, collapse = "; "
     )[, .SD, .SDcols = !"variable"]
+    as.list(data)
 }
 
 na_string <- c("NA", "null", "NULL", "Null")
