@@ -28,4 +28,27 @@ check_ids <- function(ids) {
     }
 }
 
+wrap_cat <- function(label, names) {
+    label <- sprintf("%s:", label)
+    total <- length(names)
+    
+    ext <-if (identical(total, 0L)) {
+        "none"
+    } else if (total <= 6L) {
+        paste(names, collapse = " ")
+    } else {
+        paste(
+            paste(names[1:3], collapse = " "),
+            "...",
+            paste(names[(total - 1L):total], collapse = " "),
+            sprintf("(%d total)", total),
+            sep = " "
+        )
+    }
+    cat(strwrap(
+        paste(label, ext, sep = " "),
+        indent = 2L, exdent = 4L
+    ), sep = "\n")
+}
+
 `%||%` <- function(x, y) if (!is.null(x)) x else y
