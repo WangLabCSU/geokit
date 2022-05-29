@@ -1,4 +1,5 @@
-#' @importClassesFrom Biobase AnnotatedDataFrame
+##' @importClassesFrom Biobase AnnotatedDataFrame
+#' @noRd 
 methods::setClass(
     "AnnotatedDataFrameWithMeta",
     slots = c(
@@ -17,8 +18,6 @@ methods::setClass(
 #' slots `meta` contaning the metadata from GPL or GSM in GEO database. You can
 #' use `meta()` accessor function to get it.
 #' 
-#' @section Class-specific slots:
-#' 
 #' @slot data: A data.frame containing samples (rows) and measured variables
 #' (columns).  
 #' @slot dimLabels: A character vector of length 2 that provides labels for the
@@ -32,10 +31,6 @@ methods::setClass(
 #' 
 #' @seealso For methods, please see
 #' [AnnotatedDataFrame](Biobase::AnnotatedDataFrame)
-#' @name AnnotatedDataFrameWithMeta-Class
-#' @rdname AnnotatedDataFrameWithMeta
-NULL
-
 #' @section Creating Objects:
 #' `AnnotatedDataFrameWithMeta(data, varMetadata, dimLabels=c("rowNames",
 #' "columnNames"), meta = list())`
@@ -48,8 +43,11 @@ NULL
 #' variable. dimLabels provides aesthetic control for labeling rows and columns
 #' in the show method. meta is a list of meta data, varMetadata, dimLabels and
 #' meta can be missing.
-#' @export 
+#' @name AnnotatedDataFrameWithMeta-Class
 #' @rdname AnnotatedDataFrameWithMeta
+NULL
+
+#' @noRd
 AnnotatedDataFrameWithMeta <- function(data, varMetadata, dimLabels = c("rowNames", "columnNames"), meta = list()) {
     methods::new(
         "AnnotatedDataFrameWithMeta",
@@ -67,22 +65,20 @@ methods::setGeneric("meta<-", function(object, value) {
     methods::makeStandardGeneric("meta<-")
 })
 
-#' @export
-#' @rdname AnnotatedDataFrameWithMeta
+#' @noRd
 methods::setMethod("meta", "AnnotatedDataFrameWithMeta", function(object) {
     object@meta
 })
 
-#' @export
-#' @rdname AnnotatedDataFrameWithMeta
+#' @noRd
 methods::setMethod("meta<-", "AnnotatedDataFrameWithMeta", function(object, value) {
     object@meta <- value
     methods::validObject(object)
     object
 })
 
-#' @export
-#' @rdname AnnotatedDataFrameWithMeta
+##' @importFrom methods show
+#' @noRd
 methods::setMethod("show", "AnnotatedDataFrameWithMeta", function(object) {
     methods::callNextMethod()
     wrap_cat("meta", names(meta(object)))

@@ -2,25 +2,7 @@
 % Please edit documentation in R/class.R
 \name{AnnotatedDataFrameWithMeta-Class}
 \alias{AnnotatedDataFrameWithMeta-Class}
-\alias{AnnotatedDataFrameWithMeta}
-\alias{meta,AnnotatedDataFrameWithMeta-method}
-\alias{meta<-,AnnotatedDataFrameWithMeta-method}
-\alias{show,AnnotatedDataFrameWithMeta-method}
 \title{SubClass of AnnotatedDataFrame wiht extra meta data}
-\usage{
-AnnotatedDataFrameWithMeta(
-  data,
-  varMetadata,
-  dimLabels = c("rowNames", "columnNames"),
-  meta = list()
-)
-
-\S4method{meta}{AnnotatedDataFrameWithMeta}(object)
-
-\S4method{meta}{AnnotatedDataFrameWithMeta}(object) <- value
-
-\S4method{show}{AnnotatedDataFrameWithMeta}(object)
-}
 \description{
 An AnnotatedDataFrameWithMeta object is a subclass of
 \href{Biobase::AnnotatedDataFrame}{AnnotatedDataFrame}, which extends it by a
@@ -45,10 +27,6 @@ textual description of each variable.}
 \item{\code{.__classVersion__:}}{A Versions object describing the R and Biobase
 version numbers used to created the instance. Intended for developer use.}
 }}
-
-\section{Class-specific slots}{
-
-}
 
 \section{Creating Objects}{
 
