@@ -98,7 +98,7 @@ download_inform <- function(urls, file_paths, method = "ftp") {
                     paste0(
                         "Downloading ",
                         basename(file_path),
-                        " From ",
+                        " from ",
                         switch(method,
                             ftp = "FTP site",
                             acc = "GEO Accession Site"
