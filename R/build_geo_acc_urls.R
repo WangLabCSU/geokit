@@ -28,7 +28,7 @@ build_geo_acc_url <- function(id, scope = "self", amount = "data", format = "tex
         ),
         match.arg(
             tolower(amount),
-            c("brief", "quick", "data", "full.")
+            c("brief", "quick", "data", "full")
         ),
         match.arg(
             tolower(format),
