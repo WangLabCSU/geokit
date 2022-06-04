@@ -82,12 +82,12 @@ parse_gse_matrix_sample_characteristics <- function(sample_dt) {
                     ]
                     # Add this key-value pair to original data.table
                     sample_dt[, paste0(
-                        .col_characteristic_name[[1]],
                         # Since the names of these columns starting by "chr",
                         # we should extract the second "ch\\d?+"
                         str_extract_all(
                             .characteristic_col, "ch\\d?+"
-                        )[[1]][[2]]
+                        )[[1]][[2]], "_",
+                        .col_characteristic_name[[1]]
                     ) := .col_characteristic_split[[2]]]
                 })
             }
