@@ -7,7 +7,6 @@
 #' computer.
 #'
 #' @note just a note that the files are simply downloaded.
-#'
 #' @inheritParams get_geo
 #' @return A list (or a character atomic verctor if only one `id` is provided)
 #' of The full file paths of the resulting downloaded files.
@@ -20,7 +19,7 @@
 #' @export
 get_geo_suppl <- function(ids, dest_dir = getwd()) {
     ids <- toupper(ids)
-    check_ids(ids)
+    check_ids(ids, only_gse = FALSE)
     get_geo_suppl_multi(ids = ids, dest_dir = dest_dir)
 }
 

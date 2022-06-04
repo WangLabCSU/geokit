@@ -18,10 +18,10 @@ read_lines <- function(file) {
     )[[1]]
 }
 
-check_ids <- function(ids) {
+check_ids <- function(ids, only_gse = FALSE) {
     geotype <- unique(substr(ids, 1L, 3L))
     id_test <- any(!geotype %in% c("GSE", "GPL", "GSM", "GDS"))
-    if (any(geotype %in% c("GPL", "GSM", "GDS"))) {
+    if (any(geotype %in% c("GPL", "GSM", "GDS")) && only_gse) {
         rlang::abort(
             c(
                 "Sorry, Current `rgeo` only support parse GSE matrix.",
@@ -32,7 +32,7 @@ check_ids <- function(ids) {
     if (id_test) {
         rlang::abort(
             c(
-                "`ids` should representing the GEO GSE identity.",
+                "`ids` should representing the GEO identity.",
                 "Please check the `ids` provided is correct."
             )
         )
@@ -62,4 +62,4 @@ wrap_cat <- function(label, names) {
     ), sep = "\n")
 }
 
-`%||%` <- function(x, y) if (!is.null(x)) x else y
+`%||%` <- function(x, y) if (is.null(x)) y else x

@@ -4,18 +4,15 @@
 \alias{get_geo}
 \title{Get a GEO object from GEO FTP site}
 \usage{
-get_geo(ids, dest_dir = getwd(), gse_matrix = TRUE, add_gpl = TRUE)
+get_geo(ids, dest_dir = getwd(), add_gpl = TRUE)
 }
 \arguments{
 \item{ids}{A character vector representing the GEO identity for downloading
-and parsing.  (eg., 'GDS505','GSE2','GSM2','GPL96')}
+and parsing. ('GDS505','GSE2','GSM2','GPL96' eg.). Currently, \code{rgeo} only
+support GSE identity.}
 
 \item{dest_dir}{The destination directory for any downloads.  Defaults to
 current working dir.}
-
-\item{gse_matrix}{A logical value indicates whether to retrieve Series Matrix
-files when fetching a \code{GSE} GEO identity. When set to \code{TRUE}, a
-\link[Biobase:class.ExpressionSet]{ExpressionSet} Object will be returned}
 
 \item{add_gpl}{A logical value indicates whether to add \strong{platform}
 information (namely the \link[Biobase:featureData]{featureData} slot in
