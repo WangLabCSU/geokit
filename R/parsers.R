@@ -57,6 +57,7 @@ parse_gse_soft <- function(file_text) {
         file_text[entity_indices],
         split = "\\s*=\\s*"
     )
+    names(soft_data_list) <- entity[[2]]
     seq_line_temp <- c(entity_indices, length(file_text))
     for (i in seq_along(entity_indices)) {
         accession <- entity[[2]][[i]]
@@ -67,7 +68,7 @@ parse_gse_soft <- function(file_text) {
             )
         )
         entity_data <- parse_soft(file_text[
-            seq_line_temp[[i]]:seq_line_temp[[i + 1L]]
+            seq_line_temp[[i]]:(seq_line_temp[[i + 1L]] - 1L)
         ])
         soft_data_list[[i]] <- methods::new(
             switch(entity[[1]][[i]],

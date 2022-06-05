@@ -56,6 +56,9 @@
 #' support GSE identity.
 #' @param dest_dir The destination directory for any downloads.  Defaults to
 #' current working dir.
+#' @param gse_matrix A logical value indicates whether to retrieve Series Matrix
+#' files when fetching a `GSE` GEO identity. When set to `TRUE`, a
+#' [ExpressionSet][Biobase::ExpressionSet] Object will be returned
 #' @param add_gpl A logical value indicates whether to add **platform**
 #' information (namely the [featureData][Biobase::featureData] slot in
 #' [ExpressionSet][Biobase::ExpressionSet] Object) when fetching a `GSE` GEO
@@ -77,22 +80,22 @@
 #' @keywords IO database
 #' @rdname get_geo
 #' @examples
-#' gse <- get_geo("GSE10", tempdir())
+#' gse_matix <- get_geo("GSE10", tempdir())
+#' gse <- get_geo("GSE10", tempdir(), gse_matrix = FALSE)
+#' gpl <- get_geo("gpl98", tempdir())
+#' gsm <- get_geo("GSM1", tempdir())
 #'
 #' @export
-get_geo <- function(ids, dest_dir = getwd(), add_gpl = TRUE) {
+get_geo <- function(ids, dest_dir = getwd(), gse_matrix = TRUE, add_gpl = TRUE) {
     ids <- toupper(ids)
     check_ids(ids)
     get_geo_multi(
         ids = ids, dest_dir = dest_dir,
-        gse_matrix = TRUE,
+        gse_matrix = gse_matrix,
         add_gpl = add_gpl
     )
 }
 
-#' @param gse_matrix A logical value indicates whether to retrieve Series Matrix
-#' files when fetching a `GSE` GEO identity. When set to `TRUE`, a
-#' [ExpressionSet][Biobase::ExpressionSet] Object will be returned
 #' @noRd
 get_geo_multi <- function(ids, dest_dir = getwd(), gse_matrix = TRUE, add_gpl = TRUE) {
     res <- lapply(ids, function(id) {
@@ -124,7 +127,7 @@ get_geo_switch <- function(id, dest_dir = getwd(), gse_matrix = TRUE, add_gpl = 
         GSE = if (gse_matrix) {
             get_gse_matrix(id, dest_dir = dest_dir, add_gpl = add_gpl)
         } else {
-            "series"
+            get_gse_soft(id, dest_dir = dest_dir)
         },
         GPL = ,
         GSM = get_geo_soft(id, dest_dir = dest_dir),
@@ -162,7 +165,7 @@ construct_gse_matrix_expressionset <- function(matrix_data, pheno_data, experime
         annotation = gpl_id
     )
     if (add_gpl) {
-        gpl_file_path <- download_gpl_file(gpl_id, dest_dir)
+        gpl_file_path <- download_gpl_or_gse_soft_file(gpl_id, dest_dir)
         gpl_file_text <- read_lines(gpl_file_path)
         gpl_data <- parse_soft(gpl_file_text)
         if (!is.null(gpl_data$data_table)) {
@@ -179,9 +182,10 @@ construct_gse_matrix_expressionset <- function(matrix_data, pheno_data, experime
             feature_data <- Biobase::AnnotatedDataFrame(
                 feature_data,
                 varMetadata = data.frame(
-                    labelDescription = unname(
-                        gpl_data$columns[colnames(feature_data)]
-                    ),
+                    labelDescription = gpl_data$columns[
+                        colnames(feature_data), "Description",
+                        drop = TRUE
+                    ],
                     row.names = colnames(feature_data)
                 )
             )
@@ -203,26 +207,37 @@ construct_gse_matrix_expressionset <- function(matrix_data, pheno_data, experime
     rlang::eval_bare(expr)
 }
 
+get_gse_soft <- function(id, dest_dir = getwd()) {
+    file_path <- download_gpl_or_gse_soft_file(
+        id = id, dest_dir = dest_dir
+    )
+    file_text <- read_lines(file_path)
+    soft_data <- parse_gse_soft(file_text)
+    methods::new(
+        "GSE",
+        meta = soft_data$meta,
+        gsm = soft_data$gsm,
+        gpl = soft_data$gpl,
+        accession = id
+    )
+}
+
 get_geo_soft <- function(id, dest_dir = getwd()) {
     geo_type <- unique(substr(id, 1L, 3L))
     file_path <- switch(geo_type,
-        GPL = download_gpl_file(id, dest_dir = dest_dir),
+        GPL = download_gpl_or_gse_soft_file(id, dest_dir = dest_dir),
         GSM = download_gsm_file(id, dest_dir = dest_dir)
     )
     file_text <- read_lines(file_path)
     soft_data <- parse_soft(file_text)
-    if (!is.null(soft_data$data_table)) {
-        methods::new(
-            switch(geo_type,
-                GPL = "GSM",
-                GSM = "GPL"
-            ),
-            meta = soft_data$meta,
-            columns = soft_data$columns,
-            datatable = soft_data$data_table,
-            accession = id
-        )
-    } else {
-        NULL
-    }
+    methods::new(
+        switch(geo_type,
+            GSM = "GSM",
+            GPL = "GPL"
+        ),
+        meta = soft_data$meta,
+        columns = soft_data$columns,
+        datatable = soft_data$data_table,
+        accession = id
+    )
 }

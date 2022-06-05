@@ -6,13 +6,16 @@ download_geo_suppl_or_gse_matrix_files <- function(id, dest_dir, file_type) {
     download_inform(urls, file_paths, method = "ftp")
 }
 
-#' For GPL files, try FTP site first, if it failed, try ACC site
+#' For GPL or GSE files, try FTP site first, if it failed, try ACC site
 #' @noRd
-download_gpl_file <- function(id, dest_dir = getwd()) {
+download_gpl_or_gse_soft_file <- function(id, dest_dir = getwd()) {
     rlang::try_fetch(
         download_with_ftp(
             id = id, dest_dir = dest_dir,
-            file_type = "annot"
+            file_type = switch(substr(id, 1L, 3L),
+                GPL = "annot",
+                GSE = "soft"
+            )
         ),
         error = function(error) {
             rlang::inform(
