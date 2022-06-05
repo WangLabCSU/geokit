@@ -270,6 +270,9 @@ parse_meta <- function(file_text) {
         meta_without_equal
     )
     meta_data <- c(meta_with_equal, meta_without_equal)
+    meta_data <- meta_data[
+        !(duplicated(meta_data) & duplicated(names(meta_data)))
+    ]
     meta_data %||% list()
 }
 
