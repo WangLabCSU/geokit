@@ -2,7 +2,6 @@
 
 export(get_geo)
 export(get_geo_suppl)
-importClassesFrom(Biobase,AnnotatedDataFrame)
 importFrom(data.table,":=")
 importFrom(data.table,.BY)
 importFrom(data.table,.EACHI)
@@ -13,4 +12,3 @@ importFrom(data.table,.NGRP)
 importFrom(data.table,.SD)
 importFrom(data.table,data.table)
 importFrom(data.table,merge.data.table)
-importFrom(methods,show)
