@@ -13,7 +13,7 @@ You can install the development version of rgeo from [GitHub](https://github.com
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("Yunuuuu/rgeo")
+pak::pkg_install("Yunuuuu/rgeo")
 ```
 
 ## Example
