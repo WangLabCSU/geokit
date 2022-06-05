@@ -59,7 +59,7 @@ parse_gse_matrix_sample_characteristics <- function(sample_dt) {
             .SDcols = characteristics_cols
         ]
         for (.characteristic_col in characteristics_cols) {
-            col_characteristic_dt <- sample_dt[
+            characteristic_dt <- sample_dt[
                 , data.table::tstrsplit(
                     .characteristic_col, "(\\s*+);(\\s*+)",
                     perl = TRUE, fill = NA_character_
@@ -68,17 +68,15 @@ parse_gse_matrix_sample_characteristics <- function(sample_dt) {
             ][, .SD, .SDcols = function(x) {
                 any(grepl(":", x, perl = TRUE))
             }]
-            if (ncol(col_characteristic_dt)) {
-                lapply(col_characteristic_dt, function(x) {
-                    .characteristic_split <- data.table::tstrsplit(
+            if (ncol(characteristic_dt)) {
+                lapply(characteristic_dt, function(x) {
+                    # the first element contain the name of this key-value pair
+                    # And the second is the value of the key-value pair
+                    .characteristic_list <- data.table::tstrsplit(
                         x, "(\\s*+):(\\s*+)",
                         perl = TRUE, fill = NA_character_
                     )
-                    # the first element contain the name of this key-value pair
-                    # And the second is the value of the key-value pair
-                    .characteristic_name <- unique(
-                        .characteristic_split[[1]]
-                    )
+                    .characteristic_name <- unique(.characteristic_list[[1]])
                     .characteristic_name <- paste0(
                         # Since the names of these columns starting by "chr",
                         # we should extract the second "ch\\d?+"
@@ -93,12 +91,12 @@ parse_gse_matrix_sample_characteristics <- function(sample_dt) {
                     # Add this key-value pair to original data.table
                     sample_dt[
                         ,
-                        (.characteristic_name) := .characteristic_split[[2]]
+                        (.characteristic_name) := .characteristic_list[[2]]
                     ]
                     data.table::setcolorder(
                         sample_dt,
                         neworder = .characteristic_name,
-                        after = characteristics_cols
+                        before = .characteristic_col
                     )
                 })
             }
