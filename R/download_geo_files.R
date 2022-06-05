@@ -39,6 +39,15 @@ download_gsm_file <- function(id, dest_dir = getwd()) {
     )
 }
 
+#' For GDS files, Only try FTP site
+#' @noRd
+download_gds_file <- function(id, dest_dir = getwd()) {
+    download_with_ftp(
+        id = id, dest_dir = dest_dir,
+        file_type = "soft"
+    )
+}
+
 #' Return a character vector, the length of it is the same with `ids`.
 #' @noRd
 download_with_ftp <- function(id, dest_dir, file_type = "soft") {
