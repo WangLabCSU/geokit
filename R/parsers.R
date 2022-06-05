@@ -234,11 +234,15 @@ parse_gse_matrix_meta <- function(file_text) {
 
 # Column should start by "#" and contain "=" string to split this character into
 # names and values;
-#' @return a character vector
+#' @return a data.frame
 #' @noRd
 parse_column <- function(file_text) {
-    data <- read_column(file_text)
-    parse_line_with_equality_extractor(data)
+    column_data <- read_column(file_text)
+    column_data <- parse_line_with_equality_extractor(column_data)
+    data.frame(
+        Description = unname(column_data),
+        row.names = names(column_data)
+    )
 }
 
 # Meta data is split into two types differentiated by string "="
@@ -262,7 +266,8 @@ parse_meta <- function(file_text) {
     meta_without_equal <- parse_line_without_equality_extractor(
         meta_without_equal
     )
-    c(meta_with_equal, meta_without_equal)
+    meta_data <- c(meta_with_equal, meta_without_equal)
+    meta_data %||% list()
 }
 
 parse_line_with_equality_extractor <- function(dt) {
