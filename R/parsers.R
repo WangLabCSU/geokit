@@ -95,7 +95,7 @@ parse_gse_soft <- function(file_text) {
 
 parse_soft <- function(file_text) {
 
-    # parse GPL data table data - which is the feature data
+    # parse data table data - which is the feature data
     data_table <- read_data_table(file_text)
     if (nrow(data_table)) {
         # GEO uses 'TAG' instead of 'ID' for SAGE GSE/GPL entries,
@@ -118,11 +118,53 @@ parse_soft <- function(file_text) {
 
     # parse meta data and column data
     meta_data <- parse_meta(file_text)
-    column_data <- parse_column(file_text)
+    column_data <- parse_columns(file_text, colnames(data_table))
     list(
         data_table = data_table,
         meta = meta_data,
         columns = column_data
+    )
+}
+
+parse_gds <- function(file_text) {
+    subset_lines <- grep(
+        "^!subset", file_text,
+        perl = TRUE
+    )
+    data_table <- read_data_table(file_text)
+    if (nrow(data_table)) {
+        data.table::setDF(data_table)
+        rownames(data_table) <- data_table[[1L]]
+    } else {
+        data.table::setDF(data_table)
+    }
+
+    # parse meta data
+    meta_data <- parse_meta(file_text[-subset_lines])
+
+    # parse column data
+    column_data <- read_column(file_text)
+    column_data <- parse_line_with_equality_extractor(column_data)
+    subset_data <- parse_gds_subset(file_text[subset_lines])
+    # Merge subset data into column data
+    column_data <- merge(
+        data.table::data.table(
+            V1 = names(column_data),
+            Description = unname(column_data)
+        ),
+        subset_data,
+        by = "V1",
+        all.x = TRUE, sort = FALSE
+    )
+    data.table::setDF(column_data)
+
+    list(
+        data_table = data_table,
+        meta = meta_data,
+        columns = column_to_rownames(column_data, "V1")[
+            colnames(data_table), ,
+            drop = FALSE
+        ]
     )
 }
 
@@ -222,6 +264,35 @@ parse_gse_matrix_meta <- function(file_text) {
     meta_data
 }
 
+parse_gds_subset <- function(subset_file_text) {
+    subset_data <- read_meta(subset_file_text)
+    subset_data <- parse_line_with_equality_extractor(subset_data)
+    subset_data <- split(
+        subset_data,
+        factor(
+            names(subset_data),
+            levels = c(
+                "subset_sample_id",
+                "subset_dataset_id",
+                "subset_description",
+                "subset_type"
+            )
+        )
+    )
+    data.table::setDT(subset_data)
+    subset_data[
+        , unlist(
+            strsplit(subset_sample_id, ",", perl = TRUE),
+            use.names = FALSE
+        ),
+        by = c(
+            "subset_dataset_id",
+            "subset_description",
+            "subset_type"
+        )
+    ][, lapply(.SD, function(x) paste0(x, collapse = "; ")), by = V1]
+}
+
 #' There are four different types of line that are recognized in SOFT. The
 #' presence of any one of three characters in the first character position in
 #' the line indicates three of the line types, and the absence of any of these
@@ -239,12 +310,12 @@ parse_gse_matrix_meta <- function(file_text) {
 # names and values;
 #' @return a data.frame
 #' @noRd
-parse_column <- function(file_text) {
+parse_columns <- function(file_text, target_col_names) {
     column_data <- read_column(file_text)
     column_data <- parse_line_with_equality_extractor(column_data)
     data.frame(
-        Description = unname(column_data),
-        row.names = names(column_data)
+        Description = unname(column_data[target_col_names]),
+        row.names = target_col_names
     )
 }
 
@@ -276,7 +347,7 @@ parse_meta <- function(file_text) {
     meta_data %||% list()
 }
 
-# Line Starting with "!" or "#"
+# Line Starting with "!", "#" or "^"
 parse_line_with_equality_extractor <- function(dt) {
     if (!nrow(dt)) {
         return(NULL)
@@ -290,7 +361,7 @@ parse_line_with_equality_extractor <- function(dt) {
     )
     structure(
         data_list[[2L]],
-        names = sub("^[#!]\\s*+", "", data_list[[1L]], perl = TRUE)
+        names = sub("^[#!\\^]\\s*+", "", data_list[[1L]], perl = TRUE)
     )
 }
 
