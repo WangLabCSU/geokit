@@ -43,6 +43,55 @@ parse_gse_matrix <- function(file_text) {
     )
 }
 
+parse_gse_soft <- function(file_text) {
+    entity_indices <- grep(
+        "^\\^(SAMPLE|PLATFORM)", file_text,
+        perl = TRUE
+    )
+    rlang::inform(
+        sprintf("Found %d entities...", length(entity_indices))
+    )
+    soft_meta <- parse_meta(file_text[seq_len(entity_indices[[1]] - 1L)])
+    soft_data_list <- vector(mode = "list", length = length(entity_indices))
+    entity <- data.table::tstrsplit(
+        file_text[entity_indices],
+        split = "\\s*=\\s*"
+    )
+    seq_line_temp <- c(entity_indices, length(file_text))
+    for (i in seq_along(entity_indices)) {
+        accession <- entity[[2]][[i]]
+        rlang::inform(
+            sprintf(
+                "%s (%d of %d entities)",
+                accession, i, length(entity_indices)
+            )
+        )
+        entity_data <- parse_soft(file_text[
+            seq_line_temp[[i]]:seq_line_temp[[i + 1L]]
+        ])
+        soft_data_list[[i]] <- methods::new(
+            switch(entity[[1]][[i]],
+                `^SAMPLE` = "GSM",
+                `^PLATFORM` = "GPL"
+            ),
+            meta = entity_data$meta,
+            columns = entity_data$columns,
+            datatable = entity_data$data_table,
+            accession = accession
+        )
+    }
+    soft_data_list <- split(
+        soft_data_list,
+        factor(entity[[1]], levels = c("^SAMPLE", "^PLATFORM")),
+        drop = FALSE
+    )
+    list(
+        meta = soft_meta,
+        gsm = soft_data_list[["^SAMPLE"]],
+        gpl = soft_data_list[["^PLATFORM"]]
+    )
+}
+
 parse_soft <- function(file_text) {
 
     # parse GPL data table data - which is the feature data
@@ -70,7 +119,7 @@ parse_soft <- function(file_text) {
     list(
         data_table = data_table,
         meta = meta_data,
-        column = column_data
+        columns = column_data
     )
 }
 
@@ -92,7 +141,8 @@ parse_gse_matrix_sample_characteristics <- function(sample_dt) {
         for (.characteristic_col in characteristics_cols) {
             characteristic_dt <- sample_dt[
                 , data.table::tstrsplit(
-                    .characteristic_col, "(\\s*+);(\\s*+)",
+                    .characteristic_col,
+                    split = "(\\s*+);(\\s*+)",
                     perl = TRUE, fill = NA_character_
                 ),
                 env = list(.characteristic_col = .characteristic_col)
@@ -104,7 +154,8 @@ parse_gse_matrix_sample_characteristics <- function(sample_dt) {
                     # the first element contain the name of this key-value pair
                     # And the second is the value of the key-value pair
                     .characteristic_list <- data.table::tstrsplit(
-                        x, "(\\s*+):(\\s*+)",
+                        x,
+                        split = "(\\s*+):(\\s*+)",
                         perl = TRUE, fill = NA_character_
                     )
                     .characteristic_name <- unique(.characteristic_list[[1]])
@@ -221,7 +272,8 @@ parse_line_with_equality_extractor <- function(dt) {
         data_chr <- dt[[1]]
     }
     data_list <- data.table::tstrsplit(
-        data_chr, "\\s*=\\s*",
+        data_chr,
+        split = "\\s*=\\s*",
         perl = TRUE
     )
     structure(
