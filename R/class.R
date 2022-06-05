@@ -124,6 +124,43 @@ methods::setClass(
     ),
     contains = "GEOData"
 )
+
+## Accessors -----
+### Accessors `columns` ----
+methods::setGeneric("columns", function(object) {
+    methods::makeStandardGeneric("columns")
+})
+methods::setGeneric("columns<-", function(object, value) {
+    methods::makeStandardGeneric("columns<-")
+})
+#' @noRd
+methods::setMethod("columns", "GEODataTable", function(object) {
+    object@columns
+})
+
+#' @noRd
+methods::setMethod("columns<-", "GEODataTable", function(object, value) {
+    object@columns <- value
+    methods::validObject(object)
+    object
+})
+
+### Accessors `datatable` ----
+methods::setGeneric("datatable", function(object) {
+    methods::makeStandardGeneric("datatable")
+})
+methods::setGeneric("datatable<-", function(object, value) {
+    methods::makeStandardGeneric("datatable<-")
+})
+methods::setMethod("datatable", "GEODataTable", function(object) {
+    object@datatable
+})
+methods::setMethod("datatable<-", "GEODataTable", function(object, value) {
+    object@datatable <- value
+    methods::validObject(object)
+    object
+})
+
 methods::setClass(
     "GPL", 
     contains = "GEODataTable"
