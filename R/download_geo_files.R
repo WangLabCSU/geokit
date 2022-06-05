@@ -9,10 +9,11 @@ download_geo_suppl_or_gse_matrix_files <- function(id, dest_dir, file_type) {
 #' For GPL or GSE files, try FTP site first, if it failed, try ACC site
 #' @noRd
 download_gpl_or_gse_soft_file <- function(id, dest_dir = getwd()) {
+    geo_type <- substr(id, 1L, 3L)
     rlang::try_fetch(
         download_with_ftp(
             id = id, dest_dir = dest_dir,
-            file_type = switch(substr(id, 1L, 3L),
+            file_type = switch(geo_type,
                 GPL = "annot",
                 GSE = "soft"
             )
@@ -23,7 +24,7 @@ download_gpl_or_gse_soft_file <- function(id, dest_dir = getwd()) {
             )
             download_with_acc(
                 id = id, dest_dir = dest_dir,
-                scope = "self", amount = "data", format = "text"
+                scope = "self", amount = "full", format = "text"
             )
         }
     )
@@ -34,7 +35,7 @@ download_gpl_or_gse_soft_file <- function(id, dest_dir = getwd()) {
 download_gsm_file <- function(id, dest_dir = getwd()) {
     download_with_acc(
         id = id, dest_dir = dest_dir,
-        scope = "self", amount = "data", format = "text"
+        scope = "self", amount = "full", format = "text"
     )
 }
 
@@ -143,7 +144,7 @@ download_inform <- function(urls, file_paths, method = "ftp") {
             } else {
                 rlang::inform(
                     paste0(
-                        "Using locally cached version of ", 
+                        "Using locally cached version of ",
                         basename(file_path),
                         " found here: ",
                         file_path
