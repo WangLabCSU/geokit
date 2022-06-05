@@ -30,6 +30,25 @@ methods::setMethod("meta<-", "GEOData", function(object, value) {
     object
 })
 
+methods::setGeneric("accession", function(object) {
+    methods::makeStandardGeneric("accession")
+})
+methods::setGeneric("accession<-", function(object, value) {
+    methods::makeStandardGeneric("accession<-")
+})
+
+#' @noRd
+methods::setMethod("accession", "GEOData", function(object) {
+    object@accession
+})
+
+#' @noRd
+methods::setMethod("accession<-", "GEOData", function(object, value) {
+    object@accession <- value
+    methods::validObject(object)
+    object
+})
+
 # Class `GSE` ----
 methods::setClass(
     "GSE", 
