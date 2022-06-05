@@ -19,7 +19,7 @@
 #' @export
 get_geo_suppl <- function(ids, dest_dir = getwd()) {
     ids <- toupper(ids)
-    check_ids(ids, only_gse = FALSE)
+    check_ids(ids)
     get_geo_suppl_multi(ids = ids, dest_dir = dest_dir)
 }
 
