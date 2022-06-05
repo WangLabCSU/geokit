@@ -26,6 +26,15 @@ download_gpl_file <- function(id, dest_dir = getwd()) {
     )
 }
 
+#' For GSM files, Only try ACC site
+#' @noRd
+download_gsm_file <- function(id, dest_dir = getwd()) {
+    download_with_acc(
+        id = id, dest_dir = dest_dir,
+        scope = "self", amount = "data", format = "text"
+    )
+}
+
 #' Return a character vector, the length of it is the same with `ids`.
 #' @noRd
 download_with_ftp <- function(id, dest_dir, file_type = "soft") {
@@ -131,7 +140,8 @@ download_inform <- function(urls, file_paths, method = "ftp") {
             } else {
                 rlang::inform(
                     paste0(
-                        "Using locally cached version of ", basename(url),
+                        "Using locally cached version of ", 
+                        basename(file_path),
                         " found here: ",
                         file_path
                     )

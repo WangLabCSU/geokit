@@ -126,8 +126,8 @@ get_geo_switch <- function(id, dest_dir = getwd(), gse_matrix = TRUE, add_gpl = 
         } else {
             "series"
         },
-        GPL = get_gpl(id, dest_dir = dest_dir),
-        GSM = "samples",
+        GPL = get_geo_soft(id, dest_dir = dest_dir),
+        GSM = get_geo_soft(id, dest_dir = dest_dir),
         GDS = "datasets"
     )
 }
@@ -164,7 +164,7 @@ construct_gse_matrix_expressionset <- function(matrix_data, pheno_data, experime
     if (add_gpl) {
         gpl_file_path <- download_gpl_file(gpl_id, dest_dir)
         gpl_file_text <- read_lines(gpl_file_path)
-        gpl_data <- parse_gpl(gpl_file_text)
+        gpl_data <- parse_soft(gpl_file_text)
         if (!is.null(gpl_data$data_table)) {
             # NCBI GEO uses case-insensitive matching between platform
             # IDs and series ID Refs
@@ -203,18 +203,21 @@ construct_gse_matrix_expressionset <- function(matrix_data, pheno_data, experime
     rlang::eval_bare(expr)
 }
 
-get_gpl <- function(id, dest_dir = getwd()) {
-    file_path <- download_gpl_file(id, dest_dir)
+get_geo_soft <- function(id, dest_dir = getwd()) {
+    file_path <- switch(unique(substr(id, 1L, 3L)),
+        GPL = download_gpl_file(id, dest_dir = dest_dir),
+        GSM = download_gsm_file(id, dest_dir = dest_dir)
+    )
     file_text <- read_lines(file_path)
-    gpl_data <- parse_gpl(file_text)
-    if (!is.null(gpl_data$data_table)) {
+    soft_data <- parse_soft(file_text)
+    if (!is.null(soft_data$data_table)) {
         Biobase::AnnotatedDataFrame(
-            gpl_data$data_table,
+            soft_data$data_table,
             varMetadata = data.frame(
                 labelDescription = unname(
-                    gpl_data$column[colnames(gpl_data$data_table)]
+                    soft_data$column[colnames(soft_data$data_table)]
                 ),
-                row.names = colnames(gpl_data$data_table)
+                row.names = colnames(soft_data$data_table)
             )
         )
     } else {
