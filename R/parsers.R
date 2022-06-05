@@ -51,16 +51,16 @@ parse_gse_soft <- function(file_text) {
     rlang::inform(
         sprintf("Found %d entities...", length(entity_indices))
     )
-    soft_meta <- parse_meta(file_text[seq_len(entity_indices[[1]] - 1L)])
+    soft_meta <- parse_meta(file_text[seq_len(entity_indices[[1L]] - 1L)])
     soft_data_list <- vector(mode = "list", length = length(entity_indices))
     entity <- data.table::tstrsplit(
         file_text[entity_indices],
         split = "\\s*=\\s*"
     )
-    names(soft_data_list) <- entity[[2]]
+    names(soft_data_list) <- entity[[2L]]
     seq_line_temp <- c(entity_indices, length(file_text))
     for (i in seq_along(entity_indices)) {
-        accession <- entity[[2]][[i]]
+        accession <- entity[[2L]][[i]]
         rlang::inform(
             sprintf(
                 "%s (%d of %d entities)",
@@ -71,7 +71,7 @@ parse_gse_soft <- function(file_text) {
             seq_line_temp[[i]]:(seq_line_temp[[i + 1L]] - 1L)
         ])
         soft_data_list[[i]] <- methods::new(
-            switch(entity[[1]][[i]],
+            switch(entity[[1L]][[i]],
                 `^SAMPLE` = "GSM",
                 `^PLATFORM` = "GPL"
             ),
@@ -83,7 +83,7 @@ parse_gse_soft <- function(file_text) {
     }
     soft_data_list <- split(
         soft_data_list,
-        factor(entity[[1]], levels = c("^SAMPLE", "^PLATFORM")),
+        factor(entity[[1L]], levels = c("^SAMPLE", "^PLATFORM")),
         drop = FALSE
     )
     list(
@@ -102,16 +102,16 @@ parse_soft <- function(file_text) {
         # but it is always the first column;
         # some dataset may contain duplicated feature names,
         # collapse other column by it.
-        if (anyDuplicated(data_table[[1]])) {
+        if (anyDuplicated(data_table[[1L]])) {
             data_table <- data_table[
                 , lapply(.SD, function(x) {
                     paste(unique(x), collapse = "; ")
                 }),
-                by = c(names(data_table)[[1]])
+                by = c(names(data_table)[[1L]])
             ]
         }
         data.table::setDF(data_table)
-        rownames(data_table) <- data_table[[1]]
+        rownames(data_table) <- data_table[[1L]]
     } else {
         data.table::setDF(data_table)
     }
@@ -161,22 +161,22 @@ parse_gse_matrix_sample_characteristics <- function(sample_dt) {
                         split = "(\\s*+):(\\s*+)",
                         perl = TRUE, fill = NA_character_
                     )
-                    .characteristic_name <- unique(.characteristic_list[[1]])
+                    .characteristic_name <- unique(.characteristic_list[[1L]])
                     .characteristic_name <- paste0(
                         # Since the names of these columns starting by "chr",
                         # we should extract the second "ch\\d?+"
                         str_extract_all(
                             .characteristic_col, "ch\\d?+"
-                        )[[1]][[2]], "_",
+                        )[[1L]][[2L]], "_",
                         # Omit NA value and only extract the first element
                         .characteristic_name[
                             !is.na(.characteristic_name)
-                        ][[1]]
+                        ][[1L]]
                     )
                     # Add this key-value pair to original data.table
                     sample_dt[
                         ,
-                        (.characteristic_name) := .characteristic_list[[2]]
+                        (.characteristic_name) := .characteristic_list[[2L]]
                     ]
                     data.table::setcolorder(
                         sample_dt,
@@ -216,7 +216,7 @@ parse_gse_matrix_meta <- function(file_text) {
                 meta_data$Series[[x]],
                 split = ";?+ ", fixed = FALSE,
                 perl = TRUE
-            )[[1]]
+            )[[1L]]
         }
     }
     meta_data
@@ -281,7 +281,7 @@ parse_line_with_equality_extractor <- function(dt) {
     if (!nrow(dt)) {
         return(NULL)
     } else {
-        data_chr <- dt[[1]]
+        data_chr <- dt[[1L]]
     }
     data_list <- data.table::tstrsplit(
         data_chr,

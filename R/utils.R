@@ -15,7 +15,7 @@ read_lines <- function(file) {
     data.table::fread(
         file = file, sep = "", header = FALSE,
         colClasses = "character"
-    )[[1]]
+    )[[1L]]
 }
 
 check_ids <- function(ids) {
