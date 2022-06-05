@@ -42,6 +42,7 @@ parse_gse_matrix <- function(file_text) {
         gpl_id = gpl_id
     )
 }
+
 # Lots of GSEs now use 'characteristics_ch1' and 'characteristics_ch2' for
 # key-value pairs of annotation. If that is the case, this simply cleans those
 # up and transforms the keys to column names and the values to column values.
@@ -60,35 +61,45 @@ parse_gse_matrix_sample_characteristics <- function(sample_dt) {
         for (.characteristic_col in characteristics_cols) {
             col_characteristic_dt <- sample_dt[
                 , data.table::tstrsplit(
-                    eval(as.name(.characteristic_col)), "(\\s*+);(\\s*+)",
+                    .characteristic_col, "(\\s*+);(\\s*+)",
                     perl = TRUE, fill = NA_character_
-                )
+                ),
+                env = list(.characteristic_col = .characteristic_col)
             ][, .SD, .SDcols = function(x) {
                 any(grepl(":", x, perl = TRUE))
             }]
             if (ncol(col_characteristic_dt)) {
                 lapply(col_characteristic_dt, function(x) {
-                    .col_characteristic_split <- data.table::tstrsplit(
+                    .characteristic_split <- data.table::tstrsplit(
                         x, "(\\s*+):(\\s*+)",
                         perl = TRUE, fill = NA_character_
                     )
                     # the first element contain the name of this key-value pair
                     # And the second is the value of the key-value pair
-                    .col_characteristic_name <- unique(
-                        .col_characteristic_split[[1]]
+                    .characteristic_name <- unique(
+                        .characteristic_split[[1]]
                     )
-                    .col_characteristic_name <- .col_characteristic_name[
-                        !is.na(.col_characteristic_name)
-                    ]
-                    # Add this key-value pair to original data.table
-                    sample_dt[, paste0(
+                    .characteristic_name <- paste0(
                         # Since the names of these columns starting by "chr",
                         # we should extract the second "ch\\d?+"
                         str_extract_all(
                             .characteristic_col, "ch\\d?+"
                         )[[1]][[2]], "_",
-                        .col_characteristic_name[[1]]
-                    ) := .col_characteristic_split[[2]]]
+                        # Omit NA value and only extract the first element
+                        .characteristic_name[
+                            !is.na(.characteristic_name)
+                        ][[1]]
+                    )
+                    # Add this key-value pair to original data.table
+                    sample_dt[
+                        ,
+                        (.characteristic_name) := .characteristic_split[[2]]
+                    ]
+                    data.table::setcolorder(
+                        sample_dt,
+                        neworder = .characteristic_name,
+                        after = characteristics_cols
+                    )
                 })
             }
         }
@@ -112,9 +123,8 @@ parse_gse_matrix_meta <- function(file_text) {
             )
         }
     )
-    parse_gse_matrix_sample_characteristics(
-        data.table::setDT(meta_data$Sample)
-    )
+    data.table::setDT(meta_data$Sample)
+    parse_gse_matrix_sample_characteristics(meta_data$Sample)
     data.table::setDF(meta_data$Sample)
     rownames(meta_data$Sample) <- meta_data$Sample[["geo_accession"]]
     for (x in c("sample_id", "pubmed_id", "platform_id")) {
