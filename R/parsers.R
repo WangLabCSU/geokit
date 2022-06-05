@@ -97,23 +97,25 @@ parse_soft <- function(file_text) {
 
     # parse GPL data table data - which is the feature data
     data_table <- read_data_table(file_text)
-    if (!nrow(data_table)) {
-        return(NULL)
+    if (nrow(data_table)) {
+        # GEO uses 'TAG' instead of 'ID' for SAGE GSE/GPL entries,
+        # but it is always the first column;
+        # some dataset may contain duplicated feature names,
+        # collapse other column by it.
+        if (anyDuplicated(data_table[[1]])) {
+            data_table <- data_table[
+                , lapply(.SD, function(x) {
+                    paste(unique(x), collapse = "; ")
+                }),
+                by = c(names(data_table)[[1]])
+            ]
+        }
+        data.table::setDF(data_table)
+        rownames(data_table) <- data_table[[1]]
+    } else {
+        data.table::setDF(data_table)
     }
-    # GEO uses 'TAG' instead of 'ID' for SAGE GSE/GPL entries,
-    # but it is always the first column;
-    # some dataset may contain duplicated feature names,
-    # collapse other column by it.
-    if (anyDuplicated(data_table[[1]])) {
-        data_table <- data_table[
-            , lapply(.SD, function(x) {
-                paste(unique(x), collapse = "; ")
-            }),
-            by = c(names(data_table)[[1]])
-        ]
-    }
-    data.table::setDF(data_table)
-    rownames(data_table) <- data_table[[1]]
+
     # parse meta data and column data
     meta_data <- parse_meta(file_text)
     column_data <- parse_column(file_text)
@@ -271,6 +273,7 @@ parse_meta <- function(file_text) {
     meta_data %||% list()
 }
 
+# Line Starting with "!" or "#"
 parse_line_with_equality_extractor <- function(dt) {
     if (!nrow(dt)) {
         return(NULL)
@@ -284,7 +287,7 @@ parse_line_with_equality_extractor <- function(dt) {
     )
     structure(
         data_list[[2L]],
-        names = sub("^#\\s*+", "", data_list[[1L]], perl = TRUE)
+        names = sub("^[#!]\\s*+", "", data_list[[1L]], perl = TRUE)
     )
 }
 
