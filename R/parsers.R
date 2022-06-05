@@ -126,6 +126,7 @@ parse_soft <- function(file_text) {
     )
 }
 
+#' @importFrom data.table merge.data.table
 parse_gds <- function(file_text) {
     subset_lines <- grep(
         "^!subset", file_text,
@@ -150,7 +151,7 @@ parse_gds <- function(file_text) {
     column_data <- merge(
         data.table::data.table(
             V1 = names(column_data),
-            Description = unname(column_data)
+            labelDescription = unname(column_data)
         ),
         subset_data,
         by = "V1",
@@ -314,7 +315,7 @@ parse_columns <- function(file_text, target_col_names) {
     column_data <- read_column(file_text)
     column_data <- parse_line_with_equality_extractor(column_data)
     data.frame(
-        Description = unname(column_data[target_col_names]),
+        labelDescription = unname(column_data[target_col_names]),
         row.names = target_col_names
     )
 }
