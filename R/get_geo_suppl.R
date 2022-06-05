@@ -20,10 +20,10 @@
 get_geo_suppl <- function(ids, dest_dir = getwd()) {
     ids <- toupper(ids)
     check_ids(ids)
-    get_geo_suppl_multi(ids = ids, dest_dir = dest_dir)
+    get_geo_suppl_helper(ids = ids, dest_dir = dest_dir)
 }
 
-get_geo_suppl_multi <- function(ids, dest_dir = getwd()) {
+get_geo_suppl_helper <- function(ids, dest_dir = getwd()) {
     file_paths <- lapply(ids, function(id) {
         rlang::try_fetch(
             download_geo_suppl_or_gse_matrix_files(
