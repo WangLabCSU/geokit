@@ -131,7 +131,12 @@ get_geo_switch <- function(id, dest_dir = getwd(), gse_matrix = TRUE, add_gpl = 
         },
         GPL = ,
         GSM = get_geo_soft(id, dest_dir = dest_dir),
-        GDS = "datasets"
+        GDS = rlang::abort(
+            c(
+                "Sorry, Current `rgeo` cannot parse GDS entity.",
+                "Please check the `ids` provided is correct."
+            )
+        )
     )
 }
 
