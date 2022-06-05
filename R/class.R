@@ -65,11 +65,11 @@ methods::setValidity("GSE", function(object) {
     if (!all(vapply(object@gsm, function(x) {
         methods::is(x, "GSM")
     }, logical(1L)))) {
-        "the element of @gsm list should contain Class `GSM` object."
+        "the element of slot @gsm list should only contain Class `GSM` object."
     } else if (!all(vapply(object@gpl, function(x) {
         methods::is(x, "GPL")
     }, logical(1L)))) {
-        "the element of @gpl list should contain Class `GPL` object."
+        "the element of slot @gpl list should only contain Class `GPL` object."
     } else {
         TRUE
     }
@@ -125,6 +125,15 @@ methods::setClass(
     contains = "GEOData"
 )
 
+## Validator ----
+methods::setValidity("GEODataTable", function(object) {
+    if (!all(rownames(object@columns) == colnames(object@datatable))) {
+        "the rownames of slot @columns should be the same with slot @datatable."
+    } else {
+        TRUE
+    }
+})
+
 ## Accessors -----
 ### Accessors `columns` ----
 methods::setGeneric("columns", function(object) {
@@ -167,6 +176,10 @@ methods::setClass(
 )
 methods::setClass(
     "GSM", 
+    contains = "GEODataTable"
+)
+methods::setClass(
+    "GDS", 
     contains = "GEODataTable"
 )
 
