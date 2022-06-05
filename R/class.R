@@ -67,7 +67,7 @@ methods::setValidity("GSE", function(object) {
     }, logical(1L)))) {
         "the element of @gsm list should contain Class `GSM` object."
     } else if (!all(vapply(object@gpl, function(x) {
-        methods::is(x, "GSM")
+        methods::is(x, "GPL")
     }, logical(1L)))) {
         "the element of @gpl list should contain Class `GPL` object."
     } else {
