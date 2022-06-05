@@ -95,6 +95,7 @@ gse_matix <- get_geo("GSE10", tempdir())
 gse <- get_geo("GSE10", tempdir(), gse_matrix = FALSE)
 gpl <- get_geo("gpl98", tempdir())
 gsm <- get_geo("GSM1", tempdir())
+gds <- get_geo("GDS10", tempdir())
 
 }
 \references{

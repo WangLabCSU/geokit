@@ -84,6 +84,7 @@
 #' gse <- get_geo("GSE10", tempdir(), gse_matrix = FALSE)
 #' gpl <- get_geo("gpl98", tempdir())
 #' gsm <- get_geo("GSM1", tempdir())
+#' gds <- get_geo("GDS10", tempdir())
 #'
 #' @export
 get_geo <- function(ids, dest_dir = getwd(), gse_matrix = TRUE, add_gpl = TRUE) {
@@ -131,12 +132,7 @@ get_geo_switch <- function(id, dest_dir = getwd(), gse_matrix = TRUE, add_gpl = 
         },
         GPL = ,
         GSM = get_geo_soft(id, dest_dir = dest_dir),
-        GDS = rlang::abort(
-            c(
-                "Sorry, Current `rgeo` cannot parse GDS entity.",
-                "Please check the `ids` provided is correct."
-            )
-        )
+        GDS = get_geo_gds(id, dest_dir = dest_dir)
     )
 }
 
@@ -186,13 +182,7 @@ construct_gse_matrix_expressionset <- function(matrix_data, pheno_data, experime
             rownames(feature_data) <- rownames(matrix_data)
             feature_data <- Biobase::AnnotatedDataFrame(
                 feature_data,
-                varMetadata = data.frame(
-                    labelDescription = gpl_data$columns[
-                        colnames(feature_data), "Description",
-                        drop = TRUE
-                    ],
-                    row.names = colnames(feature_data)
-                )
+                varMetadata = gpl_data$columns
             )
         } else {
             feature_data <- Biobase::AnnotatedDataFrame(
@@ -243,6 +233,20 @@ get_geo_soft <- function(id, dest_dir = getwd()) {
         meta = soft_data$meta,
         columns = soft_data$columns,
         datatable = soft_data$data_table,
+        accession = id
+    )
+}
+
+get_geo_gds <- function(id, dest_dir = getwd()) {
+    geo_type <- unique(substr(id, 1L, 3L))
+    file_path <- download_gds_file(id, dest_dir = dest_dir)
+    file_text <- read_lines(file_path)
+    gds_data <- parse_gds(file_text)
+    methods::new(
+        "GDS",
+        meta = gds_data$meta,
+        columns = gds_data$columns,
+        datatable = gds_data$data_table,
         accession = id
     )
 }
