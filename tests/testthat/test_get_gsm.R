@@ -1,7 +1,6 @@
 testthat::test_that("basic GSM works", {
     gsm <- rgeo::get_geo("GSM11805", tempdir())
 
-    testthat::expect_s4_class(gsm, "GSM")
     testthat::expect_s4_class(gsm, "GEODataTable")
     testthat::expect_s4_class(gsm, "GEOData")
     testthat::expect_type(meta(gsm), "list")
