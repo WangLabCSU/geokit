@@ -67,7 +67,7 @@ parse_gse_soft <- function(file_text) {
                 accession, i, length(entity_indices)
             )
         )
-        entity_data <- parse_soft(file_text[
+        entity_data <- parse_gpl_or_gsm_soft(file_text[
             seq_line_temp[[i]]:(seq_line_temp[[i + 1L]] - 1L)
         ])
         soft_data_list[[i]] <- methods::new(
@@ -90,7 +90,8 @@ parse_gse_soft <- function(file_text) {
     )
 }
 
-parse_soft <- function(file_text) {
+# For GPL and GSM entity, they share the same file structure
+parse_gpl_or_gsm_soft <- function(file_text) {
 
     # parse data table data - which is the feature data
     data_table <- read_data_table(file_text)
@@ -124,7 +125,7 @@ parse_soft <- function(file_text) {
 }
 
 #' @importFrom data.table merge.data.table
-parse_gds <- function(file_text) {
+parse_gds_soft <- function(file_text) {
     subset_lines <- grep(
         "^!subset", file_text,
         perl = TRUE

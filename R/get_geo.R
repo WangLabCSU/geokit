@@ -170,7 +170,7 @@ construct_gse_matrix_expressionset <- function(matrix_data, pheno_data, experime
     if (add_gpl) {
         gpl_file_path <- download_gpl_or_gse_soft_file(gpl_id, dest_dir)
         gpl_file_text <- read_lines(gpl_file_path)
-        gpl_data <- parse_soft(gpl_file_text)
+        gpl_data <- parse_gpl_or_gsm_soft(gpl_file_text)
         if (!is.null(gpl_data$data_table)) {
             # NCBI GEO uses case-insensitive matching between platform
             # IDs and series ID Refs
@@ -229,8 +229,8 @@ get_geo_soft <- function(id, dest_dir = getwd()) {
     file_text <- read_lines(file_path)
     soft_data <- switch(geo_type,
         GSM = ,
-        GPL = parse_soft(file_text),
-        GDS = parse_gds(file_text)
+        GPL = parse_gpl_or_gsm_soft(file_text),
+        GDS = parse_gds_soft(file_text)
     )
     methods::new(
         "GEODataTable",
