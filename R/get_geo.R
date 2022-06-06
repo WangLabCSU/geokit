@@ -4,7 +4,7 @@
 #' directs the downloading and parsing of GEO files into an R data
 #' structure.
 #'
-#' get_geo functions to download and parse information available from [NCBI
+#' Use get_geo functions to download and parse information available from [NCBI
 #' GEO](http://www.ncbi.nlm.nih.gov/geo). Here are some details about what
 #' is avaible from GEO.  All entity types are handled by get_geo and essentially
 #' any information in the GEO SOFT format is reflected in the resulting data
