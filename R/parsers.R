@@ -158,14 +158,14 @@ parse_gds <- function(file_text) {
         all.x = TRUE, sort = FALSE
     )
     data.table::setDF(column_data)
-
+    column_data <- column_to_rownames(column_data, "V1")[
+        colnames(data_table), ,
+        drop = FALSE
+    ]
     list(
         data_table = data_table,
         meta = meta_data,
-        columns = column_to_rownames(column_data, "V1")[
-            colnames(data_table), ,
-            drop = FALSE
-        ]
+        columns = column_data
     )
 }
 
@@ -348,7 +348,7 @@ parse_meta <- function(file_text) {
     meta_data %||% list()
 }
 
-# Line Starting with "!", "#" or "^"
+# Line Starting with "!" or "#"
 parse_line_with_equality_extractor <- function(dt) {
     if (!nrow(dt)) {
         return(NULL)
@@ -362,7 +362,7 @@ parse_line_with_equality_extractor <- function(dt) {
     )
     structure(
         data_list[[2L]],
-        names = sub("^[#!\\^]\\s*+", "", data_list[[1L]], perl = TRUE)
+        names = sub("^[#!]\\s*+", "", data_list[[1L]], perl = TRUE)
     )
 }
 
