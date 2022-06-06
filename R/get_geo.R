@@ -133,8 +133,8 @@ get_geo_switch <- function(id, dest_dir = getwd(), gse_matrix = TRUE, add_gpl = 
             get_gse_soft(id, dest_dir = dest_dir)
         },
         GPL = ,
-        GSM = get_geo_soft(id, dest_dir = dest_dir),
-        GDS = get_geo_gds(id, dest_dir = dest_dir)
+        GSM = ,
+        GDS = get_geo_soft(id, dest_dir = dest_dir)
     )
 }
 
@@ -220,31 +220,23 @@ get_gse_soft <- function(id, dest_dir = getwd()) {
 }
 
 get_geo_soft <- function(id, dest_dir = getwd()) {
-    file_path <- switch(unique(substr(id, 1L, 3L)),
+    geo_type <- unique(substr(id, 1L, 3L))
+    file_path <- switch(geo_type,
         GPL = download_gpl_or_gse_soft_file(id, dest_dir = dest_dir),
-        GSM = download_gsm_file(id, dest_dir = dest_dir)
+        GSM = download_gsm_file(id, dest_dir = dest_dir),
+        GDS = download_gds_file(id, dest_dir = dest_dir)
     )
     file_text <- read_lines(file_path)
-    soft_data <- parse_soft(file_text)
+    soft_data <- switch(geo_type,
+        GSM = ,
+        GPL = parse_soft(file_text),
+        GDS = parse_gds(file_text)
+    )
     methods::new(
         "GEODataTable",
         meta = soft_data$meta,
         columns = soft_data$columns,
         datatable = soft_data$data_table,
-        accession = id
-    )
-}
-
-get_geo_gds <- function(id, dest_dir = getwd()) {
-    geo_type <- unique(substr(id, 1L, 3L))
-    file_path <- download_gds_file(id, dest_dir = dest_dir)
-    file_text <- read_lines(file_path)
-    gds_data <- parse_gds(file_text)
-    methods::new(
-        "GEODataTable",
-        meta = gds_data$meta,
-        columns = gds_data$columns,
-        datatable = gds_data$data_table,
         accession = id
     )
 }
