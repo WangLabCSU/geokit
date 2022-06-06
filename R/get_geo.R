@@ -51,10 +51,10 @@
 #' consistent across the dataset. Information reflecting experimental design is
 #' provided through GDS subsets.
 #'
-#' @param ids A character vector representing the GEO identity for downloading
+#' @param ids A character vector representing the GEO entity for downloading
 #' and parsing. ('GDS505','GSE2','GSM2','GPL96' eg.). Currently, `rgeo` only
 #' support GSE identity.
-#' @param dest_dir The destination directory for any downloads.  Defaults to
+#' @param dest_dir The destination directory for any downloads. Defaults to
 #' current working dir.
 #' @param gse_matrix A logical value indicates whether to retrieve Series Matrix
 #' files when fetching a `GSE` GEO identity. When set to `TRUE`, a
@@ -62,15 +62,17 @@
 #' @param add_gpl A logical value indicates whether to add **platform**
 #' information (namely the [featureData][Biobase::featureData] slot in
 #' [ExpressionSet][Biobase::ExpressionSet] Object) when fetching a `GSE` GEO
-#' identity with `gse_matrix` option `TRUE`.
+#' entity with `gse_matrix` option `TRUE`.
 #' @return An object of the appropriate class (GDS, GPL, GSM, or GSE) is
-#' returned. If the gse_matrix (`TRUE`) option is used with a `GSE` GEO
-#' identity, then a [ExpressionSet][Biobase::ExpressionSet] Object or a list of
-#' [ExpressionSet][Biobase::ExpressionSet] Objects is
-#' returned, one for each SeriesMatrix file associated with the GSE accesion.
+#' returned. For `GSE` entity with `gse_matrix` FALSE, an [GEOSeries-class]
+#' object is returned; and for other entity, a [GEODataTable-class] object is
+#' returned. If the gse_matrix is (`TRUE`) with a `GSE` GEO entity, then a
+#' [ExpressionSet][Biobase::ExpressionSet] Object or a list of
+#' [ExpressionSet][Biobase::ExpressionSet] Objects is returned, one for each
+#' SeriesMatrix file associated with the GSE accesion.
 #' @section Warning : Some of the files that are downloaded, particularly those
 #' associated with GSE entries from GEO are absolutely ENORMOUS and parsing
-#' them can take quite some time and memory.  So, particularly when working
+#' them can take quite some time and memory. So, particularly when working
 #' with large GSE entries, expect that you may need a good chunk of memory and
 #' that coffee may be involved when parsing....
 #' @references
@@ -209,7 +211,7 @@ get_gse_soft <- function(id, dest_dir = getwd()) {
     file_text <- read_lines(file_path)
     soft_data <- parse_gse_soft(file_text)
     methods::new(
-        "GSE",
+        "GEOSeries",
         meta = soft_data$meta,
         gsm = soft_data$gsm,
         gpl = soft_data$gpl,
@@ -218,18 +220,14 @@ get_gse_soft <- function(id, dest_dir = getwd()) {
 }
 
 get_geo_soft <- function(id, dest_dir = getwd()) {
-    geo_type <- unique(substr(id, 1L, 3L))
-    file_path <- switch(geo_type,
+    file_path <- switch(unique(substr(id, 1L, 3L)),
         GPL = download_gpl_or_gse_soft_file(id, dest_dir = dest_dir),
         GSM = download_gsm_file(id, dest_dir = dest_dir)
     )
     file_text <- read_lines(file_path)
     soft_data <- parse_soft(file_text)
     methods::new(
-        switch(geo_type,
-            GSM = "GSM",
-            GPL = "GPL"
-        ),
+        "GEODataTable",
         meta = soft_data$meta,
         columns = soft_data$columns,
         datatable = soft_data$data_table,
@@ -243,7 +241,7 @@ get_geo_gds <- function(id, dest_dir = getwd()) {
     file_text <- read_lines(file_path)
     gds_data <- parse_gds(file_text)
     methods::new(
-        "GDS",
+        "GEODataTable",
         meta = gds_data$meta,
         columns = gds_data$columns,
         datatable = gds_data$data_table,

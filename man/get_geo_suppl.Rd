@@ -7,11 +7,11 @@
 get_geo_suppl(ids, dest_dir = getwd())
 }
 \arguments{
-\item{ids}{A character vector representing the GEO identity for downloading
+\item{ids}{A character vector representing the GEO entity for downloading
 and parsing. ('GDS505','GSE2','GSM2','GPL96' eg.). Currently, \code{rgeo} only
 support GSE identity.}
 
-\item{dest_dir}{The destination directory for any downloads.  Defaults to
+\item{dest_dir}{The destination directory for any downloads. Defaults to
 current working dir.}
 }
 \value{

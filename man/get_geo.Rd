@@ -7,11 +7,11 @@
 get_geo(ids, dest_dir = getwd(), gse_matrix = TRUE, add_gpl = TRUE)
 }
 \arguments{
-\item{ids}{A character vector representing the GEO identity for downloading
+\item{ids}{A character vector representing the GEO entity for downloading
 and parsing. ('GDS505','GSE2','GSM2','GPL96' eg.). Currently, \code{rgeo} only
 support GSE identity.}
 
-\item{dest_dir}{The destination directory for any downloads.  Defaults to
+\item{dest_dir}{The destination directory for any downloads. Defaults to
 current working dir.}
 
 \item{gse_matrix}{A logical value indicates whether to retrieve Series Matrix
@@ -21,14 +21,16 @@ files when fetching a \code{GSE} GEO identity. When set to \code{TRUE}, a
 \item{add_gpl}{A logical value indicates whether to add \strong{platform}
 information (namely the \link[Biobase:featureData]{featureData} slot in
 \link[Biobase:class.ExpressionSet]{ExpressionSet} Object) when fetching a \code{GSE} GEO
-identity with \code{gse_matrix} option \code{TRUE}.}
+entity with \code{gse_matrix} option \code{TRUE}.}
 }
 \value{
 An object of the appropriate class (GDS, GPL, GSM, or GSE) is
-returned. If the gse_matrix (\code{TRUE}) option is used with a \code{GSE} GEO
-identity, then a \link[Biobase:class.ExpressionSet]{ExpressionSet} Object or a list of
-\link[Biobase:class.ExpressionSet]{ExpressionSet} Objects is
-returned, one for each SeriesMatrix file associated with the GSE accesion.
+returned. For \code{GSE} entity with \code{gse_matrix} FALSE, an \linkS4class{GEOSeries}
+object is returned; and for other entity, a \linkS4class{GEODataTable} object is
+returned. If the gse_matrix is (\code{TRUE}) with a \code{GSE} GEO entity, then a
+\link[Biobase:class.ExpressionSet]{ExpressionSet} Object or a list of
+\link[Biobase:class.ExpressionSet]{ExpressionSet} Objects is returned, one for each
+SeriesMatrix file associated with the GSE accesion.
 }
 \description{
 This function is the main user-level function in the \code{rgeo} package.  It
@@ -85,7 +87,7 @@ provided through GDS subsets.
 \section{Warning }{
  Some of the files that are downloaded, particularly those
 associated with GSE entries from GEO are absolutely ENORMOUS and parsing
-them can take quite some time and memory.  So, particularly when working
+them can take quite some time and memory. So, particularly when working
 with large GSE entries, expect that you may need a good chunk of memory and
 that coffee may be involved when parsing....
 }
