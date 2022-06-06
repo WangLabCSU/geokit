@@ -71,10 +71,7 @@ parse_gse_soft <- function(file_text) {
             seq_line_temp[[i]]:(seq_line_temp[[i + 1L]] - 1L)
         ])
         soft_data_list[[i]] <- methods::new(
-            switch(entity[[1L]][[i]],
-                `^SAMPLE` = "GSM",
-                `^PLATFORM` = "GPL"
-            ),
+            "GEODataTable",
             meta = entity_data$meta,
             columns = entity_data$columns,
             datatable = entity_data$data_table,
