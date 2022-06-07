@@ -263,7 +263,7 @@ parse_gse_matrix_meta <- function(file_text) {
 
 parse_gds_subset <- function(subset_file_text) {
     subset_data <- read_meta(subset_file_text)
-    subset_data <- parse_line_with_equality_extractor(subset_data)
+    subset_data <- parse_line_sep_by_equality(subset_data)
     data.table::setDT(subset_data)
     subset_data[
         , unlist(
@@ -297,7 +297,7 @@ parse_gds_subset <- function(subset_file_text) {
 #' @noRd
 parse_columns <- function(file_text, target_rownames) {
     column_data <- read_column(file_text)
-    column_data <- parse_line_with_equality_extractor(column_data)
+    column_data <- parse_line_sep_by_equality(column_data)
     data.frame(
         labelDescription = vapply(column_data[target_rownames], function(x) {
             if (length(x) > 1) {
@@ -323,11 +323,11 @@ parse_meta <- function(file_text) {
     )
     # For lines containg "=" character
     meta_with_equal <- read_meta(file_text[line_with_equality])
-    meta_with_equal <- parse_line_with_equality_extractor(meta_with_equal)
+    meta_with_equal <- parse_line_sep_by_equality(meta_with_equal)
 
     # For lines without "=" character
     meta_without_equal <- read_meta(file_text[!line_with_equality])
-    meta_without_equal <- parse_line_without_equality_extractor(
+    meta_without_equal <- parse_line_sep_by_table(
         meta_without_equal
     )
     meta_data <- c(meta_with_equal, meta_without_equal)
@@ -338,7 +338,8 @@ parse_meta <- function(file_text) {
 }
 
 # Line Starting with "!" or "#"
-parse_line_with_equality_extractor <- function(dt) {
+# For line seperated by "=", every row represents a item.
+parse_line_sep_by_equality <- function(dt) {
     if (!nrow(dt)) {
         return(NULL)
     } else {
@@ -355,23 +356,21 @@ parse_line_with_equality_extractor <- function(dt) {
     )
 }
 
-parse_line_without_equality_extractor <- function(dt) {
+# Line starting with "!"
+# For line seperated by "\t", the element of every row stand for a item
+# So for duplicated rows IDs (the first column), we should collapse it.
+parse_line_sep_by_table <- function(dt) {
     if (!nrow(dt) || identical(ncol(dt), 1L)) {
         return(NULL)
     }
-    data <- dt[
-        , V1 := sub("^!\\s*+", "", V1, perl = TRUE)
-    ]
-    data <- data.table::dcast(
-        data.table::melt(
-            data,
-            id.vars = "V1",
-            variable.name = "variable"
-        ),
-        variable ~ V1,
-        fun.aggregate = paste0, collapse = "; "
-    )[, .SD, .SDcols = !"variable"]
-    as.list(data)
+    data <- dt[, lapply(.SD, function(x) paste0(x, collapse = "")), by = "V1"]
+    data <- split(
+        data[, .SD, .SDcols = !1],
+        factor(sub("^!\\s*+", "", data[[1]], perl = TRUE))
+    )
+    lapply(data, function(x) {
+        unlist(x, recursive = FALSE, use.names = FALSE)
+    })
 }
 
 na_string <- c("NA", "null", "NULL", "Null")
