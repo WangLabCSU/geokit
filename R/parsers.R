@@ -142,15 +142,13 @@ parse_gds_soft <- function(file_text) {
     meta_data <- parse_meta(file_text[-subset_lines])
 
     # parse column data
-    column_data <- read_column(file_text)
-    column_data <- parse_line_with_equality_extractor(column_data)
+    column_data <- parse_columns(file_text[-subset_lines], colnames(data_table))
+    data.table::setDT(column_data, keep.rownames = "V1")
+
     subset_data <- parse_gds_subset(file_text[subset_lines])
     # Merge subset data into column data
     column_data <- merge(
-        data.table::data.table(
-            V1 = names(column_data),
-            labelDescription = unname(column_data)
-        ),
+        column_data,
         subset_data,
         by = "V1",
         all.x = TRUE, sort = FALSE
@@ -266,18 +264,6 @@ parse_gse_matrix_meta <- function(file_text) {
 parse_gds_subset <- function(subset_file_text) {
     subset_data <- read_meta(subset_file_text)
     subset_data <- parse_line_with_equality_extractor(subset_data)
-    subset_data <- split(
-        subset_data,
-        factor(
-            names(subset_data),
-            levels = c(
-                "subset_sample_id",
-                "subset_dataset_id",
-                "subset_description",
-                "subset_type"
-            )
-        )
-    )
     data.table::setDT(subset_data)
     subset_data[
         , unlist(
@@ -309,12 +295,18 @@ parse_gds_subset <- function(subset_file_text) {
 # names and values;
 #' @return a data.frame
 #' @noRd
-parse_columns <- function(file_text, target_col_names) {
+parse_columns <- function(file_text, target_rownames) {
     column_data <- read_column(file_text)
     column_data <- parse_line_with_equality_extractor(column_data)
     data.frame(
-        labelDescription = unname(column_data[target_col_names]),
-        row.names = target_col_names
+        labelDescription = vapply(column_data[target_rownames], function(x) {
+            if (length(x) > 1) {
+                paste0(x, collapse = "; ")
+            } else {
+                x
+            }
+        }, character(1L)),
+        row.names = target_rownames
     )
 }
 
@@ -332,7 +324,6 @@ parse_meta <- function(file_text) {
     # For lines containg "=" character
     meta_with_equal <- read_meta(file_text[line_with_equality])
     meta_with_equal <- parse_line_with_equality_extractor(meta_with_equal)
-    if (!is.null(meta_with_equal)) meta_with_equal <- as.list(meta_with_equal)
 
     # For lines without "=" character
     meta_without_equal <- read_meta(file_text[!line_with_equality])
@@ -353,14 +344,14 @@ parse_line_with_equality_extractor <- function(dt) {
     } else {
         data_chr <- dt[[1L]]
     }
-    data_list <- data.table::tstrsplit(
+    name_value_pairs <- data.table::tstrsplit(
         data_chr,
         split = "\\s*=\\s*",
         perl = TRUE
     )
-    structure(
-        data_list[[2L]],
-        names = sub("^[#!]\\s*+", "", data_list[[1L]], perl = TRUE)
+    split(
+        name_value_pairs[[2L]],
+        factor(sub("^[#!]\\s*+", "", name_value_pairs[[1L]], perl = TRUE))
     )
 }
 
