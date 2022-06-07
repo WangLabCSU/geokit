@@ -5,6 +5,15 @@ str_extract_all <- function(string, pattern) {
         invert = FALSE
     )
 }
+# split string based on pattern, Only split once, Return a list of character,
+# the length of every element is two
+str_split <- function(string, pattern) {
+    regmatches(
+        string,
+        regexpr(pattern, string, perl = TRUE, fixed = FALSE),
+        invert = TRUE
+    )
+}
 column_to_rownames <- function(.data, var) {
     rownames(.data) <- .data[[var]]
     .data[[var]] <- NULL
