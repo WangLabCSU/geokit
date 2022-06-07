@@ -38,7 +38,7 @@ directs the downloading and parsing of GEO files into an R data
 structure.
 }
 \details{
-get_geo functions to download and parse information available from \href{http://www.ncbi.nlm.nih.gov/geo}{NCBI GEO}. Here are some details about what
+Use get_geo functions to download and parse information available from \href{http://www.ncbi.nlm.nih.gov/geo}{NCBI GEO}. Here are some details about what
 is avaible from GEO.  All entity types are handled by get_geo and essentially
 any information in the GEO SOFT format is reflected in the resulting data
 structure.
