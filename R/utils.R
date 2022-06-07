@@ -40,7 +40,7 @@ check_ids <- function(ids) {
     }
 }
 
-wrap_cat <- function(label, names) {
+wrap_cat <- function(label, names, indent = 0L, exdent = 2L) {
     label <- sprintf("%s:", label)
     total <- length(names)
 
@@ -59,7 +59,7 @@ wrap_cat <- function(label, names) {
     }
     cat(strwrap(
         paste(label, ext, sep = " "),
-        indent = 2L, exdent = 4L
+        indent = indent, exdent = exdent
     ), sep = "\n")
 }
 

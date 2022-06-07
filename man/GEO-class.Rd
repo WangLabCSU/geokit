@@ -4,6 +4,7 @@
 \name{GEO-class}
 \alias{GEO-class}
 \alias{GEOData-class}
+\alias{show,GEOData-method}
 \alias{meta,GEOData-method}
 \alias{meta}
 \alias{meta<-,GEOData-method}
@@ -13,6 +14,7 @@
 \alias{accession<-,GEOData-method}
 \alias{accession<-}
 \alias{GEODataTable-class}
+\alias{show,GEODataTable-method}
 \alias{columns,GEODataTable-method}
 \alias{columns}
 \alias{columns<-,GEODataTable-method}
@@ -22,6 +24,7 @@
 \alias{datatable<-,GEODataTable-method}
 \alias{datatable<-}
 \alias{GEOSeries-class}
+\alias{show,GEOSeries-method}
 \alias{gsm,GEOSeries-method}
 \alias{gsm}
 \alias{gsm<-,GEOSeries-method}
@@ -32,6 +35,8 @@
 \alias{gpl<-}
 \title{Virtual class for holding GEO series, samples, platforms, and datasets.}
 \usage{
+\S4method{show}{GEOData}(object)
+
 \S4method{meta}{GEOData}(object)
 
 \S4method{meta}{GEOData}(object) <- value
@@ -40,6 +45,8 @@
 
 \S4method{accession}{GEOData}(object) <- value
 
+\S4method{show}{GEODataTable}(object)
+
 \S4method{columns}{GEODataTable}(object)
 
 \S4method{columns}{GEODataTable}(object) <- value
@@ -47,6 +54,8 @@
 \S4method{datatable}{GEODataTable}(object)
 
 \S4method{datatable}{GEODataTable}(object) <- value
+
+\S4method{show}{GEOSeries}(object)
 
 \S4method{gsm}{GEOSeries}(object)
 

@@ -39,6 +39,16 @@ methods::setClass(
     )
 )
 
+#' @importFrom methods show
+#' @method show GEOData
+#' @export
+#' @rdname GEO-class
+methods::setMethod("show", "GEOData", function(object) {
+    cat(paste0("An object of ", methods::is(object)[[1]]), sep = "\n")
+    wrap_cat("meta", names = names(object@meta))
+    wrap_cat("accession", names = object@accession)
+})
+
 methods::setGeneric("meta", function(object) {
     methods::makeStandardGeneric("meta")
 })
@@ -98,12 +108,12 @@ methods::setMethod("accession<-", "GEOData", function(object, value) {
 methods::setClass(
     "GEODataTable",
     slots = list(
-        columns = "data.frame",
-        datatable = "data.frame"
+        datatable = "data.frame",
+        columns = "data.frame"
     ),
     prototype = list(
-        columns = data.frame(),
-        datatable = data.frame()
+        datatable = data.frame(),
+        columns = data.frame()
     ),
     contains = "GEOData"
 )
@@ -115,6 +125,26 @@ methods::setValidity("GEODataTable", function(object) {
     } else {
         TRUE
     }
+})
+
+#' @method show GEODataTable
+#' @export
+#' @rdname GEO-class
+methods::setMethod("show", "GEODataTable", function(object) {
+    cat(paste0("An object of ", methods::is(object)[[1]]), sep = "\n")
+    datatable_dim <- dim(object@datatable)
+    cat(
+        strwrap(paste0("datatable: a ", datatable_dim[[1]], " * ", datatable_dim[[2]], " data.frame"), exdent = 2L),
+        sep = "\n"
+    )
+    columns_dim <- dim(object@columns)
+    cat(
+        strwrap(paste0("columns: a ", columns_dim[[1]], " * ", columns_dim[[2]], " data.frame"), exdent = 2L),
+        sep = "\n"
+    )
+    wrap_cat("columnsData", names = names(object@columns), 2L, 4L)
+    wrap_cat("meta", names = names(object@meta))
+    wrap_cat("accession", names = object@accession)
 })
 
 ## Accessors -----
@@ -197,6 +227,17 @@ methods::setValidity("GEOSeries", function(object) {
     } else {
         TRUE
     }
+})
+
+#' @method show GEOSeries
+#' @export
+#' @rdname GEO-class
+methods::setMethod("show", "GEOSeries", function(object) {
+    cat(paste0("An object of ", methods::is(object)[[1]]), sep = "\n")
+    wrap_cat("gsm", names = names(object@gsm))
+    wrap_cat("gpl", names = names(object@gpl))
+    wrap_cat("meta", names = names(object@meta))
+    wrap_cat("accession", names = object@accession)
 })
 
 ## Accessors -----
