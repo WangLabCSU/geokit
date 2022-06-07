@@ -53,9 +53,11 @@ parse_gse_soft <- function(file_text) {
     )
     soft_meta <- parse_meta(file_text[seq_len(entity_indices[[1L]] - 1L)])
     soft_data_list <- vector(mode = "list", length = length(entity_indices))
-    entity <- data.table::tstrsplit(
-        file_text[entity_indices],
-        split = "\\s*=\\s*"
+    # For every entity data, the data is seperated by "=" into name-value pairs
+    # Don't use `data.table::tstrsplit`, as it will split string into three or
+    # more element.
+    entity <- data.table::transpose(
+        str_split(file_text[entity_indices], "\\s*=\\s*")
     )
     names(soft_data_list) <- entity[[2L]]
     seq_line_temp <- c(entity_indices, length(file_text))
@@ -128,9 +130,9 @@ parse_gpl_or_gsm_soft <- function(file_text) {
 parse_gds_soft <- function(file_text) {
     subset_lines <- grep(
         "^!subset", file_text,
-        perl = TRUE
+        perl = TRUE, value = FALSE
     )
-    data_table <- read_data_table(file_text)
+    data_table <- read_data_table(file_text[-subset_lines])
     if (nrow(data_table)) {
         data.table::setDF(data_table)
         rownames(data_table) <- data_table[[1L]]
@@ -189,16 +191,14 @@ parse_gse_matrix_sample_characteristics <- function(sample_dt) {
                 ),
                 env = list(.characteristic_col = .characteristic_col)
             ][, .SD, .SDcols = function(x) {
-                any(grepl(":", x, perl = TRUE))
+                any(grepl(":", x, perl = TRUE, fixed = TRUE))
             }]
             if (ncol(characteristic_dt)) {
                 lapply(characteristic_dt, function(x) {
                     # the first element contain the name of this key-value pair
                     # And the second is the value of the key-value pair
-                    .characteristic_list <- data.table::tstrsplit(
-                        x,
-                        split = "(\\s*+):(\\s*+)",
-                        perl = TRUE, fill = NA_character_
+                    .characteristic_list <- data.table::transpose(
+                        str_split(x, "(\\s*+):(\\s*+)")
                     )
                     .characteristic_name <- unique(.characteristic_list[[1L]])
                     .characteristic_name <- paste0(
@@ -292,7 +292,9 @@ parse_gds_subset <- function(subset_file_text) {
 #' @noRd
 
 # Column should start by "#" and contain "=" string to split this character into
-# names and values;
+# names and values; For line seperated by "=", every row represents a item. But
+# every item in `columns` data should only own a value of length one, so we
+# collapse it.
 #' @return a data.frame
 #' @noRd
 parse_columns <- function(file_text, target_rownames) {
@@ -321,16 +323,16 @@ parse_meta <- function(file_text) {
         "^[^\\t]*=", file_text,
         fixed = FALSE, perl = TRUE
     )
-    # For lines containg "=" character
-    meta_with_equal <- read_meta(file_text[line_with_equality])
-    meta_with_equal <- parse_line_sep_by_equality(meta_with_equal)
+    # For lines seperated by "="
+    meta_sep_by_equality <- read_meta(file_text[line_with_equality])
+    meta_sep_by_equality <- parse_line_sep_by_equality(meta_sep_by_equality)
 
-    # For lines without "=" character
-    meta_without_equal <- read_meta(file_text[!line_with_equality])
-    meta_without_equal <- parse_line_sep_by_table(
-        meta_without_equal
+    # For lines seperated by "\t"
+    meta_sep_by_table <- read_meta(file_text[!line_with_equality])
+    meta_sep_by_table <- parse_line_sep_by_table(
+        meta_sep_by_table
     )
-    meta_data <- c(meta_with_equal, meta_without_equal)
+    meta_data <- c(meta_sep_by_equality, meta_sep_by_table)
     meta_data <- meta_data[
         !(duplicated(meta_data) & duplicated(names(meta_data)))
     ]
@@ -339,16 +341,16 @@ parse_meta <- function(file_text) {
 
 # Line Starting with "!" or "#"
 # For line seperated by "=", every row represents a item.
+# Don't use `data.table::tstrsplit`, as it will split string into three or
+# more element.
 parse_line_sep_by_equality <- function(dt) {
     if (!nrow(dt)) {
         return(NULL)
     } else {
         data_chr <- dt[[1L]]
     }
-    name_value_pairs <- data.table::tstrsplit(
-        data_chr,
-        split = "\\s*=\\s*",
-        perl = TRUE
+    name_value_pairs <- data.table::transpose(
+        str_split(data_chr, "\\s*=\\s*")
     )
     split(
         name_value_pairs[[2L]],
@@ -365,8 +367,8 @@ parse_line_sep_by_table <- function(dt) {
     }
     data <- dt[, lapply(.SD, function(x) paste0(x, collapse = "")), by = "V1"]
     data <- split(
-        data[, .SD, .SDcols = !1],
-        factor(sub("^!\\s*+", "", data[[1]], perl = TRUE))
+        data[, V1 := factor(sub("^!\\s*+", "", V1, perl = TRUE))],
+        by = "V1", keep.by = FALSE
     )
     lapply(data, function(x) {
         unlist(x, recursive = FALSE, use.names = FALSE)
