@@ -4,7 +4,7 @@
 \alias{set_char}
 \title{Parse key-value pairs}
 \usage{
-set_char(data, columns = NULL, con = ":", split = "(\\\\s*+);(\\\\s*+)")
+set_char(data, columns = NULL, sep = ":", split = "(\\\\s*+);(\\\\s*+)")
 }
 \arguments{
 \item{data}{a data.table, this function will modify \code{data} in place.}
@@ -12,7 +12,7 @@ set_char(data, columns = NULL, con = ":", split = "(\\\\s*+);(\\\\s*+)")
 \item{columns}{a character vector, these columns in \code{data} will be parsed. If
 \code{NULL}, all columns started with \code{"characteristics_ch"} will be used.}
 
-\item{con}{the connection string which paired key-value, usually \code{":"}.}
+\item{sep}{the string separating paired key-value, usually \code{":"}.}
 
 \item{split}{Just like the \code{split} parameter in \link[base:strsplit]{strsplit}.
 Default is \code{"(\\\\s*+);(\\\\s*+)"}.}
@@ -47,5 +47,8 @@ will modify \code{data} in place, So we needn't assign value.
      function(x) paste0("; ", x)
  )]
  rgeo::set_char(gse53987_smp_info)
+ gse53987_smp_info[
+     , .SD, .SDcols = patterns("^ch1_|characteristics_ch1")
+ ]
 
 }

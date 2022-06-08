@@ -9,7 +9,7 @@
 #' @param data a data.table, this function will modify `data` in place.
 #' @param columns a character vector, these columns in `data` will be parsed. If
 #' `NULL`, all columns started with `"characteristics_ch"` will be used.
-#' @param con the connection string which paired key-value, usually `":"`.
+#' @param sep the string separating paired key-value, usually `":"`.
 #' @param split Just like the `split` parameter in [strsplit][base::strsplit].
 #' Default is `"(\\s*+);(\\s*+)"`.
 #' 
@@ -34,14 +34,17 @@
 #'      function(x) paste0("; ", x)
 #'  )]
 #'  rgeo::set_char(gse53987_smp_info)
+#'  gse53987_smp_info[
+#'      , .SD, .SDcols = patterns("^ch1_|characteristics_ch1")
+#'  ]
 #' 
 #' @export 
-set_char <- function(data, columns = NULL, con = ":", split = "(\\s*+);(\\s*+)") {
+set_char <- function(data, columns = NULL, sep = ":", split = "(\\s*+);(\\s*+)") {
     if (!data.table::is.data.table(data)) rlang::abort(
         "`data` should be a data.table"
     )
-    if (!rlang::is_scalar_character(con)) rlang::abort(
-        "`con` should be a single string"
+    if (!rlang::is_scalar_character(sep)) rlang::abort(
+        "`sep` should be a single string"
     )
     if (!rlang::is_scalar_character(split)) rlang::abort(
         "`split` should be a single string"
@@ -50,17 +53,17 @@ set_char <- function(data, columns = NULL, con = ":", split = "(\\s*+);(\\s*+)")
         parse_gse_matrix_sample_characteristics(
              sample_dt = data,
              characteristics_cols = columns,
-             con = con,
+             sep = sep,
              split = split
         ),
         warn_cannot_parse_characteristics = function(cnd) {
             rlang::abort(
                 c(
                     "Cannot parse characteristic column correctly", 
-                    paste0("There remains more than one `", con,
+                    paste0("There remains more than one `", sep,
                     "` characters after splitting `columns` by `", 
                     split, "`"),
-                    "Please check if `con` and `split` parameters can parse `columns`."
+                    "Please check if `sep` and `split` parameters can parse `columns`."
                 )
             )
         }
@@ -73,7 +76,7 @@ set_char <- function(data, columns = NULL, con = ":", split = "(\\s*+);(\\s*+)")
 # up and transforms the keys to column names and the values to column values.
 # This function will modify `sample_dt` in place, So we needn't assign value.
 # `sample_dt` should be a data.table
-parse_gse_matrix_sample_characteristics <- function(sample_dt, characteristics_cols = NULL, con = ":", split = "(\\s*+);(\\s*+)") {
+parse_gse_matrix_sample_characteristics <- function(sample_dt, characteristics_cols = NULL, sep = ":", split = "(\\s*+);(\\s*+)") {
     if (is.null(characteristics_cols)) {
         characteristics_cols <- grep(
             "^characteristics_ch",
@@ -93,12 +96,12 @@ parse_gse_matrix_sample_characteristics <- function(sample_dt, characteristics_c
                     .characteristic_col = .characteristic_col
                 )
             ][, .SD, .SDcols = function(x) {
-                any(grepl(con, x, perl = TRUE, fixed = FALSE))
+                any(grepl(sep, x, perl = TRUE, fixed = FALSE))
             }]
             if (ncol(characteristic_dt)) {
                 is_more_than_one_connection_chr <- vapply(
                     characteristic_dt,
-                    function(x) any(lengths(str_extract_all(x, con)) > 1L),
+                    function(x) any(lengths(str_extract_all(x, sep)) > 1L),
                     logical(1L)
                 )
                 if (any(is_more_than_one_connection_chr)) {
@@ -118,7 +121,7 @@ parse_gse_matrix_sample_characteristics <- function(sample_dt, characteristics_c
                     # the first element contain the name of this key-value pair
                     # And the second is the value of the key-value pair
                     .characteristic_list <- data.table::transpose(
-                        str_split(x, paste0("(\\s*+)", con, "(\\s*+)"))
+                        str_split(x, paste0("(\\s*+)", sep, "(\\s*+)"))
                     )
                     .characteristic_name <- unique(.characteristic_list[[1L]])
                     .characteristic_name <- paste0(
