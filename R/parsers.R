@@ -191,7 +191,7 @@ parse_gse_matrix_sample_characteristics <- function(sample_dt) {
                 ),
                 env = list(.characteristic_col = .characteristic_col)
             ][, .SD, .SDcols = function(x) {
-                any(grepl(":", x, perl = TRUE, fixed = TRUE))
+                any(grepl(":", x, perl = FALSE, fixed = TRUE))
             }]
             if (ncol(characteristic_dt)) {
                 lapply(characteristic_dt, function(x) {
