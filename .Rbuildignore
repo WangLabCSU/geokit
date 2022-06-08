@@ -9,3 +9,4 @@
 ^\.radian_history$
 ^\.gitignore$
 ^Scratch\.RConsole$
+^\.Rhistory$
