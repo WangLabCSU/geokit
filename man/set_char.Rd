@@ -10,27 +10,27 @@ set_char(data, columns = NULL, con = ":", split = "(\\\\s*+);(\\\\s*+)")
 \item{data}{a data.table, this function will modify \code{data} in place.}
 
 \item{columns}{a character vector, these columns in \code{data} will be parsed. If
-\code{NULL}, all columns started by \code{"characteristics_ch"} will be used.}
+\code{NULL}, all columns started with \code{"characteristics_ch"} will be used.}
 
-\item{con}{the connection string which paired key-value, usually ":".}
+\item{con}{the connection string which paired key-value, usually \code{":"}.}
 
 \item{split}{Just like the \code{split} parameter in \link[base:strsplit]{strsplit}.
 Default is \code{"(\\\\s*+);(\\\\s*+)"}.}
 }
 \value{
-see details
+modified data invisibly
 }
 \description{
-Lots of GSEs now use "characteristics_ch*" for key-value pairs of annotation.
-If that is the case, this simply cleans those up and transforms the keys to
-column names and the values to column values.  This function will modify
-\code{data} in place, So we needn't assign value. \code{data} should be a data.table.
-Just like \verb{set*} function in \code{data.table}.
+Lots of GSEs now use \code{"characteristics_ch*"} for key-value pairs of
+annotation.  If that is the case, this simply cleans those up and transforms
+the keys to column names and the values to column values. This function is
+just like \verb{set*} function in \code{data.table}, it will modify \code{data} in place, So
+we don't have to assign value. \code{data} should be a data.table.
 }
 \details{
 A characteristics annotation column is usually contains multiple
 key-value items, so we should first split these columns by \code{split} and then
 extract \code{key-value} pairs. A new column will be added whose name is the \code{key}
-and value is the \code{value} in pair. This function will modify \code{data} in place,
-So we needn't assign value.
+and value is the character vector \code{value} in \code{key-value} pair. This function
+will modify \code{data} in place, So we needn't assign value.
 }

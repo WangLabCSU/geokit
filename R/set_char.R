@@ -1,25 +1,25 @@
 #' Parse key-value pairs
 #' 
-#' Lots of GSEs now use "characteristics_ch*" for key-value pairs of annotation.
-#' If that is the case, this simply cleans those up and transforms the keys to
-#' column names and the values to column values.  This function will modify
-#' `data` in place, So we needn't assign value. `data` should be a data.table.
-#' Just like `set*` function in `data.table`.
+#' Lots of GSEs now use `"characteristics_ch*"` for key-value pairs of
+#' annotation.  If that is the case, this simply cleans those up and transforms
+#' the keys to column names and the values to column values. This function is
+#' just like `set*` function in `data.table`, it will modify `data` in place, So
+#' we don't have to assign value. `data` should be a data.table. 
 #' 
 #' @param data a data.table, this function will modify `data` in place.
 #' @param columns a character vector, these columns in `data` will be parsed. If
-#' `NULL`, all columns started by `"characteristics_ch"` will be used.
-#' @param con the connection string which paired key-value, usually ":".
+#' `NULL`, all columns started with `"characteristics_ch"` will be used.
+#' @param con the connection string which paired key-value, usually `":"`.
 #' @param split Just like the `split` parameter in [strsplit][base::strsplit].
 #' Default is `"(\\s*+);(\\s*+)"`.
 #' 
 #' @details A characteristics annotation column is usually contains multiple
 #' key-value items, so we should first split these columns by `split` and then
 #' extract `key-value` pairs. A new column will be added whose name is the `key`
-#' and value is the `value` in pair. This function will modify `data` in place,
-#' So we needn't assign value.
+#' and value is the character vector `value` in `key-value` pair. This function
+#' will modify `data` in place, So we needn't assign value.
 #' 
-#' @return see details
+#' @return modified data invisibly
 #' @export 
 set_char <- function(data, columns = NULL, con = ":", split = "(\\s*+);(\\s*+)") {
     if (!data.table::is.data.table(data)) rlang::abort(
@@ -49,7 +49,8 @@ set_char <- function(data, columns = NULL, con = ":", split = "(\\s*+);(\\s*+)")
                 )
             )
         }
-    )   
+    )
+    invisible(data)
 }
 
 # Lots of GSEs now use 'characteristics_ch1' and 'characteristics_ch2' for
