@@ -7,6 +7,6 @@ testthat::test_that("GSE/GSM with characteristic column seperated by no special 
     data.table::setDT(pdata)
     testthat::expect_error(
         rgeo::set_char(pdata),
-        regexp = "Please check if `con` and `split` parameters can parse `columns`."
+        regexp = "Please check if `sep` and `split` parameters can parse `columns`."
     )
 })
