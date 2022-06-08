@@ -79,3 +79,7 @@ testthat::test_that("GSE/GPL with integer64 columns handled correctly", {
     testthat::expect_s3_class(fdata$ID, "integer64")
     testthat::expect_type(rownames(fdata), "character")
 })
+
+testthat::test_that("GSE/GSM with characteristic column seperated by no special string warned", {
+    testthat::expect_warning(rgeo::get_geo("GSE53987", tempdir()))
+})

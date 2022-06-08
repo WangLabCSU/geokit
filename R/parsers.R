@@ -194,6 +194,23 @@ parse_gse_matrix_sample_characteristics <- function(sample_dt) {
                 any(grepl(":", x, perl = FALSE, fixed = TRUE))
             }]
             if (ncol(characteristic_dt)) {
+                is_more_than_two_colon <- vapply(
+                    characteristic_dt,
+                    function(x) any(lengths(str_extract_all(x, ":")) > 1L),
+                    logical(1L)
+                )
+                if (any(is_more_than_two_colon)) {
+                    rlang::warn(
+                        c(
+                            "Cannot parse characteristic column correctly", "Please convert it manually if necessary!",
+                            paste0(
+                                "Details see `", .characteristic_col, 
+                                "` column in `phenoData`"
+                            )
+                        )
+                    )
+                    next
+                }
                 lapply(characteristic_dt, function(x) {
                     # the first element contain the name of this key-value pair
                     # And the second is the value of the key-value pair
