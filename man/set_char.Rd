@@ -9,11 +9,13 @@ set_char(data, columns = NULL, con = ":", split = "(\\\\s*+);(\\\\s*+)")
 \arguments{
 \item{data}{a data.table, this function will modify \code{data} in place.}
 
-\item{columns}{a character vector, these columns in \code{data} will be parsed.}
+\item{columns}{a character vector, these columns in \code{data} will be parsed. If
+\code{NULL}, all columns started by \code{"characteristics_ch"} will be used.}
 
 \item{con}{the connection string which paired key-value, usually ":".}
 
-\item{split}{Just like the \code{split} parameter in \link[base:strsplit]{strsplit}.}
+\item{split}{Just like the \code{split} parameter in \link[base:strsplit]{strsplit}.
+Default is \code{"(\\\\s*+);(\\\\s*+)"}.}
 }
 \value{
 see details

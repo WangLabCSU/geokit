@@ -7,9 +7,11 @@
 #' Just like `set*` function in `data.table`.
 #' 
 #' @param data a data.table, this function will modify `data` in place.
-#' @param columns a character vector, these columns in `data` will be parsed.
+#' @param columns a character vector, these columns in `data` will be parsed. If
+#' `NULL`, all columns started by `"characteristics_ch"` will be used.
 #' @param con the connection string which paired key-value, usually ":".
 #' @param split Just like the `split` parameter in [strsplit][base::strsplit].
+#' Default is `"(\\s*+);(\\s*+)"`.
 #' 
 #' @details A characteristics annotation column is usually contains multiple
 #' key-value items, so we should first split these columns by `split` and then
@@ -18,6 +20,7 @@
 #' So we needn't assign value.
 #' 
 #' @return see details
+#' @export 
 set_char <- function(data, columns = NULL, con = ":", split = "(\\s*+);(\\s*+)") {
     if (!data.table::is.data.table(data)) rlang::abort(
         "`data` should be a data.table"

@@ -2,6 +2,7 @@
 
 export(get_geo)
 export(get_geo_suppl)
+export(set_char)
 export(show_geo)
 exportMethods("accession<-")
 exportMethods("columns<-")
