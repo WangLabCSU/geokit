@@ -19,6 +19,7 @@ Imports:
     methods
 Suggests: 
     bit64,
+    utils,
     roxygen2,
     testthat (>= 3.0.0)
 Remotes: github::Rdatatable/data.table
