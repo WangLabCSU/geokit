@@ -5,7 +5,7 @@ parse_gse_matrix <- function(file_text) {
     # extract series matrix data
     matrix_data <- read_data_table(file_text)
     data.table::setDF(matrix_data)
-    matrix_data <- as.matrix(column_to_rownames(matrix_data, 1))
+    matrix_data <- as.matrix(column_to_rownames(matrix_data, 1L))
     meta_data <- parse_gse_matrix_meta(file_text)
     # Construct ExpressionSet Object element
     experiment_data <- Biobase::MIAME(
@@ -265,6 +265,10 @@ parse_gds_subset <- function(subset_file_text) {
     subset_data <- read_meta(subset_file_text)
     subset_data <- parse_line_sep_by_equality(subset_data)
     data.table::setDT(subset_data)
+    # For GDS subset data, there'll be four column, the subset_sample_id
+    # correspond to `colnames(data_table)` but these ids are collapsed and some
+    # are duplicated, so we should unnest it and then collapse other columns
+    # group by `subset_sample_id`
     subset_data[
         , unlist(
             strsplit(subset_sample_id, ",", perl = TRUE),
@@ -302,7 +306,7 @@ parse_columns <- function(file_text, target_rownames) {
     column_data <- parse_line_sep_by_equality(column_data)
     data.frame(
         labelDescription = vapply(column_data[target_rownames], function(x) {
-            if (length(x) > 1) {
+            if (length(x) > 1L) {
                 paste0(x, collapse = "; ")
             } else {
                 x
@@ -342,7 +346,7 @@ parse_meta <- function(file_text) {
 # Line Starting with "!" or "#"
 # For line seperated by "=", every row represents a item.
 # Don't use `data.table::tstrsplit`, as it will split string into three or
-# more element.
+# more pieces
 parse_line_sep_by_equality <- function(dt) {
     if (!nrow(dt)) {
         return(NULL)

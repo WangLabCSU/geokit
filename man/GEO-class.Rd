@@ -102,9 +102,9 @@ of current GEO series.}
  gse <- rgeo::get_geo("GSE10", tempdir(), gse_matrix = FALSE)
  accession(gse)
  gpllist <- gpl(gse)
- meta(gpllist[[1]])
- accession(gpllist[[1]])
- columns(gpllist[[1]])
- datatable(gpllist[[1]])
+ meta(gpllist[[1L]])
+ accession(gpllist[[1L]])
+ columns(gpllist[[1L]])
+ datatable(gpllist[[1L]])
 }
 \keyword{classes}
