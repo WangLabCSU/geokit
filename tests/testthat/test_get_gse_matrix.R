@@ -7,34 +7,38 @@ testthat::test_that("empty GSE is handled correctly", {
 })
 
 testthat::test_that("case-mismatched IDs in GSEs handled correctly", {
-    gse <- rgeo::get_geo("GSE35683", tempdir())
-
+    testthat::expect_warning(
+        gse <- rgeo::get_geo("GSE35683", tempdir()),
+        class = "warn_cannot_parse_characteristics"
+    )
     testthat::expect_equal(nrow(gse), 54675L, ignore_attr = TRUE)
 })
 
 testthat::test_that("single-sample GSE handled correctly", {
-    gse <- rgeo::get_geo("GSE11595", tempdir())
-
+    suppressWarnings(gse <- rgeo::get_geo("GSE11595", tempdir()))
     testthat::expect_s4_class(gse[[1L]], "ExpressionSet")
     testthat::expect_equal(ncol(gse[[1L]]), 1L, ignore_attr = TRUE)
 })
 
 testthat::test_that("short GSE handled correctly", {
-    gse <- rgeo::get_geo("GSE34145", tempdir())
-
+    suppressWarnings(gse <- rgeo::get_geo("GSE34145", tempdir()))
     testthat::expect_equal(nrow(gse[[1L]]), 15L, ignore_attr = TRUE)
 })
 
 testthat::test_that("GSE with more than one value per characteristic handled", {
-    gse <- rgeo::get_geo("GSE71989", tempdir())
-
+    testthat::expect_warning(
+        gse <- rgeo::get_geo("GSE71989", tempdir()),
+        class = "warn_cannot_parse_characteristics"
+    )
     testthat::expect_equal(nrow(gse), 54675L, ignore_attr = TRUE)
     testthat::expect_equal(ncol(gse), 22L, ignore_attr = TRUE)
 })
 
 testthat::test_that("GSE has populated experimentData", {
-    gse <- rgeo::get_geo("GSE53986", tempdir())
-
+    testthat::expect_warning(
+        gse <- rgeo::get_geo("GSE53986", tempdir()),
+        class = "warn_cannot_parse_characteristics"
+    )
     ed <- Biobase::experimentData(gse)
     testthat::expect_equal(Biobase::pubMedIds(ed), "24739962")
 
@@ -47,8 +51,7 @@ testthat::test_that("GSE has populated experimentData", {
 })
 
 testthat::test_that("GSE populates experimentData as much as possible", {
-    gse <- rgeo::get_geo("GSE99709", tempdir())
-
+    suppressWarnings(gse <- rgeo::get_geo("GSE99709", tempdir()))
     ed <- Biobase::experimentData(gse)
     testthat::expect_equal(Biobase::pubMedIds(ed), "")
 
@@ -59,8 +62,7 @@ testthat::test_that("GSE populates experimentData as much as possible", {
     testthat::expect_equal(ei[[4L]], "RNA-Sequencing of Stat3 silenced oligodendrocyte progenitor cells.")
     testthat::expect_equal(ei[[5L]], "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE99709") # url
     # ----------------------------------------------------------------
-    gse <- rgeo::get_geo("GSE27712", tempdir())
-
+    suppressWarnings(gse <- rgeo::get_geo("GSE27712", tempdir()))
     ed <- Biobase::experimentData(gse[[1L]])
     testthat::expect_equal(Biobase::pubMedIds(ed), "22253802")
 
@@ -78,8 +80,4 @@ testthat::test_that("GSE/GPL with integer64 columns handled correctly", {
     fdata <- Biobase::fData(gse)
     testthat::expect_s3_class(fdata$ID, "integer64")
     testthat::expect_type(rownames(fdata), "character")
-})
-
-testthat::test_that("GSE/GSM with characteristic column seperated by no special string warned", {
-    testthat::expect_warning(rgeo::get_geo("GSE53987", tempdir()))
 })
