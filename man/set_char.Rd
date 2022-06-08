@@ -34,3 +34,18 @@ extract \code{key-value} pairs. A new column will be added whose name is the \co
 and value is the character vector \code{value} in \code{key-value} pair. This function
 will modify \code{data} in place, So we needn't assign value.
 }
+\examples{
+ gse53987 <- rgeo::get_geo(
+     "gse53987", tempdir(),
+     gse_matrix = TRUE, add_gpl = FALSE
+ )
+ gse53987_smp_info <- Biobase::pData(gse53987)
+ data.table::setDT(gse53987_smp_info)
+ gse53987_smp_info[, characteristics_ch1 := stringr::str_replace_all(
+     characteristics_ch1,
+     "gender|race|pmi|ph|rin|tissue|disease state",
+     function(x) paste0("; ", x)
+ )]
+ rgeo::set_char(gse53987_smp_info)
+
+}
