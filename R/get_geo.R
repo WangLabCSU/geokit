@@ -52,8 +52,7 @@
 #' provided through GDS subsets.
 #'
 #' @param ids A character vector representing the GEO entity for downloading
-#' and parsing. ('GDS505','GSE2','GSM2','GPL96' eg.). Currently, `rgeo` only
-#' support GSE identity.
+#' and parsing. ('GDS505','GSE2','GSM2','GPL96' eg.). 
 #' @param dest_dir The destination directory for any downloads. Defaults to
 #' current working dir.
 #' @param gse_matrix A logical value indicates whether to retrieve Series Matrix

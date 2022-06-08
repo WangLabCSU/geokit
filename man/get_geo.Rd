@@ -8,8 +8,7 @@ get_geo(ids, dest_dir = getwd(), gse_matrix = TRUE, add_gpl = TRUE)
 }
 \arguments{
 \item{ids}{A character vector representing the GEO entity for downloading
-and parsing. ('GDS505','GSE2','GSM2','GPL96' eg.). Currently, \code{rgeo} only
-support GSE identity.}
+and parsing. ('GDS505','GSE2','GSM2','GPL96' eg.).}
 
 \item{dest_dir}{The destination directory for any downloads. Defaults to
 current working dir.}
