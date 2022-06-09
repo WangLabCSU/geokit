@@ -1,74 +1,88 @@
 #' Parse key-value pairs
-#' 
+#'
 #' Lots of GSEs now use `"characteristics_ch*"` for key-value pairs of
 #' annotation.  If that is the case, this simply cleans those up and transforms
 #' the keys to column names and the values to column values. This function is
 #' just like `set*` function in `data.table`, it will modify `data` in place, So
-#' we don't have to assign value. `data` should be a data.table. 
-#' 
+#' we don't have to assign value. `data` should be a data.table.
+#'
 #' @param data a data.table, this function will modify `data` in place.
 #' @param columns a character vector, these columns in `data` will be parsed. If
 #' `NULL`, all columns started with `"characteristics_ch"` will be used.
 #' @param sep the string separating paired key-value, usually `":"`.
 #' @param split Just like the `split` parameter in [strsplit][base::strsplit].
 #' Default is `"(\\s*+);(\\s*+)"`.
-#' 
+#'
 #' @details A characteristics annotation column is usually contains multiple
 #' key-value items, so we should first split these columns by `split` and then
-#' extract `key-value` pairs. A new column will be added whose name is the `key`
-#' and value is the character vector `value` in `key-value` pair. This function
-#' will modify `data` in place, So we needn't assign value.
-#' 
+#' extract `key-value` pairs. A new column will be added whose name is the first
+#' group in the "(ch\\d*)(\\.\\d*)?$" regex pattern of the orginal column name
+#' connected with `key` element in `key-value` pair by string "_" and the new
+#' column value is the character vector of `value` element in all `key-value`
+#' pair. This function will modify `data` in place, So we don't have to assign
+#' value.
+#'
 #' @return modified data invisibly
-#' 
-#' @examples 
-#'  gse53987 <- rgeo::get_geo(
-#'      "gse53987", tempdir(),
-#'      gse_matrix = TRUE, add_gpl = FALSE
-#'  )
-#'  gse53987_smp_info <- Biobase::pData(gse53987)
-#'  data.table::setDT(gse53987_smp_info)
-#'  gse53987_smp_info[, characteristics_ch1 := stringr::str_replace_all(
-#'      characteristics_ch1,
-#'      "gender|race|pmi|ph|rin|tissue|disease state",
-#'      function(x) paste0("; ", x)
-#'  )]
-#'  rgeo::set_char(gse53987_smp_info)
-#'  gse53987_smp_info[
-#'      , .SD, .SDcols = patterns("^ch1_|characteristics_ch1")
-#'  ]
-#' 
-#' @export 
+#'
+#' @examples
+#' gse53987 <- rgeo::get_geo(
+#'     "gse53987", tempdir(),
+#'     gse_matrix = TRUE, add_gpl = FALSE
+#' )
+#' gse53987_smp_info <- Biobase::pData(gse53987)
+#' data.table::setDT(gse53987_smp_info)
+#' gse53987_smp_info[, characteristics_ch1 := stringr::str_replace_all(
+#'     characteristics_ch1,
+#'     "gender|race|pmi|ph|rin|tissue|disease state",
+#'     function(x) paste0("; ", x)
+#' )]
+#' rgeo::set_char(gse53987_smp_info)
+#' gse53987_smp_info[
+#'     , .SD,
+#'     .SDcols = patterns("^ch1_|characteristics_ch1")
+#' ]
+#'
+#' @export
 set_char <- function(data, columns = NULL, sep = ":", split = "(\\s*+);(\\s*+)") {
-    if (!data.table::is.data.table(data)) rlang::abort(
-        "`data` should be a data.table"
-    )
-    if (!rlang::is_scalar_character(sep)) rlang::abort(
-        "`sep` should be a single string"
-    )
-    if (!rlang::is_scalar_character(split)) rlang::abort(
-        "`split` should be a single string"
-    )
+    if (!data.table::is.data.table(data)) {
+        rlang::abort(
+            "`data` should be a data.table"
+        )
+    }
+    if (!rlang::is_scalar_character(sep)) {
+        rlang::abort(
+            "`sep` should be a single string"
+        )
+    }
+    if (!rlang::is_scalar_character(split)) {
+        rlang::abort(
+            "`split` should be a single string"
+        )
+    }
     rlang::try_fetch(
         parse_gse_matrix_sample_characteristics(
-             sample_dt = data,
-             characteristics_cols = columns,
-             sep = sep,
-             split = split
+            sample_dt = data,
+            characteristics_cols = columns,
+            sep = sep,
+            split = split
         ),
         warn_cannot_parse_characteristics = function(cnd) {
             rlang::abort(
                 c(
-                    "Cannot parse characteristic column correctly", 
-                    paste0("There remains more than one `", sep,
-                    "` characters after splitting `columns` by `", 
-                    split, "`"),
+                    "Cannot parse characteristic column correctly",
+                    paste0(
+                        "There remains more than one `", sep,
+                        "` characters after splitting `columns` by `",
+                        split, "`"
+                    ),
                     "Please check if `sep` and `split` parameters can parse `columns`."
                 )
             )
         }
     )
-    invisible(data)
+    # As the modification in place of data.table will prevent print methods
+    # A simple method is just use `[` function.
+    invisible(data[])
 }
 
 # Lots of GSEs now use 'characteristics_ch1' and 'characteristics_ch2' for
@@ -125,11 +139,13 @@ parse_gse_matrix_sample_characteristics <- function(sample_dt, characteristics_c
                     )
                     .characteristic_name <- unique(.characteristic_list[[1L]])
                     .characteristic_name <- paste0(
-                        # Since the names of these columns starting by "chr",
-                        # we should extract the second "ch\\d?+"
-                        str_extract_all(
-                            .characteristic_col, "ch\\d?+"
-                        )[[1L]][[2L]], "_",
+                        # we extract the last "ch\\d*" pattern as the column
+                        # name, which is the first group defined by parentheses.
+                        # This is just the second column of `str_match`.
+                        # Sometimes there may be a "\\.\\d*" tail
+                        str_match(.characteristic_col, "(ch\\d*)(\\.\\d*)?$")[
+                            , 2L, drop = TRUE
+                        ], "_",
                         # Omit NA value and only extract the first element
                         .characteristic_name[
                             !is.na(.characteristic_name)
