@@ -14,6 +14,40 @@ str_split <- function(string, pattern) {
         invert = TRUE
     )
 }
+
+str_match <- function(string, pattern) {
+    loc <- regexec(pattern, string,
+        fixed = FALSE,
+        perl = TRUE
+    )
+    loc <- lapply(loc, location)
+
+    out <- lapply(seq_along(string), function(i) {
+        loc <- loc[[i]]
+        substr(
+            rep(string[[i]], nrow(loc)),
+            loc[, 1L, drop = TRUE],
+            loc[, 2L, drop = TRUE]
+        )
+    })
+    do.call("rbind", out)
+}
+
+location <- function(x, all = FALSE) {
+    start <- as.vector(x)
+    if (all && identical(start, -1L)) {
+        return(cbind(start = integer(), end = integer()))
+    }
+
+    end <- start + attr(x, "match.length") - 1
+
+    no_match <- start == -1L
+    start[no_match] <- NA
+    end[no_match] <- NA
+
+    cbind(start = start, end = end)
+}
+
 column_to_rownames <- function(.data, var) {
     rownames(.data) <- .data[[var]]
     .data[[var]] <- NULL
