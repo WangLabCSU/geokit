@@ -7,8 +7,9 @@
 #' we don't have to assign value. `data` should be a data.table.
 #'
 #' @param data a data.table, this function will modify `data` in place.
-#' @param columns a character vector, these columns in `data` will be parsed. If
-#' `NULL`, all columns started with `"characteristics_ch"` will be used.
+#' @param columns a character vector, should be ended with "(ch\\d*)(\\.\\d*)?".
+#' these columns in `data` will be parsed. If `NULL`, all columns started with
+#' `"characteristics_ch"` will be used.
 #' @param sep the string separating paired key-value, usually `":"`.
 #' @param split Just like the `split` parameter in [strsplit][base::strsplit].
 #' Default is `"(\\s*+);(\\s*+)"`.
@@ -95,6 +96,12 @@ parse_gse_matrix_sample_characteristics <- function(sample_dt, characteristics_c
         characteristics_cols <- grep(
             "^characteristics_ch",
             colnames(sample_dt),
+            value = TRUE, perl = TRUE
+        )
+    } else {
+        characteristics_cols <- grep(
+            "ch\\d*(\\.\\d*)?$",
+            characteristics_cols,
             value = TRUE, perl = TRUE
         )
     }
