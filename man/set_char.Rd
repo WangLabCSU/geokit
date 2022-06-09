@@ -9,8 +9,9 @@ set_char(data, columns = NULL, sep = ":", split = "(\\\\s*+);(\\\\s*+)")
 \arguments{
 \item{data}{a data.table, this function will modify \code{data} in place.}
 
-\item{columns}{a character vector, these columns in \code{data} will be parsed. If
-\code{NULL}, all columns started with \code{"characteristics_ch"} will be used.}
+\item{columns}{a character vector, should be ended with "(ch\\d*)(\\.\\d*)?".
+these columns in \code{data} will be parsed. If \code{NULL}, all columns started with
+\code{"characteristics_ch"} will be used.}
 
 \item{sep}{the string separating paired key-value, usually \code{":"}.}
 
