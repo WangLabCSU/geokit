@@ -1,51 +1,48 @@
-str_extract_all <- function(string, pattern) {
+str_extract <- function(string, pattern, ignore.case = FALSE) {
+    matches <- regexpr(pattern, string,
+        perl = TRUE, fixed = FALSE,
+        ignore.case = ignore.case
+    )
+    start <- as.vector(matches)
+    end <- start + attr(matches, "match.length") - 1L
+    start[start == -1L] <- NA_integer_
+    substr(string, start, end)
+}
+str_extract_all <- function(string, pattern, ignore.case = FALSE) {
     regmatches(
         string,
-        gregexpr(pattern, string, perl = TRUE, fixed = FALSE),
+        gregexpr(pattern, string,
+            perl = TRUE, fixed = FALSE,
+            ignore.case = ignore.case
+        ),
         invert = FALSE
     )
 }
 # split string based on pattern, Only split once, Return a list of character,
 # the length of every element is two
-str_split <- function(string, pattern) {
+str_split <- function(string, pattern, ignore.case = FALSE) {
     regmatches(
         string,
-        regexpr(pattern, string, perl = TRUE, fixed = FALSE),
+        regexpr(pattern, string,
+            perl = TRUE, fixed = FALSE,
+            ignore.case = ignore.case
+        ),
         invert = TRUE
     )
 }
 
-str_match <- function(string, pattern) {
-    loc <- regexec(pattern, string,
-        fixed = FALSE,
-        perl = TRUE
+str_match <- function(string, pattern, ignore.case = FALSE) {
+    out <- regmatches(
+        string,
+        regexec(pattern, string,
+            perl = TRUE, fixed = FALSE,
+            ignore.case = ignore.case
+        ),
+        invert = FALSE
     )
-    loc <- lapply(loc, location)
-
-    out <- lapply(seq_along(string), function(i) {
-        loc <- loc[[i]]
-        substr(
-            rep(string[[i]], nrow(loc)),
-            loc[, 1L, drop = TRUE],
-            loc[, 2L, drop = TRUE]
-        )
-    })
-    do.call("rbind", out)
-}
-
-location <- function(x, all = FALSE) {
-    start <- as.vector(x)
-    if (all && identical(start, -1L)) {
-        return(cbind(start = integer(), end = integer()))
-    }
-
-    end <- start + attr(x, "match.length") - 1
-
-    no_match <- start == -1L
-    start[no_match] <- NA
-    end[no_match] <- NA
-
-    cbind(start = start, end = end)
+    out <- do.call("rbind", out)
+    out[out == ""] <- NA_character_
+    out
 }
 
 column_to_rownames <- function(.data, var) {
