@@ -52,7 +52,7 @@
 #' provided through GDS subsets.
 #'
 #' @param ids A character vector representing the GEO entity for downloading
-#' and parsing. ('GDS505','GSE2','GSM2','GPL96' eg.). 
+#' and parsing. ('GDS505','GSE2','GSM2','GPL96' eg.).
 #' @param dest_dir The destination directory for any downloads. Defaults to
 #' current working dir.
 #' @param gse_matrix A logical value indicates whether to retrieve Series Matrix
@@ -125,16 +125,12 @@ get_geo_multi <- function(ids, dest_dir = getwd(), gse_matrix = TRUE, add_gpl = 
 }
 
 get_geo_switch <- function(id, dest_dir = getwd(), gse_matrix = TRUE, add_gpl = TRUE) {
-    switch(unique(substr(id, 1L, 3L)),
-        GSE = if (gse_matrix) {
-            get_gse_matrix(id, dest_dir = dest_dir, add_gpl = add_gpl)
-        } else {
-            get_gse_soft(id, dest_dir = dest_dir)
-        },
-        GPL = ,
-        GSM = ,
-        GDS = get_geo_soft(id, dest_dir = dest_dir)
-    )
+    geo_type <- substr(id, 1L, 3L)
+    if (identical(geo_type, "GSE") && gse_matrix) {
+        get_gse_matrix(id, dest_dir = dest_dir, add_gpl = add_gpl)
+    } else {
+        get_geo_soft(id, geo_type = geo_type, dest_dir = dest_dir)
+    }
 }
 
 get_gse_matrix <- function(id, dest_dir = getwd(), add_gpl = TRUE) {
@@ -203,39 +199,38 @@ construct_gse_matrix_expressionset <- function(matrix_data, pheno_data, experime
     rlang::eval_bare(expr)
 }
 
-get_gse_soft <- function(id, dest_dir = getwd()) {
-    file_path <- download_gpl_or_gse_soft_file(
-        id = id, dest_dir = dest_dir
-    )
-    file_text <- read_lines(file_path)
-    soft_data <- parse_gse_soft(file_text)
-    methods::new(
-        "GEOSeries",
-        meta = soft_data$meta,
-        gsm = soft_data$gsm,
-        gpl = soft_data$gpl,
-        accession = id
-    )
-}
-
-get_geo_soft <- function(id, dest_dir = getwd()) {
-    geo_type <- unique(substr(id, 1L, 3L))
+# For GPL, GSM, and GDS entity, return a `GEODataTable` object
+# For GSE entity, return a `GEOSeries` object
+get_geo_soft <- function(id, geo_type, dest_dir = getwd()) {
     file_path <- switch(geo_type,
-        GPL = download_gpl_or_gse_soft_file(id, dest_dir = dest_dir),
         GSM = download_gsm_file(id, dest_dir = dest_dir),
+        GPL = ,
+        GSE = download_gpl_or_gse_soft_file(id, dest_dir = dest_dir),
         GDS = download_gds_file(id, dest_dir = dest_dir)
     )
     file_text <- read_lines(file_path)
     soft_data <- switch(geo_type,
         GSM = ,
         GPL = parse_gpl_or_gsm_soft(file_text),
+        GSE = parse_gse_soft(file_text),
         GDS = parse_gds_soft(file_text)
     )
-    methods::new(
-        "GEODataTable",
-        meta = soft_data$meta,
-        columns = soft_data$columns,
-        datatable = soft_data$data_table,
-        accession = id
+    switch(geo_type,
+        GSM = ,
+        GPL = ,
+        GDS = methods::new(
+            "GEODataTable",
+            meta = soft_data$meta,
+            columns = soft_data$columns,
+            datatable = soft_data$data_table,
+            accession = id
+        ),
+        GSE = methods::new(
+            "GEOSeries",
+            meta = soft_data$meta,
+            gsm = soft_data$gsm,
+            gpl = soft_data$gpl,
+            accession = id
+        )
     )
 }
