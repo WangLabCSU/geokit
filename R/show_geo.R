@@ -12,7 +12,7 @@
 #' @details See [utils::browseURL()]
 #' @export
 show_geo <- function(id, browser = getOption("browser")) {
-    id <- toupper(id[[1]])
+    id <- toupper(id[[1L]])
     check_ids(id)
     utils::browseURL(
         build_geo_acc_url(
