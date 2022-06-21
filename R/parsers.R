@@ -110,8 +110,7 @@ parse_gpl_or_gsm_soft <- function(file_text) {
                 by = c(names(data_table)[[1L]])
             ]
         }
-        data.table::setDF(data_table)
-        rownames(data_table) <- data_table[[1L]]
+        data.table::setDF(data_table, rownames = as.character(data_table[[1L]]))
     } else {
         data.table::setDF(data_table)
     }
@@ -134,8 +133,7 @@ parse_gds_soft <- function(file_text) {
     )
     data_table <- read_data_table(file_text[-subset_lines])
     if (nrow(data_table)) {
-        data.table::setDF(data_table)
-        rownames(data_table) <- data_table[[1L]]
+        data.table::setDF(data_table, rownames = as.character(data_table[[1L]]))
     } else {
         data.table::setDF(data_table)
     }
@@ -186,8 +184,10 @@ parse_gse_matrix_meta <- function(file_text) {
     )
     data.table::setDT(meta_data$Sample)
     parse_gse_matrix_sample_characteristics(meta_data$Sample)
-    data.table::setDF(meta_data$Sample)
-    rownames(meta_data$Sample) <- meta_data$Sample[["geo_accession"]]
+    data.table::setDF(
+        meta_data$Sample,
+        rownames = as.character(meta_data$Sample[["geo_accession"]])
+    )
     for (x in c("sample_id", "pubmed_id", "platform_id")) {
         if (x %in% names(meta_data$Series)) {
             meta_data$Series[[x]] <- strsplit(
