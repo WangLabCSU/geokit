@@ -102,7 +102,7 @@ get_geo <- function(ids, dest_dir = getwd(), gse_matrix = TRUE, add_gpl = TRUE) 
 get_geo_multi <- function(ids, dest_dir = getwd(), gse_matrix = TRUE, add_gpl = TRUE) {
     res <- lapply(ids, function(id) {
         rlang::try_fetch(
-            get_geo_switch(
+            get_geo_unit(
                 id,
                 dest_dir = dest_dir,
                 gse_matrix = gse_matrix,
@@ -124,7 +124,7 @@ get_geo_multi <- function(ids, dest_dir = getwd(), gse_matrix = TRUE, add_gpl = 
     }
 }
 
-get_geo_switch <- function(id, dest_dir = getwd(), gse_matrix = TRUE, add_gpl = TRUE) {
+get_geo_unit <- function(id, dest_dir = getwd(), gse_matrix = TRUE, add_gpl = TRUE) {
     geo_type <- substr(id, 1L, 3L)
     if (identical(geo_type, "GSE") && gse_matrix) {
         get_gse_matrix(id, dest_dir = dest_dir, add_gpl = add_gpl)
