@@ -121,7 +121,7 @@ methods::setClass(
 ## Validator ----
 methods::setValidity("GEODataTable", function(object) {
     if (!all(rownames(object@columns) == colnames(object@datatable))) {
-        "the rownames of slot @columns should be the same with the colunames of slot @datatable."
+        "the rownames of slot @columns should be the same with the colnames of slot @datatable."
     } else {
         TRUE
     }
