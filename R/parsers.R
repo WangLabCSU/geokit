@@ -1,12 +1,16 @@
 #' For all parsers used in `get_geo.R`, return a list
 #' @noRd
-parse_gse_matrix <- function(file_text) {
+parse_gse_matrix <- function(file_text, pdata_from_soft) {
 
     # extract series matrix data
     matrix_data <- read_data_table(file_text)
     data.table::setDF(matrix_data)
     matrix_data <- as.matrix(column_to_rownames(matrix_data, 1L))
-    meta_data <- parse_gse_matrix_meta(file_text)
+    meta_data <- parse_gse_matrix_meta(
+        file_text,
+        pdata_from_soft = pdata_from_soft
+    )
+
     # Construct ExpressionSet Object element
     experiment_data <- Biobase::MIAME(
         name = meta_data$Series$contact_name %||% "",
@@ -36,17 +40,25 @@ parse_gse_matrix <- function(file_text) {
     )]])
 
     list(
-        matrix_data = matrix_data,
-        pheno_data = pheno_data,
-        experiment_data = experiment_data,
-        gpl_id = gpl_id
+        assayData = matrix_data,
+        phenoData = pheno_data,
+        experimentData = experiment_data,
+        annotation = gpl_id
     )
 }
 
-parse_gse_soft <- function(file_text) {
+parse_gse_soft <- function(file_text, entity_type = "all") {
+    entity_marker <- paste0(
+        "^\\^(", switch(entity_type,
+            sample = "SAMPLE",
+            platform = "PLATFORM",
+            all = "SAMPLE|PLATFORM"
+        ), ")"
+    )
+
     entity_indices <- grep(
-        "^\\^(SAMPLE|PLATFORM)", file_text,
-        perl = TRUE
+        entity_marker, file_text,
+        perl = TRUE, value = FALSE
     )
     rlang::inform(
         sprintf("Found %d entities...", length(entity_indices))
@@ -165,7 +177,7 @@ parse_gds_soft <- function(file_text) {
     )
 }
 
-parse_gse_matrix_meta <- function(file_text) {
+parse_gse_matrix_meta <- function(file_text, pdata_from_soft) {
     meta_groups <- c("Series", "Sample")
     names(meta_groups) <- meta_groups
     meta_data <- lapply(
@@ -183,7 +195,9 @@ parse_gse_matrix_meta <- function(file_text) {
         }
     )
     data.table::setDT(meta_data$Sample)
-    parse_gse_matrix_sample_characteristics(meta_data$Sample)
+    if (!pdata_from_soft) {
+        parse_gse_matrix_sample_characteristics(meta_data$Sample)
+    }
     data.table::setDF(
         meta_data$Sample,
         rownames = as.character(meta_data$Sample[["geo_accession"]])

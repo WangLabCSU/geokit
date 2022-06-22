@@ -56,8 +56,12 @@
 #' @param dest_dir The destination directory for any downloads. Defaults to
 #' current working dir.
 #' @param gse_matrix A logical value indicates whether to retrieve Series Matrix
-#' files when fetching a `GSE` GEO identity. When set to `TRUE`, a
+#' files when fetching a `GSE` GEO identity. When set to `TRUE`, an
 #' [ExpressionSet][Biobase::ExpressionSet] Object will be returned
+#' @param pdata_from_soft A logical value indicates whether derive `phenoData`
+#' from GSE series soft file when parsing
+#' [ExpressionSet][Biobase::ExpressionSet] Object. Defaults to `TRUE`, if
+#' `FALSE`, `phenoData` will be parsed directly from GEO series matrix file.
 #' @param add_gpl A logical value indicates whether to add **platform**
 #' information (namely the [featureData][Biobase::featureData] slot in
 #' [ExpressionSet][Biobase::ExpressionSet] Object) when fetching a `GSE` GEO
@@ -88,24 +92,26 @@
 #' gds <- get_geo("GDS10", tempdir())
 #'
 #' @export
-get_geo <- function(ids, dest_dir = getwd(), gse_matrix = TRUE, add_gpl = TRUE) {
+get_geo <- function(ids, dest_dir = getwd(), gse_matrix = TRUE, pdata_from_soft = TRUE, add_gpl = TRUE) {
     ids <- toupper(ids)
     check_ids(ids)
     get_geo_multi(
         ids = ids, dest_dir = dest_dir,
         gse_matrix = gse_matrix,
+        pdata_from_soft = pdata_from_soft,
         add_gpl = add_gpl
     )
 }
 
 #' @noRd
-get_geo_multi <- function(ids, dest_dir = getwd(), gse_matrix = TRUE, add_gpl = TRUE) {
+get_geo_multi <- function(ids, dest_dir = getwd(), gse_matrix = TRUE, pdata_from_soft = TRUE, add_gpl = TRUE) {
     res <- lapply(ids, function(id) {
         rlang::try_fetch(
             get_geo_unit(
                 id,
                 dest_dir = dest_dir,
                 gse_matrix = gse_matrix,
+                pdata_from_soft = pdata_from_soft,
                 add_gpl = add_gpl
             ),
             error = function(err) {
@@ -124,25 +130,44 @@ get_geo_multi <- function(ids, dest_dir = getwd(), gse_matrix = TRUE, add_gpl = 
     }
 }
 
-get_geo_unit <- function(id, dest_dir = getwd(), gse_matrix = TRUE, add_gpl = TRUE) {
+get_geo_unit <- function(id, dest_dir = getwd(), gse_matrix = TRUE, pdata_from_soft = TRUE, add_gpl = TRUE) {
     geo_type <- substr(id, 1L, 3L)
     if (identical(geo_type, "GSE") && gse_matrix) {
-        get_gse_matrix(id, dest_dir = dest_dir, add_gpl = add_gpl)
+        get_gse_matrix(
+            id,
+            dest_dir = dest_dir,
+            pdata_from_soft = pdata_from_soft,
+            add_gpl = add_gpl
+        )
     } else {
         get_geo_soft(id, geo_type = geo_type, dest_dir = dest_dir)
     }
 }
 
-get_gse_matrix <- function(id, dest_dir = getwd(), add_gpl = TRUE) {
+get_gse_matrix <- function(id, dest_dir = getwd(), pdata_from_soft = TRUE, add_gpl = TRUE) {
     file_paths <- download_geo_suppl_or_gse_matrix_files(
         id = id, dest_dir = dest_dir,
         file_type = "matrix"
     )
+    # For GEO series soft files, there is only one file corresponding to all
+    # GSE matrix fiels, so we should extract the sample data firstly, and then
+    # split it into pieces. 
+    if (pdata_from_soft) {
+        gse_soft_file_path <- download_gpl_or_gse_soft_file(id, dest_dir)
+        gse_soft_file_text <- read_lines(gse_soft_file_path)
+        gse_sample_data <- suppressMessages(
+            parse_gse_soft(
+                gse_soft_file_text,
+                entity_type = "sample"
+            )[["gsm"]]
+        )
+    }
+    # For each GSE matrix file, we construct a `ExpressionSet` object
     res <- lapply(file_paths, function(file) {
-        gse_matrix_data <- parse_gse_matrix(read_lines(file))
-        rlang::exec(
-            "construct_gse_matrix_expressionset",
-            !!!gse_matrix_data,
+        construct_gse_matrix_expressionset(
+            file_text = read_lines(file),
+            pdata_from_soft = pdata_from_soft,
+            gse_sample_data = gse_sample_data,
             add_gpl = add_gpl,
             dest_dir = dest_dir
         )
@@ -155,15 +180,30 @@ get_gse_matrix <- function(id, dest_dir = getwd(), add_gpl = TRUE) {
     }
 }
 
-construct_gse_matrix_expressionset <- function(matrix_data, pheno_data, experiment_data, gpl_id, add_gpl, dest_dir) {
-    construct_param_list <- list(
-        assayData = matrix_data,
-        phenoData = pheno_data,
-        experimentData = experiment_data,
-        annotation = gpl_id
+construct_gse_matrix_expressionset <- function(file_text, pdata_from_soft, gse_sample_data, add_gpl, dest_dir) {
+    expressionset_elements <- parse_gse_matrix(
+        file_text = file_text,
+        pdata_from_soft = pdata_from_soft
     )
+    if (pdata_from_soft) {
+        gse_sample_data <- parse_gse_soft_sample_characteristics(
+            gse_sample_data[colnames(expressionset_elements$assayData)]
+        )
+        data.table::setDF(
+            gse_sample_data,
+            rownames = gse_sample_data[["geo_accession"]]
+        )
+        expressionset_elements$phenoData <- Biobase::AnnotatedDataFrame(
+            data = gse_sample_data[
+                colnames(expressionset_elements$assayData), ,
+                drop = FALSE
+            ]
+        )
+    }
     if (add_gpl) {
-        gpl_file_path <- download_gpl_or_gse_soft_file(gpl_id, dest_dir)
+        gpl_file_path <- download_gpl_or_gse_soft_file(
+            expressionset_elements$annotation, dest_dir
+        )
         gpl_file_text <- read_lines(gpl_file_path)
         gpl_data <- parse_gpl_or_gsm_soft(gpl_file_text)
         if (!is.null(gpl_data$data_table)) {
@@ -171,29 +211,31 @@ construct_gse_matrix_expressionset <- function(matrix_data, pheno_data, experime
             # IDs and series ID Refs
             feature_data <- gpl_data$data_table[
                 match(
-                    tolower(rownames(matrix_data)),
+                    tolower(rownames(expressionset_elements$assayData)),
                     tolower(rownames(gpl_data$data_table))
                 ), ,
                 drop = FALSE
             ]
-            rownames(feature_data) <- rownames(matrix_data)
+            rownames(feature_data) <- rownames(expressionset_elements$assayData)
             feature_data <- Biobase::AnnotatedDataFrame(
                 feature_data,
                 varMetadata = gpl_data$columns
             )
         } else {
             feature_data <- Biobase::AnnotatedDataFrame(
-                data.frame(row.names = rownames(matrix_data))
+                data.frame(
+                    row.names = rownames(expressionset_elements$assayData)
+                )
             )
         }
-        construct_param_list <- c(
-            construct_param_list,
+        expressionset_elements <- c(
+            expressionset_elements,
             featureData = feature_data
         )
     }
     expr <- rlang::call2(
         "ExpressionSet",
-        !!!construct_param_list,
+        !!!expressionset_elements,
         .ns = "Biobase"
     )
     rlang::eval_bare(expr)
@@ -212,7 +254,7 @@ get_geo_soft <- function(id, geo_type, dest_dir = getwd()) {
     soft_data <- switch(geo_type,
         GSM = ,
         GPL = parse_gpl_or_gsm_soft(file_text),
-        GSE = parse_gse_soft(file_text),
+        GSE = parse_gse_soft(file_text, entity_type = "all"),
         GDS = parse_gds_soft(file_text)
     )
     switch(geo_type,
