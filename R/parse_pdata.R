@@ -116,13 +116,20 @@ parse_gse_soft_sample_characteristics <- function(gsm_list) {
                 .characteristic_list,
                 use.names = TRUE, fill = TRUE
             )
+            newnames <- make.unique(names(characteristic_dt))
+
             # parse text into corresponding mode
             characteristic_dt <- lapply(characteristic_dt, function(x) {
                 data.table::fread(text = x, sep = "\t", header = FALSE)
             })
-            characteristic_dt <- unlist(characteristic_dt, recursive = FALSE)
+            characteristic_dt <- unlist(
+                characteristic_dt, recursive = FALSE, use.names = FALSE
+            )
             data.table::setDT(characteristic_dt, check.names = FALSE)
-            data.table::setnames(characteristic_dt, make.unique)
+            data.table::setnames(
+                characteristic_dt, old = names(characteristic_dt),
+                new = newnames
+            )
             if (ncol(characteristic_dt)) {
                 .characteristic_name <- paste0(
                     # we extract the last "ch\\d*" pattern as the column
