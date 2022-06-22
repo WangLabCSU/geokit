@@ -1,7 +1,7 @@
-#' Parse key-value pairs
+#' Parse key-value pairs in GEO series matrix file
 #'
 #' Lots of GSEs now use `"characteristics_ch*"` for key-value pairs of
-#' annotation.  If that is the case, this simply cleans those up and transforms
+#' annotation. If that is the case, this simply cleans those up and transforms
 #' the keys to column names and the values to column values. This function is
 #' just like `set*` function in `data.table`, it will modify `data` in place, So
 #' we don't have to assign value. `data` should be a data.table.
@@ -28,7 +28,8 @@
 #' @examples
 #' gse53987 <- rgeo::get_geo(
 #'     "gse53987", tempdir(),
-#'     gse_matrix = TRUE, add_gpl = FALSE
+#'     gse_matrix = TRUE, add_gpl = FALSE,
+#'     pdata_use_soft = FALSE
 #' )
 #' gse53987_smp_info <- Biobase::pData(gse53987)
 #' data.table::setDT(gse53987_smp_info)
@@ -37,14 +38,14 @@
 #'     "gender|race|pmi|ph|rin|tissue|disease state",
 #'     function(x) paste0("; ", x)
 #' )]
-#' rgeo::set_char(gse53987_smp_info)
+#' rgeo::set_pdata(gse53987_smp_info)
 #' gse53987_smp_info[
 #'     , .SD,
 #'     .SDcols = patterns("^ch1_|characteristics_ch1")
 #' ]
 #'
 #' @export
-set_char <- function(data, columns = NULL, sep = ":", split = "(\\s*+);(\\s*+)") {
+set_pdata <- function(data, columns = NULL, sep = ":", split = "(\\s*+);(\\s*+)") {
     if (!data.table::is.data.table(data)) {
         rlang::abort(
             "`data` should be a data.table"
@@ -128,7 +129,7 @@ parse_gse_matrix_sample_characteristics <- function(sample_dt, characteristics_c
                 if (any(is_more_than_one_connection_chr)) {
                     rlang::warn(
                         c(
-                            "Cannot parse characteristic column correctly", "Please use `set_char` function to convert it manually if necessary!",
+                            "Cannot parse characteristic column correctly", "Please use `set_pdata` or `parse_pdata` function to convert it manually if necessary!",
                             paste0(
                                 "Details see `", .characteristic_col,
                                 "` column in `phenoData`"
