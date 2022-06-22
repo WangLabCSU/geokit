@@ -2,7 +2,7 @@ testthat::test_that("GSE/GSM with characteristic column seperated by no special 
     testthat::expect_warning(
         gse <- rgeo::get_geo(
             "GSE53987", tempdir(),
-            pdata_use_soft = FALSE, add_gpl = FALSE
+            pdata_from_soft = FALSE, add_gpl = FALSE
         ),
         class = "warn_cannot_parse_characteristics",
     )

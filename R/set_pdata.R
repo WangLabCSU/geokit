@@ -29,7 +29,7 @@
 #' gse53987 <- rgeo::get_geo(
 #'     "gse53987", tempdir(),
 #'     gse_matrix = TRUE, add_gpl = FALSE,
-#'     pdata_use_soft = FALSE
+#'     pdata_from_soft = FALSE
 #' )
 #' gse53987_smp_info <- Biobase::pData(gse53987)
 #' data.table::setDT(gse53987_smp_info)
