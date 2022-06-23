@@ -22,7 +22,7 @@ parse_pdata <- function(gsm_list) {
     test_gsm_list <- is.list(gsm_list) && all(vapply(
         gsm_list, function(x) {
             methods::is(x, "GEODataTable") && all(
-                grepl("^Sample_", names(meta(x)))
+                grepl("^Sample_", names(meta(x)), perl = TRUE)
             )
         }, logical(1L)
     ))
