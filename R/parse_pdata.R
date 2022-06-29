@@ -1,23 +1,23 @@
 #' Parse key-value pairs in GEO series soft file
-#' 
+#'
 #' Lots of GSEs now use `"characteristics_ch*"` meta header data for key-value
 #' pairs of annotation. If that is the case, this simply cleans the GSM
 #' `GEODataTable` @meta slot up and transforms the keys to column names and the
 #' values to column values.
-#' 
+#'
 #' @param gsm_list a list of GEODataTable, especially for @gsm slot in a
 #' `GEOSeries` object.
-#' 
+#'
 #' @return a data.frame whose rows are samples and columns are the sample infos
-#' 
-#' @examples 
+#'
+#' @examples
 #' gse201530_soft <- rgeo::get_geo(
 #'     "GSE201530",
 #'     dest_dir = tempdir(),
 #'     gse_matrix = FALSE
 #' )
 #' rgeo::parse_pdata(rgeo::gsm(gse201530_soft))
-#' @export 
+#' @export
 parse_pdata <- function(gsm_list) {
     test_gsm_list <- is.list(gsm_list) && all(vapply(
         gsm_list, function(x) {
@@ -26,9 +26,11 @@ parse_pdata <- function(gsm_list) {
             )
         }, logical(1L)
     ))
-    if (!test_gsm_list) rlang::abort(
-        "gsm_list should be a list of GEODataTable, especially for @gsm slot in a GEOSeries object."
-    )
+    if (!test_gsm_list) {
+        rlang::abort(
+            "gsm_list should be a list of GEODataTable, especially for @gsm slot in a GEOSeries object."
+        )
+    }
     res <- parse_gse_soft_sample_characteristics(gsm_list)
     data.table::setDF(res, rownames = res[["geo_accession"]])
     res
@@ -116,21 +118,20 @@ parse_gse_soft_sample_characteristics <- function(gsm_list) {
                 .characteristic_list,
                 use.names = TRUE, fill = TRUE
             )
-            newnames <- make.unique(names(characteristic_dt))
+            data.table::setnames(characteristic_dt, make.unique)
 
-            # parse text into corresponding mode
-            characteristic_dt <- lapply(characteristic_dt, function(x) {
-                data.table::fread(text = x, sep = "\t", header = FALSE)
+            # parse text into corresponding atomic vector mode
+            .temp_characteristic_list <- lapply(characteristic_dt, function(x) {
+                unlist(
+                    data.table::fread(
+                        text = x, sep = "\t", header = FALSE,
+                        blank.lines.skip = FALSE, fill = TRUE
+                    ),
+                    recursive = FALSE, use.names = FALSE
+                )
             })
-            characteristic_dt <- unlist(
-                characteristic_dt, recursive = FALSE, use.names = FALSE
-            )
-            data.table::setDT(characteristic_dt, check.names = FALSE)
-            data.table::setnames(
-                characteristic_dt, old = names(characteristic_dt),
-                new = newnames
-            )
-            if (ncol(characteristic_dt)) {
+
+            if (length(.temp_characteristic_list)) {
                 .characteristic_name <- paste0(
                     # we extract the last "ch\\d*" pattern as the column
                     # name, which is the first group defined by parentheses.
@@ -140,11 +141,11 @@ parse_gse_soft_sample_characteristics <- function(gsm_list) {
                         , 2L,
                         drop = TRUE
                     ], "_",
-                    names(characteristic_dt)
+                    names(.temp_characteristic_list)
                 )
                 sample_meta_dt[
                     ,
-                    (.characteristic_name) := characteristic_dt
+                    (.characteristic_name) := .temp_characteristic_list
                 ]
                 data.table::setcolorder(
                     sample_meta_dt,
