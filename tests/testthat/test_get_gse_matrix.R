@@ -1,3 +1,8 @@
+testthat::test_that("Create dir correctly", {
+    rgeo::get_geo("GSE11413", file.path(tempdir(), "test"))
+    testthat::expect_true(dir.exists(file.path(tempdir(), "test")))
+})
+
 testthat::test_that("empty GSE is handled correctly", {
     gse <- rgeo::get_geo("GSE11413", tempdir())
 
