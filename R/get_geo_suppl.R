@@ -20,6 +20,9 @@
 get_geo_suppl <- function(ids, dest_dir = getwd()) {
     ids <- toupper(ids)
     check_ids(ids)
+    if (!dir.exists(dest_dir)) {
+        dir.create(dest_dir, recursive = TRUE)
+    }
     get_geo_suppl_helper(ids = ids, dest_dir = dest_dir)
 }
 

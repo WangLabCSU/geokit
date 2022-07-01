@@ -95,6 +95,9 @@
 get_geo <- function(ids, dest_dir = getwd(), gse_matrix = TRUE, pdata_from_soft = TRUE, add_gpl = TRUE) {
     ids <- toupper(ids)
     check_ids(ids)
+    if (!dir.exists(dest_dir)) {
+        dir.create(dest_dir, recursive = TRUE)
+    }
     get_geo_multi(
         ids = ids, dest_dir = dest_dir,
         gse_matrix = gse_matrix,
@@ -151,7 +154,7 @@ get_gse_matrix <- function(id, dest_dir = getwd(), pdata_from_soft = TRUE, add_g
     )
     # For GEO series soft files, there is only one file corresponding to all
     # GSE matrix fiels, so we should extract the sample data firstly, and then
-    # split it into pieces. 
+    # split it into pieces.
     if (pdata_from_soft) {
         gse_soft_file_path <- download_gpl_or_gse_soft_file(id, dest_dir)
         gse_soft_file_text <- read_lines(gse_soft_file_path)

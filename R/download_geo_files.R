@@ -74,37 +74,37 @@ download_with_acc <- function(id, dest_dir, scope = "self", amount = "data", for
 
 list_file_helper <- function(url) {
     xml_doc <- xml2::read_html(url)
-    # file_name <- str_extract_all(
+    # file_names <- str_extract_all(
     #     xml2::xml_text(xml_doc),
     #     "G\\S++"
     # )
-    # if (identical(length(file_name), 1L) && !length(file_name[[1L]])) {
+    # if (identical(length(file_names), 1L) && !length(file_names[[1L]])) {
     #     return(NULL)
     # }
 
     # use HTTPS to connect GEO FTP site
     # See https://github.com/seandavi/GEOquery/blob/master/R/getGEOSuppFiles.R
-    file_name <- grep(
+    file_names <- grep(
         "^G",
         xml2::xml_text(xml2::xml_find_all(
             xml_doc, "//a/@href"
         )),
         perl = TRUE, value = TRUE
     )
-    if (!length(file_name)) {
+    if (!length(file_names)) {
         return(NULL)
     }
-    file.path(url, file_name)
+    file.path(url, file_names)
 }
 list_geo_file_url <- function(id, file_type) {
     url <- build_geo_ftp_url(id, file_type)
-    res <- list_file_helper(url)
-    if (is.null(res)) {
+    file_urls <- list_file_helper(url)
+    if (is.null(file_urls)) {
         rlang::inform(
             paste0("No ", file_type, " file found for ", id, ".")
         )
     }
-    res
+    file_urls
 }
 
 #' Download utils function with good message.
@@ -113,9 +113,6 @@ download_inform <- function(urls, file_paths, method = "ftp") {
     mapply(
         function(url, file_path) {
             if (!file.exists(file_path)) {
-                if (!dir.exists(dirname(file_path))) {
-                    dir.create(dirname(file_path), recursive = TRUE)
-                }
                 rlang::inform(
                     paste0(
                         "Downloading ",
