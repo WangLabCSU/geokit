@@ -19,6 +19,7 @@ Imports:
     methods
 Suggests: 
     bit64,
+    stats,
     utils,
     stringr,
     roxygen2,
