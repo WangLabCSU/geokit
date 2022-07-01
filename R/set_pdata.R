@@ -129,7 +129,8 @@ parse_gse_matrix_sample_characteristics <- function(sample_dt, characteristics_c
                 if (any(is_more_than_one_connection_chr)) {
                     rlang::warn(
                         c(
-                            "Cannot parse characteristic column correctly", "Please use `set_pdata` or `parse_pdata` function to convert it manually if necessary!",
+                            "Cannot parse characteristic column correctly",
+                            "Please use `set_pdata` or `parse_pdata` function to convert it manually if necessary!",
                             paste0(
                                 "Details see `", .characteristic_col,
                                 "` column in `phenoData`"
@@ -152,7 +153,8 @@ parse_gse_matrix_sample_characteristics <- function(sample_dt, characteristics_c
                         # This is just the second column of `str_match`.
                         # Sometimes there may be a "\\.\\d*" tail
                         str_match(.characteristic_col, "(ch\\d*)(\\.\\d*)?$")[
-                            , 2L, drop = TRUE
+                            , 2L,
+                            drop = TRUE
                         ], "_",
                         # Omit NA value and only extract the first element
                         .characteristic_name[
