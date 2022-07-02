@@ -27,4 +27,28 @@ testthat::test_that("GSE/GSM with characteristic column seperated by no special 
             ), 8L
         )
     )
+    testthat::expect_type(
+        pdata$ch1_age, "integer"
+    )
+    testthat::expect_type(
+        pdata$ch1_gender, "character"
+    )
+    testthat::expect_type(
+        pdata$ch1_race, "character"
+    )
+    testthat::expect_type(
+        pdata$ch1_pmi, "double"
+    )
+    testthat::expect_type(
+        pdata$ch1_ph, "double"
+    )
+    testthat::expect_type(
+        pdata$ch1_rin, "double"
+    )
+    testthat::expect_type(
+        pdata$ch1_tissue, "character"
+    )
+    testthat::expect_type(
+        pdata$`ch1_disease state`, "character"
+    )
 })
