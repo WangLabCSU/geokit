@@ -11,8 +11,8 @@
 #' these columns in `data` will be parsed. If `NULL`, all columns started with
 #' `"characteristics_ch"` will be used.
 #' @param sep the string separating paired key-value, usually `":"`.
-#' @param split Just like the `split` parameter in [strsplit][base::strsplit].
-#' Default is `"(\\s*+);(\\s*+)"`.
+#' @param split Passed to [strsplit][base::strsplit] function.  Default is
+#' `"(\\s*+);(\\s*+)"`.
 #'
 #' @details A characteristics annotation column is usually contains multiple
 #' key-value items, so we should first split these columns by `split` and then
@@ -108,70 +108,58 @@ parse_gse_matrix_sample_characteristics <- function(sample_dt, characteristics_c
     }
     if (length(characteristics_cols)) {
         for (.characteristic_col in characteristics_cols) {
-            characteristic_dt <- sample_dt[
-                , data.table::tstrsplit(
-                    as.character(.characteristic_col),
-                    split = split,
-                    perl = TRUE, fill = NA_character_
-                ),
-                env = list(
-                    .characteristic_col = .characteristic_col
+            characteristic_list <- strsplit(
+                sample_dt[[as.character(.characteristic_col)]],
+                split = split, perl = TRUE
+            )
+            characteristic_list <- lapply(characteristic_list, function(x) {
+                grep(sep, x, perl = TRUE, value = TRUE)
+            })
+            is_more_than_one_sep_chr <- vapply(
+                characteristic_list,
+                function(x) any(lengths(str_extract_all(x, sep)) > 1L),
+                logical(1L)
+            )
+            if (any(is_more_than_one_sep_chr)) {
+                rlang::warn(
+                    c(
+                        "Cannot parse characteristic column correctly",
+                        "Please use `set_pdata` or `parse_pdata` function to convert it manually if necessary!",
+                        paste0(
+                            "Details see `", .characteristic_col,
+                            "` column in `phenoData`"
+                        )
+                    ),
+                    class = "warn_cannot_parse_characteristics"
                 )
-            ][, .SD, .SDcols = function(x) {
-                any(grepl(sep, x, perl = TRUE, fixed = FALSE))
-            }]
-            if (ncol(characteristic_dt)) {
-                is_more_than_one_connection_chr <- vapply(
-                    characteristic_dt,
-                    function(x) any(lengths(str_extract_all(x, sep)) > 1L),
-                    logical(1L)
+                next
+            }
+            .temp_characteristic_list <- parse_name_value_pairs(
+                characteristic_list, sep = sep
+            )
+            if (length(.temp_characteristic_list)) {
+                .characteristic_name <- paste0(
+                    # we extract the last "ch\\d*" pattern as the column
+                    # name, which is the first group defined by parentheses.
+                    # This is just the second column of `str_match`.
+                    # Sometimes there may be a "\\.\\d*" tail
+                    str_match(.characteristic_col, "(ch\\d*)(\\.\\d*)?$")[
+                        , 2L,
+                        drop = TRUE
+                    ],
+                    "_",
+                    names(.temp_characteristic_list)
                 )
-                if (any(is_more_than_one_connection_chr)) {
-                    rlang::warn(
-                        c(
-                            "Cannot parse characteristic column correctly",
-                            "Please use `set_pdata` or `parse_pdata` function to convert it manually if necessary!",
-                            paste0(
-                                "Details see `", .characteristic_col,
-                                "` column in `phenoData`"
-                            )
-                        ),
-                        class = "warn_cannot_parse_characteristics"
-                    )
-                    next
-                }
-                lapply(characteristic_dt, function(x) {
-                    # the first element contain the name of this key-value pair
-                    # And the second is the value of the key-value pair
-                    .characteristic_list <- data.table::transpose(
-                        str_split(x, paste0("(\\s*+)", sep, "(\\s*+)"))
-                    )
-                    .characteristic_name <- unique(.characteristic_list[[1L]])
-                    .characteristic_name <- paste0(
-                        # we extract the last "ch\\d*" pattern as the column
-                        # name, which is the first group defined by parentheses.
-                        # This is just the second column of `str_match`.
-                        # Sometimes there may be a "\\.\\d*" tail
-                        str_match(.characteristic_col, "(ch\\d*)(\\.\\d*)?$")[
-                            , 2L,
-                            drop = TRUE
-                        ], "_",
-                        # Omit NA value and only extract the first element
-                        .characteristic_name[
-                            !is.na(.characteristic_name)
-                        ][[1L]]
-                    )
-                    # Add this key-value pair to original data.table
-                    sample_dt[
-                        ,
-                        (.characteristic_name) := .characteristic_list[[2L]]
-                    ]
-                    data.table::setcolorder(
-                        sample_dt,
-                        neworder = .characteristic_name,
-                        before = .characteristic_col
-                    )
-                })
+                # Add this key-value pair to original data.table
+                sample_dt[
+                    ,
+                    (.characteristic_name) := .temp_characteristic_list
+                ]
+                data.table::setcolorder(
+                    sample_dt,
+                    neworder = .characteristic_name,
+                    before = .characteristic_col
+                )
             }
         }
     }

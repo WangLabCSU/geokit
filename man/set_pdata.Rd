@@ -15,8 +15,8 @@ these columns in \code{data} will be parsed. If \code{NULL}, all columns started
 
 \item{sep}{the string separating paired key-value, usually \code{":"}.}
 
-\item{split}{Just like the \code{split} parameter in \link[base:strsplit]{strsplit}.
-Default is \code{"(\\\\s*+);(\\\\s*+)"}.}
+\item{split}{Passed to \link[base:strsplit]{strsplit} function.  Default is
+\code{"(\\\\s*+);(\\\\s*+)"}.}
 }
 \value{
 modified data invisibly

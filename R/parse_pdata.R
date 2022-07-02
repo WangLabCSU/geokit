@@ -102,35 +102,9 @@ parse_gse_soft_sample_characteristics <- function(gsm_list) {
             )
         }
         for (.characteristic_col in characteristics_cols) {
-            .characteristic_list <- lapply(
-                sample_meta_dt[[.characteristic_col]], function(x) {
-                    name_value_pairs <- data.table::transpose(
-                        str_split(x, "(\\s*+):(\\s*+)")
-                    )
-                    res <- as.list(name_value_pairs[[2L]])
-                    names(res) <- name_value_pairs[[1L]]
-                    data.table::setDT(res)
-                    res
-                }
+            .temp_characteristic_list <- parse_name_value_pairs(
+                sample_meta_dt[[.characteristic_col]], sep = ":"
             )
-
-            characteristic_dt <- data.table::rbindlist(
-                .characteristic_list,
-                use.names = TRUE, fill = TRUE
-            )
-            data.table::setnames(characteristic_dt, make.unique)
-
-            # parse text into corresponding atomic vector mode
-            .temp_characteristic_list <- lapply(characteristic_dt, function(x) {
-                unlist(
-                    data.table::fread(
-                        text = x, sep = "\t", header = FALSE,
-                        blank.lines.skip = FALSE, fill = TRUE
-                    ),
-                    recursive = FALSE, use.names = FALSE
-                )
-            })
-
             if (length(.temp_characteristic_list)) {
                 .characteristic_name <- paste0(
                     # we extract the last "ch\\d*" pattern as the column
@@ -140,7 +114,8 @@ parse_gse_soft_sample_characteristics <- function(gsm_list) {
                     str_match(.characteristic_col, "(ch\\d*)(\\.\\d*)?$")[
                         , 2L,
                         drop = TRUE
-                    ], "_",
+                    ],
+                    "_",
                     names(.temp_characteristic_list)
                 )
                 sample_meta_dt[
