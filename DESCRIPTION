@@ -14,13 +14,13 @@ Imports:
     rlang (>= 0.4.11),
     xml2,
     curl,
-    R.utils,
     Biobase,
     methods
 Suggests: 
     bit64,
     stats,
     utils,
+    R.utils,
     stringr,
     roxygen2,
     testthat (>= 3.0.0)
