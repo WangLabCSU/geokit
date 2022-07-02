@@ -12,7 +12,6 @@ The goal of rgeo is to ...
 You can install the development version of rgeo from [GitHub](https://github.com/) with:
 
 ``` r
-# install.packages("devtools")
 pak::pkg_install("Yunuuuu/rgeo")
 ```
 
