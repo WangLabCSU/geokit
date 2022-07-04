@@ -7,7 +7,7 @@
 parse_pdata(gsm_list)
 }
 \arguments{
-\item{gsm_list}{a list of GEODataTable, especially for @gsm slot in a
+\item{gsm_list}{a list of GEOSoft, especially for @gsm slot in a
 \code{GEOSeries} object.}
 }
 \value{
@@ -16,7 +16,7 @@ a data.frame whose rows are samples and columns are the sample infos
 \description{
 Lots of GSEs now use \code{"characteristics_ch*"} meta header data for key-value
 pairs of annotation. If that is the case, this simply cleans the GSM
-\code{GEODataTable} @meta slot up and transforms the keys to column names and the
+\code{GEOSoft} @meta slot up and transforms the keys to column names and the
 values to column values.
 }
 \examples{

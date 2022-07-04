@@ -1,9 +1,9 @@
 #' Virtual class for holding GEO series, samples, platforms, and datasets.
 #'
 #' `GEOData` class, which contains two slots `meta` and `accession`, is the
-#' basic class (super class) of `GSE` class and `GEODataTable` class.
+#' basic class (super class) of `GEOSeries` class and `GEOSoft` class.
 #' `GEOSeries` class contains extra two slots `gsm` and `gpl` special for `GSE`
-#' entity soft file and `GEODataTable` contains extra two slots `columns` and
+#' entity soft file and `GEOSoft` contains extra two slots `columns` and
 #' `datatable` special for GEO samples, platforms, and datasets.
 #' 
 #' @param object A [GEO-class] Class Object.
@@ -99,14 +99,14 @@ methods::setMethod("accession<-", "GEOData", function(object, value) {
     object
 })
 
-# Class `GEODataTable` ----
+# Class `GEOSoft` ----
 #' @slot columns: A `data.frame` gives the `datatable` header descriptions. The
 #' rownmaes of this `data.frame` should be the same with the column names of
 #' slot `datatable`.
 #' @slot datatable: A `data.frame` shows the data information.
 #' @rdname GEO-class
 methods::setClass(
-    "GEODataTable",
+    "GEOSoft",
     slots = list(
         datatable = "data.frame",
         columns = "data.frame"
@@ -119,7 +119,7 @@ methods::setClass(
 )
 
 ## Validator ----
-methods::setValidity("GEODataTable", function(object) {
+methods::setValidity("GEOSoft", function(object) {
     if (!all(rownames(object@columns) == colnames(object@datatable))) {
         "the rownames of slot @columns should be the same with the colnames of slot @datatable."
     } else {
@@ -127,10 +127,10 @@ methods::setValidity("GEODataTable", function(object) {
     }
 })
 
-#' @method show GEODataTable
+#' @method show GEOSoft
 #' @export
 #' @rdname GEO-class
-methods::setMethod("show", "GEODataTable", function(object) {
+methods::setMethod("show", "GEOSoft", function(object) {
     cat(paste0("An object of ", methods::is(object)[[1L]]), sep = "\n")
     datatable_dim <- dim(object@datatable)
     cat(
@@ -156,19 +156,19 @@ methods::setGeneric("columns<-", function(object, value) {
     methods::makeStandardGeneric("columns<-")
 })
 
-#' @method columns GEODataTable
+#' @method columns GEOSoft
 #' @aliases columns
 #' @export
 #' @rdname GEO-class
-methods::setMethod("columns", "GEODataTable", function(object) {
+methods::setMethod("columns", "GEOSoft", function(object) {
     object@columns
 })
 
-#' @method columns<- GEODataTable
+#' @method columns<- GEOSoft
 #' @aliases columns<-
 #' @export
 #' @rdname GEO-class
-methods::setMethod("columns<-", "GEODataTable", function(object, value) {
+methods::setMethod("columns<-", "GEOSoft", function(object, value) {
     object@columns <- value
     methods::validObject(object)
     object
@@ -181,27 +181,27 @@ methods::setGeneric("datatable", function(object) {
 methods::setGeneric("datatable<-", function(object, value) {
     methods::makeStandardGeneric("datatable<-")
 })
-#' @method datatable GEODataTable
+#' @method datatable GEOSoft
 #' @aliases datatable
 #' @export
 #' @rdname GEO-class
-methods::setMethod("datatable", "GEODataTable", function(object) {
+methods::setMethod("datatable", "GEOSoft", function(object) {
     object@datatable
 })
-#' @method datatable<- GEODataTable
+#' @method datatable<- GEOSoft
 #' @aliases datatable<-
 #' @export
 #' @rdname GEO-class
-methods::setMethod("datatable<-", "GEODataTable", function(object, value) {
+methods::setMethod("datatable<-", "GEOSoft", function(object, value) {
     object@datatable <- value
     methods::validObject(object)
     object
 })
 
 # Class `GEOSeries` ----
-#' @slot gsm: a list of `GEODataTable` object containg the samples information
+#' @slot gsm: a list of `GEOSoft` object containg the samples information
 #' of current GEO series.
-#' @slot gpl: a list of `GEODataTable` object containg the platforms information
+#' @slot gpl: a list of `GEOSoft` object containg the platforms information
 #' of current GEO series.
 #' @rdname GEO-class
 methods::setClass(
@@ -217,13 +217,13 @@ methods::setClass(
 ## Validator ----
 methods::setValidity("GEOSeries", function(object) {
     if (!all(vapply(object@gsm, function(x) {
-        methods::is(x, "GEODataTable")
+        methods::is(x, "GEOSoft")
     }, logical(1L)))) {
-        "the element of slot @gsm list should only contain Class `GEODataTable` object."
+        "the element of slot @gsm list should only contain Class `GEOSoft` object."
     } else if (!all(vapply(object@gpl, function(x) {
-        methods::is(x, "GEODataTable")
+        methods::is(x, "GEOSoft")
     }, logical(1L)))) {
-        "the element of slot @gpl list should only contain Class `GEODataTable` object."
+        "the element of slot @gpl list should only contain Class `GEOSoft` object."
     } else {
         TRUE
     }

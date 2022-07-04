@@ -84,7 +84,7 @@ parse_gse_soft <- function(file_text, entity_type = "all") {
             seq_line_temp[[i]]:(seq_line_temp[[i + 1L]] - 1L)
         ])
         soft_data_list[[i]] <- methods::new(
-            "GEODataTable",
+            "GEOSoft",
             meta = entity_data$meta,
             columns = entity_data$columns,
             datatable = entity_data$data_table,

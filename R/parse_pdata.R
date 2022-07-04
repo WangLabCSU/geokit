@@ -2,11 +2,11 @@
 #'
 #' Lots of GSEs now use `"characteristics_ch*"` meta header data for key-value
 #' pairs of annotation. If that is the case, this simply cleans the GSM
-#' `GEODataTable` @meta slot up and transforms the keys to column names and the
+#' `GEOSoft` @meta slot up and transforms the keys to column names and the
 #' values to column values.
 #'
-#' @param gsm_list a list of GEODataTable, especially for @gsm slot in a
-#' `GEOSeries` object.
+#' @param gsm_list a list of GEOSoft, especially for @gsm slot in a `GEOSeries`
+#' object.
 #'
 #' @return a data.frame whose rows are samples and columns are the sample infos
 #'
@@ -21,14 +21,14 @@
 parse_pdata <- function(gsm_list) {
     test_gsm_list <- is.list(gsm_list) && all(vapply(
         gsm_list, function(x) {
-            methods::is(x, "GEODataTable") && all(
+            methods::is(x, "GEOSoft") && all(
                 grepl("^Sample_", names(meta(x)), perl = TRUE)
             )
         }, logical(1L)
     ))
     if (!test_gsm_list) {
         rlang::abort(
-            "gsm_list should be a list of GEODataTable, especially for @gsm slot in a GEOSeries object."
+            "gsm_list should be a list of GEOSoft, especially for @gsm slot in a GEOSeries object."
         )
     }
     res <- parse_gse_soft_sample_characteristics(gsm_list)
@@ -37,8 +37,8 @@ parse_pdata <- function(gsm_list) {
 }
 
 parse_gse_soft_sample_characteristics <- function(gsm_list) {
-    sample_meta_list <- lapply(gsm_list, function(geodatatable) {
-        sample_meta_data <- meta(geodatatable)
+    sample_meta_list <- lapply(gsm_list, function(gsm_geosoft) {
+        sample_meta_data <- meta(gsm_geosoft)
         if (any(lengths(sample_meta_data) > 1L)) {
             sample_meta_data[lengths(sample_meta_data) > 1L] <- lapply(
                 sample_meta_data[lengths(sample_meta_data) > 1L],

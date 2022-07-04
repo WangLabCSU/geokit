@@ -13,15 +13,15 @@
 \alias{accession}
 \alias{accession<-,GEOData-method}
 \alias{accession<-}
-\alias{GEODataTable-class}
-\alias{show,GEODataTable-method}
-\alias{columns,GEODataTable-method}
+\alias{GEOSoft-class}
+\alias{show,GEOSoft-method}
+\alias{columns,GEOSoft-method}
 \alias{columns}
-\alias{columns<-,GEODataTable-method}
+\alias{columns<-,GEOSoft-method}
 \alias{columns<-}
-\alias{datatable,GEODataTable-method}
+\alias{datatable,GEOSoft-method}
 \alias{datatable}
-\alias{datatable<-,GEODataTable-method}
+\alias{datatable<-,GEOSoft-method}
 \alias{datatable<-}
 \alias{GEOSeries-class}
 \alias{show,GEOSeries-method}
@@ -45,15 +45,15 @@
 
 \S4method{accession}{GEOData}(object) <- value
 
-\S4method{show}{GEODataTable}(object)
+\S4method{show}{GEOSoft}(object)
 
-\S4method{columns}{GEODataTable}(object)
+\S4method{columns}{GEOSoft}(object)
 
-\S4method{columns}{GEODataTable}(object) <- value
+\S4method{columns}{GEOSoft}(object) <- value
 
-\S4method{datatable}{GEODataTable}(object)
+\S4method{datatable}{GEOSoft}(object)
 
-\S4method{datatable}{GEODataTable}(object) <- value
+\S4method{datatable}{GEOSoft}(object) <- value
 
 \S4method{show}{GEOSeries}(object)
 
@@ -72,9 +72,9 @@
 }
 \description{
 \code{GEOData} class, which contains two slots \code{meta} and \code{accession}, is the
-basic class (super class) of \code{GSE} class and \code{GEODataTable} class.
+basic class (super class) of \code{GSE} class and \code{GEOSoft} class.
 \code{GEOSeries} class contains extra two slots \code{gsm} and \code{gpl} special for \code{GSE}
-entity soft file and \code{GEODataTable} contains extra two slots \code{columns} and
+entity soft file and \code{GEOSoft} contains extra two slots \code{columns} and
 \code{datatable} special for GEO samples, platforms, and datasets.
 }
 \section{Slots}{
@@ -91,10 +91,10 @@ slot \code{datatable}.}
 
 \item{\code{datatable:}}{A \code{data.frame} shows the data information.}
 
-\item{\code{gsm:}}{a list of \code{GEODataTable} object containg the samples information
+\item{\code{gsm:}}{a list of \code{GEOSoft} object containg the samples information
 of current GEO series.}
 
-\item{\code{gpl:}}{a list of \code{GEODataTable} object containg the platforms information
+\item{\code{gpl:}}{a list of \code{GEOSoft} object containg the platforms information
 of current GEO series.}
 }}
 

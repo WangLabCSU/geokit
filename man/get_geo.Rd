@@ -36,7 +36,7 @@ entity with \code{gse_matrix} option \code{TRUE}.}
 \value{
 An object of the appropriate class (GDS, GPL, GSM, or GSE) is
 returned. For \code{GSE} entity with \code{gse_matrix} FALSE, an \linkS4class{GEOSeries}
-object is returned; and for other entity, a \linkS4class{GEODataTable} object is
+object is returned; and for other entity, a \linkS4class{GEOSoft} object is
 returned. If the gse_matrix is (\code{TRUE}) with a \code{GSE} GEO entity, then a
 \link[Biobase:class.ExpressionSet]{ExpressionSet} Object or a list of
 \link[Biobase:class.ExpressionSet]{ExpressionSet} Objects is returned, one for each

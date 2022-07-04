@@ -68,7 +68,7 @@
 #' entity with `gse_matrix` option `TRUE`.
 #' @return An object of the appropriate class (GDS, GPL, GSM, or GSE) is
 #' returned. For `GSE` entity with `gse_matrix` FALSE, an [GEOSeries-class]
-#' object is returned; and for other entity, a [GEODataTable-class] object is
+#' object is returned; and for other entity, a [GEOSoft-class] object is
 #' returned. If the gse_matrix is (`TRUE`) with a `GSE` GEO entity, then a
 #' [ExpressionSet][Biobase::ExpressionSet] Object or a list of
 #' [ExpressionSet][Biobase::ExpressionSet] Objects is returned, one for each
@@ -244,7 +244,7 @@ construct_gse_matrix_expressionset <- function(file_text, pdata_from_soft, gse_s
     rlang::eval_bare(expr)
 }
 
-# For GPL, GSM, and GDS entity, return a `GEODataTable` object
+# For GPL, GSM, and GDS entity, return a `GEOSoft` object
 # For GSE entity, return a `GEOSeries` object
 get_geo_soft <- function(id, geo_type, dest_dir = getwd()) {
     file_path <- switch(geo_type,
@@ -264,7 +264,7 @@ get_geo_soft <- function(id, geo_type, dest_dir = getwd()) {
         GSM = ,
         GPL = ,
         GDS = methods::new(
-            "GEODataTable",
+            "GEOSoft",
             meta = soft_data$meta,
             columns = soft_data$columns,
             datatable = soft_data$data_table,

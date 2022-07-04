@@ -6,9 +6,9 @@ testthat::test_that("generic SOFT format GSE handled correctly", {
     testthat::expect_equal(nrow(datatable(gpl(gse)[[1L]])), 12625L)
     testthat::expect_equal(nrow(datatable(gsm(gse)[[1L]])), 12625L)
     lapply(gsm(gse), function(x) {
-        testthat::expect_s4_class(x, "GEODataTable")
+        testthat::expect_s4_class(x, "GEOSoft")
         testthat::expect_equal(nrow(datatable(x)), 12625L)
     }) 
-    testthat::expect_s4_class(gpl(gse)[[1L]], "GEODataTable")
+    testthat::expect_s4_class(gpl(gse)[[1L]], "GEOSoft")
     testthat::expect_equal(accession(gse), "GSE1563")
 })
