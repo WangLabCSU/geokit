@@ -72,7 +72,7 @@
 }
 \description{
 \code{GEOData} class, which contains two slots \code{meta} and \code{accession}, is the
-basic class (super class) of \code{GSE} class and \code{GEOSoft} class.
+basic class (super class) of \code{GEOSeries} class and \code{GEOSoft} class.
 \code{GEOSeries} class contains extra two slots \code{gsm} and \code{gpl} special for \code{GSE}
 entity soft file and \code{GEOSoft} contains extra two slots \code{columns} and
 \code{datatable} special for GEO samples, platforms, and datasets.

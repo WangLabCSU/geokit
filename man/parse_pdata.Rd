@@ -7,8 +7,8 @@
 parse_pdata(gsm_list)
 }
 \arguments{
-\item{gsm_list}{a list of GEOSoft, especially for @gsm slot in a
-\code{GEOSeries} object.}
+\item{gsm_list}{a list of GEOSoft, especially for @gsm slot in a \code{GEOSeries}
+object.}
 }
 \value{
 a data.frame whose rows are samples and columns are the sample infos
