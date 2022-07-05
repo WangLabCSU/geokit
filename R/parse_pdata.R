@@ -97,7 +97,7 @@ parse_gse_soft_sample_characteristics <- function(gsm_list) {
                     paste0(
                         "Details see: ", warn_column_names, " column in returned data."
                     ),
-                    "Please use `set_pdata` or `parse_pdata` function to convert it manually if necessary!"
+                    "Please use `set_pdata` or combine `strsplit` and `parse_pdata` function to convert it manually if necessary!"
                 )
             )
         }
