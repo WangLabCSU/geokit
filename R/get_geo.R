@@ -71,10 +71,10 @@
 #' @return An object of the appropriate class (GDS, GPL, GSM, or GSE) is
 #' returned. For `GSE` entity with `gse_matrix` FALSE, an [GEOSeries-class]
 #' object is returned; and for other entity, a [GEOSoft-class] object is
-#' returned. If the gse_matrix is (`TRUE`) with a `GSE` GEO entity, then a
+#' returned. If the `gse_matrix` is (`TRUE`) with a `GSE` GEO entity, then a
 #' [ExpressionSet][Biobase::ExpressionSet] Object or a list of
 #' [ExpressionSet][Biobase::ExpressionSet] Objects is returned, one for each
-#' SeriesMatrix file associated with the GSE accesion.
+#' Series Matrix file associated with the GSE accesion.
 #' @section Warning : Some of the files that are downloaded, particularly those
 #' associated with GSE entries from GEO are absolutely ENORMOUS and parsing
 #' them can take quite some time and memory. So, particularly when working
