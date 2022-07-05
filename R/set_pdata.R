@@ -71,14 +71,14 @@ set_pdata <- function(data, columns = NULL, sep = ":", split = "(\\s*+);(\\s*+)"
         warn_cannot_parse_characteristics = function(cnd) {
             rlang::abort(
                 c(
-                    "Cannot parse characteristic column correctly",
                     paste0(
-                        "There remains more than one `", sep,
-                        "` characters after splitting `columns` by `",
-                        split, "`"
+                        "There remains more than one \"", sep,
+                        "\" characters after splitting `columns` by \"",
+                        split, "\""
                     ),
                     "Please check if `sep` and `split` parameters can parse `columns`."
-                )
+                ),
+                parent = cnd
             )
         }
     )
@@ -124,7 +124,6 @@ parse_gse_matrix_sample_characteristics <- function(sample_dt, characteristics_c
                 rlang::warn(
                     c(
                         "Cannot parse characteristic column correctly",
-                        "Please use `set_pdata` or `parse_pdata` function to convert it manually if necessary!",
                         paste0(
                             "Details see `", .characteristic_col,
                             "` column in `phenoData`"
@@ -132,10 +131,14 @@ parse_gse_matrix_sample_characteristics <- function(sample_dt, characteristics_c
                     ),
                     class = "warn_cannot_parse_characteristics"
                 )
+                rlang::warn(
+                    "Please use `set_pdata` or `parse_pdata` function to convert it manually if necessary!"
+                )
                 next
             }
             .temp_characteristic_list <- parse_name_value_pairs(
-                characteristic_list, sep = sep
+                characteristic_list,
+                sep = sep
             )
             if (length(.temp_characteristic_list)) {
                 .characteristic_name <- paste0(
