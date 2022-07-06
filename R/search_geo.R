@@ -12,9 +12,9 @@
 #' <https://docs.ropensci.org/rentrez/articles/rentrez_tutorial.html#rate-limiting-and-api-keys>
 #' 
 #' @param query character, the search term. The NCBI uses a search term syntax
-#' where search terms can be associated with a specific search field with square
-#' brackets. So, for instance "Homo sapiens\[ORGN\]" denotes a search for `Homo
-#' sapiens` in the “Organism” field. Details see
+#' which can be associated with a specific search field with square brackets.
+#' So, for instance "Homo sapiens\[ORGN\]" denotes a search for `Homo sapiens`
+#' in the “Organism” field. Details see
 #' <https://www.ncbi.nlm.nih.gov/geo/info/qqtutorial.html>. The names and
 #' definitions of these fields can be identified using
 #' [entrez_db_searchable][rentrez::entrez_db_searchable].
@@ -66,7 +66,7 @@ preprocess_records <- function(x) {
     )
     x <- sub("\\tID:\\s*", "\nID: ", x, perl = TRUE)
     x <- sub(
-        "\\n?\\s*((?:\\s*\\d+(?:\\s*related)?\\s*(?:DataSet|Platforms|Samples|Series))+)([^:])",
+        "\\n?\\s*((?:\\s*\\d+(?:\\s*related)?\\s*(?:DataSet|Platform|Sample|Serie)s?)+)([^:])",
         "\nContains: \\1\\2", x,
         perl = TRUE
     )
