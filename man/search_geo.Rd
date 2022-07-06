@@ -8,8 +8,9 @@ search_geo(query, step = 500L)
 }
 \arguments{
 \item{query}{character, the search term. The NCBI uses a search term syntax
-where search terms can be associated with a specific search field with square
-brackets. So, for instance "Homo sapiens[ORGN]" denotes a search for \verb{Homo sapiens} in the “Organism” field. Details see
+which can be associated with a specific search field with square brackets.
+So, for instance "Homo sapiens[ORGN]" denotes a search for \verb{Homo sapiens}
+in the “Organism” field. Details see
 \url{https://www.ncbi.nlm.nih.gov/geo/info/qqtutorial.html}. The names and
 definitions of these fields can be identified using
 \link[rentrez:entrez_db_searchable]{entrez_db_searchable}.}
