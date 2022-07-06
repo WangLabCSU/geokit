@@ -39,10 +39,10 @@ entity with \code{gse_matrix} option \code{TRUE}.}
 An object of the appropriate class (GDS, GPL, GSM, or GSE) is
 returned. For \code{GSE} entity with \code{gse_matrix} FALSE, an \linkS4class{GEOSeries}
 object is returned; and for other entity, a \linkS4class{GEOSoft} object is
-returned. If the gse_matrix is (\code{TRUE}) with a \code{GSE} GEO entity, then a
+returned. If the \code{gse_matrix} is (\code{TRUE}) with a \code{GSE} GEO entity, then a
 \link[Biobase:class.ExpressionSet]{ExpressionSet} Object or a list of
 \link[Biobase:class.ExpressionSet]{ExpressionSet} Objects is returned, one for each
-SeriesMatrix file associated with the GSE accesion.
+Series Matrix file associated with the GSE accesion.
 }
 \description{
 This function is the main user-level function in the \code{rgeo} package.  It
