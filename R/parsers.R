@@ -358,36 +358,3 @@ read_column <- function(file_text) {
         na.strings = na_string
     )
 }
-
-# Lots of GSEs now use 'characteristics_ch1' and 'characteristics_ch2' for
-# key-value pairs of annotation. If that is the case, this simply cleans those
-# up and transforms the keys to column names and the values to column values.
-#' @return a list, every element of which corresponds to each name-value pairs.
-#' @noRd
-parse_name_value_pairs <- function(chr_list, sep = ":") {
-    .characteristic_list <- lapply(chr_list, function(x) {
-        if (!length(x)) {
-            return(data.table::data.table())
-        }
-        name_value_pairs <- data.table::transpose(
-            str_split(x, paste0("(\\s*+)", sep, "(\\s*+)"))
-        )
-        res <- as.list(name_value_pairs[[2L]])
-        names(res) <- name_value_pairs[[1L]]
-        data.table::setDT(res)
-        res
-    })
-    characteristic_dt <- data.table::rbindlist(
-        .characteristic_list,
-        use.names = TRUE, fill = TRUE
-    )
-    data.table::setnames(characteristic_dt, make.unique)
-
-    # parse text into corresponding atomic vector mode
-    lapply(characteristic_dt, function(x) {
-        data.table::fread(
-            text = x, sep = "", header = FALSE,
-            strip.white = TRUE, blank.lines.skip = FALSE, fill = TRUE
-        )[[1L]]
-    })
-}
