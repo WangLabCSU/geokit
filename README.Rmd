@@ -37,7 +37,7 @@ pak::pkg_install("Yunuuuu/rgeo")
 
 ## Vignettes
 
-``` r
+```{r set_up}
 library(rgeo)
 ```
 
@@ -46,11 +46,11 @@ The NCBI uses a search term syntax which can be associated with a specific searc
 API, so we can utilize `NCBI API key` to increase the downloading speed, details see <https://docs.ropensci.org/rentrez/articles/rentrez_tutorial.html#rate-limiting-and-api-keys>.
 
 Providing we want ***GSE*** GEO records related to ***human diabetes***, we can get these records by this:
-``` r
+```{r search_geo}
 diabetes_gse_records <- search_geo(
     "diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"
 )
-diabetes_gse_records
+head(diabetes_gse_records)
 ```
 
 ### download data from GEO database - `get_geo`
