@@ -10,4 +10,3 @@
 ^\.gitignore$
 ^Scratch\.RConsole$
 ^\.Rhistory$
-^codecov\.yml$

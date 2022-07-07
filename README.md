@@ -6,8 +6,6 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/Yunuuuu/rgeo/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Yunuuuu/rgeo/actions/workflows/R-CMD-check.yaml)
-[![Codecov test
-coverage](https://codecov.io/gh/Yunuuuu/rgeo/branch/main/graph/badge.svg)](https://app.codecov.io/gh/Yunuuuu/rgeo?branch=main)
 <!-- badges: end -->
 
 The goal of `rgeo` is to reduce the dependencies of
