@@ -275,7 +275,7 @@ parse_columns <- function(file_text, target_rownames) {
 #' @noRd
 parse_meta <- function(file_text) {
     line_with_equality <- grepl(
-        "^![^\\t]*=", file_text,
+        "^[^\\t]*=", file_text,
         fixed = FALSE, perl = TRUE
     )
     # For lines seperated by "="
