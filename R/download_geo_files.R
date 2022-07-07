@@ -125,7 +125,7 @@ download_inform <- function(urls, file_paths, method = "ftp") {
                         ":"
                     )
                 )
-                h <- curl::new_handle()
+                # h <- curl::new_handle()
                 # For we use HTTPs to link GEO FTP site,
                 # No need to follow GEO FTP buffersie recommendations
                 # if (identical(method, "ftp")) {
@@ -135,7 +135,7 @@ download_inform <- function(urls, file_paths, method = "ftp") {
                 #         upload_buffersize = 33554432L
                 #     )
                 # }
-                curl::handle_setopt(h, timeout_ms = 120L * 1000L)
+                # curl::handle_setopt(h, timeout = 120L, connecttimeout = 60)
                 file_path <- curl::curl_download(
                     url, file_path,
                     mode = switch(method,
@@ -143,7 +143,9 @@ download_inform <- function(urls, file_paths, method = "ftp") {
                         acc = "w"
                     ),
                     quiet = FALSE,
-                    handle = h
+                    handle = curl::new_handle(
+                        timeout = 120L, connecttimeout = 60L
+                    )
                 )
                 cat("\n")
                 file_path
