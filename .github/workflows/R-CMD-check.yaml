@@ -41,5 +41,6 @@ jobs:
         with:
           extra-packages: rcmdcheck
           pak-version: rc
+          extra-packages: any::XML
 
       - uses: r-lib/actions/check-r-package@v2
