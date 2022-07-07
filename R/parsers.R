@@ -10,7 +10,7 @@ parse_gse_matrix <- function(file_text, pdata_from_soft) {
         pdata_from_soft = pdata_from_soft
     )
 
-    # Construct ExpressionSet Object element
+    # fetch phenoData and experiment data
     experiment_data <- Biobase::MIAME(
         name = meta_data$Series$contact_name %||% "",
         title = meta_data$Series$title,
@@ -32,7 +32,7 @@ parse_gse_matrix <- function(file_text, pdata_from_soft) {
     pheno_data <- Biobase::AnnotatedDataFrame(
         data = meta_data$Sample[colnames(matrix_data), , drop = FALSE]
     )
-    # if it exist, fetch GPL feature data and experiment data
+    # fetch GPL accession
     gpl_id <- unique(meta_data$Sample[[grep(
         "platform_id", colnames(meta_data$Sample),
         ignore.case = TRUE, value = FALSE
@@ -213,7 +213,7 @@ parse_gse_matrix_meta <- function(file_text, pdata_from_soft) {
 }
 
 parse_gds_subset <- function(subset_file_text) {
-    subset_data <- read_meta(subset_file_text)
+    subset_data <- read_meta(subset_file_text, "equality")
     subset_data <- parse_line_sep_by_equality(subset_data)
     data.table::setDT(subset_data)
     # For GDS subset data, there'll be four column, the subset_sample_id
@@ -275,11 +275,11 @@ parse_columns <- function(file_text, target_rownames) {
 #' @noRd
 parse_meta <- function(file_text) {
     line_with_equality <- grepl(
-        "^[^\\t]*=", file_text,
+        "^![^\\t]*=", file_text,
         fixed = FALSE, perl = TRUE
     )
     # For lines seperated by "="
-    meta_sep_by_equality <- read_meta(file_text[line_with_equality])
+    meta_sep_by_equality <- read_meta(file_text[line_with_equality], "equality")
     meta_sep_by_equality <- parse_line_sep_by_equality(meta_sep_by_equality)
 
     # For lines seperated by "\t"
@@ -301,11 +301,9 @@ parse_meta <- function(file_text) {
 parse_line_sep_by_equality <- function(dt) {
     if (!nrow(dt)) {
         return(NULL)
-    } else {
-        data_chr <- dt[[1L]]
     }
     name_value_pairs <- data.table::transpose(
-        str_split(data_chr, "\\s*=\\s*")
+        str_split(dt[[1L]], "\\s*=\\s*")
     )
     split(
         name_value_pairs[[2L]],
@@ -320,12 +318,13 @@ parse_line_sep_by_table <- function(dt) {
     if (!nrow(dt) || identical(ncol(dt), 1L)) {
         return(NULL)
     }
-    data <- dt[, lapply(.SD, function(x) paste0(x, collapse = "")), by = "V1"]
-    data <- split(
-        data[, V1 := factor(sub("^!\\s*+", "", V1, perl = TRUE))],
-        by = "V1", keep.by = FALSE
+    dt[, V1 := factor(sub("^!\\s*+", "", V1, perl = TRUE))]
+    meta_list <- split(
+        dt[, lapply(.SD, paste0, collapse = ""), by = "V1"], 
+        by = "V1", drop = TRUE,
+        keep.by = FALSE
     )
-    lapply(data, function(x) {
+    lapply(meta_list, function(x) {
         unlist(x, recursive = FALSE, use.names = FALSE)
     })
 }
@@ -339,14 +338,26 @@ read_data_table <- function(file_text) {
         na.strings = na_string
     )
 }
-read_meta <- function(file_text) {
-    data.table::fread(
+read_meta <- function(file_text, meta_type = "table") {
+    read_params <- list(
         text = grep("^!\\w*", file_text,
             value = TRUE,
             fixed = FALSE, perl = TRUE
-        ), sep = "\t", header = FALSE, blank.lines.skip = TRUE,
+        ),
+        sep = switch(meta_type,
+            table = "\t",
+            equality = ""
+        ),
+        header = FALSE, blank.lines.skip = TRUE,
         na.strings = na_string
     )
+    if (identical(meta_type, "equality")) {
+        read_params <- c(
+            read_params,
+            colClasses = "character"
+        )
+    }
+    rlang::exec(data.table::fread, !!!read_params)
 }
 read_column <- function(file_text) {
     data.table::fread(
@@ -354,7 +365,8 @@ read_column <- function(file_text) {
             value = TRUE,
             fixed = FALSE, perl = TRUE
         ),
-        sep = "\t", header = FALSE, blank.lines.skip = TRUE,
-        na.strings = na_string
+        sep = "", header = FALSE, blank.lines.skip = TRUE,
+        na.strings = na_string,
+        colClasses = "character"
     )
 }
