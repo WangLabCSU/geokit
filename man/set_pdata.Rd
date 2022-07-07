@@ -4,7 +4,7 @@
 \alias{set_pdata}
 \title{Parse key-value pairs in GEO series matrix file}
 \usage{
-set_pdata(data, columns = NULL, sep = ":", split = "(\\\\s*+);(\\\\s*+)")
+set_pdata(data, columns = NULL, sep = ":", split = ";")
 }
 \arguments{
 \item{data}{a data.table, this function will modify \code{data} in place.}
@@ -15,8 +15,7 @@ these columns in \code{data} will be parsed. If \code{NULL}, all columns started
 
 \item{sep}{the string separating paired key-value, usually \code{":"}.}
 
-\item{split}{Passed to \link[base:strsplit]{strsplit} function.  Default is
-\code{"(\\\\s*+);(\\\\s*+)"}.}
+\item{split}{Passed to \link[base:strsplit]{strsplit} function. Default is ";"`.}
 }
 \value{
 modified data invisibly
