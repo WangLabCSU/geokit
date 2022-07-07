@@ -11,8 +11,7 @@
 #' these columns in `data` will be parsed. If `NULL`, all columns started with
 #' `"characteristics_ch"` will be used.
 #' @param sep the string separating paired key-value, usually `":"`.
-#' @param split Passed to [strsplit][base::strsplit] function.  Default is
-#' `"(\\s*+);(\\s*+)"`.
+#' @param split Passed to [strsplit][base::strsplit] function. Default is ";"`.
 #'
 #' @details A characteristics annotation column is usually contains multiple
 #' key-value items, so we should first split these columns by `split` and then
@@ -45,7 +44,7 @@
 #' ]
 #'
 #' @export
-set_pdata <- function(data, columns = NULL, sep = ":", split = "(\\s*+);(\\s*+)") {
+set_pdata <- function(data, columns = NULL, sep = ":", split = ";") {
     if (!data.table::is.data.table(data)) {
         rlang::abort(
             "`data` should be a data.table"
@@ -92,7 +91,7 @@ set_pdata <- function(data, columns = NULL, sep = ":", split = "(\\s*+);(\\s*+)"
 # up and transforms the keys to column names and the values to column values.
 # This function will modify `sample_dt` in place, So we needn't assign value.
 # `sample_dt` should be a data.table
-parse_gse_matrix_sample_characteristics <- function(sample_dt, characteristics_cols = NULL, sep = ":", split = "(\\s*+);(\\s*+)") {
+parse_gse_matrix_sample_characteristics <- function(sample_dt, characteristics_cols = NULL, sep = ":", split = ";") {
     if (is.null(characteristics_cols)) {
         characteristics_cols <- grep(
             "^characteristics_ch",
@@ -107,6 +106,7 @@ parse_gse_matrix_sample_characteristics <- function(sample_dt, characteristics_c
         )
     }
     if (length(characteristics_cols)) {
+        split <- paste0("(\\s*+)", split, "(\\s*+)")
         for (.characteristic_col in characteristics_cols) {
             characteristic_list <- strsplit(
                 sample_dt[[as.character(.characteristic_col)]],
