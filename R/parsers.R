@@ -348,15 +348,13 @@ read_meta <- function(file_text, meta_type = "table") {
             table = "\t",
             equality = ""
         ),
+        colClasses = switch(meta_type,
+            table = NULL,
+            equality = "character"
+        ),
         header = FALSE, blank.lines.skip = TRUE,
         na.strings = na_string
     )
-    if (identical(meta_type, "equality")) {
-        read_params <- c(
-            read_params,
-            colClasses = "character"
-        )
-    }
     rlang::exec(data.table::fread, !!!read_params)
 }
 read_column <- function(file_text) {
