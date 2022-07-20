@@ -238,12 +238,7 @@ construct_gse_matrix_expressionset <- function(file_text, pdata_from_soft, gse_s
             featureData = feature_data
         )
     }
-    expr <- rlang::call2(
-        "ExpressionSet",
-        !!!expressionset_elements,
-        .ns = "Biobase"
-    )
-    rlang::eval_bare(expr)
+    rlang::exec(Biobase::ExpressionSet, !!!expressionset_elements)
 }
 
 # For GPL, GSM, and GDS entity, return a `GEOSoft` object
