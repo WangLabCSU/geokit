@@ -62,14 +62,14 @@ preprocess_records <- function(x) {
         perl = TRUE
     )
     x <- gsub(
-        "\\s*\\n?(Platform|Dataset)s?\\s*:\\s*",
-        "\n\\1s: ", x,
+        "(Platform|Dataset)s?:\\s*((?:GPL\\d+\\s*|GDS\\d+\\s*)+)",
+        "\\1s: \\2\n", x,
         perl = TRUE
     )
     x <- sub("\\tID:\\s*", "\nID: ", x, perl = TRUE)
     x <- sub(
-        "\\n?\\s*((?:\\s*\\d+(?:\\s*related)?\\s*(?:DataSet|Platform|Sample|Serie)s?)+)([^:])",
-        "\nContains: \\1\\2", x,
+        "((?:\\d+(?:\\s*related)? *(?:DataSet|Platform|Sample|Serie)s?\\s*)+)([^:])",
+        "Contains: \\1\\2", x,
         perl = TRUE
     )
     x <- gsub(":\\t+", ": ", x, perl = TRUE)
