@@ -312,16 +312,22 @@ parse_gse_soft_sample_characteristics <- function(gsm_list) {
     ]
 }
 
-# Lots of GSEs now use 'characteristics_ch1' and 'characteristics_ch2' for
-# key-value pairs of annotation. If that is the case, this simply cleans those
-# up and transforms the keys to column names and the values to column values.
-#' @return a list, every element of which corresponds to each name-value pairs.
+# parse key-value pairs separeted by ":". For a list of key-value pairs
+# characters (like: `list(c("a:1", "b:2"), c("a:3", "b:4"))`), this function
+# simply cleans those up and transforms the list into a list object, the names
+# of returned value is the unique keys in the pairs, the element of the returned
+# list is the values in the paris.
+# See: `parse_name_value_pairs(list(c("a:1", "b:2"), c("a:3", "b:4")))`
+#' @return a list, every element of which corresponds to each key-value pairs
+#' group by key in the paris.
 #' @noRd
 parse_name_value_pairs <- function(chr_list, sep = ":") {
     .characteristic_list <- lapply(chr_list, function(x) {
         if (!length(x)) {
             return(data.table::data.table())
         }
+        # Don't use `data.table::tstrsplit`, as it will split string into three
+        # or more elements.
         name_value_pairs <- data.table::transpose(
             str_split(x, paste0("(\\s*+)", sep, "(\\s*+)"))
         )

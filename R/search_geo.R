@@ -52,6 +52,8 @@ search_geo <- function(query, step = 500L) {
     name_value_pairs
 }
 
+# this function just processed GEO searched results returned by `entrez_fetch`
+# into key-values paris
 preprocess_records <- function(x) {
     x <- sub("^\\d+\\.", "Title:", x, perl = TRUE)
     x <- sub(
