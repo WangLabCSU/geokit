@@ -20,7 +20,10 @@ download_gpl_or_gse_soft_file <- function(id, dest_dir = getwd()) {
         ),
         error = function(error) {
             rlang::inform(
-                paste0("\nAnnotation file in FTP site for ", id, " is not available, so will use data format from GEO Accession Site instead.")
+                paste0(
+                    "\nAnnotation file in FTP site for ", id,
+                    " is not available, so will use data format from GEO Accession Site instead."
+                )
             )
             download_with_acc(
                 id = id, dest_dir = dest_dir,
