@@ -6,22 +6,44 @@ download_geo_suppl_or_gse_matrix_files <- function(id, dest_dir, file_type) {
     download_inform(urls, file_paths, method = "ftp")
 }
 
-#' For GPL or GSE files, try FTP site first, if it failed, try ACC site
+#' For GPL data, we often only need datatable data, So we try download
+#' `annot` file firstly and then download full text file if it failed
 #' @noRd
-download_gpl_or_gse_soft_file <- function(id, dest_dir = getwd()) {
-    geo_type <- substr(id, 1L, 3L)
+download_gpl_soft_file <- function(id, dest_dir = getwd(), only_datatable = TRUE) {
+    file_type <- if (only_datatable) "annot" else "soft"
     rlang::try_fetch(
         download_with_ftp(
             id = id, dest_dir = dest_dir,
-            file_type = switch(geo_type,
-                GPL = "annot",
-                GSE = "soft"
-            )
+            file_type = file_type
         ),
         error = function(error) {
             rlang::inform(
                 paste0(
-                    "\nAnnotation file in FTP site for ", id,
+                    "\n", file_type,
+                    " file in FTP site for ", id,
+                    " is not available, so will use data format from GEO Accession Site instead."
+                )
+            )
+            download_with_acc(
+                id = id, dest_dir = dest_dir,
+                scope = "self", amount = "full", format = "text"
+            )
+        }
+    )
+}
+
+#' For GSE files, try FTP site first, if it failed, try ACC site
+#' @noRd
+download_gse_soft_file <- function(id, dest_dir = getwd()) {
+    rlang::try_fetch(
+        download_with_ftp(
+            id = id, dest_dir = dest_dir,
+            file_type = "soft"
+        ),
+        error = function(error) {
+            rlang::inform(
+                paste0(
+                    "\nsoft file in FTP site for ", id,
                     " is not available, so will use data format from GEO Accession Site instead."
                 )
             )
