@@ -10,3 +10,4 @@
 ^\.gitignore$
 ^Scratch\.RConsole$
 ^\.Rhistory$
+^data-raw$
