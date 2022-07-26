@@ -2,8 +2,7 @@ Package: rgeo
 Title: R interface for GEO database
 Version: 0.0.0.9000
 Authors@R: 
-    person("Yun", "Peng", email = "yunyunpp96@outlook.com",
-               role = c("aut", "cre"))
+    person("Yun", "Peng", , "yunyunpp96@outlook.com", role = c("aut", "cre"))
 Description: R interface for Gene Expression Omnibus (GEO) database.
 License: GPL (>= 3)
 Encoding: UTF-8
@@ -12,19 +11,23 @@ RoxygenNote: 7.2.0
 Imports: 
     data.table (>= 1.14.3),
     rlang (>= 0.4.11),
-    xml2,
-    curl,
-    rentrez,
     Biobase,
-    methods
+    curl,
+    methods,
+    rentrez,
+    xml2
 Suggests: 
     bit64,
-    stats,
-    utils,
     R.utils,
+    stats,
     stringr,
-    roxygen2,
-    testthat (>= 3.0.0)
-Remotes: github::Rdatatable/data.table
-ByteCompile: true
+    testthat (>= 3.0.0),
+    utils
+Remotes: 
+    Rdatatable/data.table
 Config/testthat/edition: 3
+Config/testthat/parallel: true
+ByteCompile: true
+LazyData: true
+Depends: 
+    R (>= 2.10)
