@@ -37,12 +37,12 @@ entity with \code{gse_matrix} option \code{TRUE}.}
 }
 \value{
 An object of the appropriate class (GDS, GPL, GSM, or GSE) is
-returned. For \code{GSE} entity with \code{gse_matrix} FALSE, an \linkS4class{GEOSeries}
-object is returned; and for other entity, a \linkS4class{GEOSoft} object is
-returned. If the \code{gse_matrix} is (\code{TRUE}) with a \code{GSE} GEO entity, then a
-\link[Biobase:class.ExpressionSet]{ExpressionSet} Object or a list of
-\link[Biobase:class.ExpressionSet]{ExpressionSet} Objects is returned, one for each
-Series Matrix file associated with the GSE accesion.
+returned. For \code{GSE} entity, if \code{gse_matrix} parameter is \code{FALSE}, an
+\linkS4class{GEOSeries} object is returned and if \code{gse_matrix} parameter is \code{TRUE},
+a ExpressionSet]\link[Biobase:class.ExpressionSet]{Biobase::ExpressionSet} Object or a list of
+\link[Biobase:class.ExpressionSet]{ExpressionSet} Objects is returned with one element
+for each Series Matrix file associated with the GSE accesion. And for other
+GEO entity, a \linkS4class{GEOSoft} object is returned.
 }
 \description{
 This function is the main user-level function in the \code{rgeo} package.  It
@@ -50,10 +50,11 @@ directs the downloading and parsing of GEO files into an R data
 structure.
 }
 \details{
-Use get_geo functions to download and parse information available from \href{http://www.ncbi.nlm.nih.gov/geo}{NCBI GEO}. Here are some details about what
-is avaible from GEO.  All entity types are handled by get_geo and essentially
-any information in the GEO SOFT format is reflected in the resulting data
-structure.
+Use \code{get_geo} functions to download and parse information available from
+\href{http://www.ncbi.nlm.nih.gov/geo}{NCBI GEO}. Here are some details about what
+is avaible from GEO.  All entity types are handled by \code{get_geo} and
+essentially any information in the GEO SOFT format is reflected in the
+resulting data structure.
 
 From the GEO website:
 

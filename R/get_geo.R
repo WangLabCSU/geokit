@@ -4,11 +4,11 @@
 #' directs the downloading and parsing of GEO files into an R data
 #' structure.
 #'
-#' Use get_geo functions to download and parse information available from [NCBI
-#' GEO](http://www.ncbi.nlm.nih.gov/geo). Here are some details about what
-#' is avaible from GEO.  All entity types are handled by get_geo and essentially
-#' any information in the GEO SOFT format is reflected in the resulting data
-#' structure.
+#' Use `get_geo` functions to download and parse information available from
+#' [NCBI GEO](http://www.ncbi.nlm.nih.gov/geo). Here are some details about what
+#' is avaible from GEO.  All entity types are handled by `get_geo` and
+#' essentially any information in the GEO SOFT format is reflected in the
+#' resulting data structure.
 #'
 #' From the GEO website:
 #'
@@ -69,12 +69,12 @@
 #' [ExpressionSet][Biobase::ExpressionSet] Object) when fetching a `GSE` GEO
 #' entity with `gse_matrix` option `TRUE`.
 #' @return An object of the appropriate class (GDS, GPL, GSM, or GSE) is
-#' returned. For `GSE` entity with `gse_matrix` FALSE, an [GEOSeries-class]
-#' object is returned; and for other entity, a [GEOSoft-class] object is
-#' returned. If the `gse_matrix` is (`TRUE`) with a `GSE` GEO entity, then a
-#' [ExpressionSet][Biobase::ExpressionSet] Object or a list of
-#' [ExpressionSet][Biobase::ExpressionSet] Objects is returned, one for each
-#' Series Matrix file associated with the GSE accesion.
+#' returned. For `GSE` entity, if `gse_matrix` parameter is `FALSE`, an
+#' [GEOSeries-class] object is returned and if `gse_matrix` parameter is `TRUE`,
+#' a ExpressionSet][Biobase::ExpressionSet] Object or a list of
+#' [ExpressionSet][Biobase::ExpressionSet] Objects is returned with one element
+#' for each Series Matrix file associated with the GSE accesion. And for other
+#' GEO entity, a [GEOSoft-class] object is returned. 
 #' @section Warning : Some of the files that are downloaded, particularly those
 #' associated with GSE entries from GEO are absolutely ENORMOUS and parsing
 #' them can take quite some time and memory. So, particularly when working
@@ -158,7 +158,7 @@ get_gse_matrix <- function(id, dest_dir = getwd(), pdata_from_soft = TRUE, add_g
     # GSE matrix fiels, so we should extract the sample data firstly, and then
     # split it into pieces.
     if (pdata_from_soft) {
-        gse_soft_file_path <- download_gpl_or_gse_soft_file(id, dest_dir)
+        gse_soft_file_path <- download_gse_soft_file(id, dest_dir)
         gse_soft_file_text <- read_lines(gse_soft_file_path)
         gse_sample_data <- suppressMessages(
             parse_gse_soft(
@@ -206,8 +206,9 @@ construct_gse_matrix_expressionset <- function(file_text, pdata_from_soft, gse_s
         )
     }
     if (add_gpl) {
-        gpl_file_path <- download_gpl_or_gse_soft_file(
-            expressionset_elements$annotation, dest_dir
+        gpl_file_path <- download_gpl_soft_file(
+            expressionset_elements$annotation, 
+            dest_dir, only_datatable = TRUE
         )
         gpl_file_text <- read_lines(gpl_file_path)
         gpl_data <- parse_gpl_or_gsm_soft(gpl_file_text)
@@ -246,8 +247,10 @@ construct_gse_matrix_expressionset <- function(file_text, pdata_from_soft, gse_s
 get_geo_soft <- function(id, geo_type, dest_dir = getwd()) {
     file_path <- switch(geo_type,
         GSM = download_gsm_file(id, dest_dir = dest_dir),
-        GPL = ,
-        GSE = download_gpl_or_gse_soft_file(id, dest_dir = dest_dir),
+        GPL = download_gpl_soft_file(
+            id, dest_dir = dest_dir, only_datatable = FALSE
+        ),
+        GSE = download_gse_soft_file(id, dest_dir = dest_dir),
         GDS = download_gds_file(id, dest_dir = dest_dir)
     )
     file_text <- read_lines(file_path)
