@@ -107,6 +107,7 @@ parse_gse_soft <- function(file_text, entity_type = "all") {
 parse_gpl_or_gsm_soft <- function(file_text) {
     # parse data table data - which is the feature data
     data_table <- read_data_table(file_text)
+    data.table::setnames(data_table, make.unique)
     if (nrow(data_table)) {
         # GEO uses 'TAG' instead of 'ID' for SAGE GSE/GPL entries,
         # but it is always the first column;
@@ -255,14 +256,29 @@ parse_gds_subset <- function(subset_file_text) {
 parse_columns <- function(file_text, target_rownames) {
     column_data <- read_column(file_text)
     column_data <- parse_line_sep_by_equality(column_data)
+    labelDescription <- vapply(column_data[target_rownames], function(x) {
+        if (is.null(x)) {
+            NA_character_
+        } else if (length(x) > 1L) {
+            paste0(x, collapse = "; ")
+        } else {
+            x
+        }
+    }, character(1L), USE.NAMES = FALSE)
+    # Sometimes column_data may contain character vectors with length greater
+    # than 1L and the last value of which is a blank string ""; after above
+    # transformation, a tail "; " will be inserted in this element, So we just
+    # remove the tail "; " string.
+    labelDescription <- sub(
+        ";\\s*$", "", labelDescription, perl = TRUE
+    )
+    labelDescription <- data.table::fifelse(
+        labelDescription == "", 
+        NA_character_, labelDescription,
+        na = NA_character_
+    )
     data.frame(
-        labelDescription = vapply(column_data[target_rownames], function(x) {
-            if (length(x) > 1L) {
-                paste0(x, collapse = "; ")
-            } else {
-                x
-            }
-        }, character(1L)),
+        labelDescription = labelDescription,
         row.names = target_rownames
     )
 }
@@ -320,7 +336,7 @@ parse_line_sep_by_table <- function(dt) {
     }
     dt[, V1 := factor(sub("^!\\s*+", "", V1, perl = TRUE))]
     meta_list <- split(
-        dt[, lapply(.SD, paste0, collapse = ""), by = "V1"], 
+        dt[, lapply(.SD, paste0, collapse = ""), by = "V1"],
         by = "V1", drop = TRUE,
         keep.by = FALSE
     )
@@ -334,15 +350,15 @@ read_data_table <- function(file_text) {
     data.table::fread(
         text = file_text[
             !grepl("^[\\^!#]", file_text, fixed = FALSE, perl = TRUE)
-        ], sep = "\t", header = TRUE, blank.lines.skip = TRUE,
-        na.strings = na_string
+        ],
+        sep = "\t", header = TRUE, blank.lines.skip = TRUE,
+        na.strings = na_string, check.names = FALSE
     )
 }
 read_meta <- function(file_text, meta_type = "table") {
-    read_params <- list(
+    data.table::fread(
         text = grep("^!\\w*", file_text,
-            value = TRUE,
-            fixed = FALSE, perl = TRUE
+            value = TRUE, fixed = FALSE, perl = TRUE
         ),
         sep = switch(meta_type,
             table = "\t",
@@ -353,9 +369,8 @@ read_meta <- function(file_text, meta_type = "table") {
             equality = "character"
         ),
         header = FALSE, blank.lines.skip = TRUE,
-        na.strings = na_string
+        na.strings = na_string, check.names = FALSE
     )
-    rlang::exec(data.table::fread, !!!read_params)
 }
 read_column <- function(file_text) {
     data.table::fread(
@@ -365,6 +380,7 @@ read_column <- function(file_text) {
         ),
         sep = "", header = FALSE, blank.lines.skip = TRUE,
         na.strings = na_string,
-        colClasses = "character"
+        colClasses = "character", 
+        check.names = FALSE
     )
 }
