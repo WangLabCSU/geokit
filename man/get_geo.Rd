@@ -9,7 +9,7 @@ get_geo(
   dest_dir = getwd(),
   gse_matrix = TRUE,
   pdata_from_soft = TRUE,
-  add_gpl = TRUE
+  add_gpl = NULL
 )
 }
 \arguments{
@@ -33,7 +33,12 @@ sometimes cannot be parsed correctly.}
 \item{add_gpl}{A logical value indicates whether to add \strong{platform}
 information (namely the \link[Biobase:featureData]{featureData} slot in
 \link[Biobase:class.ExpressionSet]{ExpressionSet} Object) when fetching a \code{GSE} GEO
-entity with \code{gse_matrix} option \code{TRUE}.}
+entity with \code{gse_matrix} option \code{TRUE}. Default is \code{NULL}, which means the
+internal will try to map the GPL accession ID into a Bioconductor annotation
+package, if it succeed, the \code{annotation} slot in the returned
+\link[Biobase:class.ExpressionSet]{ExpressionSet} object will be set to the found
+Bioconductor annotation package and the \code{add_gpl} will be set to \code{FALSE},
+otherwise, to \code{TRUE}.}
 }
 \value{
 An object of the appropriate class (GDS, GPL, GSM, or GSE) is

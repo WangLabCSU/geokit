@@ -67,14 +67,19 @@
 #' @param add_gpl A logical value indicates whether to add **platform**
 #' information (namely the [featureData][Biobase::featureData] slot in
 #' [ExpressionSet][Biobase::ExpressionSet] Object) when fetching a `GSE` GEO
-#' entity with `gse_matrix` option `TRUE`.
+#' entity with `gse_matrix` option `TRUE`. Default is `NULL`, which means the
+#' internal will try to map the GPL accession ID into a Bioconductor annotation
+#' package, if it succeed, the `annotation` slot in the returned
+#' [ExpressionSet][Biobase::ExpressionSet] object will be set to the found
+#' Bioconductor annotation package and the `add_gpl` will be set to `FALSE`,
+#' otherwise, to `TRUE`.
 #' @return An object of the appropriate class (GDS, GPL, GSM, or GSE) is
 #' returned. For `GSE` entity, if `gse_matrix` parameter is `FALSE`, an
 #' [GEOSeries-class] object is returned and if `gse_matrix` parameter is `TRUE`,
 #' a ExpressionSet][Biobase::ExpressionSet] Object or a list of
 #' [ExpressionSet][Biobase::ExpressionSet] Objects is returned with one element
 #' for each Series Matrix file associated with the GSE accesion. And for other
-#' GEO entity, a [GEOSoft-class] object is returned. 
+#' GEO entity, a [GEOSoft-class] object is returned.
 #' @section Warning : Some of the files that are downloaded, particularly those
 #' associated with GSE entries from GEO are absolutely ENORMOUS and parsing
 #' them can take quite some time and memory. So, particularly when working
@@ -94,7 +99,7 @@
 #' gds <- get_geo("GDS10", tempdir())
 #'
 #' @export
-get_geo <- function(ids, dest_dir = getwd(), gse_matrix = TRUE, pdata_from_soft = TRUE, add_gpl = TRUE) {
+get_geo <- function(ids, dest_dir = getwd(), gse_matrix = TRUE, pdata_from_soft = TRUE, add_gpl = NULL) {
     ids <- toupper(ids)
     check_ids(ids)
     if (!dir.exists(dest_dir)) {
@@ -109,7 +114,7 @@ get_geo <- function(ids, dest_dir = getwd(), gse_matrix = TRUE, pdata_from_soft 
 }
 
 #' @noRd
-get_geo_multi <- function(ids, dest_dir = getwd(), gse_matrix = TRUE, pdata_from_soft = TRUE, add_gpl = TRUE) {
+get_geo_multi <- function(ids, dest_dir = getwd(), gse_matrix = TRUE, pdata_from_soft = TRUE, add_gpl = NULL) {
     res <- lapply(ids, function(id) {
         rlang::try_fetch(
             get_geo_unit(
@@ -135,7 +140,7 @@ get_geo_multi <- function(ids, dest_dir = getwd(), gse_matrix = TRUE, pdata_from
     }
 }
 
-get_geo_unit <- function(id, dest_dir = getwd(), gse_matrix = TRUE, pdata_from_soft = TRUE, add_gpl = TRUE) {
+get_geo_unit <- function(id, dest_dir = getwd(), gse_matrix = TRUE, pdata_from_soft = TRUE, add_gpl = NULL) {
     geo_type <- substr(id, 1L, 3L)
     if (identical(geo_type, "GSE") && gse_matrix) {
         get_gse_matrix(
@@ -149,7 +154,7 @@ get_geo_unit <- function(id, dest_dir = getwd(), gse_matrix = TRUE, pdata_from_s
     }
 }
 
-get_gse_matrix <- function(id, dest_dir = getwd(), pdata_from_soft = TRUE, add_gpl = TRUE) {
+get_gse_matrix <- function(id, dest_dir = getwd(), pdata_from_soft = TRUE, add_gpl = NULL) {
     file_paths <- download_geo_suppl_or_gse_matrix_files(
         id = id, dest_dir = dest_dir,
         file_type = "matrix"
@@ -205,10 +210,42 @@ construct_gse_matrix_expressionset <- function(file_text, pdata_from_soft, gse_s
             ]
         )
     }
+
+    if (is.null(add_gpl)) {
+        if (has_bioc_annotation_pkg(expressionset_elements$annotation)) {
+            rlang::inform(
+                c(
+                    paste0(
+                        "Found Bioconductor annotation package for ",
+                        expressionset_elements$annotation
+                    ),
+                    "Setting `add_gpl` to `FALSE`",
+                    "You can overwrite this behaviour by setting `add_gpl` to `TRUE` manually."
+                )
+            )
+            expressionset_elements$annotation <- gpl2bioc(
+                expressionset_elements$annotation
+            )
+            add_gpl <- FALSE
+        } else {
+            rlang::inform(
+                c(
+                    paste0(
+                        "Cannot map ", expressionset_elements$annotation,
+                        " to a Bioconductor annotation package"
+                    ),
+                    "Setting `add_gpl` to `TRUE`"
+                )
+            )
+            add_gpl <- TRUE
+        }
+    }
+
     if (add_gpl) {
         gpl_file_path <- download_gpl_file(
-            expressionset_elements$annotation, 
-            dest_dir, amount = "data"
+            expressionset_elements$annotation,
+            dest_dir,
+            amount = "data"
         )
         gpl_file_text <- read_lines(gpl_file_path)
         gpl_data <- parse_gpl_or_gsm_soft(gpl_file_text)
@@ -248,7 +285,8 @@ get_geo_soft <- function(id, geo_type, dest_dir = getwd()) {
     file_path <- switch(geo_type,
         GSM = download_gsm_file(id, dest_dir = dest_dir),
         GPL = download_gpl_file(
-            id, dest_dir = dest_dir, amount = "full"
+            id,
+            dest_dir = dest_dir, amount = "full"
         ),
         GSE = download_gse_soft_file(id, dest_dir = dest_dir),
         GDS = download_gds_file(id, dest_dir = dest_dir)
