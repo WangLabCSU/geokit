@@ -13,10 +13,10 @@
 #' displays the accessions's attributes and the full data table. "Data" omits
 #' the accession's attributes, showing only the links to other accessions as
 #' well as the full data table
-#' @param format A character string in one of "text", "html" or "xml". Allows
-#' you to display the GEO accession in human readable, linked "HTML" form, or in
-#' machine readable, "SOFT" form. SOFT stands for "simple omnibus format in
-#' text".
+#' @param format A character string in one of "text", "xml" or "html".
+#' Allows you to display the GEO accession in human readable, linked "HTML"
+#' form, or in machine readable, "text" format, which is the same with "soft"
+#' format. SOFT stands for "simple omnibus format in text".
 #' @noRd
 build_geo_acc_url <- function(id, scope = "self", amount = "data", format = "text") {
     sprintf(
@@ -30,6 +30,8 @@ build_geo_acc_url <- function(id, scope = "self", amount = "data", format = "tex
             tolower(amount),
             c("brief", "quick", "data", "full")
         ),
+        # GEO use "text" to refer to "soft" format
+        # GEO use "xml" to refer to "miniml" format
         match.arg(
             tolower(format),
             c("text", "html", "xml")
