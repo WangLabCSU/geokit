@@ -16,8 +16,7 @@ show_geo <- function(id, browser = getOption("browser")) {
     check_ids(id)
     utils::browseURL(
         build_geo_acc_url(
-            id,
-            scope = "self", amount = "quick", format = "html"
+            id, scope = "self", amount = "quick", format = "html"
         ),
         browser = browser
     )
