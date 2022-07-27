@@ -206,9 +206,9 @@ construct_gse_matrix_expressionset <- function(file_text, pdata_from_soft, gse_s
         )
     }
     if (add_gpl) {
-        gpl_file_path <- download_gpl_soft_file(
+        gpl_file_path <- download_gpl_file(
             expressionset_elements$annotation, 
-            dest_dir, only_datatable = TRUE
+            dest_dir, amount = "data"
         )
         gpl_file_text <- read_lines(gpl_file_path)
         gpl_data <- parse_gpl_or_gsm_soft(gpl_file_text)
@@ -247,8 +247,8 @@ construct_gse_matrix_expressionset <- function(file_text, pdata_from_soft, gse_s
 get_geo_soft <- function(id, geo_type, dest_dir = getwd()) {
     file_path <- switch(geo_type,
         GSM = download_gsm_file(id, dest_dir = dest_dir),
-        GPL = download_gpl_soft_file(
-            id, dest_dir = dest_dir, only_datatable = FALSE
+        GPL = download_gpl_file(
+            id, dest_dir = dest_dir, amount = "full"
         ),
         GSE = download_gse_soft_file(id, dest_dir = dest_dir),
         GDS = download_gds_file(id, dest_dir = dest_dir)
