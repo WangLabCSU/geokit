@@ -4,9 +4,10 @@ testthat::test_that("generic GPL parsing works as expected", {
     testthat::expect_s4_class(gpl, "GEOSoft")
     testthat::expect_s4_class(gpl, "GEOData")
     testthat::expect_equal(nrow(datatable(gpl)), 22283L)
-    testthat::expect_equal(ncol(datatable(gpl)), 21L)
+    testthat::expect_equal(nrow(columns(gpl)), 16L)
+    testthat::expect_equal(ncol(datatable(gpl)), 16L)
     testthat::expect_type(meta(gpl), "list")
-    testthat::expect_length(meta(gpl), 4L)
+    testthat::expect_length(meta(gpl), 27L)
     testthat::expect_s3_class(datatable(gpl), "data.frame")
 })
 
@@ -15,6 +16,7 @@ testthat::test_that("quoted GPL works", {
 
     testthat::expect_s4_class(gpl, "GEOSoft")
     testthat::expect_s4_class(gpl, "GEOData")
+    testthat::expect_equal(nrow(columns(gpl)), 22L)
     testthat::expect_equal(nrow(datatable(gpl)), 45220L)
 })
 
