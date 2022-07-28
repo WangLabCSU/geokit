@@ -20,7 +20,7 @@ and parsing. ('GDS505','GSE2','GSM2','GPL96' eg.).}
 current working dir.}
 
 \item{gse_matrix}{A logical value indicates whether to retrieve Series Matrix
-files when fetching a \code{GSE} GEO identity. When set to \code{TRUE}, an
+files when handling a \code{GSE} GEO entity When set to \code{TRUE}, an
 \link[Biobase:class.ExpressionSet]{ExpressionSet} Object will be returned}
 
 \item{pdata_from_soft}{A logical value indicates whether derive \code{phenoData}
@@ -30,24 +30,25 @@ from GSE series soft file when parsing
 which is what \code{GEOquery} do, in this way, \verb{characteristics_ch*} column
 sometimes cannot be parsed correctly.}
 
-\item{add_gpl}{A logical value indicates whether to add \strong{platform}
-information (namely the \link[Biobase:featureData]{featureData} slot in
-\link[Biobase:class.ExpressionSet]{ExpressionSet} Object) when fetching a \code{GSE} GEO
-entity with \code{gse_matrix} option \code{TRUE}. Default is \code{NULL}, which means the
-internal will try to map the GPL accession ID into a Bioconductor annotation
-package firstly, if it succeed, the \link[Biobase:class.eSet]{annotation} slot in the
-returned \link[Biobase:class.ExpressionSet]{ExpressionSet} object will be set to the
-found Bioconductor annotation package and the \code{add_gpl} will be set to
-\code{FALSE}, otherwise, to \code{TRUE}.}
+\item{add_gpl}{A logical value indicates whether to add \strong{platform} (namely
+the \link[Biobase:featureData]{featureData} slot in the
+\link[Biobase:class.ExpressionSet]{ExpressionSet} Object) information when fetching a
+\code{GSE} GEO entity with \code{gse_matrix} option \code{TRUE}. \code{add_gpl} is set to
+\code{NULL}by default, which means the internal will try to map the GPL accession
+ID into a Bioconductor annotation package firstly, if it succeed, the
+\link[Biobase:class.eSet]{annotation} slot in the returned
+\link[Biobase:class.ExpressionSet]{ExpressionSet} object will be set to the found
+Bioconductor annotation package and the \code{add_gpl} will be set to \code{FALSE},
+otherwise, to \code{TRUE}.}
 }
 \value{
 An object of the appropriate class (GDS, GPL, GSM, or GSE) is
 returned. For \code{GSE} entity, if \code{gse_matrix} parameter is \code{FALSE}, an
 \linkS4class{GEOSeries} object is returned and if \code{gse_matrix} parameter is \code{TRUE},
-a ExpressionSet]\link[Biobase:class.ExpressionSet]{Biobase::ExpressionSet} Object or a list of
-\link[Biobase:class.ExpressionSet]{ExpressionSet} Objects is returned with one element
-for each Series Matrix file associated with the GSE accesion. And for other
-GEO entity, a \linkS4class{GEOSoft} object is returned.
+a \link[Biobase:class.ExpressionSet]{ExpressionSet} Object or a list of
+\link[Biobase:class.ExpressionSet]{ExpressionSet} Objects is returned with every
+element correspongding to each Series Matrix file associated with the GSE
+accesion. And for other GEO entity, a \linkS4class{GEOSoft} object is returned.
 }
 \description{
 This function is the main user-level function in the \code{rgeo} package.  It

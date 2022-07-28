@@ -56,7 +56,7 @@
 #' @param dest_dir The destination directory for any downloads. Defaults to
 #' current working dir.
 #' @param gse_matrix A logical value indicates whether to retrieve Series Matrix
-#' files when fetching a `GSE` GEO identity. When set to `TRUE`, an
+#' files when handling a `GSE` GEO entity When set to `TRUE`, an
 #' [ExpressionSet][Biobase::ExpressionSet] Object will be returned
 #' @param pdata_from_soft A logical value indicates whether derive `phenoData`
 #' from GSE series soft file when parsing
@@ -64,22 +64,23 @@
 #' `FALSE`, `phenoData` will be parsed directly from GEO series matrix file,
 #' which is what `GEOquery` do, in this way, `characteristics_ch*` column
 #' sometimes cannot be parsed correctly.
-#' @param add_gpl A logical value indicates whether to add **platform**
-#' information (namely the [featureData][Biobase::featureData] slot in
-#' [ExpressionSet][Biobase::ExpressionSet] Object) when fetching a `GSE` GEO
-#' entity with `gse_matrix` option `TRUE`. Default is `NULL`, which means the
-#' internal will try to map the GPL accession ID into a Bioconductor annotation
-#' package firstly, if it succeed, the [annotation][Biobase::eSet] slot in the
-#' returned [ExpressionSet][Biobase::ExpressionSet] object will be set to the
-#' found Bioconductor annotation package and the `add_gpl` will be set to
-#' `FALSE`, otherwise, to `TRUE`.
+#' @param add_gpl A logical value indicates whether to add **platform** (namely
+#' the [featureData][Biobase::featureData] slot in the
+#' [ExpressionSet][Biobase::ExpressionSet] Object) information when fetching a
+#' `GSE` GEO entity with `gse_matrix` option `TRUE`. `add_gpl` is set to
+#' `NULL`by default, which means the internal will try to map the GPL accession
+#' ID into a Bioconductor annotation package firstly, if it succeed, the
+#' [annotation][Biobase::eSet] slot in the returned
+#' [ExpressionSet][Biobase::ExpressionSet] object will be set to the found
+#' Bioconductor annotation package and the `add_gpl` will be set to `FALSE`,
+#' otherwise, to `TRUE`.
 #' @return An object of the appropriate class (GDS, GPL, GSM, or GSE) is
 #' returned. For `GSE` entity, if `gse_matrix` parameter is `FALSE`, an
 #' [GEOSeries-class] object is returned and if `gse_matrix` parameter is `TRUE`,
-#' a ExpressionSet][Biobase::ExpressionSet] Object or a list of
-#' [ExpressionSet][Biobase::ExpressionSet] Objects is returned with one element
-#' for each Series Matrix file associated with the GSE accesion. And for other
-#' GEO entity, a [GEOSoft-class] object is returned.
+#' a [ExpressionSet][Biobase::ExpressionSet] Object or a list of
+#' [ExpressionSet][Biobase::ExpressionSet] Objects is returned with every
+#' element correspongding to each Series Matrix file associated with the GSE
+#' accesion. And for other GEO entity, a [GEOSoft-class] object is returned.
 #' @section Warning : Some of the files that are downloaded, particularly those
 #' associated with GSE entries from GEO are absolutely ENORMOUS and parsing
 #' them can take quite some time and memory. So, particularly when working
