@@ -69,10 +69,10 @@
 #' [ExpressionSet][Biobase::ExpressionSet] Object) when fetching a `GSE` GEO
 #' entity with `gse_matrix` option `TRUE`. Default is `NULL`, which means the
 #' internal will try to map the GPL accession ID into a Bioconductor annotation
-#' package, if it succeed, the `annotation` slot in the returned
-#' [ExpressionSet][Biobase::ExpressionSet] object will be set to the found
-#' Bioconductor annotation package and the `add_gpl` will be set to `FALSE`,
-#' otherwise, to `TRUE`.
+#' package firstly, if it succeed, the [annotation][Biobase::eSet] slot in the
+#' returned [ExpressionSet][Biobase::ExpressionSet] object will be set to the
+#' found Bioconductor annotation package and the `add_gpl` will be set to
+#' `FALSE`, otherwise, to `TRUE`.
 #' @return An object of the appropriate class (GDS, GPL, GSM, or GSE) is
 #' returned. For `GSE` entity, if `gse_matrix` parameter is `FALSE`, an
 #' [GEOSeries-class] object is returned and if `gse_matrix` parameter is `TRUE`,

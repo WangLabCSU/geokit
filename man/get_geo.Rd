@@ -35,10 +35,10 @@ information (namely the \link[Biobase:featureData]{featureData} slot in
 \link[Biobase:class.ExpressionSet]{ExpressionSet} Object) when fetching a \code{GSE} GEO
 entity with \code{gse_matrix} option \code{TRUE}. Default is \code{NULL}, which means the
 internal will try to map the GPL accession ID into a Bioconductor annotation
-package, if it succeed, the \code{annotation} slot in the returned
-\link[Biobase:class.ExpressionSet]{ExpressionSet} object will be set to the found
-Bioconductor annotation package and the \code{add_gpl} will be set to \code{FALSE},
-otherwise, to \code{TRUE}.}
+package firstly, if it succeed, the \link[Biobase:class.eSet]{annotation} slot in the
+returned \link[Biobase:class.ExpressionSet]{ExpressionSet} object will be set to the
+found Bioconductor annotation package and the \code{add_gpl} will be set to
+\code{FALSE}, otherwise, to \code{TRUE}.}
 }
 \value{
 An object of the appropriate class (GDS, GPL, GSM, or GSE) is
