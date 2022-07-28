@@ -17,6 +17,7 @@ Imports:
     rentrez,
     xml2
 Suggests: 
+    BiocGenerics,
     bit64,
     R.utils,
     stats,
