@@ -4,7 +4,7 @@ testthat::test_that("Create dir correctly", {
 })
 
 testthat::test_that("empty GSE is handled correctly", {
-    gse <- rgeo::get_geo("GSE11413", tempdir())
+    gse <- rgeo::get_geo("GSE11413", tempdir(), add_gpl = TRUE)
 
     testthat::expect_s4_class(gse, "ExpressionSet")
     testthat::expect_equal(nrow(Biobase::pData(gse)), 12L)
@@ -42,7 +42,9 @@ testthat::test_that("GSE has populated experimentData", {
     testthat::expect_equal(ei[[1L]], "Jason,A,Hackney")
     testthat::expect_equal(ei[[2L]], "") # lab
     testthat::expect_equal(ei[[3L]], "hackney.jason@gene.com")
-    testthat::expect_equal(ei[[4L]], "NRROS negatively regulates ROS in phagocytes during host defense and autoimmunity")
+    testthat::expect_equal(
+        ei[[4L]], "NRROS negatively regulates ROS in phagocytes during host defense and autoimmunity"
+    )
     testthat::expect_equal(ei[[5L]], "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE53986") # url
 })
 
@@ -72,8 +74,16 @@ testthat::test_that("GSE populates experimentData as much as possible", {
 })
 
 testthat::test_that("GSE/GPL with integer64 columns handled correctly", {
-    gse <- rgeo::get_geo("GSE7864", tempdir())
+    gse <- rgeo::get_geo("GSE7864", tempdir(), add_gpl = TRUE)
     fdata <- Biobase::fData(gse)
     testthat::expect_s3_class(fdata$ID, "integer64")
     testthat::expect_type(rownames(fdata), "character")
+})
+
+testthat::test_that("GSE/GPL with Bioconductor annotation package handled correctly", {
+    gse <- rgeo::get_geo("GSE410", tempdir(), add_gpl = NULL)
+    testthat::expect_equal(
+        BiocGenerics::annotation(gse),
+        "hgu133a"
+    )
 })
