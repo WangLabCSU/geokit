@@ -32,9 +32,9 @@ sometimes cannot be parsed correctly.}
 
 \item{add_gpl}{A logical value indicates whether to add \strong{platform} (namely
 the \link[Biobase:featureData]{featureData} slot in the
-\link[Biobase:class.ExpressionSet]{ExpressionSet} Object) information when fetching a
+\link[Biobase:class.ExpressionSet]{ExpressionSet} Object) information when handling a
 \code{GSE} GEO entity with \code{gse_matrix} option \code{TRUE}. \code{add_gpl} is set to
-\code{NULL}by default, which means the internal will try to map the GPL accession
+\code{NULL} by default, which means the internal will try to map the GPL accession
 ID into a Bioconductor annotation package firstly, if it succeed, the
 \link[Biobase:class.eSet]{annotation} slot in the returned
 \link[Biobase:class.ExpressionSet]{ExpressionSet} object will be set to the found

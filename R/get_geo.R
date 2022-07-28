@@ -66,9 +66,9 @@
 #' sometimes cannot be parsed correctly.
 #' @param add_gpl A logical value indicates whether to add **platform** (namely
 #' the [featureData][Biobase::featureData] slot in the
-#' [ExpressionSet][Biobase::ExpressionSet] Object) information when fetching a
+#' [ExpressionSet][Biobase::ExpressionSet] Object) information when handling a
 #' `GSE` GEO entity with `gse_matrix` option `TRUE`. `add_gpl` is set to
-#' `NULL`by default, which means the internal will try to map the GPL accession
+#' `NULL` by default, which means the internal will try to map the GPL accession
 #' ID into a Bioconductor annotation package firstly, if it succeed, the
 #' [annotation][Biobase::eSet] slot in the returned
 #' [ExpressionSet][Biobase::ExpressionSet] object will be set to the found
