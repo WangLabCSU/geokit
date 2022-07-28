@@ -198,7 +198,7 @@ parse_pdata <- function(gsm_list) {
     ))
     if (!test_gsm_list) {
         rlang::abort(
-            "gsm_list should be a list of GEOSoft, especially for @gsm slot in a GEOSeries object."
+            "gsm_list should be a list of GEOSoft object, especially for @gsm slot in a GEOSeries object."
         )
     }
     res <- parse_gse_soft_sample_characteristics(gsm_list)
