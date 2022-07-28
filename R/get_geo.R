@@ -73,7 +73,7 @@
 #' [annotation][Biobase::eSet] slot in the returned
 #' [ExpressionSet][Biobase::ExpressionSet] object will be set to the found
 #' Bioconductor annotation package and the `add_gpl` will be set to `FALSE`,
-#' otherwise, to `TRUE`.
+#' otherwise, `add_gpl` will be set to `TRUE`.
 #' @return An object of the appropriate class (GDS, GPL, GSM, or GSE) is
 #' returned. For `GSE` entity, if `gse_matrix` parameter is `FALSE`, an
 #' [GEOSeries-class] object is returned and if `gse_matrix` parameter is `TRUE`,

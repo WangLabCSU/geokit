@@ -39,7 +39,7 @@ ID into a Bioconductor annotation package firstly, if it succeed, the
 \link[Biobase:class.eSet]{annotation} slot in the returned
 \link[Biobase:class.ExpressionSet]{ExpressionSet} object will be set to the found
 Bioconductor annotation package and the \code{add_gpl} will be set to \code{FALSE},
-otherwise, to \code{TRUE}.}
+otherwise, \code{add_gpl} will be set to \code{TRUE}.}
 }
 \value{
 An object of the appropriate class (GDS, GPL, GSM, or GSE) is
