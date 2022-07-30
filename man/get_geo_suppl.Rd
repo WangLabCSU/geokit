@@ -15,7 +15,7 @@ current working dir.}
 }
 \value{
 A list (or a character atomic verctor if only one \code{id} is provided)
-of The full file paths of the resulting downloaded files.
+of the full file paths of the resulting downloaded files.
 }
 \description{
 NCBI GEO allows supplemental files to be attached to GEO Series (GSE), GEO

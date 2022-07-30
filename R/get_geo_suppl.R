@@ -9,7 +9,7 @@
 #' @note just a note that the files are simply downloaded.
 #' @inheritParams get_geo
 #' @return A list (or a character atomic verctor if only one `id` is provided)
-#' of The full file paths of the resulting downloaded files.
+#' of the full file paths of the resulting downloaded files.
 #' @keywords IO database
 #' @examples
 #'
