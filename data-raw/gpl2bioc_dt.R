@@ -2,14 +2,15 @@
 
 old_gpl2bioc <- readRDS("data-raw/gpl2bioc_dt.rds")
 new_gpl2bioc <- structure(
-    GPL2bioc$bioc_package,
-    names = GPL2bioc$gpl
+    "hta20transcriptcluster.db",
+    names = "GPL17586"
 )
 new_gpl2bioc <- new_gpl2bioc[
     setdiff(names(new_gpl2bioc), old_gpl2bioc$Platform_geo_accession)
 ]
 if (length(new_gpl2bioc)) {
     gpl_soft <- get_geo(names(new_gpl2bioc), dest_dir = tempdir())
+    if (is(gpl_soft, "GEOSoft")) gpl_soft <- list(gpl_soft)
     gpl2bioc_list <- lapply(gpl_soft, function(gpl) {
         res <- meta(gpl)[
             c(
