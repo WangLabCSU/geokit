@@ -107,7 +107,14 @@ download_with_acc <- function(id, dest_dir, scope = "self", amount = "full", for
 }
 
 list_file_helper <- function(url) {
-    xml_doc <- xml2::read_html(url)
+    url_connection <- curl::curl(
+        url,
+        handle = geo_handle()
+    )
+    open(url_connection, "rb")
+    on.exit(close(url_connection))
+
+    xml_doc <- xml2::read_html(url_connection)
     # file_names <- str_extract_all(
     #     xml2::xml_text(xml_doc),
     #     "G\\S++"
@@ -171,10 +178,9 @@ download_inform <- function(urls, file_paths, site, mode) {
                 # }
                 # curl::handle_setopt(h, timeout = 120L, connecttimeout = 60)
                 file_path <- curl::curl_download(
-                    url, file_path, mode = mode, quiet = FALSE,
-                    handle = curl::new_handle(
-                        timeout = 120L, connecttimeout = 60L
-                    )
+                    url, file_path,
+                    mode = mode, quiet = FALSE,
+                    handle = geo_handle()
                 )
                 cat("\n")
                 file_path
@@ -191,5 +197,11 @@ download_inform <- function(urls, file_paths, site, mode) {
             }
         }, urls, file_paths,
         SIMPLIFY = TRUE, USE.NAMES = FALSE
+    )
+}
+
+geo_handle <- function() {
+    curl::new_handle(
+        timeout = 120L, connecttimeout = 60L
     )
 }
