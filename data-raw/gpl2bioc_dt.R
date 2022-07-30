@@ -2,8 +2,8 @@
 
 old_gpl2bioc <- readRDS("data-raw/gpl2bioc_dt.rds")
 new_gpl2bioc <- structure(
-    "hta20transcriptcluster.db",
-    names = "GPL17586"
+    "illuminaHumanv3.db",
+    names = c("GPL6947")
 )
 new_gpl2bioc <- new_gpl2bioc[
     setdiff(names(new_gpl2bioc), old_gpl2bioc$Platform_geo_accession)
@@ -60,3 +60,7 @@ if (length(new_gpl2bioc)) {
         compress = "gzip", version = 3
     )
 }
+Sys.setenv(
+    http_proxy = "127.0.0.1:10809",
+    https_proxy = "127.0.0.1:10809"
+)
