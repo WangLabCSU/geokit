@@ -2,8 +2,8 @@
 
 old_gpl2bioc <- readRDS("data-raw/gpl2bioc_dt.rds")
 new_gpl2bioc <- structure(
-    "clariomdhumantranscriptcluster.db",
-    names = c("GPL23126")
+    "hgu95av2.db",
+    names = c("GPL8300")
 )
 new_gpl2bioc <- new_gpl2bioc[
     setdiff(names(new_gpl2bioc), old_gpl2bioc$Platform_geo_accession)
