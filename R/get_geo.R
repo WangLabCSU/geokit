@@ -89,6 +89,7 @@
 #' @references
 #' * <https://www.ncbi.nlm.nih.gov/geo/info/download.html>
 #' * <https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi>
+#' * <https://www.ncbi.nlm.nih.gov/geo/info/soft.html#format>
 #' * [Programmatic access to GEO FTP site](https://ftp.ncbi.nlm.nih.gov/geo/README.txt)
 #' @keywords IO database
 #' @rdname get_geo
