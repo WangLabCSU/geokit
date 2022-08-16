@@ -225,9 +225,6 @@ construct_gse_matrix_expressionset <- function(file_text, pdata_from_soft, gse_s
                     "You can overwrite this behaviour by setting `add_gpl` to `TRUE` manually."
                 )
             )
-            expressionset_elements$annotation <- gpl2bioc(
-                expressionset_elements$annotation
-            )
             add_gpl <- FALSE
         } else {
             rlang::inform(
@@ -243,7 +240,11 @@ construct_gse_matrix_expressionset <- function(file_text, pdata_from_soft, gse_s
         }
     }
 
-    if (add_gpl) {
+    if (!add_gpl) {
+        expressionset_elements$annotation <- gpl2bioc(
+            expressionset_elements$annotation
+        )
+    } else {
         gpl_file_path <- download_gpl_file(
             expressionset_elements$annotation,
             dest_dir,
