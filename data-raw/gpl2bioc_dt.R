@@ -13,12 +13,15 @@ if (length(new_gpl2bioc)) {
     if (is(gpl_soft, "GEOSoft")) gpl_soft <- list(gpl_soft)
     gpl2bioc_list <- lapply(gpl_soft, function(gpl) {
         res <- meta(gpl)[
-            c(
-                "Platform_geo_accession", "Platform_title",
-                "Platform_manufacturer", "Platform_description", "Platform_organism",
-                "Platform_data_row_count", "Platform_status",
-                "Platform_submission_date", "Platform_technology",
-                "Platform_web_link"
+            intersect(
+                c(
+                    "Platform_geo_accession", "Platform_title",
+                    "Platform_manufacturer", "Platform_description", "Platform_organism",
+                    "Platform_data_row_count", "Platform_status",
+                    "Platform_submission_date", "Platform_technology",
+                    "Platform_web_link"
+                ),
+                names(meta(gpl))
             )
         ]
         res <- c(res, bioc_pkg = new_gpl2bioc[[res$Platform_geo_accession]])
@@ -34,6 +37,7 @@ if (length(new_gpl2bioc)) {
         })
         data.table::setDT(res)
     })
+
     gpl2bioc_dt <- data.table::rbindlist(
         c(list(old_gpl2bioc), gpl2bioc_list),
         use.names = TRUE, fill = TRUE, idcol = FALSE
