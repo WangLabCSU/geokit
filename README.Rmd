@@ -67,7 +67,7 @@ Providing we want ***GSE*** GEO records related to ***human diabetes***, we can 
 diabetes_gse_records <- search_geo(
     "diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"
 )
-kbl(diabetes_gse_records) %>%
+kbl(head(diabetes_gse_records)) %>%
     kable_paper() %>%
     scroll_box(width = "100%", height = "500px")
 ```
@@ -94,7 +94,7 @@ diabetes_nephropathy_gse_records <- diabetes_gse_records %>%
         stringr::str_detect(Type, "(?i)expression profiling"),
         number_of_samples >= 6L
     )
-kbl(diabetes_nephropathy_gse_records) %>%
+kbl(head(diabetes_nephropathy_gse_records)) %>%
     kable_paper() %>%
     scroll_box(width = "100%", height = "500px")
 ```
@@ -177,7 +177,7 @@ gse160724 <- get_geo_suppl(
     pattern = "counts_anno"
 )
 gse160724_dt <- data.table::fread(gse160724)
-head(gse160724_dt)
+head(gse160724_dt[1:5])
 ```
 
 If the expression matrix is given in the GSM supplementary files, in this way, we start from derive all GSM accession ids and then download all GSM supplementary files and combine them into the expression matrix. Although no expression matrix in the series matrix file, it remain contain the samples informations. 
@@ -188,7 +188,7 @@ gse180383_smat <- get_geo(
     pdata_from_soft = FALSE
 )
 gse180383_smat_cli <- Biobase::pData(gse180383_smat)
-head(gse180383_smat_cli)
+head(gse180383_smat_cli[1:5])
 gse180383_smat_gsmids <- gse180383_smat_cli[["geo_accession"]]
 gse180383_smat_gsm_suppl <- get_geo_suppl(gse180383_smat_gsmids, tempdir())
 ```
@@ -200,7 +200,7 @@ gse180383_soft <- get_geo(
     gse_matrix = FALSE
 )
 gse180383_soft_cli <- parse_pdata(gsm(gse180383_soft))
-head(gse180383_soft_cli)
+head(gse180383_soft_cli[1:5])
 gse180383_soft_gsmids <- names(gsm(gse180383_soft))
 gse180383_soft_gsm_suppl <- get_geo_suppl(gse180383_soft_gsmids, tempdir())
 ```
