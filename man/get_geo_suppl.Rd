@@ -13,7 +13,7 @@ and parsing. ('GDS505','GSE2','GSM2','GPL96' eg.).}
 \item{dest_dir}{The destination directory for any downloads. Defaults to
 current working dir.}
 
-\item{pattern}{character string containing a \link[base:regex]{regular expression} to be matched in the given character vector.}
+\item{pattern}{character string containing a \link[base:regex]{regular expression} to be matched in the supplementary file names.}
 }
 \value{
 A list (or a character atomic verctor if only one \code{id} is provided)

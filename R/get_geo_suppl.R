@@ -8,7 +8,7 @@
 #'
 #' @inheritParams get_geo
 #' @param pattern character string containing a [regular
-#' expression][base::regex] to be matched in the given character vector. 
+#' expression][base::regex] to be matched in the supplementary file names.
 #' @return A list (or a character atomic verctor if only one `id` is provided)
 #' of the full file paths of the resulting downloaded files.
 #' @keywords IO database
