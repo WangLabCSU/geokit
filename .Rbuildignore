@@ -11,3 +11,6 @@
 ^Scratch\.RConsole$
 ^\.Rhistory$
 ^data-raw$
+^README_cache$
+^README\.html$
+^README\.md$
