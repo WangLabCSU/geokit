@@ -1,15 +1,20 @@
 ---
-output: github_document
+output: 
+    github_document:
+        html_preview: true
+        keep_html: true
+always_allow_html: true
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  fig.path = "man/figures/README-",
-  out.width = "100%"
+    collapse = TRUE,
+    comment = "#>",
+    fig.path = "man/figures/README-",
+    out.width = "100%",
+    dev = "ragg_png"
 )
 ```
 
@@ -19,38 +24,192 @@ knitr::opts_chunk$set(
 [![R-CMD-check](https://github.com/Yunuuuu/rgeo/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Yunuuuu/rgeo/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-The goal of `rgeo` is to reduce the dependencies of [`GEOquery`](https://github.com/seandavi/GEOquery) and provide a unified R interface for most operation including both searching and downloading in [GEO database](https://www.ncbi.nlm.nih.gov/geo/).
+The goal of `rgeo` is to provide a unified interface for most interactions between R and [GEO database](https://www.ncbi.nlm.nih.gov/geo/).
+
+## Features
+
+- Low dependency, utilizing [`data.table`](https://github.com/Rdatatable/data.table) to implement all reading and preprocessing process. Reducing the dependencies is the initial purpose of this package since I have experienced several times of code running failure after updating packages when using [`GEOquery`](https://github.com/seandavi/GEOquery).
+- Consistent design, use [`curl`](https://github.com/jeroen/curl) to download all files, and use [`data.table`](https://github.com/Rdatatable/data.table) to read and preprocess all data.
+- Provide a searching interface of [GEO database](https://www.ncbi.nlm.nih.gov/geo/), in this way, we can filter the searching results using `R function`.
+- Provide a downloading interface of [GEO database](https://www.ncbi.nlm.nih.gov/geo/), in this way, we can make full use of R to analyze GEO datasets.
+- Provide mapping bettween GPL id and Bioconductor annotation package.
+- Provide some useful utils function to work with GEO datasets like `parse_pdata`, `set_pdata`, `log_trans` and `show_geo`.
 
 ## Installation
 
 You can install the development version of rgeo from [GitHub](https://github.com/) with:
 
-``` r
+```{r, eval=FALSE}
+if (!require(pak)) {
+    install.packages("pak",
+        repos = sprintf(
+            "https://r-lib.github.io/p/pak/devel/%s/%s/%s",
+            .Platform$pkgType, R.Version()$os, R.Version()$arch
+        )
+    )
+}
 pak::pkg_install("Yunuuuu/rgeo")
 ```
-
-## Features
-
-- Low dependency, using [`data.table`](https://github.com/Rdatatable/data.table) to implement all reading and preprocessing process. Reducing dependencies is the main purpose of this package since I have experienced several times of code failure after updating packages when using [`GEOquery`](https://github.com/seandavi/GEOquery).
-- Provide a searching interface of [GEO database](https://www.ncbi.nlm.nih.gov/geo/), in this way, we can filter the searching results using `R function`.
-- Provide some useful utils function to deal with GEO datasets like `parse_pdata`, `set_pdata`, `log_trans` and `show_geo`.
 
 ## Vignettes
 
 ```{r set_up}
 library(rgeo)
+library(magrittr)
+library(kableExtra)
 ```
 
 ### Search GEO database - `search_geo`
-The NCBI uses a search term syntax which can be associated with a specific search field with square brackets. So, for instance "Homo sapiens[ORGN]" denotes a search for `Homo sapiens` in the “Organism” field. Details see <https://www.ncbi.nlm.nih.gov/geo/info/qqtutorial.html>. We can use the same term to query our desirable results in `search_geo`. `search_geo` will parse the searching results and return a data.frame containing all the records based on the search term. The internal of `search_geo` is based on [`rentrez`](https://github.com/ropensci/rentrez) package, which provides functions that work with the [NCBI Eutils](http://www.ncbi.nlm.nih.gov/books/NBK25500/)
-API, so we can utilize `NCBI API key` to increase the downloading speed, details see <https://docs.ropensci.org/rentrez/articles/rentrez_tutorial.html#rate-limiting-and-api-keys>.
+The NCBI uses a search term syntax which can be associated with a specific search field with square brackets. So, for instance `"Homo sapiens[ORGN]"` denotes a search for `Homo sapiens` in the `“Organism”` field. Details see <https://www.ncbi.nlm.nih.gov/geo/info/qqtutorial.html>. We can use the same term to query our desirable results in `search_geo`. `search_geo` will parse the searching results and return a `data.frame` object containing all the records based on the search term. The internal of `search_geo` is based on [`rentrez`](https://github.com/ropensci/rentrez) package, which provides functions working with the [NCBI Eutils](http://www.ncbi.nlm.nih.gov/books/NBK25500/) API, so we can utilize `NCBI API key` to increase the downloading speed, details see <https://docs.ropensci.org/rentrez/articles/rentrez_tutorial.html#rate-limiting-and-api-keys>.
 
-Providing we want ***GSE*** GEO records related to ***human diabetes***, we can get these records by this:
-```{r search_geo}
+Providing we want ***GSE*** GEO records related to ***human diabetes***, we can get these records by following code, the returned object is a `data.frame`:
+```{r diabetes_gse_records, cache = TRUE}
 diabetes_gse_records <- search_geo(
     "diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"
 )
-head(diabetes_gse_records)
+kbl(diabetes_gse_records) %>%
+    kable_paper() %>%
+    scroll_box(width = "100%", height = "500px")
 ```
 
-### download data from GEO database - `get_geo`
+Then, we can use whatever we're famaliar to filter the searching results. Providing we want GSE datasets with at least 6 diabetic nephropathy samples containing expression profiling. Here is the example code:
+
+```{r filtered_diabetes_gse_records}
+diabetes_nephropathy_gse_records <- diabetes_gse_records %>%
+    dplyr::mutate(
+        number_of_samples = stringr::str_match(
+            Contains, "(\\d+) Samples?"
+        )[, 2L, drop = TRUE],
+        number_of_samples = as.integer(number_of_samples)
+    ) %>%
+    dplyr::filter(
+        dplyr::if_any(
+            c(Title, Summary),
+            ~ stringr::str_detect(.x, "(?i)diabetes|diabetic")
+        ),
+        dplyr::if_any(
+            c(Title, Summary),
+            ~ stringr::str_detect(.x, "(?i)nephropathy")
+        ),
+        stringr::str_detect(Type, "(?i)expression profiling"),
+        number_of_samples >= 6L
+    )
+kbl(diabetes_nephropathy_gse_records) %>%
+    kable_paper() %>%
+    scroll_box(width = "100%", height = "500px")
+```
+
+After filtering, we got `r nrow(diabetes_nephropathy_gse_records)` candidate datasets. This can reduce a lot of time of us comparing with refining datasets by reading the summary records. 
+
+### Download data from GEO database - `get_geo` 
+GEO database mainly provides SOFT (Simple Omnibus Format in Text) formatted files for GPL, GSM and GDS entity. SOFT is designed for rapid batch submission and download of data. SOFT is a simple line-based, plain text format, meaning that SOFT files may be readily generated from common spreadsheet and database applications. A single SOFT file can hold both data tables and accompanying descriptive information for multiple, concatenated Platforms, Samples, and/or Series records. 
+`rgeo` provide a `GEOSoft` class object to store SOFT file contents, `GEOSoft` object contains four slots ("accession", "meta", "datatable", and "columns"). `accession` slot stores the GEO accession ID, `meta` slot contains the metadata header in the SOFT formatted file, and `datatable` slot contains the the data table in SOFT file which is the main data for us to use, along with a `columns` slot providing descriptive column header for the `datatable` data. We can use the function with the same name of these slots to extract the data.
+
+`get_geo` can download SOFT files and preprocess them well, here is some example code to get soft file from `GPL`, `GSM` and `GDS` entity respectively.
+```{r gpl, cache = TRUE}
+gpl <- get_geo("gpl98", tempdir())
+gpl
+kbl(head(datatable(gpl)), caption = "datatable of GPL98") %>%
+    kable_paper()
+kbl(head(columns(gpl)), caption = "columns of GPL98") %>%
+    kable_paper()
+```
+
+```{r gsm, cache = TRUE}
+gsm <- get_geo("GSM1", tempdir())
+gsm
+kbl(head(datatable(gsm)), caption = "datatable of GSM1") %>%
+    kable_paper()
+kbl(head(columns(gsm)), caption = "columns of GSM1") %>%
+    kable_paper()
+```
+
+```{r gds, cache = TRUE}
+gds <- get_geo("GDS10", tempdir())
+gds
+kbl(head(datatable(gds)), caption = "datatable of GDS10") %>%
+    kable_paper()
+kbl(head(columns(gds)), caption = "columns of GDS10") %>%
+    kable_paper()
+```
+
+For GSE entity, there is also a soft file associated with it. But the structure is different with `GPL`, `GSM` and `GDS` entity, `rgeo` provide `GEOSeries` class to keep contents in GSE soft file. Actually, a GSE soft file contains almost all contents in its subsets soft file including both `GPL` and `GSM`, so `GEOSeries` class provides both `gpl` and `gsm` slots as a list of `GEOSoft`. To download GSE soft file, we just set `gse_matrix` to `FALSE` in `get_geo` function.
+
+```{r gse, cache = TRUE}
+gse <- get_geo("GSE10", tempdir(), gse_matrix = FALSE)
+gse
+```
+
+It's more common to use a series matrix file in our usual analysis workflow, we can also handle it easily in `rgeo`, as what we need to do is just set `gse_matrix` to `TRUE` in `get_geo` function, which is also the default value. When `gse_matrix` is `TRUE`, `get_geo` will return a `ExpressionSet` object which can interact with lots of Bioconductor packages. There are two parameters controling the processing details when parsing series matrix file. When parsing phenoData from series matrix files directly, it's common to fail to discern `characteristics_ch*` columns, which contain the important traits informations of corresponding samples, since many `characteristics_ch*` columns in series matrix files often lacks separate strings. `pdata_from_soft`, which indicates whether retrieve phenoData from GEO Soft file, can help handle this problem well. When the soft file is large and we don't want to use it, we can set `pdata_from_soft` to `FALSE` and use `set_pdata` function to parse it manully. Another important parameter is `add_gpl`, where `FALSE` indicates `get_geo` will try to map the current GPL accession id into a Bioconductor annotation package, then we can use the latest bioconductor annotation package to get the up-to-date featureData, otherwise, `get_geo` will add featureData from GPL soft file directly. 
+
+```{r gse_matrix, cache = TRUE}
+gse_matix <- get_geo("GSE10", tempdir())
+gse_matix
+```
+
+```{r gse_matrix_with_pdata, cache = TRUE}
+gse_matrix_with_pdata <- get_geo(
+    "gse53987", tempdir(),
+    pdata_from_soft = FALSE,
+    add_gpl = FALSE
+)
+gse_matrix_smp_info <- Biobase::pData(gse_matrix_with_pdata)
+data.table::setDT(gse_matrix_smp_info)
+gse_matrix_smp_info[, characteristics_ch1 := stringr::str_replace_all(
+    characteristics_ch1,
+    "gender|race|pmi|ph|rin|tissue|disease state",
+    function(x) paste0("; ", x)
+)]
+set_pdata(gse_matrix_smp_info)
+gse_matrix_smp_info[
+    , .SD,
+    .SDcols = patterns("^ch1_|characteristics_ch1")
+]
+```
+
+### Download supplementary data from GEO database - `get_geo_suppl` 
+GEO stores raw data and processed sequence data files as the external supplementary data files. Sometimes, we may want to preprocess and normalize the rawdata by ourselves, in addition, it's not uncommon that a GSE entity series matrix won't contain the expression matrix, which is almost the case of high-throughout sequencing data. `get_geo_suppl` is designed for these conditions. Usually, the expression matrix will be provided in the GSE supplementary files or in the GSM supplementary files.
+
+If the expression matrix is given in the GSE supplementary files, we can download it directly use `get_geo_suppl`, which will return a character vector containing the path of downloaded files. 
+```{r gse160724, cache = TRUE}
+gse160724 <- get_geo_suppl(
+    ids = "GSE160724", tempdir(), 
+    pattern = "counts_anno"
+)
+gse160724_dt <- data.table::fread(gse160724)
+head(gse160724_dt)
+```
+
+If the expression matrix is given in the GSM supplementary files, in this way, we start from derive all GSM accession ids and then download all GSM supplementary files and combine them into the expression matrix. Although no expression matrix in the series matrix file, it remain contain the samples informations. 
+```{r, cache = TRUE}
+gse180383_smat <- get_geo(
+    "GSE180383", tempdir(),
+    gse_matrix = TRUE, add_gpl = FALSE,
+    pdata_from_soft = FALSE
+)
+gse180383_smat_cli <- Biobase::pData(gse180383_smat)
+head(gse180383_smat_cli)
+gse180383_smat_gsmids <- gse180383_smat_cli[["geo_accession"]]
+gse180383_smat_gsm_suppl <- get_geo_suppl(gse180383_smat_gsmids, tempdir())
+```
+
+Another way, we can also derive sample accession ids from GSE soft files, which is what our laboratory prefers to since we can easily get exact sample traits information as described in the above by utilizing `parse_pdata` function.
+```{r, cache = TRUE}
+gse180383_soft <- get_geo(
+    "GSE180383", tempdir(),
+    gse_matrix = FALSE
+)
+gse180383_soft_cli <- parse_pdata(gsm(gse180383_soft))
+head(gse180383_soft_cli)
+gse180383_soft_gsmids <- names(gsm(gse180383_soft))
+gse180383_soft_gsm_suppl <- get_geo_suppl(gse180383_soft_gsmids, tempdir())
+```
+### Other utils
+`rgeo` also provide some useful function to help better interact with GEO.
+- `show_geo` function: Require a geo entity id and open GEO Accession site in the default browser.
+- `log_trans` function: Require a expression matrix and this function will check whether this expression matrix has experienced logarithmic transformation, if it hasn't, `log_trans` will do it. This is a helper function used in `GEO2R`. 
+
+### sessionInfo
+```{r}
+sessionInfo()
+```
