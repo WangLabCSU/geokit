@@ -13,7 +13,7 @@
 #' @param sep the string separating paired key-value, usually `":"`.
 #' @param split Passed to [strsplit][base::strsplit] function. Default is ";"`.
 #'
-#' @details A characteristics annotation column is usually contains multiple
+#' @details A characteristics annotation column usually contains multiple
 #' key-value items, so we should first split these columns by `split` and then
 #' extract `key-value` pairs. A new column will be added whose name is the first
 #' group in the "(ch\\d*)(\\.\\d*)?$" regex pattern of the orginal column name

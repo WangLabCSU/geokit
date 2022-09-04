@@ -28,7 +28,7 @@ just like \verb{set*} function in \code{data.table}, it will modify \code{data} 
 we don't have to assign value. \code{data} should be a data.table.
 }
 \details{
-A characteristics annotation column is usually contains multiple
+A characteristics annotation column usually contains multiple
 key-value items, so we should first split these columns by \code{split} and then
 extract \code{key-value} pairs. A new column will be added whose name is the first
 group in the "(ch\\d*)(\\.\\d*)?$" regex pattern of the orginal column name
