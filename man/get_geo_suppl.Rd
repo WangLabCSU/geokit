@@ -4,7 +4,7 @@
 \alias{get_geo_suppl}
 \title{Get Supplemental Files from GEO}
 \usage{
-get_geo_suppl(ids, dest_dir = getwd())
+get_geo_suppl(ids, dest_dir = getwd(), pattern = NULL)
 }
 \arguments{
 \item{ids}{A character vector representing the GEO entity for downloading
@@ -12,6 +12,8 @@ and parsing. ('GDS505','GSE2','GSM2','GPL96' eg.).}
 
 \item{dest_dir}{The destination directory for any downloads. Defaults to
 current working dir.}
+
+\item{pattern}{character string containing a \link[base:regex]{regular expression} to be matched in the given character vector.}
 }
 \value{
 A list (or a character atomic verctor if only one \code{id} is provided)
@@ -23,9 +25,6 @@ platforms (GPL), and GEO samples (GSM).  This function 'knows' how to get
 these files based on the GEO accession.  No parsing of the downloaded files
 is attempted, since the file format is not generally knowable by the
 computer.
-}
-\note{
-just a note that the files are simply downloaded.
 }
 \examples{
 

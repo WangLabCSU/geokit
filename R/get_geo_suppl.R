@@ -6,8 +6,9 @@
 #' is attempted, since the file format is not generally knowable by the
 #' computer.
 #'
-#' @note just a note that the files are simply downloaded.
 #' @inheritParams get_geo
+#' @param pattern character string containing a [regular
+#' expression][base::regex] to be matched in the given character vector. 
 #' @return A list (or a character atomic verctor if only one `id` is provided)
 #' of the full file paths of the resulting downloaded files.
 #' @keywords IO database
@@ -17,21 +18,22 @@
 #' a
 #'
 #' @export
-get_geo_suppl <- function(ids, dest_dir = getwd()) {
+get_geo_suppl <- function(ids, dest_dir = getwd(), pattern = NULL) {
     ids <- toupper(ids)
     check_ids(ids)
     if (!dir.exists(dest_dir)) {
         dir.create(dest_dir, recursive = TRUE)
     }
-    get_geo_suppl_helper(ids = ids, dest_dir = dest_dir)
+    get_geo_suppl_helper(ids = ids, dest_dir = dest_dir, pattern = pattern)
 }
 
-get_geo_suppl_helper <- function(ids, dest_dir = getwd()) {
+get_geo_suppl_helper <- function(ids, dest_dir = getwd(), pattern) {
     file_paths <- lapply(ids, function(id) {
         rlang::try_fetch(
             download_geo_suppl_or_gse_matrix_files(
                 id,
-                dest_dir = dest_dir, file_type = "suppl"
+                dest_dir = dest_dir, file_type = "suppl",
+                pattern = pattern
             ),
             error = function(err) {
                 rlang::abort(

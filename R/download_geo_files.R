@@ -1,7 +1,11 @@
 #' Return a character vector of file paths
 #' @noRd
-download_geo_suppl_or_gse_matrix_files <- function(id, dest_dir, file_type) {
+download_geo_suppl_or_gse_matrix_files <- function(id, dest_dir, file_type, pattern = NULL) {
     urls <- list_geo_file_url(id = id, file_type)
+    if (!is.null(pattern)) {
+        urls <- urls[grepl(pattern = pattern, x = basename(urls), perl = TRUE)]
+        if (!length(urls)) return(NULL)
+    }
     file_paths <- file.path(dest_dir, basename(urls))
     download_inform(urls, file_paths, site = "ftp", mode = "wb")
 }
