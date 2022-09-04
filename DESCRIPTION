@@ -1,6 +1,6 @@
 Package: rgeo
 Title: R interface for GEO database
-Version: 0.0.0.9000
+Version: 0.0.1.9000
 Authors@R: 
     person("Yun", "Peng", , "yunyunpp96@outlook.com", role = c("aut", "cre"))
 Description: R interface for Gene Expression Omnibus (GEO) database.
