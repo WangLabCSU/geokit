@@ -20,7 +20,7 @@ and parsing. ('GDS505','GSE2','GSM2','GPL96' eg.).}
 current working dir.}
 
 \item{gse_matrix}{A logical value indicates whether to retrieve Series Matrix
-files when handling a \code{GSE} GEO entity When set to \code{TRUE}, an
+files when handling a \code{GSE} GEO entity. When set to \code{TRUE}, an
 \link[Biobase:class.ExpressionSet]{ExpressionSet} Object will be returned}
 
 \item{pdata_from_soft}{A logical value indicates whether derive \code{phenoData}
@@ -51,14 +51,13 @@ element correspongding to each Series Matrix file associated with the GSE
 accesion. And for other GEO entity, a \linkS4class{GEOSoft} object is returned.
 }
 \description{
-This function is the main user-level function in the \code{rgeo} package.  It
-directs the downloading and parsing of GEO files into an R data
-structure.
+This function is the main user-level function in the \code{rgeo} package. It
+implements the downloading and parsing of GEO files into an R data structure.
 }
 \details{
 Use \code{get_geo} functions to download and parse information available from
 \href{http://www.ncbi.nlm.nih.gov/geo}{NCBI GEO}. Here are some details about what
-is avaible from GEO.  All entity types are handled by \code{get_geo} and
+is avaible from GEO. All entity types are handled by \code{get_geo} and
 essentially any information in the GEO SOFT format is reflected in the
 resulting data structure.
 
@@ -103,14 +102,6 @@ considerations such as background processing and normalization are
 consistent across the dataset. Information reflecting experimental design is
 provided through GDS subsets.
 }
-\section{Warning }{
- Some of the files that are downloaded, particularly those
-associated with GSE entries from GEO are absolutely ENORMOUS and parsing
-them can take quite some time and memory. So, particularly when working
-with large GSE entries, expect that you may need a good chunk of memory and
-that coffee may be involved when parsing....
-}
-
 \examples{
 gse_matix <- get_geo("GSE10", tempdir())
 gse <- get_geo("GSE10", tempdir(), gse_matrix = FALSE)
