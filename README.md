@@ -14,23 +14,21 @@ database](https://www.ncbi.nlm.nih.gov/geo/).
 
 ## Features
 
-- Low dependency, utilizing
-  [`data.table`](https://github.com/Rdatatable/data.table) to implement
-  all reading and preprocessing process. Reducing the dependencies is
-  the initial purpose of this package since I have experienced several
-  times of code running failure after updating packages when using
+- Low dependency and Consistent design, use
+  [`curl`](https://github.com/jeroen/curl) to download all files, and
+  utilize [`data.table`](https://github.com/Rdatatable/data.table) to
+  implement all reading and preprocessing process. Reducing the
+  dependencies is the initial purpose of this package since I have
+  experienced several times of code running failure after updating
+  packages when using
   [`GEOquery`](https://github.com/seandavi/GEOquery).
-- Consistent design, use [`curl`](https://github.com/jeroen/curl) to
-  download all files, and use
-  [`data.table`](https://github.com/Rdatatable/data.table) to read and
-  preprocess all data.
 - Provide a searching interface of [GEO
   database](https://www.ncbi.nlm.nih.gov/geo/), in this way, we can
   filter the searching results using `R function`.
 - Provide a downloading interface of [GEO
   database](https://www.ncbi.nlm.nih.gov/geo/), in this way, we can make
   full use of R to analyze GEO datasets.
-- Provide mapping bettween GPL id and Bioconductor annotation package.
+- Enable mapping bettween GPL id and Bioconductor annotation package.
 - Provide some useful utils function to work with GEO datasets like
   `parse_pdata`, `set_pdata`, `log_trans` and `show_geo`.
 
@@ -56,15 +54,14 @@ pak::pkg_install("Yunuuuu/rgeo")
 ``` r
 library(rgeo)
 library(magrittr)
-library(kableExtra)
 ```
 
 ### Search GEO database - `search_geo`
 
 The NCBI uses a search term syntax which can be associated with a
-specific search field with square brackets. So, for instance
-`"Homo sapiens[ORGN]"` denotes a search for `Homo sapiens` in the
-`“Organism”` field. Details see
+specific search field enclosed by a pair of square brackets. So, for
+instance `"Homo sapiens[ORGN]"` denotes a search for `Homo sapiens` in
+the `“Organism”` field. Details see
 <https://www.ncbi.nlm.nih.gov/geo/info/qqtutorial.html>. We can use the
 same term to query our desirable results in `search_geo`. `search_geo`
 will parse the searching results and return a `data.frame` object
@@ -84,338 +81,36 @@ we can get these records by following code, the returned object is a
 diabetes_gse_records <- search_geo(
     "diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"
 )
-kbl(head(diabetes_gse_records)) %>%
-    kable_paper() %>%
-    scroll_box(width = "100%", height = "500px")
+head(diabetes_gse_records[1:5])
+#>                                                                                                                                                                                                          Title
+#> 1                                                                                      Neutrophil extracellular traps induce glomerular endothelial cell dysfunction and pyroptosis in diabetic kidney disease
+#> 2 The expression of mRNA and lncRNA in peripheral blood mononuclear cells (PBMCs) of diabetes mellitus, diabetic retinopathy (DR), diabetic peripheral neuropathy (DPN) and diabetic nephropathy (DN) patients
+#> 3                                                                                                                                           Mitochondrial DNA atlas reveals physiopathology of type 2 diabetes
+#> 4                                                                                                           DNA methylation profiling in cord blood neonatal monocytes from women with pre-gestational obesity
+#> 5                                                                            Transcriptomic signatures responding to PKM2 activator TEPP-46 in the hyperglycemic human renal proximal epithelial tubular cells
+#> 6                                                                                                                                               Global microRNA and protein expression in human term placenta.
+#>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    Summary
+#> 1                                                                                                                                                                          Diabetic kidney disease (DKD) is the leading cause of end-stage renal disease. Neutrophil extracellular traps (NETs) are a network structure composed of loose chromatin and embedded with multiple proteins. Here, we observed increased NETs deposition in the glomeruli of DKD patients and diabetic mice (streptozotocin-induced or db/db mice). After degrading NETs with DNase I, diabetic mice exhibited attenuated glomerulopathy and glomerular endothelial cell (GEC) injury. more...
+#> 2                                     DR, DPN and DN are common complications in diabetes, and the differentially expressed mRNAs and lncRNAs in these diabetic complications may help to identify the molecular markers for the onset and progression of diseases. In our study, high-throughput sequencing technique was used to analyze the expression profile of mRNA and lncRNA in the peripheral blood of health control, T2DM, DR, DPN and DN patients, in order to determine the differentially expressed  transcriptomic profiles changes in diabetic complications and identify the shared and specific biological signaling pathways related to DR, DPN and DN.
+#> 3                                                                                                             Type 2 diabetes (T2D), one of the most common metabolic diseases, is the result of insulin resistance or impaired insulin secretion by mitochondrial dysfunctions. Mitochondrial DNA (mtDNA) polymorphisms play an important role in physiological and pathological characteristics of T2D, however, their mechanism is poorly understood. To directly identify candidate mtDNA variants associated with T2D at the genome-wide level, we constructed forty libraries from ten patients with T2D and thirty control individuals for deep sequencing. more...
+#> 4                                                                                                                                  Obesity represents a global burden with an increasing worldwide prevalence, especially in women of reproductive age. Obesity in women, defined as a body mass index (BMI) > 30 kg/m2, has a worldwide prevalence ~21%, however, it exceeds 30% in countries such as Chile, Mexico, United States, and the United Kingdom. Growing evidence support the notion that pre-gestational obesity confers an increased risk for the development of diabetes, obesity and chronic inflammatory diseases in the offspring later in life. more...
+#> 5 Pyruvate kinase M2 (PKM2), as the terminal and last rate-limiting enzyme of the glycolytic pathway, is an ideal enzyme for regulating metabolic phenotype. PKM2 tetramer activation has shown a protective role against diabetic kidney disease (DKD). However, the molecular mechanisms involved in diabetic tubular has not been investigated so far. In this study, we performed transcriptome gene expression profiling in human renal proximal tubular epithelial cell line (HK-2 cells) treated with high D-glucose (HG) for 7 days before the addition of 10-μM TEPP-46, an activator of PKM2 tetramerization, for a further 1 day in the presence of HG. more...
+#> 6                                                                                                                                                                                          Description of the global expression of microRNAs (miRNAs) and proteins in healthy human term placentas may increase our knowledge of molecular biological pathways that are important for normal fetal growth and development in term pregnancy. The aim of this study was to explore the global expression of miRNAs and proteins, and to point out functions of importance in healthy term placentas. Placental samples (n = 19) were identified in a local biobank. more...
+#>       Organism                                                     Type
+#> 1 Homo sapiens       Expression profiling by high throughput sequencing
+#> 2 Homo sapiens       Expression profiling by high throughput sequencing
+#> 3 Homo sapiens Genome variation profiling by high throughput sequencing
+#> 4 Homo sapiens             Methylation profiling by genome tiling array
+#> 5 Homo sapiens       Expression profiling by high throughput sequencing
+#> 6 Homo sapiens   Non-coding RNA profiling by high throughput sequencing
+#>                                                                FTP download
+#> 1      GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE189nnn/GSE189875/
+#> 2 GEO (GTF, TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE185nnn/GSE185011/
+#> 3      GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE136nnn/GSE136892/
+#> 4      GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE212nnn/GSE212174/
+#> 5      GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE205nnn/GSE205674/
+#> 6      GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE211nnn/GSE211791/
 ```
-
-<div
-style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:500px; overflow-x: scroll; width:100%; ">
-
-<table class=" lightable-paper" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto;">
-<thead>
-<tr>
-<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
-Title
-</th>
-<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
-Summary
-</th>
-<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
-Organism
-</th>
-<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
-Type
-</th>
-<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
-FTP download
-</th>
-<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
-ID
-</th>
-<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
-SRA Run Selector
-</th>
-<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
-Project
-</th>
-<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
-Contains
-</th>
-<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
-Datasets
-</th>
-<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
-Platforms
-</th>
-<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
-Series Accession
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-Neutrophil extracellular traps induce glomerular endothelial cell
-dysfunction and pyroptosis in diabetic kidney disease
-</td>
-<td style="text-align:left;">
-Diabetic kidney disease (DKD) is the leading cause of end-stage renal
-disease. Neutrophil extracellular traps (NETs) are a network structure
-composed of loose chromatin and embedded with multiple proteins. Here,
-we observed increased NETs deposition in the glomeruli of DKD patients
-and diabetic mice (streptozotocin-induced or db/db mice). After
-degrading NETs with DNase I, diabetic mice exhibited attenuated
-glomerulopathy and glomerular endothelial cell (GEC) injury. more…
-</td>
-<td style="text-align:left;">
-Homo sapiens
-</td>
-<td style="text-align:left;">
-Expression profiling by high throughput sequencing
-</td>
-<td style="text-align:left;">
-GEO (TXT) <ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE189nnn/GSE189875/>
-</td>
-<td style="text-align:right;">
-200189875
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-10 Samples
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-GPL20795
-</td>
-<td style="text-align:left;">
-GSE189875
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-The expression of mRNA and lncRNA in peripheral blood mononuclear cells
-(PBMCs) of diabetes mellitus, diabetic retinopathy (DR), diabetic
-peripheral neuropathy (DPN) and diabetic nephropathy (DN) patients
-</td>
-<td style="text-align:left;">
-DR, DPN and DN are common complications in diabetes, and the
-differentially expressed mRNAs and lncRNAs in these diabetic
-complications may help to identify the molecular markers for the onset
-and progression of diseases. In our study, high-throughput sequencing
-technique was used to analyze the expression profile of mRNA and lncRNA
-in the peripheral blood of health control, T2DM, DR, DPN and DN
-patients, in order to determine the differentially expressed
-transcriptomic profiles changes in diabetic complications and identify
-the shared and specific biological signaling pathways related to DR, DPN
-and DN.
-</td>
-<td style="text-align:left;">
-Homo sapiens
-</td>
-<td style="text-align:left;">
-Expression profiling by high throughput sequencing
-</td>
-<td style="text-align:left;">
-GEO (GTF, TXT)
-<ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE185nnn/GSE185011/>
-</td>
-<td style="text-align:right;">
-200185011
-</td>
-<td style="text-align:left;">
-<https://www.ncbi.nlm.nih.gov/Traces/study/?acc=PRJNA767371>
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-25 Samples
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-GPL24676
-</td>
-<td style="text-align:left;">
-GSE185011
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Mitochondrial DNA atlas reveals physiopathology of type 2 diabetes
-</td>
-<td style="text-align:left;">
-Type 2 diabetes (T2D), one of the most common metabolic diseases, is the
-result of insulin resistance or impaired insulin secretion by
-mitochondrial dysfunctions. Mitochondrial DNA (mtDNA) polymorphisms play
-an important role in physiological and pathological characteristics of
-T2D, however, their mechanism is poorly understood. To directly identify
-candidate mtDNA variants associated with T2D at the genome-wide level,
-we constructed forty libraries from ten patients with T2D and thirty
-control individuals for deep sequencing. more…
-</td>
-<td style="text-align:left;">
-Homo sapiens
-</td>
-<td style="text-align:left;">
-Genome variation profiling by high throughput sequencing
-</td>
-<td style="text-align:left;">
-GEO (TXT) <ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE136nnn/GSE136892/>
-</td>
-<td style="text-align:right;">
-200136892
-</td>
-<td style="text-align:left;">
-<https://www.ncbi.nlm.nih.gov/Traces/study/?acc=PRJNA563929>
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-40 Samples
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-GPL24676
-</td>
-<td style="text-align:left;">
-GSE136892
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-DNA methylation profiling in cord blood neonatal monocytes from women
-with pre-gestational obesity
-</td>
-<td style="text-align:left;">
-Obesity represents a global burden with an increasing worldwide
-prevalence, especially in women of reproductive age. Obesity in women,
-defined as a body mass index (BMI) \> 30 kg/m2, has a worldwide
-prevalence \~21%, however, it exceeds 30% in countries such as Chile,
-Mexico, United States, and the United Kingdom. Growing evidence support
-the notion that pre-gestational obesity confers an increased risk for
-the development of diabetes, obesity and chronic inflammatory diseases
-in the offspring later in life. more…
-</td>
-<td style="text-align:left;">
-Homo sapiens
-</td>
-<td style="text-align:left;">
-Methylation profiling by genome tiling array
-</td>
-<td style="text-align:left;">
-GEO (TXT) <ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE212nnn/GSE212174/>
-</td>
-<td style="text-align:right;">
-200212174
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-29 Samples
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-GPL21145
-</td>
-<td style="text-align:left;">
-GSE212174
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Transcriptomic signatures responding to PKM2 activator TEPP-46 in the
-hyperglycemic human renal proximal epithelial tubular cells
-</td>
-<td style="text-align:left;">
-Pyruvate kinase M2 (PKM2), as the terminal and last rate-limiting enzyme
-of the glycolytic pathway, is an ideal enzyme for regulating metabolic
-phenotype. PKM2 tetramer activation has shown a protective role against
-diabetic kidney disease (DKD). However, the molecular mechanisms
-involved in diabetic tubular has not been investigated so far. In this
-study, we performed transcriptome gene expression profiling in human
-renal proximal tubular epithelial cell line (HK-2 cells) treated with
-high D-glucose (HG) for 7 days before the addition of 10-μM TEPP-46, an
-activator of PKM2 tetramerization, for a further 1 day in the presence
-of HG. more…
-</td>
-<td style="text-align:left;">
-Homo sapiens
-</td>
-<td style="text-align:left;">
-Expression profiling by high throughput sequencing
-</td>
-<td style="text-align:left;">
-GEO (TXT) <ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE205nnn/GSE205674/>
-</td>
-<td style="text-align:right;">
-200205674
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-6 Samples
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-GPL20795
-</td>
-<td style="text-align:left;">
-GSE205674
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Global microRNA and protein expression in human term placenta.
-</td>
-<td style="text-align:left;">
-Description of the global expression of microRNAs (miRNAs) and proteins
-in healthy human term placentas may increase our knowledge of molecular
-biological pathways that are important for normal fetal growth and
-development in term pregnancy. The aim of this study was to explore the
-global expression of miRNAs and proteins, and to point out functions of
-importance in healthy term placentas. Placental samples (n = 19) were
-identified in a local biobank. more…
-</td>
-<td style="text-align:left;">
-Homo sapiens
-</td>
-<td style="text-align:left;">
-Non-coding RNA profiling by high throughput sequencing
-</td>
-<td style="text-align:left;">
-GEO (TXT) <ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE211nnn/GSE211791/>
-</td>
-<td style="text-align:right;">
-200211791
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-19 Samples
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-GPL16791
-</td>
-<td style="text-align:left;">
-GSE211791
-</td>
-</tr>
-</tbody>
-</table>
-
-</div>
 
 Then, we can use whatever we’re famaliar to filter the searching
 results. Providing we want GSE datasets with at least 6 diabetic
@@ -442,352 +137,36 @@ diabetes_nephropathy_gse_records <- diabetes_gse_records %>%
         stringr::str_detect(Type, "(?i)expression profiling"),
         number_of_samples >= 6L
     )
-kbl(head(diabetes_nephropathy_gse_records)) %>%
-    kable_paper() %>%
-    scroll_box(width = "100%", height = "500px")
+head(diabetes_nephropathy_gse_records[1:5])
+#>                                                                                                                                                                                                          Title
+#> 1 The expression of mRNA and lncRNA in peripheral blood mononuclear cells (PBMCs) of diabetes mellitus, diabetic retinopathy (DR), diabetic peripheral neuropathy (DPN) and diabetic nephropathy (DN) patients
+#> 2                                                     Secretory Leukocyte Peptidase Inhibitor (SLPI) is a Novel Predictor of Tubulointerstitial Injury and Renal Outcome in Patients with Diabetic Nephropathy
+#> 3                                                                                                                    Bulk RNA-seq on mouse model of diabetic nephropathy and in vitro model of SRSF7 knockdown
+#> 4                                                                            RNA-seq profiling of tubulointerstitial tissue reveals a potential therapeutic role of dual anti-phosphatase 1 in kidney diseases
+#> 5                                                                                                  Human Tubular Epithelial Cells Activate a Coordinated Stress Response after Serum Exposure [RNAseq-pid2019]
+#> 6                                                                                                  Human Tubular Epithelial Cells Activate a Coordinated Stress Response after Serum Exposure [RNAseq-pid1830]
+#>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                Summary
+#> 1 DR, DPN and DN are common complications in diabetes, and the differentially expressed mRNAs and lncRNAs in these diabetic complications may help to identify the molecular markers for the onset and progression of diseases. In our study, high-throughput sequencing technique was used to analyze the expression profile of mRNA and lncRNA in the peripheral blood of health control, T2DM, DR, DPN and DN patients, in order to determine the differentially expressed  transcriptomic profiles changes in diabetic complications and identify the shared and specific biological signaling pathways related to DR, DPN and DN.
+#> 2                                                                                                                                                                                                          Tubulointerstitial injury plays an important role in diabetic nephropathy (DN) progression; however, no reliable urinary molecule has been used to predict tubulointerstitial injury and renal outcome of DN clinically. In this study, based on tubulointerstitial transcriptome, we identified secretory leukocyte peptidase inhibitor (SLPI) as the molecule associated with renal fibrosis and prognosis of DN. more...
+#> 3                                                                                                                                                                                                                  In this dataset, we utilized the db/db, uninephrectomy and renin-hypertension mouse model. We performed bulk RNA-seq and compared vehicle to ACE inhibitor, Rosiglitizone, SGLT2 inhibitor, ACEi + Rosiglitizone and ACEi + SGLT2i at two time points (2 days and 2 weeks). To study the mechanism, we also performed bulk RNA-seq on human primary tubular epithelial cells with or without SRSF7 siRNA knockdown.
+#> 4                                                                                                                                                                                                                                 We profiled manually microdissected tubulointerstitial tissue from 43 IgA nephropathy, 3 diabetes mellitus nephropathy, 3 focal segmental glomerulosclerosis, 3 lupus nephritis, 4 membranous nephropathy, and 9 minimal change disease biopsy cores and 22 nephrectomy controls by RNA sequencing. The 3 outliers which were not included in our main analysis were also uploaded in this database.
+#> 5                                                                                                                                                                                                   Proteinuria, the spillage of serum proteins into the urine, is a feature of glomerulonephritides, podocyte disorders and diabetic nephropathy. However, the response of tubular epithelial cells to serum protein exposure has not been systematically characterized. Using transcriptomic profiling we studied serum-induced changes in primary human tubular epithelial cells cultured in 3D microphysiological devices. more...
+#> 6                                                                                                                                                                                                   Proteinuria, the spillage of serum proteins into the urine, is a feature of glomerulonephritides, podocyte disorders and diabetic nephropathy. However, the response of tubular epithelial cells to serum protein exposure has not been systematically characterized. Using transcriptomic profiling we studied serum-induced changes in primary human tubular epithelial cells cultured in 3D microphysiological devices. more...
+#>                     Organism                                               Type
+#> 1               Homo sapiens Expression profiling by high throughput sequencing
+#> 2               Homo sapiens Expression profiling by high throughput sequencing
+#> 3 Mus musculus; Homo sapiens Expression profiling by high throughput sequencing
+#> 4               Homo sapiens Expression profiling by high throughput sequencing
+#> 5               Homo sapiens Expression profiling by high throughput sequencing
+#> 6               Homo sapiens Expression profiling by high throughput sequencing
+#>                                                                FTP download
+#> 1 GEO (GTF, TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE185nnn/GSE185011/
+#> 2      GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE158nnn/GSE158230/
+#> 3      GEO (CSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE199nnn/GSE199437/
+#> 4      GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE175nnn/GSE175759/
+#> 5      GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE159nnn/GSE159586/
+#> 6      GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE159nnn/GSE159554/
 ```
-
-<div
-style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:500px; overflow-x: scroll; width:100%; ">
-
-<table class=" lightable-paper" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto;">
-<thead>
-<tr>
-<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
-Title
-</th>
-<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
-Summary
-</th>
-<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
-Organism
-</th>
-<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
-Type
-</th>
-<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
-FTP download
-</th>
-<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
-ID
-</th>
-<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
-SRA Run Selector
-</th>
-<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
-Project
-</th>
-<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
-Contains
-</th>
-<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
-Datasets
-</th>
-<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
-Platforms
-</th>
-<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
-Series Accession
-</th>
-<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
-number_of_samples
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-The expression of mRNA and lncRNA in peripheral blood mononuclear cells
-(PBMCs) of diabetes mellitus, diabetic retinopathy (DR), diabetic
-peripheral neuropathy (DPN) and diabetic nephropathy (DN) patients
-</td>
-<td style="text-align:left;">
-DR, DPN and DN are common complications in diabetes, and the
-differentially expressed mRNAs and lncRNAs in these diabetic
-complications may help to identify the molecular markers for the onset
-and progression of diseases. In our study, high-throughput sequencing
-technique was used to analyze the expression profile of mRNA and lncRNA
-in the peripheral blood of health control, T2DM, DR, DPN and DN
-patients, in order to determine the differentially expressed
-transcriptomic profiles changes in diabetic complications and identify
-the shared and specific biological signaling pathways related to DR, DPN
-and DN.
-</td>
-<td style="text-align:left;">
-Homo sapiens
-</td>
-<td style="text-align:left;">
-Expression profiling by high throughput sequencing
-</td>
-<td style="text-align:left;">
-GEO (GTF, TXT)
-<ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE185nnn/GSE185011/>
-</td>
-<td style="text-align:right;">
-200185011
-</td>
-<td style="text-align:left;">
-<https://www.ncbi.nlm.nih.gov/Traces/study/?acc=PRJNA767371>
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-25 Samples
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-GPL24676
-</td>
-<td style="text-align:left;">
-GSE185011
-</td>
-<td style="text-align:right;">
-25
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Secretory Leukocyte Peptidase Inhibitor (SLPI) is a Novel Predictor of
-Tubulointerstitial Injury and Renal Outcome in Patients with Diabetic
-Nephropathy
-</td>
-<td style="text-align:left;">
-Tubulointerstitial injury plays an important role in diabetic
-nephropathy (DN) progression; however, no reliable urinary molecule has
-been used to predict tubulointerstitial injury and renal outcome of DN
-clinically. In this study, based on tubulointerstitial transcriptome, we
-identified secretory leukocyte peptidase inhibitor (SLPI) as the
-molecule associated with renal fibrosis and prognosis of DN. more…
-</td>
-<td style="text-align:left;">
-Homo sapiens
-</td>
-<td style="text-align:left;">
-Expression profiling by high throughput sequencing
-</td>
-<td style="text-align:left;">
-GEO (TXT) <ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE158nnn/GSE158230/>
-</td>
-<td style="text-align:right;">
-200158230
-</td>
-<td style="text-align:left;">
-<https://www.ncbi.nlm.nih.gov/Traces/study/?acc=PRJNA664391>
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-6 Samples
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-GPL16791
-</td>
-<td style="text-align:left;">
-GSE158230
-</td>
-<td style="text-align:right;">
-6
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Bulk RNA-seq on mouse model of diabetic nephropathy and in vitro model
-of SRSF7 knockdown
-</td>
-<td style="text-align:left;">
-In this dataset, we utilized the db/db, uninephrectomy and
-renin-hypertension mouse model. We performed bulk RNA-seq and compared
-vehicle to ACE inhibitor, Rosiglitizone, SGLT2 inhibitor, ACEi +
-Rosiglitizone and ACEi + SGLT2i at two time points (2 days and 2 weeks).
-To study the mechanism, we also performed bulk RNA-seq on human primary
-tubular epithelial cells with or without SRSF7 siRNA knockdown.
-</td>
-<td style="text-align:left;">
-Mus musculus; Homo sapiens
-</td>
-<td style="text-align:left;">
-Expression profiling by high throughput sequencing
-</td>
-<td style="text-align:left;">
-GEO (CSV) <ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE199nnn/GSE199437/>
-</td>
-<td style="text-align:right;">
-200199437
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-59 Samples
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-GPL24676 GPL24247
-</td>
-<td style="text-align:left;">
-GSE199437
-</td>
-<td style="text-align:right;">
-59
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-RNA-seq profiling of tubulointerstitial tissue reveals a potential
-therapeutic role of dual anti-phosphatase 1 in kidney diseases
-</td>
-<td style="text-align:left;">
-We profiled manually microdissected tubulointerstitial tissue from 43
-IgA nephropathy, 3 diabetes mellitus nephropathy, 3 focal segmental
-glomerulosclerosis, 3 lupus nephritis, 4 membranous nephropathy, and 9
-minimal change disease biopsy cores and 22 nephrectomy controls by RNA
-sequencing. The 3 outliers which were not included in our main analysis
-were also uploaded in this database.
-</td>
-<td style="text-align:left;">
-Homo sapiens
-</td>
-<td style="text-align:left;">
-Expression profiling by high throughput sequencing
-</td>
-<td style="text-align:left;">
-GEO (TXT) <ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE175nnn/GSE175759/>
-</td>
-<td style="text-align:right;">
-200175759
-</td>
-<td style="text-align:left;">
-<https://www.ncbi.nlm.nih.gov/Traces/study/?acc=PRJNA733490>
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-90 Samples
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-GPL16791
-</td>
-<td style="text-align:left;">
-GSE175759
-</td>
-<td style="text-align:right;">
-90
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Human Tubular Epithelial Cells Activate a Coordinated Stress Response
-after Serum Exposure \[RNAseq-pid2019\]
-</td>
-<td style="text-align:left;">
-Proteinuria, the spillage of serum proteins into the urine, is a feature
-of glomerulonephritides, podocyte disorders and diabetic nephropathy.
-However, the response of tubular epithelial cells to serum protein
-exposure has not been systematically characterized. Using transcriptomic
-profiling we studied serum-induced changes in primary human tubular
-epithelial cells cultured in 3D microphysiological devices. more…
-</td>
-<td style="text-align:left;">
-Homo sapiens
-</td>
-<td style="text-align:left;">
-Expression profiling by high throughput sequencing
-</td>
-<td style="text-align:left;">
-GEO (TXT) <ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE159nnn/GSE159586/>
-</td>
-<td style="text-align:right;">
-200159586
-</td>
-<td style="text-align:left;">
-<https://www.ncbi.nlm.nih.gov/Traces/study/?acc=PRJNA669838>
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-47 Samples
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-GPL24676
-</td>
-<td style="text-align:left;">
-GSE159586
-</td>
-<td style="text-align:right;">
-47
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Human Tubular Epithelial Cells Activate a Coordinated Stress Response
-after Serum Exposure \[RNAseq-pid1830\]
-</td>
-<td style="text-align:left;">
-Proteinuria, the spillage of serum proteins into the urine, is a feature
-of glomerulonephritides, podocyte disorders and diabetic nephropathy.
-However, the response of tubular epithelial cells to serum protein
-exposure has not been systematically characterized. Using transcriptomic
-profiling we studied serum-induced changes in primary human tubular
-epithelial cells cultured in 3D microphysiological devices. more…
-</td>
-<td style="text-align:left;">
-Homo sapiens
-</td>
-<td style="text-align:left;">
-Expression profiling by high throughput sequencing
-</td>
-<td style="text-align:left;">
-GEO (TXT) <ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE159nnn/GSE159554/>
-</td>
-<td style="text-align:right;">
-200159554
-</td>
-<td style="text-align:left;">
-<https://www.ncbi.nlm.nih.gov/Traces/study/?acc=PRJNA669691>
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-11 Samples
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-GPL18573
-</td>
-<td style="text-align:left;">
-GSE159554
-</td>
-<td style="text-align:right;">
-11
-</td>
-</tr>
-</tbody>
-</table>
-
-</div>
 
 After filtering, we got 19 candidate datasets. This can reduce a lot of
 time of us comparing with refining datasets by reading the summary
@@ -827,464 +206,79 @@ gpl
 #>   Platform_contact_country ... Platform_title Platform_web_link (26
 #>   total)
 #> accession: GPL98
-kbl(head(datatable(gpl)), caption = "datatable of GPL98") %>%
-    kable_paper()
+head(datatable(gpl))
+#>                          ID   GB_ACC SPOT_ID Species Scientific Name
+#> AA000993_at     AA000993_at AA000993                    Homo sapiens
+#> AA001296_s_at AA001296_s_at AA001296                    Homo sapiens
+#> AA002245_at     AA002245_at AA002245                    Homo sapiens
+#> AA004231_at     AA004231_at AA004231                    Homo sapiens
+#> AA004333_at     AA004333_at AA004333                    Homo sapiens
+#> AA004987_at     AA004987_at AA004987                    Homo sapiens
+#>               Annotation Date     Sequence Type Sequence Source
+#> AA000993_at      Mar 11, 2009 Exemplar sequence         GenBank
+#> AA001296_s_at    Mar 11, 2009 Exemplar sequence         GenBank
+#> AA002245_at      Mar 11, 2009 Exemplar sequence         GenBank
+#> AA004231_at      Mar 11, 2009 Exemplar sequence         GenBank
+#> AA004333_at      Mar 11, 2009 Exemplar sequence         GenBank
+#> AA004987_at      Mar 11, 2009 Exemplar sequence         GenBank
+#>                                                                             Target Description
+#> AA000993_at                 ze46h10.r1 Soares retina N2b4HR Homo sapiens cDNA clone 362083 5'.
+#> AA001296_s_at zh82b09.r1 Soares fetal liver spleen 1NFLS S1 Homo sapiens cDNA clone 427769 5'.
+#> AA002245_at   zh85f01.r1 Soares fetal liver spleen 1NFLS S1 Homo sapiens cDNA clone 428089 5'.
+#> AA004231_at   zh92a03.r1 Soares fetal liver spleen 1NFLS S1 Homo sapiens cDNA clone 428716 5'.
+#> AA004333_at   zh91a01.r1 Soares fetal liver spleen 1NFLS S1 Homo sapiens cDNA clone 428616 5'.
+#> AA004987_at   zh94b01.r1 Soares fetal liver spleen 1NFLS S1 Homo sapiens cDNA clone 428905 5'.
+#>               Representative Public ID
+#> AA000993_at                   AA000993
+#> AA001296_s_at                 AA001296
+#> AA002245_at                   AA002245
+#> AA004231_at                   AA004231
+#> AA004333_at                   AA004333
+#> AA004987_at                   AA004987
+#>                                                                     Gene Title
+#> AA000993_at                                             PR domain containing 8
+#> AA001296_s_at                                            PHD finger protein 23
+#> AA002245_at                               zinc finger CCCH-type containing 11A
+#> AA004231_at                                                                   
+#> AA004333_at                                                                   
+#> AA004987_at   BMP2 inducible kinase, mRNA (cDNA clone MGC:33000 IMAGE:5272264)
+#>               Gene Symbol ENTREZ_GENE_ID       RefSeq Transcript ID
+#> AA000993_at         PRDM8          56978 NM_001099403 /// NM_020226
+#> AA001296_s_at       PHF23          79142                  NM_024297
+#> AA002245_at       ZC3H11A           9877                  NM_014827
+#> AA004231_at                                                        
+#> AA004333_at                                                        
+#> AA004987_at         BMP2K          55589    NM_017593 /// NM_198892
+#>                                                                                                                                               Gene Ontology Biological Process
+#> AA000993_at   0006350 // transcription // inferred from electronic annotation /// 0006355 // regulation of transcription, DNA-dependent // inferred from electronic annotation
+#> AA001296_s_at                                                                                                                                                                 
+#> AA002245_at                                                                                                                                                                   
+#> AA004231_at                                                                                                                                                                   
+#> AA004333_at                                                                                                                                                                   
+#> AA004987_at                                                                               0006468 // protein amino acid phosphorylation // inferred from electronic annotation
+#>                                                                                                            Gene Ontology Cellular Component
+#> AA000993_at   0005622 // intracellular // inferred from electronic annotation /// 0005634 // nucleus // inferred from electronic annotation
+#> AA001296_s_at                                                                                                                              
+#> AA002245_at                                                                                                                                
+#> AA004231_at                                                                                                                                
+#> AA004333_at                                                                                                                                
+#> AA004987_at                                                                       0005634 // nucleus // inferred from electronic annotation
+#>                                                                                                                                                                                                                                                                                                                                                                                                                                                   Gene Ontology Molecular Function
+#> AA000993_at                                                                                                                                                                                                                                                           0003677 // DNA binding // inferred from electronic annotation /// 0008270 // zinc ion binding // inferred from electronic annotation /// 0046872 // metal ion binding // inferred from electronic annotation
+#> AA001296_s_at                                                                                                                                                                                                                                                     0005515 // protein binding // inferred from electronic annotation /// 0008270 // zinc ion binding // inferred from electronic annotation /// 0046872 // metal ion binding // inferred from electronic annotation
+#> AA002245_at                                                                                                                                                                                                                                                  0003676 // nucleic acid binding // inferred from electronic annotation /// 0008270 // zinc ion binding // inferred from electronic annotation /// 0046872 // metal ion binding // inferred from electronic annotation
+#> AA004231_at                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+#> AA004333_at                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+#> AA004987_at   0000166 // nucleotide binding // inferred from electronic annotation /// 0004672 // protein kinase activity // inferred from electronic annotation /// 0004674 // protein serine/threonine kinase activity // inferred from electronic annotation /// 0005524 // ATP binding // inferred from electronic annotation /// 0016301 // kinase activity // inferred from electronic annotation /// 0016740 // transferase activity // inferred from electronic annotation
+head(columns(gpl))
+#>                                                                                                                                                                                                                                                                                                                                                    labelDescription
+#> ID                                                                                                                                                                                                                                                                   Affymetrix Probe Set ID LINK_PRE:"https://www.affymetrix.com/LinkServlet?array=U35K&probeset="
+#> GB_ACC                                                                                                                                                                                                                                                                               GenBank Accession Number LINK_PRE:"http://www.ncbi.nlm.nih.gov/nuccore/?term="
+#> SPOT_ID                                                                                                                                                                                                                                                                                                                                                        <NA>
+#> Species Scientific Name                                                                                                                                                                                                                                                                         The genus and species of the organism represented by the probe set.
+#> Annotation Date                                                                                                                                                                       The date that the annotations for this probe array were last updated. It will generally be earlier than the date when the annotations were posted on the Affymetrix web site.
+#> Sequence Type           Indicates whether the sequence is an Exemplar, Consensus or Control sequence. An Exemplar is a single nucleotide sequence taken directly from a public database. This sequence could be an mRNA or EST. A Consensus sequence, is a nucleotide sequence assembled by Affymetrix, based on one or more sequence taken from a public database.
 ```
-
-<table class=" lightable-paper" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto;">
-<caption>
-datatable of GPL98
-</caption>
-<thead>
-<tr>
-<th style="text-align:left;">
-</th>
-<th style="text-align:left;">
-ID
-</th>
-<th style="text-align:left;">
-GB_ACC
-</th>
-<th style="text-align:left;">
-SPOT_ID
-</th>
-<th style="text-align:left;">
-Species Scientific Name
-</th>
-<th style="text-align:left;">
-Annotation Date
-</th>
-<th style="text-align:left;">
-Sequence Type
-</th>
-<th style="text-align:left;">
-Sequence Source
-</th>
-<th style="text-align:left;">
-Target Description
-</th>
-<th style="text-align:left;">
-Representative Public ID
-</th>
-<th style="text-align:left;">
-Gene Title
-</th>
-<th style="text-align:left;">
-Gene Symbol
-</th>
-<th style="text-align:left;">
-ENTREZ_GENE_ID
-</th>
-<th style="text-align:left;">
-RefSeq Transcript ID
-</th>
-<th style="text-align:left;">
-Gene Ontology Biological Process
-</th>
-<th style="text-align:left;">
-Gene Ontology Cellular Component
-</th>
-<th style="text-align:left;">
-Gene Ontology Molecular Function
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-AA000993_at
-</td>
-<td style="text-align:left;">
-AA000993_at
-</td>
-<td style="text-align:left;">
-AA000993
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-Homo sapiens
-</td>
-<td style="text-align:left;">
-Mar 11, 2009
-</td>
-<td style="text-align:left;">
-Exemplar sequence
-</td>
-<td style="text-align:left;">
-GenBank
-</td>
-<td style="text-align:left;">
-ze46h10.r1 Soares retina N2b4HR Homo sapiens cDNA clone 362083 5’.
-</td>
-<td style="text-align:left;">
-AA000993
-</td>
-<td style="text-align:left;">
-PR domain containing 8
-</td>
-<td style="text-align:left;">
-PRDM8
-</td>
-<td style="text-align:left;">
-56978
-</td>
-<td style="text-align:left;">
-NM_001099403 /// NM_020226
-</td>
-<td style="text-align:left;">
-0006350 // transcription // inferred from electronic annotation ///
-0006355 // regulation of transcription, DNA-dependent // inferred from
-electronic annotation
-</td>
-<td style="text-align:left;">
-0005622 // intracellular // inferred from electronic annotation ///
-0005634 // nucleus // inferred from electronic annotation
-</td>
-<td style="text-align:left;">
-0003677 // DNA binding // inferred from electronic annotation ///
-0008270 // zinc ion binding // inferred from electronic annotation ///
-0046872 // metal ion binding // inferred from electronic annotation
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-AA001296_s\_at
-</td>
-<td style="text-align:left;">
-AA001296_s\_at
-</td>
-<td style="text-align:left;">
-AA001296
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-Homo sapiens
-</td>
-<td style="text-align:left;">
-Mar 11, 2009
-</td>
-<td style="text-align:left;">
-Exemplar sequence
-</td>
-<td style="text-align:left;">
-GenBank
-</td>
-<td style="text-align:left;">
-zh82b09.r1 Soares fetal liver spleen 1NFLS S1 Homo sapiens cDNA clone
-427769 5’.
-</td>
-<td style="text-align:left;">
-AA001296
-</td>
-<td style="text-align:left;">
-PHD finger protein 23
-</td>
-<td style="text-align:left;">
-PHF23
-</td>
-<td style="text-align:left;">
-79142
-</td>
-<td style="text-align:left;">
-NM_024297
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-0005515 // protein binding // inferred from electronic annotation ///
-0008270 // zinc ion binding // inferred from electronic annotation ///
-0046872 // metal ion binding // inferred from electronic annotation
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-AA002245_at
-</td>
-<td style="text-align:left;">
-AA002245_at
-</td>
-<td style="text-align:left;">
-AA002245
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-Homo sapiens
-</td>
-<td style="text-align:left;">
-Mar 11, 2009
-</td>
-<td style="text-align:left;">
-Exemplar sequence
-</td>
-<td style="text-align:left;">
-GenBank
-</td>
-<td style="text-align:left;">
-zh85f01.r1 Soares fetal liver spleen 1NFLS S1 Homo sapiens cDNA clone
-428089 5’.
-</td>
-<td style="text-align:left;">
-AA002245
-</td>
-<td style="text-align:left;">
-zinc finger CCCH-type containing 11A
-</td>
-<td style="text-align:left;">
-ZC3H11A
-</td>
-<td style="text-align:left;">
-9877
-</td>
-<td style="text-align:left;">
-NM_014827
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-0003676 // nucleic acid binding // inferred from electronic annotation
-/// 0008270 // zinc ion binding // inferred from electronic annotation
-/// 0046872 // metal ion binding // inferred from electronic annotation
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-AA004231_at
-</td>
-<td style="text-align:left;">
-AA004231_at
-</td>
-<td style="text-align:left;">
-AA004231
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-Homo sapiens
-</td>
-<td style="text-align:left;">
-Mar 11, 2009
-</td>
-<td style="text-align:left;">
-Exemplar sequence
-</td>
-<td style="text-align:left;">
-GenBank
-</td>
-<td style="text-align:left;">
-zh92a03.r1 Soares fetal liver spleen 1NFLS S1 Homo sapiens cDNA clone
-428716 5’.
-</td>
-<td style="text-align:left;">
-AA004231
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-AA004333_at
-</td>
-<td style="text-align:left;">
-AA004333_at
-</td>
-<td style="text-align:left;">
-AA004333
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-Homo sapiens
-</td>
-<td style="text-align:left;">
-Mar 11, 2009
-</td>
-<td style="text-align:left;">
-Exemplar sequence
-</td>
-<td style="text-align:left;">
-GenBank
-</td>
-<td style="text-align:left;">
-zh91a01.r1 Soares fetal liver spleen 1NFLS S1 Homo sapiens cDNA clone
-428616 5’.
-</td>
-<td style="text-align:left;">
-AA004333
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-AA004987_at
-</td>
-<td style="text-align:left;">
-AA004987_at
-</td>
-<td style="text-align:left;">
-AA004987
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-Homo sapiens
-</td>
-<td style="text-align:left;">
-Mar 11, 2009
-</td>
-<td style="text-align:left;">
-Exemplar sequence
-</td>
-<td style="text-align:left;">
-GenBank
-</td>
-<td style="text-align:left;">
-zh94b01.r1 Soares fetal liver spleen 1NFLS S1 Homo sapiens cDNA clone
-428905 5’.
-</td>
-<td style="text-align:left;">
-AA004987
-</td>
-<td style="text-align:left;">
-BMP2 inducible kinase, mRNA (cDNA clone MGC:33000 IMAGE:5272264)
-</td>
-<td style="text-align:left;">
-BMP2K
-</td>
-<td style="text-align:left;">
-55589
-</td>
-<td style="text-align:left;">
-NM_017593 /// NM_198892
-</td>
-<td style="text-align:left;">
-0006468 // protein amino acid phosphorylation // inferred from
-electronic annotation
-</td>
-<td style="text-align:left;">
-0005634 // nucleus // inferred from electronic annotation
-</td>
-<td style="text-align:left;">
-0000166 // nucleotide binding // inferred from electronic annotation ///
-0004672 // protein kinase activity // inferred from electronic
-annotation /// 0004674 // protein serine/threonine kinase activity //
-inferred from electronic annotation /// 0005524 // ATP binding //
-inferred from electronic annotation /// 0016301 // kinase activity //
-inferred from electronic annotation /// 0016740 // transferase activity
-// inferred from electronic annotation
-</td>
-</tr>
-</tbody>
-</table>
-
-``` r
-kbl(head(columns(gpl)), caption = "columns of GPL98") %>%
-    kable_paper()
-```
-
-<table class=" lightable-paper" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto;">
-<caption>
-columns of GPL98
-</caption>
-<thead>
-<tr>
-<th style="text-align:left;">
-</th>
-<th style="text-align:left;">
-labelDescription
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-ID
-</td>
-<td style="text-align:left;">
-Affymetrix Probe Set ID
-LINK_PRE:“<https://www.affymetrix.com/LinkServlet?array=U35K&probeset=>”
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-GB_ACC
-</td>
-<td style="text-align:left;">
-GenBank Accession Number
-LINK_PRE:“<http://www.ncbi.nlm.nih.gov/nuccore/?term=>”
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-SPOT_ID
-</td>
-<td style="text-align:left;">
-NA
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Species Scientific Name
-</td>
-<td style="text-align:left;">
-The genus and species of the organism represented by the probe set.
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Annotation Date
-</td>
-<td style="text-align:left;">
-The date that the annotations for this probe array were last updated. It
-will generally be earlier than the date when the annotations were posted
-on the Affymetrix web site.
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Sequence Type
-</td>
-<td style="text-align:left;">
-Indicates whether the sequence is an Exemplar, Consensus or Control
-sequence. An Exemplar is a single nucleotide sequence taken directly
-from a public database. This sequence could be an mRNA or EST. A
-Consensus sequence, is a nucleotide sequence assembled by Affymetrix,
-based on one or more sequence taken from a public database.
-</td>
-</tr>
-</tbody>
-</table>
 
 ``` r
 gsm <- get_geo("GSM1", tempdir())
@@ -1297,162 +291,20 @@ gsm
 #> meta: Sample_anchor Sample_channel_count Sample_contact_address ...
 #>   Sample_title Sample_type (29 total)
 #> accession: GSM1
-kbl(head(datatable(gsm)), caption = "datatable of GSM1") %>%
-    kable_paper()
+head(datatable(gsm))
+#>                   TAG COUNT     TPM
+#> AAAAAAAAAA AAAAAAAAAA    17 1741.98
+#> AAAAAAATCA AAAAAAATCA     1  102.47
+#> AAAAAAATTT AAAAAAATTT     1  102.47
+#> AAAAAACAAA AAAAAACAAA     1  102.47
+#> AAAAAACTCC AAAAAACTCC     1  102.47
+#> AAAAAATAAA AAAAAATAAA     1  102.47
+head(columns(gsm))
+#>         labelDescription
+#> TAG   Ten base SAGE tag,
+#> COUNT         TAG NUMBER
+#> TPM     tags per million
 ```
-
-<table class=" lightable-paper" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto;">
-<caption>
-datatable of GSM1
-</caption>
-<thead>
-<tr>
-<th style="text-align:left;">
-</th>
-<th style="text-align:left;">
-TAG
-</th>
-<th style="text-align:right;">
-COUNT
-</th>
-<th style="text-align:right;">
-TPM
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-AAAAAAAAAA
-</td>
-<td style="text-align:left;">
-AAAAAAAAAA
-</td>
-<td style="text-align:right;">
-17
-</td>
-<td style="text-align:right;">
-1741.98
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-AAAAAAATCA
-</td>
-<td style="text-align:left;">
-AAAAAAATCA
-</td>
-<td style="text-align:right;">
-1
-</td>
-<td style="text-align:right;">
-102.47
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-AAAAAAATTT
-</td>
-<td style="text-align:left;">
-AAAAAAATTT
-</td>
-<td style="text-align:right;">
-1
-</td>
-<td style="text-align:right;">
-102.47
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-AAAAAACAAA
-</td>
-<td style="text-align:left;">
-AAAAAACAAA
-</td>
-<td style="text-align:right;">
-1
-</td>
-<td style="text-align:right;">
-102.47
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-AAAAAACTCC
-</td>
-<td style="text-align:left;">
-AAAAAACTCC
-</td>
-<td style="text-align:right;">
-1
-</td>
-<td style="text-align:right;">
-102.47
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-AAAAAATAAA
-</td>
-<td style="text-align:left;">
-AAAAAATAAA
-</td>
-<td style="text-align:right;">
-1
-</td>
-<td style="text-align:right;">
-102.47
-</td>
-</tr>
-</tbody>
-</table>
-
-``` r
-kbl(head(columns(gsm)), caption = "columns of GSM1") %>%
-    kable_paper()
-```
-
-<table class=" lightable-paper" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto;">
-<caption>
-columns of GSM1
-</caption>
-<thead>
-<tr>
-<th style="text-align:left;">
-</th>
-<th style="text-align:left;">
-labelDescription
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-TAG
-</td>
-<td style="text-align:left;">
-Ten base SAGE tag,
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-COUNT
-</td>
-<td style="text-align:left;">
-TAG NUMBER
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-TPM
-</td>
-<td style="text-align:left;">
-tags per million
-</td>
-</tr>
-</tbody>
-</table>
 
 ``` r
 gds <- get_geo("GDS10", tempdir())
@@ -1466,796 +318,44 @@ gds
 #> meta: Database_email Database_institute Database_name ...
 #>   dataset_update_date dataset_value_type (21 total)
 #> accession: GDS10
-kbl(head(datatable(gds)), caption = "datatable of GDS10") %>%
-    kable_paper()
+head(datatable(gds))
+#>   ID_REF    IDENTIFIER GSM582 GSM589 GSM583 GSM590 GSM584 GSM591 GSM585 GSM592
+#> 1      1 1200011I18Rik    101     54    111     55     87     30     99     43
+#> 2      2             2     26     23     30     27     19     22     32     19
+#> 3      3       Ccdc28b     NA     NA     NA     NA     NA     NA     NA     NA
+#> 4      4      AA014405    233    162    252    178    214    144    238    147
+#> 5      5        Crebrf     NA     NA     NA     NA     NA     NA     NA     NA
+#> 6      6             6    691    661    696    652    609    665    684    672
+#>   GSM586 GSM593 GSM587 GSM594 GSM588 GSM595 GSM596 GSM603 GSM597 GSM604 GSM598
+#> 1    105     56     43     14    112     43     97     36    117     40    125
+#> 2     24     25     14     49     32     29     31     22     26     26     35
+#> 3     NA     NA     NA      7     NA      4     10     22     NA     15     NA
+#> 4    250    166     86     22    236    139    216    112    241    130    270
+#> 5     NA     NA     NA     NA     NA      3     NA     NA     NA     NA     NA
+#> 6    644    679    631    596    609    606    601    557    596    580    601
+#>   GSM605 GSM599 GSM606 GSM600 GSM607 GSM601 GSM608 GSM602 GSM609
+#> 1     45     99      1    109     38     87     18     72     16
+#> 2     26     18     13     25     32     28     40     14     41
+#> 3     23     NA     29      9     25     11     40     NA     22
+#> 4    144    239    148    211    139    208     16    174     15
+#> 5     NA     NA     NA     NA     NA     NA     NA     NA     NA
+#> 6    554    562    561    580    568    519    562    497    564
+head(columns(gds))
+#>                                  labelDescription   subset_dataset_id
+#> ID_REF              Platform reference identifier                <NA>
+#> IDENTIFIER                             identifier                <NA>
+#> GSM582      Value for GSM582: NOD_S1; src: Spleen GDS10; GDS10; GDS10
+#> GSM589      Value for GSM589: NOD_S2; src: Spleen GDS10; GDS10; GDS10
+#> GSM583     Value for GSM583: Idd3_S1; src: Spleen GDS10; GDS10; GDS10
+#> GSM590     Value for GSM590: Idd3_S2; src: Spleen GDS10; GDS10; GDS10
+#>                          subset_description                   subset_type
+#> ID_REF                                 <NA>                          <NA>
+#> IDENTIFIER                             <NA>                          <NA>
+#> GSM582                spleen; NOD; diabetic tissue; strain; disease state
+#> GSM589                spleen; NOD; diabetic tissue; strain; disease state
+#> GSM583     spleen; Idd3; diabetic-resistant tissue; strain; disease state
+#> GSM590     spleen; Idd3; diabetic-resistant tissue; strain; disease state
 ```
-
-<table class=" lightable-paper" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto;">
-<caption>
-datatable of GDS10
-</caption>
-<thead>
-<tr>
-<th style="text-align:right;">
-ID_REF
-</th>
-<th style="text-align:left;">
-IDENTIFIER
-</th>
-<th style="text-align:right;">
-GSM582
-</th>
-<th style="text-align:right;">
-GSM589
-</th>
-<th style="text-align:right;">
-GSM583
-</th>
-<th style="text-align:right;">
-GSM590
-</th>
-<th style="text-align:right;">
-GSM584
-</th>
-<th style="text-align:right;">
-GSM591
-</th>
-<th style="text-align:right;">
-GSM585
-</th>
-<th style="text-align:right;">
-GSM592
-</th>
-<th style="text-align:right;">
-GSM586
-</th>
-<th style="text-align:right;">
-GSM593
-</th>
-<th style="text-align:right;">
-GSM587
-</th>
-<th style="text-align:right;">
-GSM594
-</th>
-<th style="text-align:right;">
-GSM588
-</th>
-<th style="text-align:right;">
-GSM595
-</th>
-<th style="text-align:right;">
-GSM596
-</th>
-<th style="text-align:right;">
-GSM603
-</th>
-<th style="text-align:right;">
-GSM597
-</th>
-<th style="text-align:right;">
-GSM604
-</th>
-<th style="text-align:right;">
-GSM598
-</th>
-<th style="text-align:right;">
-GSM605
-</th>
-<th style="text-align:right;">
-GSM599
-</th>
-<th style="text-align:right;">
-GSM606
-</th>
-<th style="text-align:right;">
-GSM600
-</th>
-<th style="text-align:right;">
-GSM607
-</th>
-<th style="text-align:right;">
-GSM601
-</th>
-<th style="text-align:right;">
-GSM608
-</th>
-<th style="text-align:right;">
-GSM602
-</th>
-<th style="text-align:right;">
-GSM609
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:right;">
-1
-</td>
-<td style="text-align:left;">
-1200011I18Rik
-</td>
-<td style="text-align:right;">
-101
-</td>
-<td style="text-align:right;">
-54
-</td>
-<td style="text-align:right;">
-111
-</td>
-<td style="text-align:right;">
-55
-</td>
-<td style="text-align:right;">
-87
-</td>
-<td style="text-align:right;">
-30
-</td>
-<td style="text-align:right;">
-99
-</td>
-<td style="text-align:right;">
-43
-</td>
-<td style="text-align:right;">
-105
-</td>
-<td style="text-align:right;">
-56
-</td>
-<td style="text-align:right;">
-43
-</td>
-<td style="text-align:right;">
-14
-</td>
-<td style="text-align:right;">
-112
-</td>
-<td style="text-align:right;">
-43
-</td>
-<td style="text-align:right;">
-97
-</td>
-<td style="text-align:right;">
-36
-</td>
-<td style="text-align:right;">
-117
-</td>
-<td style="text-align:right;">
-40
-</td>
-<td style="text-align:right;">
-125
-</td>
-<td style="text-align:right;">
-45
-</td>
-<td style="text-align:right;">
-99
-</td>
-<td style="text-align:right;">
-1
-</td>
-<td style="text-align:right;">
-109
-</td>
-<td style="text-align:right;">
-38
-</td>
-<td style="text-align:right;">
-87
-</td>
-<td style="text-align:right;">
-18
-</td>
-<td style="text-align:right;">
-72
-</td>
-<td style="text-align:right;">
-16
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-2
-</td>
-<td style="text-align:left;">
-2
-</td>
-<td style="text-align:right;">
-26
-</td>
-<td style="text-align:right;">
-23
-</td>
-<td style="text-align:right;">
-30
-</td>
-<td style="text-align:right;">
-27
-</td>
-<td style="text-align:right;">
-19
-</td>
-<td style="text-align:right;">
-22
-</td>
-<td style="text-align:right;">
-32
-</td>
-<td style="text-align:right;">
-19
-</td>
-<td style="text-align:right;">
-24
-</td>
-<td style="text-align:right;">
-25
-</td>
-<td style="text-align:right;">
-14
-</td>
-<td style="text-align:right;">
-49
-</td>
-<td style="text-align:right;">
-32
-</td>
-<td style="text-align:right;">
-29
-</td>
-<td style="text-align:right;">
-31
-</td>
-<td style="text-align:right;">
-22
-</td>
-<td style="text-align:right;">
-26
-</td>
-<td style="text-align:right;">
-26
-</td>
-<td style="text-align:right;">
-35
-</td>
-<td style="text-align:right;">
-26
-</td>
-<td style="text-align:right;">
-18
-</td>
-<td style="text-align:right;">
-13
-</td>
-<td style="text-align:right;">
-25
-</td>
-<td style="text-align:right;">
-32
-</td>
-<td style="text-align:right;">
-28
-</td>
-<td style="text-align:right;">
-40
-</td>
-<td style="text-align:right;">
-14
-</td>
-<td style="text-align:right;">
-41
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-3
-</td>
-<td style="text-align:left;">
-Ccdc28b
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-7
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-4
-</td>
-<td style="text-align:right;">
-10
-</td>
-<td style="text-align:right;">
-22
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-15
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-23
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-29
-</td>
-<td style="text-align:right;">
-9
-</td>
-<td style="text-align:right;">
-25
-</td>
-<td style="text-align:right;">
-11
-</td>
-<td style="text-align:right;">
-40
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-22
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-4
-</td>
-<td style="text-align:left;">
-AA014405
-</td>
-<td style="text-align:right;">
-233
-</td>
-<td style="text-align:right;">
-162
-</td>
-<td style="text-align:right;">
-252
-</td>
-<td style="text-align:right;">
-178
-</td>
-<td style="text-align:right;">
-214
-</td>
-<td style="text-align:right;">
-144
-</td>
-<td style="text-align:right;">
-238
-</td>
-<td style="text-align:right;">
-147
-</td>
-<td style="text-align:right;">
-250
-</td>
-<td style="text-align:right;">
-166
-</td>
-<td style="text-align:right;">
-86
-</td>
-<td style="text-align:right;">
-22
-</td>
-<td style="text-align:right;">
-236
-</td>
-<td style="text-align:right;">
-139
-</td>
-<td style="text-align:right;">
-216
-</td>
-<td style="text-align:right;">
-112
-</td>
-<td style="text-align:right;">
-241
-</td>
-<td style="text-align:right;">
-130
-</td>
-<td style="text-align:right;">
-270
-</td>
-<td style="text-align:right;">
-144
-</td>
-<td style="text-align:right;">
-239
-</td>
-<td style="text-align:right;">
-148
-</td>
-<td style="text-align:right;">
-211
-</td>
-<td style="text-align:right;">
-139
-</td>
-<td style="text-align:right;">
-208
-</td>
-<td style="text-align:right;">
-16
-</td>
-<td style="text-align:right;">
-174
-</td>
-<td style="text-align:right;">
-15
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-5
-</td>
-<td style="text-align:left;">
-Crebrf
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-3
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-NA
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-6
-</td>
-<td style="text-align:left;">
-6
-</td>
-<td style="text-align:right;">
-691
-</td>
-<td style="text-align:right;">
-661
-</td>
-<td style="text-align:right;">
-696
-</td>
-<td style="text-align:right;">
-652
-</td>
-<td style="text-align:right;">
-609
-</td>
-<td style="text-align:right;">
-665
-</td>
-<td style="text-align:right;">
-684
-</td>
-<td style="text-align:right;">
-672
-</td>
-<td style="text-align:right;">
-644
-</td>
-<td style="text-align:right;">
-679
-</td>
-<td style="text-align:right;">
-631
-</td>
-<td style="text-align:right;">
-596
-</td>
-<td style="text-align:right;">
-609
-</td>
-<td style="text-align:right;">
-606
-</td>
-<td style="text-align:right;">
-601
-</td>
-<td style="text-align:right;">
-557
-</td>
-<td style="text-align:right;">
-596
-</td>
-<td style="text-align:right;">
-580
-</td>
-<td style="text-align:right;">
-601
-</td>
-<td style="text-align:right;">
-554
-</td>
-<td style="text-align:right;">
-562
-</td>
-<td style="text-align:right;">
-561
-</td>
-<td style="text-align:right;">
-580
-</td>
-<td style="text-align:right;">
-568
-</td>
-<td style="text-align:right;">
-519
-</td>
-<td style="text-align:right;">
-562
-</td>
-<td style="text-align:right;">
-497
-</td>
-<td style="text-align:right;">
-564
-</td>
-</tr>
-</tbody>
-</table>
-
-``` r
-kbl(head(columns(gds)), caption = "columns of GDS10") %>%
-    kable_paper()
-```
-
-<table class=" lightable-paper" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto;">
-<caption>
-columns of GDS10
-</caption>
-<thead>
-<tr>
-<th style="text-align:left;">
-</th>
-<th style="text-align:left;">
-labelDescription
-</th>
-<th style="text-align:left;">
-subset_dataset_id
-</th>
-<th style="text-align:left;">
-subset_description
-</th>
-<th style="text-align:left;">
-subset_type
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-ID_REF
-</td>
-<td style="text-align:left;">
-Platform reference identifier
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-IDENTIFIER
-</td>
-<td style="text-align:left;">
-identifier
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-GSM582
-</td>
-<td style="text-align:left;">
-Value for GSM582: NOD_S1; src: Spleen
-</td>
-<td style="text-align:left;">
-GDS10; GDS10; GDS10
-</td>
-<td style="text-align:left;">
-spleen; NOD; diabetic
-</td>
-<td style="text-align:left;">
-tissue; strain; disease state
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-GSM589
-</td>
-<td style="text-align:left;">
-Value for GSM589: NOD_S2; src: Spleen
-</td>
-<td style="text-align:left;">
-GDS10; GDS10; GDS10
-</td>
-<td style="text-align:left;">
-spleen; NOD; diabetic
-</td>
-<td style="text-align:left;">
-tissue; strain; disease state
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-GSM583
-</td>
-<td style="text-align:left;">
-Value for GSM583: Idd3_S1; src: Spleen
-</td>
-<td style="text-align:left;">
-GDS10; GDS10; GDS10
-</td>
-<td style="text-align:left;">
-spleen; Idd3; diabetic-resistant
-</td>
-<td style="text-align:left;">
-tissue; strain; disease state
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-GSM590
-</td>
-<td style="text-align:left;">
-Value for GSM590: Idd3_S2; src: Spleen
-</td>
-<td style="text-align:left;">
-GDS10; GDS10; GDS10
-</td>
-<td style="text-align:left;">
-spleen; Idd3; diabetic-resistant
-</td>
-<td style="text-align:left;">
-tissue; strain; disease state
-</td>
-</tr>
-</tbody>
-</table>
 
 For GSE entity, there is also a soft file associated with it. But the
 structure is different with `GPL`, `GSM` and `GDS` entity, `rgeo`
@@ -2582,7 +682,7 @@ gse180383_soft_gsm_suppl <- get_geo_suppl(gse180383_soft_gsmids, tempdir())
 #> Using locally cached version of GSM5461792_trim_RNA_ab_3_S18_R1_001_countsMatrix.txt.gz found here: C:\Users\yunyu\AppData\Local\Temp\RtmpkxJgG3/GSM5461792_trim_RNA_ab_3_S18_R1_001_countsMatrix.txt.gz
 ```
 
-### Other utils
+### Other utilities
 
 `rgeo` also provide some useful function to help better interact with
 GEO.
@@ -2615,26 +715,19 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] kableExtra_1.3.4 magrittr_2.0.3   rgeo_0.0.0.9000 
+#> [1] magrittr_2.0.3  rgeo_0.0.1.9000
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] tidyselect_1.1.2     xfun_0.31            purrr_0.3.4         
-#>  [4] colorspace_2.0-3     vctrs_0.4.1          generics_0.1.3      
-#>  [7] htmltools_0.5.3      viridisLite_0.4.0    yaml_2.3.5          
-#> [10] utf8_1.2.2           XML_3.99-0.10        rlang_1.0.4         
-#> [13] R.oo_1.25.0          pillar_1.8.0         R.utils_2.12.0      
-#> [16] glue_1.6.2           DBI_1.1.3            BiocGenerics_0.42.0 
-#> [19] rentrez_1.2.3        lifecycle_1.0.1.9001 stringr_1.4.0       
-#> [22] munsell_0.5.0        R.methodsS3_1.8.2    ragg_1.2.2.9000     
-#> [25] rvest_1.0.2          codetools_0.2-18     evaluate_0.15       
-#> [28] Biobase_2.56.0       knitr_1.39           fastmap_1.1.0       
-#> [31] curl_4.3.2           fansi_1.0.3          highr_0.9           
-#> [34] scales_1.2.0         webshot_0.5.3        jsonlite_1.8.0      
-#> [37] systemfonts_1.0.4    textshaping_0.3.6    digest_0.6.29       
-#> [40] stringi_1.7.8        dplyr_1.0.9          cli_3.3.0           
-#> [43] tools_4.2.1          tibble_3.1.8         crayon_1.5.1        
-#> [46] pkgconfig_2.0.3      ellipsis_0.3.2       data.table_1.14.3   
-#> [49] xml2_1.3.3           assertthat_0.2.1     rmarkdown_2.14      
-#> [52] svglite_2.1.0        httr_1.4.3           rstudioapi_0.13     
-#> [55] R6_2.5.1             compiler_4.2.1
+#>  [1] knitr_1.39           tidyselect_1.1.2     R6_2.5.1            
+#>  [4] ragg_1.2.2.9000      rlang_1.0.4          fastmap_1.1.0       
+#>  [7] fansi_1.0.3          stringr_1.4.0        dplyr_1.0.9         
+#> [10] tools_4.2.1          data.table_1.14.3    xfun_0.31           
+#> [13] utf8_1.2.2           DBI_1.1.3            cli_3.3.0           
+#> [16] ellipsis_0.3.2       htmltools_0.5.3      systemfonts_1.0.4   
+#> [19] assertthat_0.2.1     yaml_2.3.5           digest_0.6.29       
+#> [22] tibble_3.1.8         lifecycle_1.0.1.9001 crayon_1.5.1        
+#> [25] textshaping_0.3.6    purrr_0.3.4          vctrs_0.4.1         
+#> [28] glue_1.6.2           evaluate_0.15        rmarkdown_2.14      
+#> [31] stringi_1.7.8        compiler_4.2.1       pillar_1.8.0        
+#> [34] generics_0.1.3       pkgconfig_2.0.3
 ```
