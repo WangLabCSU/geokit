@@ -565,9 +565,9 @@ head(gse160724_dt[1:5])
 
 If the expression matrix is given in the GSM supplementary files, in
 this way, we start from derive all GSM accession ids and then download
-all GSM supplementary files and combine them into the expression matrix.
-Although no expression matrix in the series matrix file, it remain
-contain the samples informations.
+all GSM supplementary files and combine them into a expression matrix.
+Although no expression matrix in the series matrix file, it still
+contains the samples informations.
 
 ``` r
 gse180383_smat <- get_geo(

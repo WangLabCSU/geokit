@@ -1121,9 +1121,9 @@ return a character vector containing the path of downloaded files.</p>
 <span id="cb11-49"><a href="#cb11-49" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5: hsa00603 Glycosphingolipid biosynthesis - globo and isoglobo series</span></span></code></pre></div>
 <p>If the expression matrix is given in the GSM supplementary files, in
 this way, we start from derive all GSM accession ids and then download
-all GSM supplementary files and combine them into the expression matrix.
-Although no expression matrix in the series matrix file, it remain
-contain the samples informations.</p>
+all GSM supplementary files and combine them into a expression matrix.
+Although no expression matrix in the series matrix file, it still
+contains the samples informations.</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>gse180383_smat <span class="ot">&lt;-</span> <span class="fu">get_geo</span>(</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;GSE180383&quot;</span>, <span class="fu">tempdir</span>(),</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">gse_matrix =</span> <span class="cn">TRUE</span>, <span class="at">add_gpl =</span> <span class="cn">FALSE</span>,</span>
