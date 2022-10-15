@@ -46,7 +46,7 @@ str_match <- function(string, pattern, ignore.case = FALSE) {
 }
 
 column_to_rownames <- function(.data, var) {
-    rownames(.data) <- .data[[var]]
+    rownames(.data) <- as.character(.data[[var]])
     .data[[var]] <- NULL
     .data
 }
