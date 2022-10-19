@@ -40,6 +40,9 @@ str_match <- function(string, pattern, ignore.case = FALSE) {
         ),
         invert = FALSE
     )
+    out <- lapply(out, function(x) {
+        if (!length(x)) "" else x
+    })
     out <- do.call("rbind", out)
     out[out == ""] <- NA_character_
     out
