@@ -24,8 +24,6 @@ Suggests:
     stringr,
     testthat (>= 3.0.0),
     utils
-Remotes: 
-    Rdatatable/data.table
 Config/testthat/edition: 3
 Config/testthat/parallel: true
 ByteCompile: true
