@@ -9,7 +9,8 @@ get_geo(
   dest_dir = getwd(),
   gse_matrix = TRUE,
   pdata_from_soft = TRUE,
-  add_gpl = NULL
+  add_gpl = NULL,
+  curl_handle = NULL
 )
 }
 \arguments{
@@ -40,6 +41,9 @@ ID into a Bioconductor annotation package firstly, if it succeed, the
 \link[Biobase:class.ExpressionSet]{ExpressionSet} object will be set to the found
 Bioconductor annotation package and the \code{add_gpl} will be set to \code{FALSE},
 otherwise, \code{add_gpl} will be set to \code{TRUE}.}
+
+\item{curl_handle}{A curl \link[curl:handle]{handle} object passed to
+\link[curl:curl_download]{curl_download}. If \code{NULL}, \code{curl::new_handle(timeout = 120L, connecttimeout = 60L)} will be used.}
 }
 \value{
 An object of the appropriate class (GDS, GPL, GSM, or GSE) is

@@ -1,13 +1,18 @@
 #' Return a character vector of file paths
 #' @noRd
-download_geo_suppl_or_gse_matrix_files <- function(id, dest_dir, file_type, pattern = NULL) {
-    urls <- list_geo_file_url(id = id, file_type)
+download_geo_suppl_or_gse_matrix_files <- function(id, dest_dir, file_type, pattern = NULL, curl_handle = NULL) {
+    urls <- list_geo_file_url(id = id, file_type, curl_handle = curl_handle)
     if (!is.null(pattern)) {
         urls <- urls[grepl(pattern = pattern, x = basename(urls), perl = TRUE)]
-        if (!length(urls)) return(NULL)
+        if (!length(urls)) {
+            return(NULL)
+        }
     }
     file_paths <- file.path(dest_dir, basename(urls))
-    download_inform(urls, file_paths, site = "ftp", mode = "wb")
+    download_inform(urls, file_paths,
+        site = "ftp", mode = "wb",
+        curl_handle = curl_handle
+    )
 }
 
 #' For GPL data, if we only need datatable data, we firstly try to download
@@ -16,13 +21,14 @@ download_geo_suppl_or_gse_matrix_files <- function(id, dest_dir, file_type, patt
 #' in ACC site is much smaller than in FTP site.
 #' @param amount "data" or "full"
 #' @noRd
-download_gpl_file <- function(id, dest_dir = getwd(), amount = "data") {
+download_gpl_file <- function(id, dest_dir = getwd(), amount = "data", curl_handle = NULL) {
     amount <- match.arg(amount, c("data", "full"))
     switch(amount,
         data = rlang::try_fetch(
             download_with_ftp(
                 id = id, dest_dir = dest_dir,
-                file_type = "annot"
+                file_type = "annot",
+                curl_handle = curl_handle
             ),
             error = function(error) {
                 rlang::inform(
@@ -33,14 +39,16 @@ download_gpl_file <- function(id, dest_dir = getwd(), amount = "data") {
                 )
                 download_with_acc(
                     id = id, dest_dir = dest_dir,
-                    scope = "self", amount = amount, format = "text"
+                    scope = "self", amount = amount, format = "text",
+                    curl_handle = curl_handle
                 )
             }
         ),
         full = rlang::try_fetch(
             download_with_acc(
                 id = id, dest_dir = dest_dir,
-                scope = "self", amount = amount, format = "text"
+                scope = "self", amount = amount, format = "text",
+                curl_handle = curl_handle
             ),
             error = function(error) {
                 rlang::inform(
@@ -51,7 +59,8 @@ download_gpl_file <- function(id, dest_dir = getwd(), amount = "data") {
                 )
                 download_with_ftp(
                     id = id, dest_dir = dest_dir,
-                    file_type = "soft"
+                    file_type = "soft",
+                    curl_handle = curl_handle
                 )
             }
         )
@@ -61,41 +70,45 @@ download_gpl_file <- function(id, dest_dir = getwd(), amount = "data") {
 #' For GSE files, try FTP site only, soft file in ACC site for GSE entitty is
 #' not full of all records
 #' @noRd
-download_gse_soft_file <- function(id, dest_dir = getwd()) {
+download_gse_soft_file <- function(id, dest_dir = getwd(), curl_handle = NULL) {
     download_with_ftp(
         id = id, dest_dir = dest_dir,
-        file_type = "soft"
+        file_type = "soft",
+        curl_handle = curl_handle
     )
 }
 
 #' For GSM files, Only try ACC site
 #' @noRd
-download_gsm_file <- function(id, dest_dir = getwd()) {
+download_gsm_file <- function(id, dest_dir = getwd(), curl_handle = NULL) {
     download_with_acc(
         id = id, dest_dir = dest_dir,
-        scope = "self", amount = "full", format = "text"
+        scope = "self", amount = "full", format = "text",
+        curl_handle = curl_handle
     )
 }
 
 #' For GDS files, Only try FTP site
 #' @noRd
-download_gds_file <- function(id, dest_dir = getwd()) {
+download_gds_file <- function(id, dest_dir = getwd(), curl_handle = NULL) {
     download_with_ftp(
         id = id, dest_dir = dest_dir,
-        file_type = "soft"
+        file_type = "soft",
+        curl_handle = curl_handle
     )
 }
 
 #' Return a character vector, the length of it is the same with `ids`.
 #' @noRd
-download_with_ftp <- function(id, dest_dir, file_type = "soft") {
+download_with_ftp <- function(id, dest_dir, file_type = "soft", curl_handle = NULL) {
     url <- build_geo_ftp_url(id = id, file_type = file_type)
     download_inform(url,
         file.path(dest_dir, basename(url)),
-        site = "ftp", mode = "wb"
+        site = "ftp", mode = "wb",
+        curl_handle = curl_handle
     )
 }
-download_with_acc <- function(id, dest_dir, scope = "self", amount = "full", format = "text") {
+download_with_acc <- function(id, dest_dir, scope = "self", amount = "full", format = "text", curl_handle = NULL) {
     url <- build_geo_acc_url(
         id = id, scope = scope, amount = amount, format = format
     )
@@ -106,14 +119,15 @@ download_with_acc <- function(id, dest_dir, scope = "self", amount = "full", for
     )
     download_inform(url,
         file.path(dest_dir, paste(id, file_name, sep = ".")),
-        site = "acc", mode = "w"
+        site = "acc", mode = "w",
+        curl_handle = curl_handle
     )
 }
 
-list_file_helper <- function(url) {
+list_file_helper <- function(url, curl_handle) {
     url_connection <- curl::curl(
         url,
-        handle = geo_handle()
+        handle = curl_handle %||% geo_handle()
     )
     open(url_connection, "rb")
     on.exit(close(url_connection))
@@ -141,9 +155,10 @@ list_file_helper <- function(url) {
     }
     file.path(url, file_names)
 }
-list_geo_file_url <- function(id, file_type) {
+
+list_geo_file_url <- function(id, file_type, curl_handle = NULL) {
     url <- build_geo_ftp_url(id, file_type)
-    file_urls <- list_file_helper(url)
+    file_urls <- list_file_helper(url, curl_handle = NULL)
     if (is.null(file_urls)) {
         rlang::inform(
             paste0("No ", file_type, " file found for ", id, ".")
@@ -154,7 +169,7 @@ list_geo_file_url <- function(id, file_type) {
 
 #' Download utils function with good message.
 #' @noRd
-download_inform <- function(urls, file_paths, site, mode) {
+download_inform <- function(urls, file_paths, site, mode, curl_handle = NULL) {
     mapply(
         function(url, file_path) {
             if (!file.exists(file_path)) {
@@ -184,7 +199,7 @@ download_inform <- function(urls, file_paths, site, mode) {
                 file_path <- curl::curl_download(
                     url, file_path,
                     mode = mode, quiet = FALSE,
-                    handle = geo_handle()
+                    handle = curl_handle %||% geo_handle()
                 )
                 cat("\n")
                 file_path
@@ -205,7 +220,5 @@ download_inform <- function(urls, file_paths, site, mode) {
 }
 
 geo_handle <- function() {
-    curl::new_handle(
-        timeout = 120L, connecttimeout = 60L
-    )
+    curl::new_handle(timeout = 120L, connecttimeout = 60L)
 }

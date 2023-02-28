@@ -1,14 +1,24 @@
 # For GPL, GSM, and GDS entity, return a `GEOSoft` object
 # For GSE entity, return a `GEOSeries` object
-get_geo_soft <- function(id, geo_type, dest_dir = getwd()) {
+get_geo_soft <- function(id, geo_type, dest_dir = getwd(), curl_handle = NULL) {
     file_path <- switch(geo_type,
-        GSM = download_gsm_file(id, dest_dir = dest_dir),
+        GSM = download_gsm_file(id,
+            dest_dir = dest_dir,
+            curl_handle = curl_handle
+        ),
         GPL = download_gpl_file(
             id,
-            dest_dir = dest_dir, amount = "full"
+            dest_dir = dest_dir, amount = "full",
+            curl_handle = curl_handle
         ),
-        GSE = download_gse_soft_file(id, dest_dir = dest_dir),
-        GDS = download_gds_file(id, dest_dir = dest_dir)
+        GSE = download_gse_soft_file(id,
+            dest_dir = dest_dir,
+            curl_handle = curl_handle
+        ),
+        GDS = download_gds_file(id,
+            dest_dir = dest_dir,
+            curl_handle = curl_handle
+        )
     )
     file_text <- read_lines(file_path)
     soft_data <- switch(geo_type,

@@ -1,4 +1,4 @@
-get_gse_matrix <- function(id, dest_dir = getwd(), pdata_from_soft = TRUE, add_gpl = NULL) {
+get_gse_matrix <- function(id, dest_dir = getwd(), pdata_from_soft = TRUE, add_gpl = NULL, curl_handle = NULL) {
     file_paths <- download_geo_suppl_or_gse_matrix_files(
         id = id, dest_dir = dest_dir,
         file_type = "matrix"
@@ -7,7 +7,9 @@ get_gse_matrix <- function(id, dest_dir = getwd(), pdata_from_soft = TRUE, add_g
     # GSE matrix fiels, so we should extract the sample data firstly, and then
     # split it into pieces.
     if (pdata_from_soft) {
-        gse_soft_file_path <- download_gse_soft_file(id, dest_dir)
+        gse_soft_file_path <- download_gse_soft_file(id, dest_dir,
+            curl_handle = curl_handle
+        )
         gse_soft_file_text <- read_lines(gse_soft_file_path)
         gse_sample_data <- suppressMessages(
             parse_gse_soft(
@@ -23,7 +25,8 @@ get_gse_matrix <- function(id, dest_dir = getwd(), pdata_from_soft = TRUE, add_g
             pdata_from_soft = pdata_from_soft,
             gse_sample_data = gse_sample_data,
             add_gpl = add_gpl,
-            dest_dir = dest_dir
+            dest_dir = dest_dir,
+            curl_handle = curl_handle
         )
     })
     if (identical(length(res), 1L)) {
@@ -34,7 +37,7 @@ get_gse_matrix <- function(id, dest_dir = getwd(), pdata_from_soft = TRUE, add_g
     }
 }
 
-construct_gse_matrix_expressionset <- function(file_text, pdata_from_soft, gse_sample_data, add_gpl, dest_dir) {
+construct_gse_matrix_expressionset <- function(file_text, pdata_from_soft, gse_sample_data, add_gpl, dest_dir, curl_handle) {
     expressionset_elements <- parse_gse_matrix(
         file_text = file_text,
         pdata_from_soft = pdata_from_soft
@@ -90,7 +93,8 @@ construct_gse_matrix_expressionset <- function(file_text, pdata_from_soft, gse_s
         gpl_file_path <- download_gpl_file(
             expressionset_elements$annotation,
             dest_dir,
-            amount = "data"
+            amount = "data",
+            curl_handle = curl_handle
         )
         gpl_file_text <- read_lines(gpl_file_path)
         gpl_data <- parse_gpl_or_gsm_soft(gpl_file_text)

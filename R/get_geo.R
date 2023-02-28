@@ -73,6 +73,9 @@
 #' [ExpressionSet][Biobase::ExpressionSet] object will be set to the found
 #' Bioconductor annotation package and the `add_gpl` will be set to `FALSE`,
 #' otherwise, `add_gpl` will be set to `TRUE`.
+#' @param curl_handle A curl [handle][curl::handle] object passed to
+#' [curl_download][curl::curl_download]. If `NULL`, `curl::new_handle(timeout =
+#' 120L, connecttimeout = 60L)` will be used.
 #' @return An object of the appropriate class (GDS, GPL, GSM, or GSE) is
 #' returned. For `GSE` entity, if `gse_matrix` parameter is `FALSE`, an
 #' [GEOSeries-class] object is returned and if `gse_matrix` parameter is `TRUE`,
@@ -95,7 +98,7 @@
 #' gds <- get_geo("GDS10", tempdir())
 #'
 #' @export
-get_geo <- function(ids, dest_dir = getwd(), gse_matrix = TRUE, pdata_from_soft = TRUE, add_gpl = NULL) {
+get_geo <- function(ids, dest_dir = getwd(), gse_matrix = TRUE, pdata_from_soft = TRUE, add_gpl = NULL, curl_handle = NULL) {
     ids <- toupper(ids)
     check_ids(ids)
     if (!dir.exists(dest_dir)) {
@@ -105,12 +108,13 @@ get_geo <- function(ids, dest_dir = getwd(), gse_matrix = TRUE, pdata_from_soft 
         ids = ids, dest_dir = dest_dir,
         gse_matrix = gse_matrix,
         pdata_from_soft = pdata_from_soft,
-        add_gpl = add_gpl
+        add_gpl = add_gpl,
+        curl_handle = curl_handle
     )
 }
 
 #' @noRd
-get_geo_multi <- function(ids, dest_dir = getwd(), gse_matrix = TRUE, pdata_from_soft = TRUE, add_gpl = NULL) {
+get_geo_multi <- function(ids, dest_dir = getwd(), gse_matrix = TRUE, pdata_from_soft = TRUE, add_gpl = NULL, curl_handle = NULL) {
     res <- lapply(ids, function(id) {
         rlang::try_fetch(
             get_geo_unit(
@@ -118,7 +122,8 @@ get_geo_multi <- function(ids, dest_dir = getwd(), gse_matrix = TRUE, pdata_from
                 dest_dir = dest_dir,
                 gse_matrix = gse_matrix,
                 pdata_from_soft = pdata_from_soft,
-                add_gpl = add_gpl
+                add_gpl = add_gpl,
+                curl_handle = curl_handle
             ),
             error = function(err) {
                 rlang::abort(
@@ -136,16 +141,20 @@ get_geo_multi <- function(ids, dest_dir = getwd(), gse_matrix = TRUE, pdata_from
     }
 }
 
-get_geo_unit <- function(id, dest_dir = getwd(), gse_matrix = TRUE, pdata_from_soft = TRUE, add_gpl = NULL) {
+get_geo_unit <- function(id, dest_dir = getwd(), gse_matrix = TRUE, pdata_from_soft = TRUE, add_gpl = NULL, curl_handle = NULL) {
     geo_type <- substr(id, 1L, 3L)
     if (identical(geo_type, "GSE") && gse_matrix) {
         get_gse_matrix(
             id,
             dest_dir = dest_dir,
             pdata_from_soft = pdata_from_soft,
-            add_gpl = add_gpl
+            add_gpl = add_gpl,
+            curl_handle = curl_handle
         )
     } else {
-        get_geo_soft(id, geo_type = geo_type, dest_dir = dest_dir)
+        get_geo_soft(id,
+            geo_type = geo_type, dest_dir = dest_dir,
+            curl_handle = curl_handle
+        )
     }
 }
