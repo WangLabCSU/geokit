@@ -6,13 +6,13 @@
 #' @inheritParams get_geo
 #' @return A data.frame contains metadata of all ids.
 #' @export 
-get_geo_meta <- function(ids, curl_handle = NULL) {
+get_geo_meta <- function(ids, dest_dir = getwd(), curl_handle = NULL) {
     res <- lapply(ids, function(id) {
         out <- rlang::try_fetch(
             get_and_parse_soft(
                 id = id, 
                 geo_type = substr(id, 1L, 3L),
-                dest_dir = tempdir(), 
+                dest_dir = dest_dir, 
                 curl_handle = curl_handle,
                 only_meta = TRUE
             ),

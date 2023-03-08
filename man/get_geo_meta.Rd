@@ -4,11 +4,14 @@
 \alias{get_geo_meta}
 \title{Get the metadata of multiple GEO identities}
 \usage{
-get_geo_meta(ids, curl_handle = NULL)
+get_geo_meta(ids, dest_dir = getwd(), curl_handle = NULL)
 }
 \arguments{
 \item{ids}{A character vector representing the GEO entity for downloading
 and parsing. ('GDS505','GSE2','GSM2','GPL96' eg.).}
+
+\item{dest_dir}{The destination directory for any downloads. Defaults to
+current working dir.}
 
 \item{curl_handle}{A curl \link[curl:handle]{handle} object passed to
 \link[curl:curl_download]{curl_download}. If \code{NULL}, \code{curl::new_handle(timeout = 120L, connecttimeout = 60L)} will be used.}
