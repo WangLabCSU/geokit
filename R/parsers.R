@@ -118,8 +118,6 @@ parse_gpl_or_gsm_soft <- function(file_text, only_meta = FALSE) {
         return(list(data_table = NULL, meta = meta_data, columns = NULL))
     }
 
-    # parse column data
-    column_data <- parse_columns(file_text, colnames(data_table))
     # parse data table data - which is the feature data
     data_table <- read_data_table(file_text)
     data.table::setnames(data_table, make.unique)
@@ -140,6 +138,9 @@ parse_gpl_or_gsm_soft <- function(file_text, only_meta = FALSE) {
     } else {
         data.table::setDF(data_table)
     }
+
+    # parse column data
+    column_data <- parse_columns(file_text, colnames(data_table))
     list(
         data_table = data_table,
         meta = meta_data,
