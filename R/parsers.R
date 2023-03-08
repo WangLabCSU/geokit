@@ -46,23 +46,30 @@ parse_gse_matrix <- function(file_text, pdata_from_soft) {
     )
 }
 
-parse_gse_soft <- function(file_text, entity_type = "all") {
-    entity_marker <- paste0(
-        "^\\^(", switch(entity_type,
-            sample = "SAMPLE",
-            platform = "PLATFORM",
-            all = "SAMPLE|PLATFORM"
-        ), ")"
-    )
-
-    entity_indices <- grep(
-        entity_marker, file_text,
+#' @param entity_type One of "sample", "platform" or "all".
+#' @noRd
+parse_gse_soft <- function(file_text, entity_type = "all", only_meta = FALSE) {
+    meta_idx <- grep("^\\^(SAMPLE|PLATFORM)", file_text,
         perl = TRUE, value = FALSE
     )
-    rlang::inform(
-        sprintf("Found %d entities...", length(entity_indices))
-    )
-    soft_meta <- parse_meta(file_text[seq_len(entity_indices[[1L]] - 1L)])
+    soft_meta <- parse_meta(file_text[seq_len(meta_idx[[1L]] - 1L)])
+    if (only_meta) {
+        return(list(meta = soft_meta, gsm = NULL, gpl = NULL))
+    }
+    if (entity_type == "all") {
+        entity_indices <- meta_idx
+    } else {
+        entity_marker <- paste0(
+            "^\\^", switch(entity_type,
+                sample = "SAMPLE",
+                platform = "PLATFORM"
+            )
+        )
+        entity_indices <- grep(entity_marker, file_text,
+            perl = TRUE, value = FALSE
+        )
+    }
+    rlang::inform(sprintf("Found %d entities...", length(entity_indices)))
     soft_data_list <- vector(mode = "list", length = length(entity_indices))
     # For every entity data, the data is seperated by "=" into name-value pairs
     # Don't use `data.table::tstrsplit`, as it will split string into three or
@@ -104,7 +111,15 @@ parse_gse_soft <- function(file_text, entity_type = "all") {
 }
 
 # For GPL and GSM entity, they share the same file structure
-parse_gpl_or_gsm_soft <- function(file_text) {
+parse_gpl_or_gsm_soft <- function(file_text, only_meta = FALSE) {
+    # parse meta data
+    meta_data <- parse_meta(file_text)
+    if (only_meta) {
+        return(list(data_table = NULL, meta = meta_data, columns = NULL))
+    }
+
+    # parse column data
+    column_data <- parse_columns(file_text, colnames(data_table))
     # parse data table data - which is the feature data
     data_table <- read_data_table(file_text)
     data.table::setnames(data_table, make.unique)
@@ -125,10 +140,6 @@ parse_gpl_or_gsm_soft <- function(file_text) {
     } else {
         data.table::setDF(data_table)
     }
-
-    # parse meta data and column data
-    meta_data <- parse_meta(file_text)
-    column_data <- parse_columns(file_text, colnames(data_table))
     list(
         data_table = data_table,
         meta = meta_data,
@@ -137,20 +148,24 @@ parse_gpl_or_gsm_soft <- function(file_text) {
 }
 
 #' @importFrom data.table merge.data.table
-parse_gds_soft <- function(file_text) {
+parse_gds_soft <- function(file_text, only_meta = FALSE) {
     subset_lines <- grep(
         "^!subset", file_text,
         perl = TRUE, value = FALSE
     )
+    # parse meta data
+    meta_data <- parse_meta(file_text[-subset_lines])
+    if (only_meta) {
+        return(list(data_table = NULL, meta = meta_data, columns = NULL))
+    }
+
+    # parse data_table data
     data_table <- read_data_table(file_text[-subset_lines])
     if (nrow(data_table)) {
         data.table::setDF(data_table, rownames = as.character(data_table[[1L]]))
     } else {
         data.table::setDF(data_table)
     }
-
-    # parse meta data
-    meta_data <- parse_meta(file_text[-subset_lines])
 
     # parse column data
     column_data <- parse_columns(file_text[-subset_lines], colnames(data_table))
@@ -270,10 +285,11 @@ parse_columns <- function(file_text, target_rownames) {
     # transformation, a tail "; " will be inserted in this element, So we just
     # remove the tail "; " string.
     labelDescription <- sub(
-        ";\\s*$", "", labelDescription, perl = TRUE
+        ";\\s*$", "", labelDescription,
+        perl = TRUE
     )
     labelDescription <- data.table::fifelse(
-        labelDescription == "", 
+        labelDescription == "",
         NA_character_, labelDescription,
         na = NA_character_
     )
@@ -380,7 +396,7 @@ read_column <- function(file_text) {
         ),
         sep = "", header = FALSE, blank.lines.skip = TRUE,
         na.strings = na_string,
-        colClasses = "character", 
+        colClasses = "character",
         check.names = FALSE
     )
 }
