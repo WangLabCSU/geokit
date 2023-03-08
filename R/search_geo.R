@@ -12,17 +12,17 @@
 #' <https://docs.ropensci.org/rentrez/articles/rentrez_tutorial.html#rate-limiting-and-api-keys>
 #'
 #' @param query character, the search term. The NCBI uses a search term syntax
-#' which can be associated with a specific search field with square brackets.
-#' So, for instance "Homo sapiens\[ORGN\]" denotes a search for `Homo sapiens`
-#' in the “Organism” field. Details see
-#' <https://www.ncbi.nlm.nih.gov/geo/info/qqtutorial.html>. The names and
-#' definitions of these fields can be identified using
-#' [entrez_db_searchable][rentrez::entrez_db_searchable].
+#'   which can be associated with a specific search field with square brackets.
+#'   So, for instance "Homo sapiens\[ORGN\]" denotes a search for `Homo sapiens`
+#'   in the “Organism” field. Details see
+#'   <https://www.ncbi.nlm.nih.gov/geo/info/qqtutorial.html>. The names and
+#'   definitions of these fields can be identified using
+#'   [entrez_db_searchable][rentrez::entrez_db_searchable].
 #' @param step the number of records to fetch from the database each time. You
 #' may choose a smaller value if failed.
 #' @return a data.frame contains the search results
 #' @examples
-#' rgeo::search_geo("diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]")
+#'   rgeo::search_geo("diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]")
 #' @export
 search_geo <- function(query, step = 500L) {
     records_num <- rentrez::entrez_search(
