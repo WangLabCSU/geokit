@@ -170,6 +170,32 @@ list_geo_file_url <- function(id, file_type, curl_handle = NULL) {
 #' Download utils function with good message.
 #' @noRd
 download_inform <- function(urls, file_paths, site, mode, curl_handle = NULL) {
+    # is_existed <- file.exists(file_paths)
+    # rlang::inform(
+    #     paste0(
+    #         sum(is_existed),
+    #         " files already downloaded: \n",
+    #         strwrap(
+    #             paste0(basename(file_paths[is_existed]), collapse = "\n"),
+    #             indent = 2L
+    #         )
+    #     )
+    # )
+    # urls <- urls[is_existed]
+    # file_paths <- file_paths[is_existed]
+    # rlang::inform(paste0(
+    #     "Downloading ",
+    #     length(file_paths), " files from ",
+    #     switch(site,
+    #         ftp = "FTP site",
+    #         acc = "GEO Accession Site"
+    #     )
+    # ))
+    # - how to handle curl_handle argument ?
+    # curl::multi_download(
+    #     urls, destfiles = file_paths,
+    #     resume = FALSE, progress = TRUE
+    # )
     mapply(
         function(url, file_path) {
             if (!file.exists(file_path)) {
@@ -202,7 +228,6 @@ download_inform <- function(urls, file_paths, site, mode, curl_handle = NULL) {
                     handle = curl_handle %||% geo_handle()
                 )
                 cat("\n")
-                file_path
             } else {
                 rlang::inform(
                     paste0(
@@ -212,8 +237,8 @@ download_inform <- function(urls, file_paths, site, mode, curl_handle = NULL) {
                         file_path
                     )
                 )
-                file_path
             }
+            file_path
         }, urls, file_paths,
         SIMPLIFY = TRUE, USE.NAMES = FALSE
     )
