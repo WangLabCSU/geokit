@@ -5,14 +5,14 @@
 #'
 #' @inheritParams get_geo
 #' @return A data.frame contains metadata of all ids.
-#' @export 
+#' @export
 get_geo_meta <- function(ids, dest_dir = getwd(), curl_handle = NULL) {
     res <- lapply(ids, function(id) {
         out <- rlang::try_fetch(
             get_and_parse_soft(
-                id = id, 
+                id = id,
                 geo_type = substr(id, 1L, 3L),
-                dest_dir = dest_dir, 
+                dest_dir = dest_dir,
                 curl_handle = curl_handle,
                 only_meta = TRUE
             ),
@@ -22,10 +22,12 @@ get_geo_meta <- function(ids, dest_dir = getwd(), curl_handle = NULL) {
                     parent = err
                 )
             }
+        )$meta
+        out[lengths(out) != 1L] <- lapply(
+            out[lengths(out) != 1L], function(x) {
+                paste0(x, collapse = "; ")
+            }
         )
-        out <- lapply(out$meta, function(x) {
-            if (length(x) == 1L) x else paste0(x, collapse = "; ")
-        })
         data.table::setDT(out)
     })
     res <- data.table::rbindlist(res, use.names = TRUE, fill = TRUE)
