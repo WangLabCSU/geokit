@@ -19,13 +19,11 @@ testthat::test_that("GSE/GSM with characteristic column seperated by no special 
     )]
     rgeo::set_pdata(pdata)
     testthat::expect_true(
-        identical(
-            length(
-                grep("^ch1_", names(pdata),
-                    perl = TRUE, value = TRUE
-                )
-            ), 8L
-        )
+        length(
+            grep("^ch1_", names(pdata),
+                perl = TRUE, value = TRUE
+            )
+        ) == 8L
     )
     testthat::expect_type(
         pdata$ch1_age, "integer"

@@ -348,7 +348,7 @@ parse_line_sep_by_equality <- function(dt) {
 # For line seperated by "\t", the element of every row stand for a item
 # So for duplicated rows IDs (the first column), we should collapse it.
 parse_line_sep_by_table <- function(dt) {
-    if (!nrow(dt) || identical(ncol(dt), 1L)) {
+    if (!nrow(dt) || ncol(dt) == 1L) {
         return(NULL)
     }
     dt[, V1 := factor(sub("^!\\s*+", "", V1, perl = TRUE))]
@@ -365,9 +365,9 @@ parse_line_sep_by_table <- function(dt) {
 na_string <- c("NA", "null", "NULL", "Null")
 read_data_table <- function(file_text) {
     data.table::fread(
-        text = file_text[
-            !grepl("^[\\^!#]", file_text, fixed = FALSE, perl = TRUE)
-        ],
+        text = grep("^[\\^!#]", file_text,
+            value = TRUE, fixed = FALSE, perl = TRUE, invert = TRUE
+        ),
         sep = "\t", header = TRUE, blank.lines.skip = TRUE,
         na.strings = na_string, check.names = FALSE
     )
@@ -392,8 +392,7 @@ read_meta <- function(file_text, meta_type = "table") {
 read_column <- function(file_text) {
     data.table::fread(
         text = grep("^#\\w[^\\t]*=", file_text,
-            value = TRUE,
-            fixed = FALSE, perl = TRUE
+            value = TRUE, fixed = FALSE, perl = TRUE
         ),
         sep = "", header = FALSE, blank.lines.skip = TRUE,
         na.strings = na_string,

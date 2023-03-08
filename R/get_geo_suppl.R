@@ -50,7 +50,7 @@ get_geo_suppl_helper <- function(ids, dest_dir, pattern, curl_handle) {
             }
         )
     })
-    if (identical(length(file_paths), 1L)) {
+    if (length(file_paths) == 1L) {
         file_paths[[1L]]
     } else {
         names(file_paths) <- ids

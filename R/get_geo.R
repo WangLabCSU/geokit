@@ -133,7 +133,7 @@ get_geo_multi <- function(ids, dest_dir = getwd(), gse_matrix = TRUE, pdata_from
             }
         )
     })
-    if (identical(length(res), 1L)) {
+    if (length(res) == 1L) {
         res[[1L]]
     } else {
         names(res) <- ids
@@ -143,7 +143,7 @@ get_geo_multi <- function(ids, dest_dir = getwd(), gse_matrix = TRUE, pdata_from
 
 get_geo_unit <- function(id, dest_dir = getwd(), gse_matrix = TRUE, pdata_from_soft = TRUE, add_gpl = NULL, curl_handle = NULL) {
     geo_type <- substr(id, 1L, 3L)
-    if (identical(geo_type, "GSE") && gse_matrix) {
+    if (geo_type == "GSE" && gse_matrix) {
         get_gse_matrix(
             id,
             dest_dir = dest_dir,

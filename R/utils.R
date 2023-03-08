@@ -78,7 +78,7 @@ wrap_cat <- function(label, names, indent = 0L, exdent = 2L) {
     label <- sprintf("%s:", label)
     total <- length(names)
 
-    ext <- if (identical(total, 0L)) {
+    ext <- if (total == 0L) {
         "none"
     } else if (total <= 6L) {
         paste(names, collapse = " ")

@@ -29,7 +29,7 @@ get_gse_matrix <- function(id, dest_dir = getwd(), pdata_from_soft = TRUE, add_g
             curl_handle = curl_handle
         )
     })
-    if (identical(length(res), 1L)) {
+    if (length(res) == 1L) {
         res[[1L]]
     } else {
         names(res) <- basename(file_paths)

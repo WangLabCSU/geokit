@@ -60,14 +60,14 @@ parse_file_name <- function(id, file_type, geo_type) {
                 soft = "_family.soft.gz",
                 suppl = "/"
             ),
-            GSM = if (identical(file_type, "suppl")) "/" else NULL
+            GSM = if (file_type == "suppl") "/" else NULL
         )
     if (is.null(file_suffix)) {
         rlang::abort(
             paste0(parse_geo_type(geo_type), " never own ", file_type, " file.")
         )
     }
-    if (!identical(file_suffix, "/")) {
+    if (file_suffix != "/") {
         paste0(id, file_suffix)
     } else {
         file_suffix
