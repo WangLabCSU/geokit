@@ -4,7 +4,7 @@ testthat::test_that("GSE/GSM with characteristic column seperated by no special 
             "GSE53987", tempdir(),
             pdata_from_soft = FALSE, add_gpl = FALSE
         ),
-        class = "warn_cannot_parse_characteristics",
+        class = "warn_cannot_parse_characteristics"
     )
     pdata <- Biobase::pData(gse)
     data.table::setDT(pdata)
