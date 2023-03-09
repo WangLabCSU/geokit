@@ -65,8 +65,8 @@ construct_gse_matrix_expressionset <- function(file_text, pdata_from_soft, gse_s
             cli::cli_inform(
                 c(
                     "Found Bioconductor annotation package for {.val {expressionset_elements$annotation}}",
-                    i = "Setting `add_gpl` to `FALSE`",
-                    i = "You can overwrite this behaviour by setting `add_gpl` to `TRUE` manually."
+                    i = "Setting {.arg add_gpl} to {.val {FALSE}}",
+                    i = "You can overwrite this behaviour by setting {.arg add_gpl} to {.val {TRUE}} manually."
                 )
             )
             add_gpl <- FALSE
@@ -74,7 +74,7 @@ construct_gse_matrix_expressionset <- function(file_text, pdata_from_soft, gse_s
             cli::cli_inform(
                 c(
                     "Cannot map {.val {expressionset_elements$annotation}} to a Bioconductor annotation package",
-                    "Setting `add_gpl` to `TRUE`"
+                    "Setting {.arg add_gpl} to {.val {TRUE}}"
                 )
             )
             add_gpl <- TRUE
