@@ -364,7 +364,7 @@ parse_line_sep_by_table <- function(dt) {
 
 na_string <- c("NA", "null", "NULL", "Null")
 read_data_table <- function(file_text) {
-    data.table::fread(
+    read_text(
         text = grep("^[\\^!#]", file_text,
             value = TRUE, fixed = FALSE, perl = TRUE, invert = TRUE
         ),
@@ -373,7 +373,7 @@ read_data_table <- function(file_text) {
     )
 }
 read_meta <- function(file_text, meta_type = "table") {
-    data.table::fread(
+    read_text(
         text = grep("^!\\w*", file_text,
             value = TRUE, fixed = FALSE, perl = TRUE
         ),
@@ -390,7 +390,7 @@ read_meta <- function(file_text, meta_type = "table") {
     )
 }
 read_column <- function(file_text) {
-    data.table::fread(
+    read_text(
         text = grep("^#\\w[^\\t]*=", file_text,
             value = TRUE, fixed = FALSE, perl = TRUE
         ),

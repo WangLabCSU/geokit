@@ -61,6 +61,46 @@ read_lines <- function(file) {
     )[[1L]]
 }
 
+# comment code to benchmark writeLines 
+# gen_random <- function(characters, num_lines, min, max) {
+#     line_lengths <- sample.int(max - min, num_lines, replace = TRUE) + min
+#     vapply(line_lengths, function(len) {
+#         paste(sample(characters, len, replace = TRUE), collapse = "")
+#     }, character(1))
+# }
+# set.seed(42)
+# generate 1000 random lines between 100-1000 characters long
+# data <- gen_random(letters, 500, min = 100, max = 1000)
+# bench::mark(
+#     brio::write_lines(data, tempfile()),
+#     data.table::fwrite(list(data), tempfile(),
+#         quote = FALSE,
+#         col.names = FALSE
+#     ),
+#     base::writeLines(data, tempfile()),
+#     check = FALSE
+# )
+#    min   median itr/se…¹ mem_a…² gc/se…³ n_itr  n_gc total…⁴ 
+# 1 1.97ms   2.71ms     353.      0B    0      177     0   502ms 
+# 2 1.22ms   1.36ms     703.      0B    2.02   348     1   495ms 
+# 3 3.75ms   4.24ms     224.      0B    0      113     0   504ms 
+#' @param text A character vector
+#' @noRd 
+read_text <- function(text, ...) {
+    file <- tempfile()
+    data.table::fwrite(list(text),
+        file = file,
+        quote = FALSE,
+        col.names = FALSE,
+        logical01 = FALSE,
+        showProgress = FALSE,
+        compress = "none",
+        verbose = FALSE
+    )
+    on.exit(file.remove(file))
+    data.table::fread(file = file, ...)
+}
+
 check_ids <- function(ids) {
     geotype <- unique(substr(ids, 1L, 3L))
     id_test <- any(!geotype %in% c("GSE", "GPL", "GSM", "GDS"))
