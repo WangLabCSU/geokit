@@ -126,8 +126,9 @@ get_geo_multi <- function(ids, dest_dir = getwd(), gse_matrix = TRUE, pdata_from
                 curl_handle = curl_handle
             ),
             error = function(err) {
-                rlang::abort(
-                    paste0("Error when fetching GEO data of ", id, "."),
+                cli::cat_line()
+                cli::cli_abort(
+                    "Error when fetching GEO data of {.val {id}}",
                     parent = err
                 )
             }
@@ -142,7 +143,7 @@ get_geo_multi <- function(ids, dest_dir = getwd(), gse_matrix = TRUE, pdata_from
 }
 
 get_geo_unit <- function(id, dest_dir = getwd(), gse_matrix = TRUE, pdata_from_soft = TRUE, add_gpl = NULL, curl_handle = NULL) {
-    geo_type <- substr(id, 1L, 3L)
+    geo_type <- substring(id, 1L, 3L)
     if (geo_type == "GSE" && gse_matrix) {
         get_gse_matrix(
             id,

@@ -69,7 +69,7 @@ parse_gse_soft <- function(file_text, entity_type = "all", only_meta = FALSE) {
             perl = TRUE, value = FALSE
         )
     }
-    rlang::inform(sprintf("Found %d entities...", length(entity_indices)))
+    cli::cli_inform("Found {.val {length(entity_indices)}} entit{?y/ies}")
     soft_data_list <- vector(mode = "list", length = length(entity_indices))
     # For every entity data, the data is seperated by "=" into name-value pairs
     # Don't use `data.table::tstrsplit`, as it will split string into three or
@@ -81,11 +81,8 @@ parse_gse_soft <- function(file_text, entity_type = "all", only_meta = FALSE) {
     seq_line_temp <- c(entity_indices, length(file_text))
     for (i in seq_along(entity_indices)) {
         accession <- entity[[2L]][[i]]
-        rlang::inform(
-            sprintf(
-                "%s (%d of %d entities)",
-                accession, i, length(entity_indices)
-            )
+        cli::cli_inform(
+            "{accession} ({i} of {length(entity_indices)} entit{?y/ies})"
         )
         entity_data <- parse_gpl_or_gsm_soft(file_text[
             seq_line_temp[[i]]:(seq_line_temp[[i + 1L]] - 1L)

@@ -19,13 +19,13 @@ log_trans <- function(data, pseudo = 1) {
     } else if (inherits(data, "matrix")) {
         expr_data <- data
     } else {
-        rlang::abort("data should be a class of `matrix` or `ExpressionSet`")
+        cli::cli_abort("data should must be a {.cls matrix} or {.cls ExpressionSet}")
     }
     if (is_log_trans(expr_data)) {
-        rlang::inform("log2 transformation wasn't needed")
+        cli::cli_inform("log2 transformation wasn't needed")
         return(data)
     } else {
-        rlang::inform("Doing log2 transformation")
+        cli::cli_inform("Doing log2 transformation")
         expr_data <- log2(expr_data + pseudo)
     }
     if (inherits(data, "ExpressionSet")) {

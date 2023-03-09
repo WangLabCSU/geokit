@@ -31,11 +31,8 @@ download_gpl_file <- function(id, dest_dir = getwd(), amount = "data", curl_hand
                 curl_handle = curl_handle
             ),
             error = function(error) {
-                rlang::inform(
-                    paste0(
-                        "\nannot file in FTP site for ", id,
-                        " is not available, so will use data amount of SOFT file from GEO Accession Site instead."
-                    )
+                cli::cli_alert_info(
+                    "annot file in FTP site for {.val {id}} is not available, so will use data amount of SOFT file from GEO Accession Site instead" # nolint
                 )
                 download_with_acc(
                     id = id, dest_dir = dest_dir,
@@ -51,11 +48,8 @@ download_gpl_file <- function(id, dest_dir = getwd(), amount = "data", curl_hand
                 curl_handle = curl_handle
             ),
             error = function(error) {
-                rlang::inform(
-                    paste0(
-                        "\nfull amount of SOFT file in ACC site for ", id,
-                        " is not available, so will use soft format from GEO FTP Site instead."
-                    )
+                cli::cli_alert_info(
+                    "full amount of SOFT file in ACC site for {.val {id}} is not available, so will use soft format from GEO FTP Site instead" # nolint
                 )
                 download_with_ftp(
                     id = id, dest_dir = dest_dir,
@@ -160,8 +154,8 @@ list_geo_file_url <- function(id, file_type, curl_handle = NULL) {
     url <- build_geo_ftp_url(id, file_type)
     file_urls <- list_file_helper(url, curl_handle = NULL)
     if (is.null(file_urls)) {
-        rlang::inform(
-            paste0("No ", file_type, " file found for ", id, ".")
+        cli::cli_alert_info(
+            "No {.val {file_type}} file found for {.val {id}}"
         )
     }
     file_urls
@@ -196,20 +190,12 @@ download_inform <- function(urls, file_paths, site, mode, curl_handle = NULL) {
     #     urls, destfiles = file_paths,
     #     resume = FALSE, progress = TRUE
     # )
+    # on.exit(cli::cat_line()) # just for better message display
     mapply(
         function(url, file_path) {
             if (!file.exists(file_path)) {
-                rlang::inform(
-                    paste0(
-                        "Downloading ",
-                        basename(file_path),
-                        " from ",
-                        switch(site,
-                            ftp = "FTP site",
-                            acc = "GEO Accession Site"
-                        ),
-                        ":"
-                    )
+                cli::cli_inform(
+                    "Downloading {.file {basename(file_path)}} from {switch(site, ftp = \"FTP site\",  acc = \"GEO Accession Site\")}"
                 )
                 # h <- curl::new_handle()
                 # For we use HTTPs to link GEO FTP site,
@@ -227,15 +213,9 @@ download_inform <- function(urls, file_paths, site, mode, curl_handle = NULL) {
                     mode = mode, quiet = FALSE,
                     handle = curl_handle %||% geo_handle()
                 )
-                cat("\n")
             } else {
-                rlang::inform(
-                    paste0(
-                        "Using locally cached version of ",
-                        basename(file_path),
-                        " found here: ",
-                        file_path
-                    )
+                cli::cli_inform(
+                    "Using locally cached version of {.file {basename(file_path)}} found here: {.path {file_path}}"
                 )
             }
             file_path

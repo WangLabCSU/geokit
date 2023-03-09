@@ -6,7 +6,7 @@ str_extract <- function(string, pattern, ignore.case = FALSE) {
     start <- as.vector(matches)
     end <- start + attr(matches, "match.length") - 1L
     start[start == -1L] <- NA_integer_
-    substr(string, start, end)
+    substring(string, start, end)
 }
 str_extract_all <- function(string, pattern, ignore.case = FALSE) {
     regmatches(
@@ -103,15 +103,16 @@ read_text <- function(text, ...) {
 }
 na_string <- c("NA", "null", "NULL", "Null")
 
-check_ids <- function(ids) {
-    geotype <- unique(substr(ids, 1L, 3L))
+check_ids <- function(ids, arg = rlang::caller_arg(ids), call = parent.frame()) {
+    geotype <- unique(substring(ids, 1L, 3L))
     id_test <- any(!geotype %in% c("GSE", "GPL", "GSM", "GDS"))
     if (id_test) {
-        rlang::abort(
+        cli::cli_abort(
             c(
-                "`ids` should representing the GEO identity.",
-                "Please check the `ids` provided is correct."
-            )
+                "{.arg {arg}} should representing GEO identity",
+                i = "Please check the {.arg {arg}} provided is correct."
+            ),
+            call = call
         )
     }
 }

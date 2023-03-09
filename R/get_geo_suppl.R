@@ -40,11 +40,8 @@ get_geo_suppl_helper <- function(ids, dest_dir, pattern, curl_handle) {
                 pattern = pattern, curl_handle = curl_handle
             ),
             error = function(err) {
-                rlang::abort(
-                    paste0(
-                        "Error when fetching GEO Supplementary data of ",
-                        id, "."
-                    ),
+                cli::cli_abort(
+                    "Error when fetching GEO Supplementary data of {.val {id}}",
                     parent = err
                 )
             }

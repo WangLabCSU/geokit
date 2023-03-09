@@ -3,6 +3,8 @@ get_gse_matrix <- function(id, dest_dir = getwd(), pdata_from_soft = TRUE, add_g
         id = id, dest_dir = dest_dir,
         file_type = "matrix"
     )
+
+    cli::cli_inform("Parsing {.field {id}} Series Matrix File")
     # For GEO series soft files, there is only one file corresponding to all
     # GSE matrix fiels, so we should extract the sample data firstly, and then
     # split it into pieces.
@@ -60,24 +62,18 @@ construct_gse_matrix_expressionset <- function(file_text, pdata_from_soft, gse_s
 
     if (is.null(add_gpl)) {
         if (has_bioc_annotation_pkg(expressionset_elements$annotation)) {
-            rlang::inform(
+            cli::cli_inform(
                 c(
-                    paste0(
-                        "Found Bioconductor annotation package for ",
-                        expressionset_elements$annotation
-                    ),
-                    "Setting `add_gpl` to `FALSE`",
-                    "You can overwrite this behaviour by setting `add_gpl` to `TRUE` manually."
+                    "Found Bioconductor annotation package for {.val {expressionset_elements$annotation}}",
+                    i = "Setting `add_gpl` to `FALSE`",
+                    i = "You can overwrite this behaviour by setting `add_gpl` to `TRUE` manually."
                 )
             )
             add_gpl <- FALSE
         } else {
-            rlang::inform(
+            cli::cli_inform(
                 c(
-                    paste0(
-                        "Cannot map ", expressionset_elements$annotation,
-                        " to a Bioconductor annotation package"
-                    ),
+                    "Cannot map {.val {expressionset_elements$annotation}} to a Bioconductor annotation package",
                     "Setting `add_gpl` to `TRUE`"
                 )
             )

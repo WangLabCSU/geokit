@@ -9,11 +9,8 @@ gpl2bioc <- function(gpl) {
             env = list(gpl = I(gpl))
         ]
     } else {
-        rlang::inform(
-            paste0(
-                "Cannot map ", gpl,
-                " to a Bioconductor annotation package"
-            )
+        cli::cli_alert_info(
+            "Cannot map {.val {gpl}} to a Bioconductor annotation package"
         )
         NA_character_
     }

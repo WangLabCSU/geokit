@@ -46,18 +46,18 @@
 #' @export
 set_pdata <- function(data, columns = NULL, sep = ":", split = ";") {
     if (!data.table::is.data.table(data)) {
-        rlang::abort(
-            "`data` should be a data.table"
+        cli::cli_abort(
+            "{.arg data} must be a data.table"
         )
     }
     if (!rlang::is_scalar_character(sep)) {
-        rlang::abort(
-            "`sep` should be a single string"
+        cli::cli_abort(
+            "{.arg sep} must be a single string"
         )
     }
     if (!rlang::is_scalar_character(split)) {
-        rlang::abort(
-            "`split` should be a single string"
+        cli::cli_abort(
+            "{.arg split} must be a single string"
         )
     }
     rlang::try_fetch(
@@ -68,14 +68,10 @@ set_pdata <- function(data, columns = NULL, sep = ":", split = ";") {
             split = split
         ),
         warn_cannot_parse_characteristics = function(cnd) {
-            rlang::abort(
+            cli::cli_abort(
                 c(
-                    paste0(
-                        "There remains more than one \"", sep,
-                        "\" characters after splitting `columns` by \"",
-                        split, "\""
-                    ),
-                    "Please check if `sep` and `split` parameters can parse `columns`."
+                    "There remains more than one {.arg sep} ({.val {sep}}) characters after splitting {.arg columns} by {.arg split} ({.val {split}})",
+                    i = "Please check if {.arg sep} and {.arg split} parameters can parse {.arg columns}."
                 ),
                 parent = cnd
             )
@@ -121,18 +117,13 @@ parse_gse_matrix_sample_characteristics <- function(sample_dt, characteristics_c
                 logical(1L)
             )
             if (any(is_more_than_one_sep_chr)) {
-                rlang::warn(
+                cli::cli_warn(
                     c(
                         "Cannot parse characteristic column correctly",
-                        paste0(
-                            "Details see `", .characteristic_col,
-                            "` column in `phenoData`"
-                        )
+                        i = "Details see {.val { .characteristic_col }} column in {.field phenoData}",
+                        i = "Please use {.fun set_pdata} or {.fun parse_pdata} function to convert it manually if necessary!"
                     ),
                     class = "warn_cannot_parse_characteristics"
-                )
-                rlang::warn(
-                    "Please use `set_pdata` or `parse_pdata` function to convert it manually if necessary!"
                 )
                 next
             }
@@ -197,8 +188,8 @@ parse_pdata <- function(gsm_list) {
         }, logical(1L)
     ))
     if (!test_gsm_list) {
-        rlang::abort(
-            "gsm_list should be a list of GEOSoft object, especially for @gsm slot in a GEOSeries object."
+        cli::cli_abort(
+            "{.arg gsm_list} must be a list of {.cls GEOSoft} object, especially for {.field @gsm} slot in a GEOSeries object."
         )
     }
     res <- parse_gse_soft_sample_characteristics(gsm_list)
@@ -258,16 +249,14 @@ parse_gse_soft_sample_characteristics <- function(gsm_list) {
         )
         if (any(any_more_than_one_connection_chr)) {
             # column names with more than one ":"
-            warn_column_names <- characteristics_cols[
+            warn_column_names <- characteristics_cols[ # nolint
                 any_more_than_one_connection_chr
             ]
-            rlang::warn(
+            cli::cli_warn(
                 c(
-                    "More than one characters \":\" found in meta characteristics data`: ",
-                    paste0(
-                        "Details see: ", warn_column_names, " column in returned data."
-                    ),
-                    "Please use `set_pdata` or combine `strsplit` and `parse_pdata` function to convert it manually if necessary!"
+                    "More than one characters {.val :} found in meta characteristics data",
+                    i = "Details see: {.val {warn_column_names}} column in returned data.",
+                    i = "Please use {.fun set_pdata} or combine {.fun strsplit} and {.fun parse_pdata} function to convert it manually if necessary!"
                 )
             )
         }

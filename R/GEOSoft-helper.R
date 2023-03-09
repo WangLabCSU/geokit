@@ -50,6 +50,7 @@ get_and_parse_soft <- function(id, geo_type, dest_dir, curl_handle, only_meta) {
             curl_handle = curl_handle
         )
     )
+    cli::cli_inform("Parsing {.field {id}} SOFT file")
     file_text <- read_lines(file_path)
     switch(geo_type,
         GSM = ,

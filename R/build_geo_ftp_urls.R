@@ -4,7 +4,7 @@
 #' "miniml" or "suppl".
 #' @noRd
 build_geo_ftp_url <- function(id, file_type = "soft") {
-    geo_type <- unique(substr(id, 1L, 3L))
+    geo_type <- unique(substring(id, 1L, 3L))
     file_type <- match.arg(
         tolower(file_type),
         c("soft", "soft_full", "annot", "miniml", "suppl", "matrix")
@@ -63,8 +63,8 @@ parse_file_name <- function(id, file_type, geo_type) {
             GSM = if (file_type == "suppl") "/" else NULL
         )
     if (is.null(file_suffix)) {
-        rlang::abort(
-            paste0(parse_geo_type(geo_type), " never own ", file_type, " file.")
+        cli::cli_abort(
+            "{.field {parse_geo_type(geo_type)}} never own {.val {file_type}} file."
         )
     }
     if (file_suffix != "/") {
