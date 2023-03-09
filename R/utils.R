@@ -91,6 +91,7 @@ read_text <- function(text, ...) {
     data.table::fwrite(list(text),
         file = file,
         quote = FALSE,
+        na = "NA",
         col.names = FALSE,
         logical01 = FALSE,
         showProgress = FALSE,
@@ -98,8 +99,9 @@ read_text <- function(text, ...) {
         verbose = FALSE
     )
     on.exit(file.remove(file))
-    data.table::fread(file = file, ...)
+    data.table::fread(file = file, ..., na.strings = na_string)
 }
+na_string <- c("NA", "null", "NULL", "Null")
 
 check_ids <- function(ids) {
     geotype <- unique(substr(ids, 1L, 3L))

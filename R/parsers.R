@@ -362,14 +362,13 @@ parse_line_sep_by_table <- function(dt) {
     })
 }
 
-na_string <- c("NA", "null", "NULL", "Null")
 read_data_table <- function(file_text) {
     read_text(
         text = grep("^[\\^!#]", file_text,
             value = TRUE, fixed = FALSE, perl = TRUE, invert = TRUE
         ),
         sep = "\t", header = TRUE, blank.lines.skip = TRUE,
-        na.strings = na_string, check.names = FALSE
+        check.names = FALSE
     )
 }
 read_meta <- function(file_text, meta_type = "table") {
@@ -386,7 +385,7 @@ read_meta <- function(file_text, meta_type = "table") {
             equality = "character"
         ),
         header = FALSE, blank.lines.skip = TRUE,
-        na.strings = na_string, check.names = FALSE
+        check.names = FALSE
     )
 }
 read_column <- function(file_text) {
@@ -395,7 +394,6 @@ read_column <- function(file_text) {
             value = TRUE, fixed = FALSE, perl = TRUE
         ),
         sep = "", header = FALSE, blank.lines.skip = TRUE,
-        na.strings = na_string,
         colClasses = "character",
         check.names = FALSE
     )

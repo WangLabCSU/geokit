@@ -43,7 +43,7 @@ if (length(new_gpl2bioc)) {
         use.names = TRUE, fill = TRUE, idcol = FALSE
     )
     gpl2bioc_dt[
-        , Platform_data_row_count := data.table::fread(
+        , Platform_data_row_count := read_text(
             text = Platform_data_row_count, sep = "",
             header = FALSE
         )[[1L]]

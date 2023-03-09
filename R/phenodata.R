@@ -341,10 +341,9 @@ parse_name_value_pairs <- function(chr_list, sep = ":") {
         use.names = TRUE, fill = TRUE
     )
     data.table::setnames(characteristic_dt, make.unique)
-
     # parse text into corresponding atomic vector mode
     lapply(characteristic_dt, function(x) {
-        data.table::fread(
+        read_text(
             text = x, sep = "", header = FALSE,
             strip.white = TRUE, blank.lines.skip = FALSE, fill = TRUE
         )[[1L]]
