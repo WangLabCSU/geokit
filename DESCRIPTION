@@ -11,7 +11,7 @@ RoxygenNote: 7.2.1
 Imports: 
     data.table (>= 1.14.9),
     rlang (>= 0.4.11),
-    cli,
+    cli (>= 3.6.0),
     Biobase,
     curl (>= 5.0.0),
     methods,
