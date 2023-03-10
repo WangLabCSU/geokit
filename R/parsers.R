@@ -69,7 +69,6 @@ parse_gse_soft <- function(file_text, entity_type = "all", only_meta = FALSE) {
             perl = TRUE, value = FALSE
         )
     }
-    cli::cli_inform("Found {.val {length(entity_indices)}} entit{?y/ies}")
     soft_data_list <- vector(mode = "list", length = length(entity_indices))
     # For every entity data, the data is seperated by "=" into name-value pairs
     # Don't use `data.table::tstrsplit`, as it will split string into three or
@@ -79,11 +78,15 @@ parse_gse_soft <- function(file_text, entity_type = "all", only_meta = FALSE) {
     )
     names(soft_data_list) <- entity[[2L]]
     seq_line_temp <- c(entity_indices, length(file_text))
+    cli::cli_progress_bar(
+        format = "{cli::pb_spin} Parsing series {.field soft} entity {.field {accession}} | {cli::pb_current}/{cli::pb_total}", # nolint
+        format_done = "Parsing {.val {cli::pb_total}} entit{?y/ies} in {cli::pb_elapsed}",
+        total = length(entity_indices),
+        clear = FALSE
+    )
     for (i in seq_along(entity_indices)) {
         accession <- entity[[2L]][[i]]
-        cli::cli_inform(
-            "{accession} ({i} of {length(entity_indices)} entit{?y/ies})"
-        )
+        cli::cli_progress_update()
         entity_data <- parse_gpl_or_gsm_soft(file_text[
             seq_line_temp[[i]]:(seq_line_temp[[i + 1L]] - 1L)
         ])

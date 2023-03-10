@@ -55,10 +55,10 @@ download_and_parse_soft <- function(ids, geo_type, dest_dir, handle_opts, only_m
         )
     )
     bar_id <- cli::cli_progress_bar(
-        format = "{cli::pb_spin} Parsing {.field {ids[cli::pb_current]}} | {cli::pb_current}/{cli::pb_total}",
-        format_done = "Total parsing time: {cli::pb_elapsed_clock}",
-        clear = FALSE,
-        total = length(ids)
+        format = "{cli::pb_spin} Parsing {.field {ids[cli::pb_current]}} soft file | {cli::pb_current}/{cli::pb_total}",
+        format_done = "Parsing {.val {cli::pb_total}} {.field soft} file{?s} in {cli::pb_elapsed}",
+        total = length(ids),
+        clear = FALSE
     )
     .mapply(function(id, file_path) {
         cli::cli_progress_update(id = bar_id)

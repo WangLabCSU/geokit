@@ -6,30 +6,24 @@ get_gse_matrix <- function(ids, dest_dir = getwd(), pdata_from_soft = TRUE, add_
     )
     arg_list <- list(id = ids, file_paths = file_paths_list)
     if (pdata_from_soft) {
-        cli::cli_inform("Downloading {.val {length(ids)}} series soft file{?s}")
         gse_soft_file_paths <- download_gse_soft_files(
             ids, dest_dir,
             handle_opts = handle_opts
         )
-        cli::cli_inform("Parsing {.val {length(ids)}} series soft file{?s}")
         gse_sample_data_list <- lapply(gse_soft_file_paths, function(x) {
-            gse_soft_file_text <- read_lines(x)
-            suppressMessages(parse_gse_soft(
-                gse_soft_file_text,
+            cli::cli_alert_info(
+                "Parsing series {.field soft} file {.file {basename(x)}} "
+            )
+            parse_gse_soft(
+                read_lines(x),
                 entity_type = "sample"
-            )[["gsm"]])
+            )[["gsm"]]
         })
         arg_list <- c(arg_list, list(gse_sample_data = gse_sample_data_list))
     }
-    bar_id <- cli::cli_progress_bar(
-        format = "{cli::pb_spin} Parsing {.field {ids[cli::pb_current]}} | {cli::pb_current}/{cli::pb_total}",
-        format_done = "Total parsing time: {cli::pb_elapsed_clock}",
-        clear = FALSE,
-        total = length(ids)
-    )
     .mapply(
         function(id, file_paths, gse_sample_data = NULL) {
-            cli::cli_progress_update(id = bar_id)
+            cli::cli_inform("Parsing {.val {length(file_paths)}} series matrix file{?s} of {.field {id}}")
             # For GEO series soft files, there is only one file corresponding to
             # all GSE matrix fiels, so we should extract the sample data
             # firstly, and then split it into pieces.

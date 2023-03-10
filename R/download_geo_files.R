@@ -1,6 +1,6 @@
 #' Return a character vector of file paths
 #' @noRd
-download_geo_suppl_or_gse_matrix_files <- function(ids, dest_dir, file_type, pattern = NULL, handle_opts = list()) {
+download_geo_suppl_or_gse_matrix_files <- function(ids, dest_dir, file_type, pattern = NULL, handle_opts = list(), msg = sprintf("{.strong %s} {.field %s}", substring(ids[1L], 1L, 3L), file_type)) {
     url_list <- lapply(ids, list_geo_file_url,
         file_type = file_type, handle_opts = handle_opts
     )
@@ -20,7 +20,8 @@ download_geo_suppl_or_gse_matrix_files <- function(ids, dest_dir, file_type, pat
         unlist(url_list, recursive = FALSE, use.names = FALSE),
         unlist(file_path_list, recursive = FALSE, use.names = FALSE),
         site = "ftp", mode = "wb",
-        handle_opts = handle_opts
+        handle_opts = handle_opts,
+        msg = msg
     )
     file_path_list
 }
@@ -38,17 +39,19 @@ download_gpl_files <- function(ids, dest_dir = getwd(), amount = "data", handle_
             ids = ids, dest_dir = dest_dir,
             file_type = "annot",
             handle_opts = handle_opts,
-            fail = FALSE
+            fail = FALSE,
+            msg = "{.strong GPL} {.field annot}"
         )
         out <- download_status$destfiles
         if (any(!download_status$is_success)) {
             cli::cli_alert_info(
-                "annot file in FTP site for {.val {ids[!download_status$is_success]}} is not available, so will use data amount of SOFT file from GEO Accession Site instead" # nolint
+                "{.field annot} file in FTP site for {.val {ids[!download_status$is_success]}} is not available, so will use {.field {amount}} amount file from GEO Accession Site instead" # nolint
             )
             out[!download_status$is_success] <- download_with_acc(
                 ids = ids[!download_status$is_success], dest_dir = dest_dir,
                 scope = "self", amount = amount, format = "text",
-                handle_opts = handle_opts
+                handle_opts = handle_opts,
+                msg = sprintf("{.strong GPL} {.field %s} amount", amount)
             )
         }
     } else {
@@ -56,17 +59,19 @@ download_gpl_files <- function(ids, dest_dir = getwd(), amount = "data", handle_
             ids = ids, dest_dir = dest_dir,
             scope = "self", amount = amount, format = "text",
             handle_opts = handle_opts,
-            fail = FALSE
+            fail = FALSE,
+            msg = sprintf("{.strong GPL} {.field %s} amount", amount)
         )
         out <- download_status$destfiles
         if (any(!download_status$is_success)) {
             cli::cli_alert_info(
-                "full amount of SOFT file in ACC site for {.val {ids[!download_status$is_success]}} is not available, so will use soft format from GEO FTP Site instead" # nolint
+                "{.field {amount}} amount file in ACC site for {.val {ids[!download_status$is_success]}} is not available, so will use {.field soft} format from GEO FTP Site instead" # nolint
             )
             out[!download_status$is_success] <- download_with_ftp(
                 ids = ids[!download_status$is_success], dest_dir = dest_dir,
                 file_type = "soft",
-                handle_opts = handle_opts
+                handle_opts = handle_opts,
+                msg = "{.strong GPL} {.field soft}"
             )
         }
     }
@@ -80,7 +85,8 @@ download_gse_soft_files <- function(ids, dest_dir = getwd(), handle_opts = list(
     download_with_ftp(
         ids = ids, dest_dir = dest_dir,
         file_type = "soft",
-        handle_opts = handle_opts
+        handle_opts = handle_opts,
+        msg = "{.strong GSE} {.field soft}"
     )
 }
 
@@ -90,7 +96,8 @@ download_gsm_files <- function(ids, dest_dir = getwd(), handle_opts = list()) {
     download_with_acc(
         ids = ids, dest_dir = dest_dir,
         scope = "self", amount = "full", format = "text",
-        handle_opts = handle_opts
+        handle_opts = handle_opts,
+        msg = "{.strong GSM} {.field full} amount"
     )
 }
 
@@ -100,23 +107,25 @@ download_gds_files <- function(ids, dest_dir = getwd(), handle_opts = list()) {
     download_with_ftp(
         ids = ids, dest_dir = dest_dir,
         file_type = "soft",
-        handle_opts = handle_opts
+        handle_opts = handle_opts,
+        msg = "{.strong GDS} {.field soft}"
     )
 }
 
 #' Return a character vector, the length of it is the same with `ids`.
 #' @noRd
-download_with_ftp <- function(ids, dest_dir, file_type = "soft", handle_opts = list(), fail = TRUE) {
+download_with_ftp <- function(ids, dest_dir, file_type = "soft", handle_opts = list(), fail = TRUE, msg = sprintf("{.field %s}", file_type)) {
     urls <- build_geo_ftp_url(ids = ids, file_type = file_type)
     download_inform(urls,
         file.path(dest_dir, basename(urls)),
         site = "ftp", mode = "wb",
         handle_opts = handle_opts,
-        fail = fail
+        fail = fail,
+        msg = msg
     )
 }
 
-download_with_acc <- function(ids, dest_dir, scope = "self", amount = "full", format = "text", handle_opts = list(), fail = TRUE) {
+download_with_acc <- function(ids, dest_dir, scope = "self", amount = "full", format = "text", handle_opts = list(), fail = TRUE, msg = sprintf("{.field %s} amount", amount)) {
     urls <- build_geo_acc_url(
         ids = ids, scope = scope, amount = amount, format = format
     )
@@ -129,7 +138,8 @@ download_with_acc <- function(ids, dest_dir, scope = "self", amount = "full", fo
         file.path(dest_dir, paste(ids, file_ext, sep = ".")),
         site = "acc", mode = "w",
         handle_opts = handle_opts,
-        fail = fail
+        fail = fail,
+        msg = msg
     )
 }
 
@@ -169,7 +179,7 @@ list_geo_file_url <- function(id, file_type, handle_opts = list()) {
     file_urls <- list_file_helper(url, handle_opts = handle_opts)
     if (is.null(file_urls)) {
         cli::cli_alert_info(
-            "No {.val {file_type}} file found for {.val {id}}"
+            "No {.field {file_type}} file found for {.val {id}}"
         )
     }
     file_urls
@@ -177,21 +187,25 @@ list_geo_file_url <- function(id, file_type, handle_opts = list()) {
 
 #' Download utils function with good message.
 #' @return If fail is `TRUE`, always return a character path if downloading
-#' successed. Otherwise always return a list.
+#'   successed. Otherwise always return a list.
 #' @noRd
-download_inform <- function(urls, file_paths, site, mode, handle_opts = list(), fail = TRUE) {
+download_inform <- function(urls, file_paths, site, mode, msg = "", handle_opts = list(), fail = TRUE) {
     out <- list(
         urls = urls, destfiles = file_paths,
         is_success = rep_len(TRUE, length(urls))
     )
     is_existed <- file.exists(file_paths)
     if (any(is_existed)) {
-        cli::cli_inform("{.val {sum(is_existed)}} files already downloaded: {.file {basename(file_paths[is_existed])}}")
+        cli::cli_inform(sprintf(
+            "Finding {.val {sum(is_existed)}} %s file{?s} already downloaded: {.file {basename(file_paths[is_existed])}}", msg
+        ))
         urls <- urls[!is_existed]
         file_paths <- file_paths[!is_existed]
     }
     if (length(urls) > 0L) {
-        cli::cli_inform("Downloading {.val {length(urls)}} file{?s} from {switch(site, ftp = \"FTP site\",  acc = \"GEO Accession Site\")}")
+        cli::cli_inform(sprintf(
+            "Downloading {.val {length(urls)}} %s file{?s} from {switch(site, ftp = \"FTP site\",  acc = \"GEO Accession Site\")}", msg
+        ))
         arg_list <- c(
             list(
                 urls = urls, destfiles = file_paths, resume = FALSE,
