@@ -194,7 +194,7 @@ download_inform <- function(urls, file_paths, site, mode, handle_opts = list(), 
         cli::cli_inform("Downloading {.val {length(urls)}} file{?s} from {switch(site, ftp = \"FTP site\",  acc = \"GEO Accession Site\")}")
         arg_list <- c(
             list(
-                urls = urls, destfiles = file_paths, resume = TRUE,
+                urls = urls, destfiles = file_paths, resume = FALSE,
                 progress = interactive(), timeout = Inf
             ),
             handle_opts
