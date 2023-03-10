@@ -21,8 +21,15 @@ get_gse_matrix <- function(ids, dest_dir = getwd(), pdata_from_soft = TRUE, add_
         })
         arg_list <- c(arg_list, list(gse_sample_data = gse_sample_data_list))
     }
+    bar_id <- cli::cli_progress_bar(
+        format = "{cli::pb_spin} Parsing {.field {ids[cli::pb_current]}} | {cli::pb_current}/{cli::pb_total}",
+        format_done = "Total parsing time: {cli::pb_elapsed_clock}",
+        clear = FALSE,
+        total = length(ids)
+    )
     .mapply(
         function(id, file_paths, gse_sample_data = NULL) {
+            cli::cli_progress_update(id = bar_id)
             # For GEO series soft files, there is only one file corresponding to
             # all GSE matrix fiels, so we should extract the sample data
             # firstly, and then split it into pieces.
@@ -71,10 +78,10 @@ construct_gse_matrix_expressionset <- function(file_text, pdata_from_soft, gse_s
 
     if (is.null(add_gpl)) {
         if (has_bioc_annotation_pkg(expressionset_elements$annotation)) {
-            cli::cli_inform("Found Bioconductor annotation package for {.val {expressionset_elements$annotation}}")
+            cli::cli_alert_info("Found Bioconductor annotation package for {.val {expressionset_elements$annotation}}")
             add_gpl <- FALSE
         } else {
-            cli::cli_inform("Cannot map {.val {expressionset_elements$annotation}} to a Bioconductor annotation package")
+            cli::cli_alert_info("Cannot map {.val {expressionset_elements$annotation}} to a Bioconductor annotation package")
             add_gpl <- TRUE
         }
     }

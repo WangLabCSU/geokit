@@ -6,7 +6,7 @@ get_geo_soft <- function(ids, geo_type, dest_dir, handle_opts) {
     )
     .mapply(
         new_geo_obj,
-        list(id = ids, soft_data = soft_data_list), 
+        list(id = ids, soft_data = soft_data_list),
         list(geo_type = geo_type)
     )
 }
@@ -54,8 +54,14 @@ download_and_parse_soft <- function(ids, geo_type, dest_dir, handle_opts, only_m
             handle_opts = handle_opts
         )
     )
+    bar_id <- cli::cli_progress_bar(
+        format = "{cli::pb_spin} Parsing {.field {ids[cli::pb_current]}} | {cli::pb_current}/{cli::pb_total}",
+        format_done = "Total parsing time: {cli::pb_elapsed_clock}",
+        clear = FALSE,
+        total = length(ids)
+    )
     .mapply(function(id, file_path) {
-        cli::cli_inform("Parsing {.field {id}} SOFT file")
+        cli::cli_progress_update(id = bar_id)
         file_text <- read_lines(file_path)
         out <- switch(geo_type,
             GSM = ,
