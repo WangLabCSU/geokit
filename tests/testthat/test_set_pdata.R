@@ -1,5 +1,7 @@
 testthat::test_that("GSE/GSM with characteristic column seperated by no special string warned and parsing column names worked well", {
-    testthat::expect_success(rgeo::get_geo("GSE8462", tempdir()))
+    testthat::expect_s4_class(
+        rgeo::get_geo("GSE8462", tempdir()), "ExpressionSet"
+    )
     testthat::expect_warning(
         gse <- rgeo::get_geo(
             "GSE53987", tempdir(),

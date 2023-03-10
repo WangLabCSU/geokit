@@ -57,7 +57,8 @@ column_to_rownames <- function(.data, var) {
 read_lines <- function(file) {
     data.table::fread(
         file = file, sep = "", header = FALSE,
-        colClasses = "character"
+        colClasses = "character",
+        showProgress = FALSE
     )[[1L]]
 }
 
@@ -87,6 +88,9 @@ read_lines <- function(file) {
 #' @param text A character vector
 #' @noRd
 read_text <- function(text, ...) {
+    if (length(text) == 0L) {
+        return(data.table::data.table())
+    }
     file <- tempfile()
     data.table::fwrite(list(text),
         file = file,
@@ -99,7 +103,11 @@ read_text <- function(text, ...) {
         verbose = FALSE
     )
     on.exit(file.remove(file))
-    data.table::fread(file = file, ..., na.strings = na_string)
+    data.table::fread(
+        file = file, ...,
+        na.strings = na_string,
+        showProgress = FALSE
+    )
 }
 na_string <- c("NA", "null", "NULL", "Null")
 
