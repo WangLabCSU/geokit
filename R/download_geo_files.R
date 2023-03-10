@@ -177,7 +177,7 @@ list_geo_file_url <- function(id, file_type, handle_opts = list()) {
 
 #' Download utils function with good message.
 #' @return If fail is `TRUE`, always return a character path if downloading
-#' successed. Otherwise always return a list. 
+#' successed. Otherwise always return a list.
 #' @noRd
 download_inform <- function(urls, file_paths, site, mode, handle_opts = list(), fail = TRUE) {
     out <- list(
@@ -201,15 +201,16 @@ download_inform <- function(urls, file_paths, site, mode, handle_opts = list(), 
         )
         status <- do.call(curl::multi_download, arg_list)
         is_success <- is_download_success(status)
-        if (any(!is_success & file.exists(file_paths))) {
-            file.remove(file_paths)
+        is_need_deleted <- !is_success & file.exists(file_paths)
+        if (any(is_need_deleted)) {
+            file.remove(file_paths[is_need_deleted])
         }
     }
     if (fail) {
         if (length(urls) > 0L && !all(is_success)) {
             cli::cli_abort(c(
                 "Cannot download {sum(!is_success)} file{?s}",
-                x = status$error[!is_success]
+                x = "error message: {status$error[!is_success]}"
             ))
         } else {
             return(out$destfiles)
@@ -223,5 +224,6 @@ download_inform <- function(urls, file_paths, site, mode, handle_opts = list(), 
 #' @param status A data frame returned by [multi_download][curl::multi_download]
 #' @noRd
 is_download_success <- function(status) {
-    status$success & status$status_code %in% c(200L, 206L, 416L)
+    status$success & !is.na(status$success) &
+        status$status_code %in% c(200L, 206L, 416L)
 }
