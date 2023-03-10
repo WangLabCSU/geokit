@@ -4,7 +4,7 @@
 \alias{get_geo_meta}
 \title{Get the metadata of multiple GEO identities}
 \usage{
-get_geo_meta(ids, dest_dir = getwd(), handle_opts = list())
+get_geo_meta(ids, dest_dir = getwd(), handle_opts = list(connecttimeout = 60L))
 }
 \arguments{
 \item{ids}{A character vector representing the GEO entity for downloading and
