@@ -1,18 +1,28 @@
 #' Return a character vector of file paths
 #' @noRd
-download_geo_suppl_or_gse_matrix_files <- function(id, dest_dir, file_type, pattern = NULL, curl_handle = NULL) {
-    urls <- list_geo_file_url(id = id, file_type, curl_handle = curl_handle)
+download_geo_suppl_or_gse_matrix_files <- function(ids, dest_dir, file_type, pattern = NULL, handle_opts = list()) {
+    url_list <- lapply(ids, list_geo_file_url,
+        file_type = file_type, handle_opts = handle_opts
+    )
     if (!is.null(pattern)) {
-        urls <- urls[grepl(pattern = pattern, x = basename(urls), perl = TRUE)]
-        if (!length(urls)) {
+        url_list <- lapply(url_list, grep,
+            pattern = pattern,
+            perl = TRUE, value = TRUE
+        )
+    }
+    file_path_list <- lapply(url_list, function(urls) {
+        if (length(urls) == 0L) {
             return(NULL)
         }
-    }
-    file_paths <- file.path(dest_dir, basename(urls))
-    download_inform(urls, file_paths,
+        file.path(dest_dir, basename(urls))
+    })
+    download_inform(
+        unlist(url_list, recursive = FALSE, use.names = FALSE),
+        unlist(file_path_list, recursive = FALSE, use.names = FALSE),
         site = "ftp", mode = "wb",
-        curl_handle = curl_handle
+        handle_opts = handle_opts
     )
+    file_path_list
 }
 
 #' For GPL data, if we only need datatable data, we firstly try to download
@@ -21,107 +31,112 @@ download_geo_suppl_or_gse_matrix_files <- function(id, dest_dir, file_type, patt
 #' in ACC site is much smaller than in FTP site.
 #' @param amount "data" or "full"
 #' @noRd
-download_gpl_file <- function(id, dest_dir = getwd(), amount = "data", curl_handle = NULL) {
+download_gpl_files <- function(ids, dest_dir = getwd(), amount = "data", handle_opts = list()) {
     amount <- match.arg(amount, c("data", "full"))
-    switch(amount,
-        data = rlang::try_fetch(
-            download_with_ftp(
-                id = id, dest_dir = dest_dir,
-                file_type = "annot",
-                curl_handle = curl_handle
-            ),
-            error = function(error) {
-                cli::cli_alert_info(
-                    "annot file in FTP site for {.val {id}} is not available, so will use data amount of SOFT file from GEO Accession Site instead" # nolint
-                )
-                download_with_acc(
-                    id = id, dest_dir = dest_dir,
-                    scope = "self", amount = amount, format = "text",
-                    curl_handle = curl_handle
-                )
-            }
-        ),
-        full = rlang::try_fetch(
-            download_with_acc(
-                id = id, dest_dir = dest_dir,
-                scope = "self", amount = amount, format = "text",
-                curl_handle = curl_handle
-            ),
-            error = function(error) {
-                cli::cli_alert_info(
-                    "full amount of SOFT file in ACC site for {.val {id}} is not available, so will use soft format from GEO FTP Site instead" # nolint
-                )
-                download_with_ftp(
-                    id = id, dest_dir = dest_dir,
-                    file_type = "soft",
-                    curl_handle = curl_handle
-                )
-            }
+    if (amount == "data") {
+        download_status <- download_with_ftp(
+            ids = ids, dest_dir = dest_dir,
+            file_type = "annot",
+            handle_opts = handle_opts,
+            fail = FALSE
         )
-    )
+        out <- download_status$destfiles
+        if (any(!download_status$is_success)) {
+            cli::cli_alert_info(
+                "annot file in FTP site for {.val {ids[!download_status$is_success]}} is not available, so will use data amount of SOFT file from GEO Accession Site instead" # nolint
+            )
+            out[!download_status$is_success] <- download_with_acc(
+                ids = ids[!download_status$is_success], dest_dir = dest_dir,
+                scope = "self", amount = amount, format = "text",
+                handle_opts = handle_opts
+            )
+        }
+    } else {
+        download_status <- download_with_acc(
+            ids = ids, dest_dir = dest_dir,
+            scope = "self", amount = amount, format = "text",
+            handle_opts = handle_opts,
+            fail = FALSE
+        )
+        out <- download_status$destfiles
+        if (any(!download_status$is_success)) {
+            cli::cli_alert_info(
+                "full amount of SOFT file in ACC site for {.val {ids[!download_status$is_success]}} is not available, so will use soft format from GEO FTP Site instead" # nolint
+            )
+            out[!download_status$is_success] <- download_with_ftp(
+                ids = ids[!download_status$is_success], dest_dir = dest_dir,
+                file_type = "soft",
+                handle_opts = handle_opts
+            )
+        }
+    }
+    out
 }
 
 #' For GSE files, try FTP site only, soft file in ACC site for GSE entitty is
 #' not full of all records
 #' @noRd
-download_gse_soft_file <- function(id, dest_dir = getwd(), curl_handle = NULL) {
+download_gse_soft_files <- function(ids, dest_dir = getwd(), handle_opts = list()) {
     download_with_ftp(
-        id = id, dest_dir = dest_dir,
+        ids = ids, dest_dir = dest_dir,
         file_type = "soft",
-        curl_handle = curl_handle
+        handle_opts = handle_opts
     )
 }
 
 #' For GSM files, Only try ACC site
 #' @noRd
-download_gsm_file <- function(id, dest_dir = getwd(), curl_handle = NULL) {
+download_gsm_files <- function(ids, dest_dir = getwd(), handle_opts = list()) {
     download_with_acc(
-        id = id, dest_dir = dest_dir,
+        ids = ids, dest_dir = dest_dir,
         scope = "self", amount = "full", format = "text",
-        curl_handle = curl_handle
+        handle_opts = handle_opts
     )
 }
 
 #' For GDS files, Only try FTP site
 #' @noRd
-download_gds_file <- function(id, dest_dir = getwd(), curl_handle = NULL) {
+download_gds_files <- function(ids, dest_dir = getwd(), handle_opts = list()) {
     download_with_ftp(
-        id = id, dest_dir = dest_dir,
+        ids = ids, dest_dir = dest_dir,
         file_type = "soft",
-        curl_handle = curl_handle
+        handle_opts = handle_opts
     )
 }
 
 #' Return a character vector, the length of it is the same with `ids`.
 #' @noRd
-download_with_ftp <- function(id, dest_dir, file_type = "soft", curl_handle = NULL) {
-    url <- build_geo_ftp_url(id = id, file_type = file_type)
-    download_inform(url,
-        file.path(dest_dir, basename(url)),
+download_with_ftp <- function(ids, dest_dir, file_type = "soft", handle_opts = list(), fail = TRUE) {
+    urls <- build_geo_ftp_url(ids = ids, file_type = file_type)
+    download_inform(urls,
+        file.path(dest_dir, basename(urls)),
         site = "ftp", mode = "wb",
-        curl_handle = curl_handle
+        handle_opts = handle_opts,
+        fail = fail
     )
 }
-download_with_acc <- function(id, dest_dir, scope = "self", amount = "full", format = "text", curl_handle = NULL) {
-    url <- build_geo_acc_url(
-        id = id, scope = scope, amount = amount, format = format
+
+download_with_acc <- function(ids, dest_dir, scope = "self", amount = "full", format = "text", handle_opts = list(), fail = TRUE) {
+    urls <- build_geo_acc_url(
+        ids = ids, scope = scope, amount = amount, format = format
     )
-    file_name <- switch(format,
+    file_ext <- switch(format,
         text = "txt",
         xml = "xml",
         html = "html"
     )
-    download_inform(url,
-        file.path(dest_dir, paste(id, file_name, sep = ".")),
+    download_inform(urls,
+        file.path(dest_dir, paste(ids, file_ext, sep = ".")),
         site = "acc", mode = "w",
-        curl_handle = curl_handle
+        handle_opts = handle_opts,
+        fail = fail
     )
 }
 
-list_file_helper <- function(url, curl_handle) {
+list_file_helper <- function(url, handle_opts) {
     url_connection <- curl::curl(
         url,
-        handle = curl_handle %||% geo_handle()
+        handle = do.call(curl::new_handle, handle_opts)
     )
     open(url_connection, "rb")
     on.exit(close(url_connection))
@@ -134,7 +149,6 @@ list_file_helper <- function(url, curl_handle) {
     # if (identical(length(file_names), 1L) && !length(file_names[[1L]])) {
     #     return(NULL)
     # }
-
     # use HTTPS to connect GEO FTP site
     # See https://github.com/seandavi/GEOquery/blob/master/R/getGEOSuppFiles.R
     file_names <- grep(
@@ -150,9 +164,9 @@ list_file_helper <- function(url, curl_handle) {
     file.path(url, file_names)
 }
 
-list_geo_file_url <- function(id, file_type, curl_handle = NULL) {
+list_geo_file_url <- function(id, file_type, handle_opts = list()) {
     url <- build_geo_ftp_url(id, file_type)
-    file_urls <- list_file_helper(url, curl_handle = NULL)
+    file_urls <- list_file_helper(url, handle_opts = handle_opts)
     if (is.null(file_urls)) {
         cli::cli_alert_info(
             "No {.val {file_type}} file found for {.val {id}}"
@@ -162,68 +176,52 @@ list_geo_file_url <- function(id, file_type, curl_handle = NULL) {
 }
 
 #' Download utils function with good message.
+#' @return If fail is `TRUE`, always return a character path if downloading
+#' successed. Otherwise always return a list. 
 #' @noRd
-download_inform <- function(urls, file_paths, site, mode, curl_handle = NULL) {
-    # is_existed <- file.exists(file_paths)
-    # rlang::inform(
-    #     paste0(
-    #         sum(is_existed),
-    #         " files already downloaded: \n",
-    #         strwrap(
-    #             paste0(basename(file_paths[is_existed]), collapse = "\n"),
-    #             indent = 2L
-    #         )
-    #     )
-    # )
-    # urls <- urls[is_existed]
-    # file_paths <- file_paths[is_existed]
-    # rlang::inform(paste0(
-    #     "Downloading ",
-    #     length(file_paths), " files from ",
-    #     switch(site,
-    #         ftp = "FTP site",
-    #         acc = "GEO Accession Site"
-    #     )
-    # ))
-    # - how to handle curl_handle argument ?
-    # curl::multi_download(
-    #     urls, destfiles = file_paths,
-    #     resume = FALSE, progress = TRUE
-    # )
-    # on.exit(cli::cat_line()) # just for better message display
-    mapply(
-        function(url, file_path) {
-            if (!file.exists(file_path)) {
-                cli::cli_inform(
-                    "Downloading {.file {basename(file_path)}} from {switch(site, ftp = \"FTP site\",  acc = \"GEO Accession Site\")}"
-                )
-                # h <- curl::new_handle()
-                # For we use HTTPs to link GEO FTP site,
-                # No need to follow GEO FTP buffersie recommendations
-                # if (identical(method, "ftp")) {
-                #     curl::handle_setopt(
-                #         h,
-                #         buffersize = 33554432L,
-                #         upload_buffersize = 33554432L
-                #     )
-                # }
-                # curl::handle_setopt(h, timeout = 120L, connecttimeout = 60)
-                file_path <- curl::curl_download(
-                    url, file_path,
-                    mode = mode, quiet = FALSE,
-                    handle = curl_handle %||% geo_handle()
-                )
-            } else {
-                cli::cli_inform(
-                    "Using locally cached version of {.file {basename(file_path)}} found here: {.path {file_path}}"
-                )
-            }
-            file_path
-        }, urls, file_paths,
-        SIMPLIFY = TRUE, USE.NAMES = FALSE
+download_inform <- function(urls, file_paths, site, mode, handle_opts = list(), fail = TRUE) {
+    out <- list(
+        urls = urls, destfiles = file_paths,
+        is_success = rep_len(TRUE, length(urls))
     )
+    is_existed <- file.exists(file_paths)
+    if (any(is_existed)) {
+        cli::cli_inform("{.val {sum(is_existed)}} files already downloaded: {.file {basename(file_paths[is_existed])}}")
+        urls <- urls[!is_existed]
+        file_paths <- file_paths[!is_existed]
+    }
+    if (length(urls) > 0L) {
+        cli::cli_inform("Downloading {.val {length(urls)}} file{?s} from {switch(site, ftp = \"FTP site\",  acc = \"GEO Accession Site\")}")
+        arg_list <- c(
+            list(
+                urls = urls, destfiles = file_paths, resume = TRUE,
+                progress = interactive(), timeout = Inf
+            ),
+            handle_opts
+        )
+        status <- do.call(curl::multi_download, arg_list)
+        is_success <- is_download_success(status)
+        if (any(!is_success & file.exists(file_paths))) {
+            file.remove(file_paths)
+        }
+    }
+    if (fail) {
+        if (length(urls) > 0L && !all(is_success)) {
+            cli::cli_abort(c(
+                "Cannot download {sum(!is_success)} file{?s}",
+                x = status$error[!is_success]
+            ))
+        } else {
+            return(out$destfiles)
+        }
+    } else if (length(urls) > 0L) {
+        out$is_success[!is_existed] <- is_success
+    }
+    out
 }
 
-geo_handle <- function() {
-    curl::new_handle(timeout = 120L, connecttimeout = 60L)
+#' @param status A data frame returned by [multi_download][curl::multi_download]
+#' @noRd
+is_download_success <- function(status) {
+    status$success & status$status_code %in% c(200L, 206L, 416L)
 }

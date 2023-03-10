@@ -18,10 +18,10 @@
 #' form, or in machine readable, "text" format, which is the same with "soft"
 #' format. SOFT stands for "simple omnibus format in text".
 #' @noRd
-build_geo_acc_url <- function(id, scope = "self", amount = "data", format = "text") {
+build_geo_acc_url <- function(ids, scope = "self", amount = "data", format = "text") {
     sprintf(
         "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=%s&targ=%s&view=%s&form=%s", 
-        tolower(id),
+        tolower(ids),
         match.arg(
             tolower(scope),
             c("self", "gsm", "gpl", "gse", "all")

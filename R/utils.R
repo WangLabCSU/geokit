@@ -61,7 +61,7 @@ read_lines <- function(file) {
     )[[1L]]
 }
 
-# comment code to benchmark writeLines 
+# comment code to benchmark writeLines
 # gen_random <- function(characters, num_lines, min, max) {
 #     line_lengths <- sample.int(max - min, num_lines, replace = TRUE) + min
 #     vapply(line_lengths, function(len) {
@@ -80,12 +80,12 @@ read_lines <- function(file) {
 #     base::writeLines(data, tempfile()),
 #     check = FALSE
 # )
-#    min   median itr/se…¹ mem_a…² gc/se…³ n_itr  n_gc total…⁴ 
-# 1 1.97ms   2.71ms     353.      0B    0      177     0   502ms 
-# 2 1.22ms   1.36ms     703.      0B    2.02   348     1   495ms 
-# 3 3.75ms   4.24ms     224.      0B    0      113     0   504ms 
+#    min   median itr/se…¹ mem_a…² gc/se…³ n_itr  n_gc total…⁴
+# 1 1.97ms   2.71ms     353.      0B    0      177     0   502ms
+# 2 1.22ms   1.36ms     703.      0B    2.02   348     1   495ms
+# 3 3.75ms   4.24ms     224.      0B    0      113     0   504ms
 #' @param text A character vector
-#' @noRd 
+#' @noRd
 read_text <- function(text, ...) {
     file <- tempfile()
     data.table::fwrite(list(text),
@@ -104,16 +104,17 @@ read_text <- function(text, ...) {
 na_string <- c("NA", "null", "NULL", "Null")
 
 check_ids <- function(ids, arg = rlang::caller_arg(ids), call = parent.frame()) {
-    geotype <- unique(substring(ids, 1L, 3L))
-    id_test <- any(!geotype %in% c("GSE", "GPL", "GSM", "GDS"))
-    if (id_test) {
-        cli::cli_abort(
-            c(
-                "{.arg {arg}} should representing GEO identity",
-                i = "Please check the {.arg {arg}} provided is correct."
-            ),
-            call = call
-        )
+    geotypes <- substring(ids, 1L, 3L)
+    is_geo_types <- geotypes %in% c("GSE", "GPL", "GSM", "GDS")
+    if (any(!is_geo_types)) {
+        cli::cli_abort(c(
+            "Invalid {.arg {arg}} provided: {.val {unique(geotypes[!is_geo_types])}}"
+        ), call = call)
+    }
+    if (any(geotypes != geotypes[1L])) {
+        cli::cli_abort(c(
+            "All {.arg {arg}} must in the same GEO types"
+        ), call = call)
     }
 }
 

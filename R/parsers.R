@@ -33,10 +33,10 @@ parse_gse_matrix <- function(file_text, pdata_from_soft) {
         data = meta_data$Sample[colnames(matrix_data), , drop = FALSE]
     )
     # fetch GPL accession
-    gpl_id <- unique(meta_data$Sample[[grep(
+    gpl_id <- meta_data$Sample[[grep(
         "platform_id", colnames(meta_data$Sample),
         ignore.case = TRUE, value = FALSE
-    )]])
+    )]][[1L]]
 
     list(
         assayData = matrix_data,

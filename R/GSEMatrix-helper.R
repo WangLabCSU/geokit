@@ -1,45 +1,54 @@
-get_gse_matrix <- function(id, dest_dir = getwd(), pdata_from_soft = TRUE, add_gpl = NULL, curl_handle = NULL) {
-    file_paths <- download_geo_suppl_or_gse_matrix_files(
-        id = id, dest_dir = dest_dir,
-        file_type = "matrix"
+get_gse_matrix <- function(ids, dest_dir = getwd(), pdata_from_soft = TRUE, add_gpl = NULL, handle_opts = list()) {
+    file_paths_list <- download_geo_suppl_or_gse_matrix_files(
+        ids = ids, dest_dir = dest_dir,
+        file_type = "matrix",
+        handle_opts = handle_opts
     )
-
-    cli::cli_inform("Parsing {.field {id}} Series Matrix File")
-    # For GEO series soft files, there is only one file corresponding to all
-    # GSE matrix fiels, so we should extract the sample data firstly, and then
-    # split it into pieces.
+    arg_list <- list(id = ids, file_paths = file_paths_list)
     if (pdata_from_soft) {
-        gse_soft_file_path <- download_gse_soft_file(id, dest_dir,
-            curl_handle = curl_handle
+        cli::cli_inform("Downloading {.val {length(ids)}} series soft file{?s}")
+        gse_soft_file_paths <- download_gse_soft_files(
+            ids, dest_dir,
+            handle_opts = handle_opts
         )
-        gse_soft_file_text <- read_lines(gse_soft_file_path)
-        gse_sample_data <- suppressMessages(
-            parse_gse_soft(
+        cli::cli_inform("Parsing {.val {length(ids)}} series soft file{?s}")
+        gse_sample_data_list <- lapply(gse_soft_file_paths, function(x) {
+            gse_soft_file_text <- read_lines(x)
+            suppressMessages(parse_gse_soft(
                 gse_soft_file_text,
                 entity_type = "sample"
-            )[["gsm"]]
-        )
+            )[["gsm"]])
+        })
+        arg_list <- c(arg_list, list(gse_sample_data = gse_sample_data_list))
     }
-    # For each GSE matrix file, we construct a `ExpressionSet` object
-    res <- lapply(file_paths, function(file) {
-        construct_gse_matrix_expressionset(
-            file_text = read_lines(file),
-            pdata_from_soft = pdata_from_soft,
-            gse_sample_data = gse_sample_data,
-            add_gpl = add_gpl,
-            dest_dir = dest_dir,
-            curl_handle = curl_handle
-        )
-    })
-    if (length(res) == 1L) {
-        res[[1L]]
-    } else {
-        names(res) <- basename(file_paths)
-        res
-    }
+    .mapply(
+        function(id, file_paths, gse_sample_data = NULL) {
+            # For GEO series soft files, there is only one file corresponding to
+            # all GSE matrix fiels, so we should extract the sample data
+            # firstly, and then split it into pieces.
+
+            # For each GSE matrix file, we construct a `ExpressionSet` object
+            out_list <- lapply(file_paths, function(file) {
+                construct_gse_matrix_expressionset(
+                    file_text = read_lines(file),
+                    pdata_from_soft = pdata_from_soft,
+                    gse_sample_data = gse_sample_data,
+                    add_gpl = add_gpl,
+                    dest_dir = dest_dir,
+                    handle_opts = handle_opts
+                )
+            })
+            if (length(out_list) == 1L) {
+                out_list[[1L]]
+            } else {
+                names(out_list) <- basename(file_paths)
+                out_list
+            }
+        }, arg_list, NULL
+    )
 }
 
-construct_gse_matrix_expressionset <- function(file_text, pdata_from_soft, gse_sample_data, add_gpl, dest_dir, curl_handle) {
+construct_gse_matrix_expressionset <- function(file_text, pdata_from_soft, gse_sample_data, add_gpl, dest_dir, handle_opts) {
     expressionset_elements <- parse_gse_matrix(
         file_text = file_text,
         pdata_from_soft = pdata_from_soft
@@ -62,21 +71,10 @@ construct_gse_matrix_expressionset <- function(file_text, pdata_from_soft, gse_s
 
     if (is.null(add_gpl)) {
         if (has_bioc_annotation_pkg(expressionset_elements$annotation)) {
-            cli::cli_inform(
-                c(
-                    "Found Bioconductor annotation package for {.val {expressionset_elements$annotation}}",
-                    i = "Setting {.arg add_gpl} to {.val {FALSE}}",
-                    i = "You can overwrite this behaviour by setting {.arg add_gpl} to {.val {TRUE}} manually."
-                )
-            )
+            cli::cli_inform("Found Bioconductor annotation package for {.val {expressionset_elements$annotation}}")
             add_gpl <- FALSE
         } else {
-            cli::cli_inform(
-                c(
-                    "Cannot map {.val {expressionset_elements$annotation}} to a Bioconductor annotation package",
-                    "Setting {.arg add_gpl} to {.val {TRUE}}"
-                )
-            )
+            cli::cli_inform("Cannot map {.val {expressionset_elements$annotation}} to a Bioconductor annotation package")
             add_gpl <- TRUE
         }
     }
@@ -86,11 +84,11 @@ construct_gse_matrix_expressionset <- function(file_text, pdata_from_soft, gse_s
             expressionset_elements$annotation
         )
     } else {
-        gpl_file_path <- download_gpl_file(
+        gpl_file_path <- download_gpl_files(
             expressionset_elements$annotation,
             dest_dir,
             amount = "data",
-            curl_handle = curl_handle
+            handle_opts = handle_opts
         )
         gpl_file_text <- read_lines(gpl_file_path)
         gpl_data <- parse_gpl_or_gsm_soft(gpl_file_text)
@@ -118,8 +116,8 @@ construct_gse_matrix_expressionset <- function(file_text, pdata_from_soft, gse_s
         }
         expressionset_elements <- c(
             expressionset_elements,
-            featureData = feature_data
+            list(featureData = feature_data)
         )
     }
-    rlang::exec(Biobase::ExpressionSet, !!!expressionset_elements)
+    do.call(Biobase::ExpressionSet, expressionset_elements)
 }

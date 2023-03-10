@@ -50,39 +50,39 @@
 #' consistent across the dataset. Information reflecting experimental design is
 #' provided through GDS subsets.
 #'
-#' @param ids A character vector representing the GEO entity for downloading
-#' and parsing. ('GDS505','GSE2','GSM2','GPL96' eg.).
+#' @param ids A character vector representing the GEO entity for downloading and
+#'  parsing. All ids must in the same GEO identity
+#'  ('GDS505','GSE2','GSM2','GPL96' eg.).
 #' @param dest_dir The destination directory for any downloads. Defaults to
-#' current working dir.
+#'  current working dir.
 #' @param gse_matrix A logical value indicates whether to retrieve Series Matrix
-#' files when handling a `GSE` GEO entity. When set to `TRUE`, an
-#' [ExpressionSet][Biobase::ExpressionSet] Object will be returned
+#'  files when handling a `GSE` GEO entity. When set to `TRUE`, an
+#'  [ExpressionSet][Biobase::ExpressionSet] Object will be returned.
 #' @param pdata_from_soft A logical value indicates whether derive `phenoData`
-#' from GSE series soft file when parsing
-#' [ExpressionSet][Biobase::ExpressionSet] Object. Defaults to `TRUE`, if
-#' `FALSE`, `phenoData` will be parsed directly from GEO series matrix file,
-#' which is what `GEOquery` do, in this way, `characteristics_ch*` column
-#' sometimes cannot be parsed correctly.
+#'  from GSE series soft file when parsing
+#'  [ExpressionSet][Biobase::ExpressionSet] Object. Defaults to `TRUE`, if
+#'  `FALSE`, `phenoData` will be parsed directly from GEO series matrix file,
+#'  which is what `GEOquery` do, in this way, `characteristics_ch*` column
+#'  sometimes cannot be parsed correctly.
 #' @param add_gpl A logical value indicates whether to add **platform** (namely
-#' the [featureData][Biobase::featureData] slot in the
-#' [ExpressionSet][Biobase::ExpressionSet] Object) information when handling a
-#' `GSE` GEO entity with `gse_matrix` option `TRUE`. `add_gpl` is set to
-#' `NULL` by default, which means the internal will try to map the GPL accession
-#' ID into a Bioconductor annotation package firstly, if it succeed, the
-#' [annotation][Biobase::eSet] slot in the returned
-#' [ExpressionSet][Biobase::ExpressionSet] object will be set to the found
-#' Bioconductor annotation package and the `add_gpl` will be set to `FALSE`,
-#' otherwise, `add_gpl` will be set to `TRUE`.
-#' @param curl_handle A curl [handle][curl::handle] object passed to
-#' [curl_download][curl::curl_download]. If `NULL`, `curl::new_handle(timeout =
-#' 120L, connecttimeout = 60L)` will be used.
+#'  the [featureData][Biobase::featureData] slot in the
+#'  [ExpressionSet][Biobase::ExpressionSet] Object) information when handling a
+#'  `GSE` GEO entity with `gse_matrix` option `TRUE`. `add_gpl` is set to `NULL`
+#'  by default, which means the internal will try to map the GPL accession ID
+#'  into a Bioconductor annotation package firstly, if it succeed, the
+#'  [annotation][Biobase::eSet] slot in the returned
+#'  [ExpressionSet][Biobase::ExpressionSet] object will be set to the found
+#'  Bioconductor annotation package and the `add_gpl` will be set to `FALSE`,
+#'  otherwise, `add_gpl` will be set to `TRUE`.
+#' @param handle_opts A list of arguments passed to
+#'  [new_handle][curl::new_handle].
 #' @return An object of the appropriate class (GDS, GPL, GSM, or GSE) is
-#' returned. For `GSE` entity, if `gse_matrix` parameter is `FALSE`, an
-#' [GEOSeries-class] object is returned and if `gse_matrix` parameter is `TRUE`,
-#' a [ExpressionSet][Biobase::ExpressionSet] Object or a list of
-#' [ExpressionSet][Biobase::ExpressionSet] Objects is returned with every
-#' element correspongding to each Series Matrix file associated with the GSE
-#' accesion. And for other GEO entity, a [GEOSoft-class] object is returned.
+#'  returned. For `GSE` entity, if `gse_matrix` parameter is `FALSE`, an
+#'  [GEOSeries-class] object is returned and if `gse_matrix` parameter is
+#'  `TRUE`, a [ExpressionSet][Biobase::ExpressionSet] Object or a list of
+#'  [ExpressionSet][Biobase::ExpressionSet] Objects is returned with every
+#'  element correspongding to each Series Matrix file associated with the GSE
+#'  accesion. And for other GEO entity, a [GEOSoft-class] object is returned.
 #' @references
 #' * <https://www.ncbi.nlm.nih.gov/geo/info/download.html>
 #' * <https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi>
@@ -98,64 +98,32 @@
 #' gds <- get_geo("GDS10", tempdir())
 #'
 #' @export
-get_geo <- function(ids, dest_dir = getwd(), gse_matrix = TRUE, pdata_from_soft = TRUE, add_gpl = NULL, curl_handle = NULL) {
+get_geo <- function(ids, dest_dir = getwd(), gse_matrix = TRUE, pdata_from_soft = TRUE, add_gpl = NULL, handle_opts = list(connecttimeout = 60L)) {
     ids <- toupper(ids)
     check_ids(ids)
     if (!dir.exists(dest_dir)) {
         dir.create(dest_dir, recursive = TRUE)
     }
-    get_geo_multi(
-        ids = ids, dest_dir = dest_dir,
-        gse_matrix = gse_matrix,
-        pdata_from_soft = pdata_from_soft,
-        add_gpl = add_gpl,
-        curl_handle = curl_handle
-    )
-}
-
-#' @noRd
-get_geo_multi <- function(ids, dest_dir = getwd(), gse_matrix = TRUE, pdata_from_soft = TRUE, add_gpl = NULL, curl_handle = NULL) {
-    res <- lapply(ids, function(id) {
-        rlang::try_fetch(
-            get_geo_unit(
-                id,
-                dest_dir = dest_dir,
-                gse_matrix = gse_matrix,
-                pdata_from_soft = pdata_from_soft,
-                add_gpl = add_gpl,
-                curl_handle = curl_handle
-            ),
-            error = function(err) {
-                cli::cat_line()
-                cli::cli_abort(
-                    "Error when fetching GEO data of {.val {id}}",
-                    parent = err
-                )
-            }
-        )
-    })
-    if (length(res) == 1L) {
-        res[[1L]]
-    } else {
-        names(res) <- ids
-        res
-    }
-}
-
-get_geo_unit <- function(id, dest_dir = getwd(), gse_matrix = TRUE, pdata_from_soft = TRUE, add_gpl = NULL, curl_handle = NULL) {
-    geo_type <- substring(id, 1L, 3L)
+    geo_type <- substring(ids, 1L, 3L)[1L]
     if (geo_type == "GSE" && gse_matrix) {
-        get_gse_matrix(
-            id,
+        out_list <- get_gse_matrix(
+            ids,
             dest_dir = dest_dir,
             pdata_from_soft = pdata_from_soft,
             add_gpl = add_gpl,
-            curl_handle = curl_handle
+            handle_opts = handle_opts
         )
     } else {
-        get_geo_soft(id,
+        out_list <- get_geo_soft(ids,
             geo_type = geo_type, dest_dir = dest_dir,
-            curl_handle = curl_handle
+            handle_opts = handle_opts
         )
+    }
+
+    if (length(out_list) == 1L) {
+        out_list[[1L]]
+    } else {
+        names(out_list) <- ids
+        out_list
     }
 }

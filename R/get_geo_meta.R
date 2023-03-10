@@ -6,36 +6,27 @@
 #' @inheritParams get_geo
 #' @return A data.frame contains metadata of all ids.
 #' @export
-get_geo_meta <- function(ids, dest_dir = getwd(), curl_handle = NULL) {
+get_geo_meta <- function(ids, dest_dir = getwd(), handle_opts = list()) {
     ids <- toupper(ids)
     check_ids(ids)
     if (!dir.exists(dest_dir)) {
         dir.create(dest_dir, recursive = TRUE)
     }
-    res <- lapply(ids, function(id) {
-        out <- rlang::try_fetch(
-            get_and_parse_soft(
-                id = id,
-                geo_type = substring(id, 1L, 3L),
-                dest_dir = dest_dir,
-                curl_handle = curl_handle,
-                only_meta = TRUE
-            ),
-            error = function(err) {
-                cli::cat_line()
-                cli::cli_abort(
-                    "Error when fetching GEO metadata of {.val {id}}",
-                    parent = err
-                )
-            }
-        )$meta
-        out[lengths(out) != 1L] <- lapply(
-            out[lengths(out) != 1L], function(x) {
-                paste0(x, collapse = "; ")
-            }
+    meta_list <- download_and_parse_soft(
+        ids = ids,
+        geo_type = substring(ids, 1L, 3L)[1L],
+        dest_dir = dest_dir,
+        handle_opts = handle_opts,
+        only_meta = TRUE
+    )
+    meta_list <- lapply(meta_list, function(meta) {
+        meta[lengths(meta) != 1L] <- lapply(
+            meta[lengths(meta) != 1L],
+            paste0,
+            collapse = "; "
         )
-        data.table::setDT(out)
+        data.table::setDT(meta)
     })
-    res <- data.table::rbindlist(res, use.names = TRUE, fill = TRUE)
-    data.table::setDF(res)
+    out <- data.table::rbindlist(meta_list, use.names = TRUE, fill = TRUE)
+    data.table::setDF(out)
 }

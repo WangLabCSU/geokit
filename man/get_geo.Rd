@@ -10,19 +10,20 @@ get_geo(
   gse_matrix = TRUE,
   pdata_from_soft = TRUE,
   add_gpl = NULL,
-  curl_handle = NULL
+  handle_opts = list(connecttimeout = 60L)
 )
 }
 \arguments{
-\item{ids}{A character vector representing the GEO entity for downloading
-and parsing. ('GDS505','GSE2','GSM2','GPL96' eg.).}
+\item{ids}{A character vector representing the GEO entity for downloading and
+parsing. All ids must in the same GEO identity
+('GDS505','GSE2','GSM2','GPL96' eg.).}
 
 \item{dest_dir}{The destination directory for any downloads. Defaults to
 current working dir.}
 
 \item{gse_matrix}{A logical value indicates whether to retrieve Series Matrix
 files when handling a \code{GSE} GEO entity. When set to \code{TRUE}, an
-\link[Biobase:class.ExpressionSet]{ExpressionSet} Object will be returned}
+\link[Biobase:class.ExpressionSet]{ExpressionSet} Object will be returned.}
 
 \item{pdata_from_soft}{A logical value indicates whether derive \code{phenoData}
 from GSE series soft file when parsing
@@ -34,22 +35,22 @@ sometimes cannot be parsed correctly.}
 \item{add_gpl}{A logical value indicates whether to add \strong{platform} (namely
 the \link[Biobase:featureData]{featureData} slot in the
 \link[Biobase:class.ExpressionSet]{ExpressionSet} Object) information when handling a
-\code{GSE} GEO entity with \code{gse_matrix} option \code{TRUE}. \code{add_gpl} is set to
-\code{NULL} by default, which means the internal will try to map the GPL accession
-ID into a Bioconductor annotation package firstly, if it succeed, the
+\code{GSE} GEO entity with \code{gse_matrix} option \code{TRUE}. \code{add_gpl} is set to \code{NULL}
+by default, which means the internal will try to map the GPL accession ID
+into a Bioconductor annotation package firstly, if it succeed, the
 \link[Biobase:class.eSet]{annotation} slot in the returned
 \link[Biobase:class.ExpressionSet]{ExpressionSet} object will be set to the found
 Bioconductor annotation package and the \code{add_gpl} will be set to \code{FALSE},
 otherwise, \code{add_gpl} will be set to \code{TRUE}.}
 
-\item{curl_handle}{A curl \link[curl:handle]{handle} object passed to
-\link[curl:curl_download]{curl_download}. If \code{NULL}, \code{curl::new_handle(timeout = 120L, connecttimeout = 60L)} will be used.}
+\item{handle_opts}{A list of arguments passed to
+\link[curl:handle]{new_handle}.}
 }
 \value{
 An object of the appropriate class (GDS, GPL, GSM, or GSE) is
 returned. For \code{GSE} entity, if \code{gse_matrix} parameter is \code{FALSE}, an
-\linkS4class{GEOSeries} object is returned and if \code{gse_matrix} parameter is \code{TRUE},
-a \link[Biobase:class.ExpressionSet]{ExpressionSet} Object or a list of
+\linkS4class{GEOSeries} object is returned and if \code{gse_matrix} parameter is
+\code{TRUE}, a \link[Biobase:class.ExpressionSet]{ExpressionSet} Object or a list of
 \link[Biobase:class.ExpressionSet]{ExpressionSet} Objects is returned with every
 element correspongding to each Series Matrix file associated with the GSE
 accesion. And for other GEO entity, a \linkS4class{GEOSoft} object is returned.

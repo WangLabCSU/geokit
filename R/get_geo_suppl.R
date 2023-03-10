@@ -18,35 +18,17 @@
 #' a
 #'
 #' @export
-get_geo_suppl <- function(ids, dest_dir = getwd(), pattern = NULL, curl_handle = NULL) {
+get_geo_suppl <- function(ids, dest_dir = getwd(), pattern = NULL, handle_opts = list(connecttimeout = 60L)) {
     ids <- toupper(ids)
     check_ids(ids)
     if (!dir.exists(dest_dir)) {
         dir.create(dest_dir, recursive = TRUE)
     }
-    get_geo_suppl_helper(
-        ids = ids, dest_dir = dest_dir,
-        pattern = pattern,
-        curl_handle = curl_handle
+    file_paths <- download_geo_suppl_or_gse_matrix_files(
+        ids,
+        dest_dir = dest_dir, file_type = "suppl",
+        pattern = pattern, handle_opts = handle_opts
     )
-}
-
-get_geo_suppl_helper <- function(ids, dest_dir, pattern, curl_handle) {
-    file_paths <- lapply(ids, function(id) {
-        rlang::try_fetch(
-            download_geo_suppl_or_gse_matrix_files(
-                id,
-                dest_dir = dest_dir, file_type = "suppl",
-                pattern = pattern, curl_handle = curl_handle
-            ),
-            error = function(err) {
-                cli::cli_abort(
-                    "Error when fetching GEO Supplementary data of {.val {id}}",
-                    parent = err
-                )
-            }
-        )
-    })
     if (length(file_paths) == 1L) {
         file_paths[[1L]]
     } else {

@@ -1,14 +1,18 @@
-# For GPL, GSM, and GDS entity, return a `GEOSoft` object
-# For GSE entity, return a `GEOSeries` object
-get_geo_soft <- function(id, geo_type, dest_dir, curl_handle) {
-    soft_data <- get_and_parse_soft(
-        id = id, geo_type = geo_type,
-        dest_dir = dest_dir, curl_handle = curl_handle,
+get_geo_soft <- function(ids, geo_type, dest_dir, handle_opts) {
+    soft_data_list <- download_and_parse_soft(
+        ids = ids, geo_type = geo_type,
+        dest_dir = dest_dir, handle_opts = handle_opts,
         only_meta = FALSE
     )
-    new_geo_obj(id = id, geo_type = geo_type, soft_data = soft_data)
+    .mapply(
+        new_geo_obj,
+        list(id = ids, soft_data = soft_data_list), 
+        list(geo_type = geo_type)
+    )
 }
 
+# For GPL, GSM, and GDS entity, return a `GEOSoft` object
+# For GSE entity, return a `GEOSeries` object
 new_geo_obj <- function(id, geo_type, soft_data) {
     switch(geo_type,
         GSM = ,
@@ -30,35 +34,38 @@ new_geo_obj <- function(id, geo_type, soft_data) {
     )
 }
 
-get_and_parse_soft <- function(id, geo_type, dest_dir, curl_handle, only_meta) {
-    file_path <- switch(geo_type,
-        GSM = download_gsm_file(id,
+download_and_parse_soft <- function(ids, geo_type, dest_dir, handle_opts, only_meta) {
+    file_paths <- switch(geo_type,
+        GSM = download_gsm_files(ids,
             dest_dir = dest_dir,
-            curl_handle = curl_handle
+            handle_opts = handle_opts
         ),
-        GPL = download_gpl_file(
-            id,
+        GPL = download_gpl_files(
+            ids,
             dest_dir = dest_dir, amount = "full",
-            curl_handle = curl_handle
+            handle_opts = handle_opts
         ),
-        GSE = download_gse_soft_file(id,
+        GSE = download_gse_soft_files(ids,
             dest_dir = dest_dir,
-            curl_handle = curl_handle
+            handle_opts = handle_opts
         ),
-        GDS = download_gds_file(id,
+        GDS = download_gds_files(ids,
             dest_dir = dest_dir,
-            curl_handle = curl_handle
+            handle_opts = handle_opts
         )
     )
-    cli::cli_inform("Parsing {.field {id}} SOFT file")
-    file_text <- read_lines(file_path)
-    switch(geo_type,
-        GSM = ,
-        GPL = parse_gpl_or_gsm_soft(file_text, only_meta = only_meta),
-        GSE = parse_gse_soft(file_text,
-            entity_type = "all",
-            only_meta = only_meta
-        ),
-        GDS = parse_gds_soft(file_text, only_meta = only_meta)
-    )
+    .mapply(function(id, file_path) {
+        cli::cli_inform("Parsing {.field {id}} SOFT file")
+        file_text <- read_lines(file_path)
+        out <- switch(geo_type,
+            GSM = ,
+            GPL = parse_gpl_or_gsm_soft(file_text, only_meta = only_meta),
+            GSE = parse_gse_soft(file_text,
+                entity_type = "all",
+                only_meta = only_meta
+            ),
+            GDS = parse_gds_soft(file_text, only_meta = only_meta)
+        )
+        if (only_meta) out$meta else out
+    }, list(id = ids, file_path = file_paths), NULL)
 }
