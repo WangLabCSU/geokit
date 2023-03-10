@@ -182,9 +182,8 @@ parse_gse_matrix_sample_characteristics <- function(sample_dt, characteristics_c
 parse_pdata <- function(gsm_list) {
     test_gsm_list <- is.list(gsm_list) && all(vapply(
         gsm_list, function(x) {
-            methods::is(x, "GEOSoft") && all(
-                grepl("^Sample_", names(meta(x)), perl = TRUE)
-            )
+            methods::is(x, "GEOSoft") &&
+                all(startsWith(names(meta(x)), "Sample_"))
         }, logical(1L)
     ))
     if (!test_gsm_list) {
@@ -202,8 +201,7 @@ parse_gse_soft_sample_characteristics <- function(gsm_list) {
         sample_meta_data <- meta(gsm_geosoft)
         if (any(lengths(sample_meta_data) > 1L)) {
             sample_meta_data[lengths(sample_meta_data) > 1L] <- lapply(
-                sample_meta_data[lengths(sample_meta_data) > 1L],
-                function(data) list(data)
+                sample_meta_data[lengths(sample_meta_data) > 1L], list
             )
         }
         data.table::setDT(sample_meta_data)
@@ -217,24 +215,20 @@ parse_gse_soft_sample_characteristics <- function(gsm_list) {
         sample_meta_dt,
         function(x) sub("^Sample_", "", x, perl = TRUE)
     )
-    # We select columns with names starting with "characteristics_ch" and there
-    # are at least one element whose all sub-elements contains character ":",
+    # We select columns with names starting with "characteristics_ch" and all
+    # sub-sub-element contains character ":",
     # For GEO use ":" string to separate Key-value pairs.
-    characteristics_cols <- grepl(
-        "^characteristics_ch",
-        colnames(sample_meta_dt),
-        perl = TRUE
-    ) & vapply(
-        sample_meta_dt, function(list_col) {
-            any(vapply(list_col, function(x) {
-                all(grepl(":", x, perl = TRUE, fixed = FALSE))
-            }, logical(1L)))
-        },
-        logical(1L)
-    )
+    characteristics_cols <- startsWith(
+        colnames(sample_meta_dt), "characteristics_ch"
+    ) &
+        vapply(sample_meta_dt, function(list_col) {
+            mean(vapply(list_col, function(x) {
+                all(grepl(":", x, fixed = TRUE))
+            }, logical(1L)), na.rm = TRUE) >= 0.5
+        }, logical(1L))
     characteristics_cols <- colnames(sample_meta_dt)[characteristics_cols]
 
-    if (length(characteristics_cols)) {
+    if (length(characteristics_cols) > 0L) {
         is_more_than_one_connection_chr <- sample_meta_dt[
             , lapply(.SD, function(x) {
                 vapply(x, function(sub_element) {
@@ -312,7 +306,7 @@ parse_gse_soft_sample_characteristics <- function(gsm_list) {
 #' @noRd
 parse_name_value_pairs <- function(chr_list, sep = ":") {
     .characteristic_list <- lapply(chr_list, function(x) {
-        if (!length(x)) {
+        if (length(x) == 0L) {
             return(data.table::data.table())
         }
         # Don't use `data.table::tstrsplit`, as it will split string into three
@@ -320,10 +314,15 @@ parse_name_value_pairs <- function(chr_list, sep = ":") {
         name_value_pairs <- data.table::transpose(
             str_split(x, paste0("(\\s*+)", sep, "(\\s*+)"))
         )
-        res <- as.list(name_value_pairs[[2L]])
-        names(res) <- name_value_pairs[[1L]]
-        data.table::setDT(res)
-        res
+        if (length(name_value_pairs) < 2L) {
+            out <- rep_len(NA_character_, length(name_value_pairs[[1L]]))
+        } else {
+            out <- name_value_pairs[[2L]]
+        }
+        out <- as.list(out)
+        names(out) <- name_value_pairs[[1L]]
+        data.table::setDT(out)
+        out
     })
     characteristic_dt <- data.table::rbindlist(
         .characteristic_list,
