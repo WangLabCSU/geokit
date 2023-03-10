@@ -215,8 +215,8 @@ parse_gse_soft_sample_characteristics <- function(gsm_list) {
         sample_meta_dt,
         function(x) sub("^Sample_", "", x, perl = TRUE)
     )
-    # We select columns with names starting with "characteristics_ch" and all
-    # sub-sub-element contains character ":",
+    # We select columns with names starting with "characteristics_ch" and at
+    # least 50% of the elements in the column contains character ":",
     # For GEO use ":" string to separate Key-value pairs.
     characteristics_cols <- startsWith(
         colnames(sample_meta_dt), "characteristics_ch"
