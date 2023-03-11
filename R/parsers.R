@@ -131,7 +131,7 @@ parse_gpl_or_gsm_soft <- function(file_text, only_meta = FALSE) {
                 , lapply(.SD, function(x) {
                     paste(unique(x), collapse = "; ")
                 }),
-                by = c(names(data_table)[[1L]])
+                by = names(data_table)[[1L]]
             ]
         }
         data.table::setDF(data_table, rownames = as.character(data_table[[1L]]))
@@ -247,7 +247,7 @@ parse_gds_subset <- function(subset_file_text) {
             "subset_description",
             "subset_type"
         )
-    ][, lapply(.SD, function(x) paste0(x, collapse = "; ")), by = V1]
+    ][, lapply(.SD, paste0, collapse = "; "), by = V1]
 }
 
 #' There are four different types of line that are recognized in SOFT. The

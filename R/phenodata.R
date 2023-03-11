@@ -276,7 +276,7 @@ parse_gse_soft_sample_characteristics <- function(gsm_list) {
     )
     sample_meta_dt[
         , (list_column_names) := lapply(.SD, function(x) {
-            vapply(x, function(x) paste0(x, collapse = "; "), character(1L))
+            vapply(x, paste0, character(1L), collapse = "; ")
         }),
         .SDcols = list_column_names
     ]
