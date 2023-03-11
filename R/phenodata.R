@@ -2,15 +2,13 @@
 #'
 #' Lots of GSEs now use `"characteristics_ch*"` for key-value pairs of
 #' annotation. If that is the case, this simply cleans those up and transforms
-#' the keys to column names and the values to column values. This function is
-#' just like `set*` function in `data.table`, it will modify `data` in place, So
-#' we don't have to assign value. `data` should be a data.table.
+#' the keys to column names and the values to column values.
 #'
-#' @param data a data.table, this function will modify `data` in place.
-#' @param columns a character vector, should be ended with "(ch\\d*)(\\.\\d*)?".
-#' these columns in `data` will be parsed. If `NULL`, all columns started with
-#' `"characteristics_ch"` will be used.
-#' @param sep the string separating paired key-value, usually `":"`.
+#' @param data A data.frame like object, tibble and data.table are also okay.
+#' @param columns A character vector, should be ended with "(ch\\d*)(\\.\\d*)?".
+#'  these columns in `data` will be parsed. If `NULL`, all columns started with
+#'  `"characteristics_ch"` will be used.
+#' @param sep A string separating paired key-value, usually `":"`.
 #' @param split Passed to [strsplit][base::strsplit] function. Default is ";"`.
 #'
 #' @details A characteristics annotation column usually contains multiple
@@ -19,10 +17,9 @@
 #' group in the "(ch\\d*)(\\.\\d*)?$" regex pattern of the orginal column name
 #' connected with `key` element in `key-value` pair by string "_" and the new
 #' column value is the character vector of `value` element in all `key-value`
-#' pair. This function will modify `data` in place, So we don't have to assign
-#' value.
+#' pair.
 #'
-#' @return modified data invisibly
+#' @return A modified data.frame.
 #'
 #' @examples
 #' gse53987 <- rgeo::get_geo(
@@ -31,34 +28,27 @@
 #'     pdata_from_soft = FALSE
 #' )
 #' gse53987_smp_info <- Biobase::pData(gse53987)
-#' data.table::setDT(gse53987_smp_info)
-#' gse53987_smp_info[, characteristics_ch1 := stringr::str_replace_all(
-#'     characteristics_ch1,
+#' gse53987_smp_info$characteristics_ch1 <- stringr::str_replace_all(
+#'     gse53987_smp_info$characteristics_ch1,
 #'     "gender|race|pmi|ph|rin|tissue|disease state",
 #'     function(x) paste0("; ", x)
+#' )
+#' gse53987_smp_info <- rgeo::parse_pdata(gse53987_smp_info)
+#' gse53987_smp_info[grepl(
+#'     "^ch1_|characteristics_ch1", names(gse53987_smp_info)
 #' )]
-#' rgeo::set_pdata(gse53987_smp_info)
-#' gse53987_smp_info[
-#'     , .SD,
-#'     .SDcols = patterns("^ch1_|characteristics_ch1")
-#' ]
-#'
 #' @export
-set_pdata <- function(data, columns = NULL, sep = ":", split = ";") {
-    if (!data.table::is.data.table(data)) {
-        cli::cli_abort(
-            "{.arg data} must be a data.table"
-        )
+parse_pdata <- function(data, columns = NULL, sep = ":", split = ";") {
+    if (!inherits(data, "data.frame")) {
+        cli::cli_abort("{.arg data} must be a {.cls data.frame}")
     }
+    kept_rownames <- rownames(data)
+    data <- data.table::as.data.table(data, keep.rownames = FALSE)
     if (!rlang::is_scalar_character(sep)) {
-        cli::cli_abort(
-            "{.arg sep} must be a single string"
-        )
+        cli::cli_abort("{.arg sep} must be a single string")
     }
     if (!rlang::is_scalar_character(split)) {
-        cli::cli_abort(
-            "{.arg split} must be a single string"
-        )
+        cli::cli_abort("{.arg split} must be a single string")
     }
     rlang::try_fetch(
         parse_gse_matrix_sample_characteristics(
@@ -68,18 +58,15 @@ set_pdata <- function(data, columns = NULL, sep = ":", split = ";") {
             split = split
         ),
         warn_cannot_parse_characteristics = function(cnd) {
-            cli::cli_abort(
-                c(
-                    "There remains more than one {.arg sep} ({.val {sep}}) characters after splitting {.arg columns} by {.arg split} ({.val {split}})",
-                    i = "Please check if {.arg sep} and {.arg split} parameters can parse {.arg columns}."
-                ),
-                parent = cnd
-            )
+            cli::cli_abort(c(
+                "There remains more than one {.arg sep} ({.val {sep}}) characters after splitting {.arg columns} by {.arg split} ({.val {split}})",
+                i = "Please check if {.arg sep} and {.arg split} parameters can parse {.arg columns}."
+            ), parent = cnd)
         }
     )
     # As the modification in place of data.table will prevent print methods
     # A simple method is just use `[` function.
-    invisible(data[])
+    data.table::setDF(data, rownames = kept_rownames)
 }
 
 # Lots of GSEs now use 'characteristics_ch1' and 'characteristics_ch2' for
@@ -121,7 +108,7 @@ parse_gse_matrix_sample_characteristics <- function(sample_dt, characteristics_c
                     c(
                         "Cannot parse characteristic column correctly",
                         i = "Details see {.val { .characteristic_col }} column in {.field phenoData}",
-                        i = "Please use {.fun set_pdata} or {.fun parse_pdata} function to convert it manually if necessary!"
+                        i = "Please use {.fun parse_pdata} or {.fun parse_gsm_list} function to convert it manually if necessary!"
                     ),
                     class = "warn_cannot_parse_characteristics"
                 )
@@ -166,8 +153,8 @@ parse_gse_matrix_sample_characteristics <- function(sample_dt, characteristics_c
 #' `GEOSoft` @meta slot up and transforms the keys to column names and the
 #' values to column values.
 #'
-#' @param gsm_list a list of GEOSoft, especially for @gsm slot in a `GEOSeries`
-#' object.
+#' @param gsm_list A list of GEOSoft, especially for @gsm slot in a `GEOSeries`
+#'   object.
 #'
 #' @return a data.frame whose rows are samples and columns are the sample infos
 #'
@@ -177,9 +164,9 @@ parse_gse_matrix_sample_characteristics <- function(sample_dt, characteristics_c
 #'     dest_dir = tempdir(),
 #'     gse_matrix = FALSE
 #' )
-#' rgeo::parse_pdata(rgeo::gsm(gse201530_soft))
+#' rgeo::parse_gsm_list(rgeo::gsm(gse201530_soft))
 #' @export
-parse_pdata <- function(gsm_list) {
+parse_gsm_list <- function(gsm_list) {
     test_gsm_list <- is.list(gsm_list) && all(vapply(
         gsm_list, function(x) {
             methods::is(x, "GEOSoft") &&
@@ -250,7 +237,7 @@ parse_gse_soft_sample_characteristics <- function(gsm_list) {
                 c(
                     "More than one characters {.val :} found in meta characteristics data",
                     i = "Details see: {.val {warn_column_names}} column in returned data.",
-                    i = "Please use {.fun set_pdata} or combine {.fun strsplit} and {.fun parse_pdata} function to convert it manually if necessary!"
+                    i = "Please use {.fun parse_pdata} or combine {.fun strsplit} and {.fun parse_gsm_list} function to convert it manually if necessary!"
                 )
             )
         }

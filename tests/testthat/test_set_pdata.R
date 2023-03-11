@@ -10,17 +10,16 @@ testthat::test_that("GSE/GSM with characteristic column seperated by no special 
         class = "warn_cannot_parse_characteristics"
     )
     pdata <- Biobase::pData(gse)
-    data.table::setDT(pdata)
     testthat::expect_error(
-        rgeo::set_pdata(pdata),
+        rgeo::parse_pdata(pdata),
         regexp = "Please check if `sep` and `split` parameters can parse `columns`."
     )
-    pdata[, characteristics_ch1 := stringr::str_replace_all(
-        characteristics_ch1,
+    pdata$characteristics_ch1 <- stringr::str_replace_all(
+        pdata$characteristics_ch1,
         "gender|race|pmi|ph|rin|tissue|disease state",
         function(x) paste0("; ", x)
-    )]
-    rgeo::set_pdata(pdata)
+    )
+    pdata <- rgeo::parse_pdata(pdata)
     testthat::expect_true(
         length(
             grep("^ch1_", names(pdata),
@@ -28,28 +27,12 @@ testthat::test_that("GSE/GSM with characteristic column seperated by no special 
             )
         ) == 8L
     )
-    testthat::expect_type(
-        pdata$ch1_age, "integer"
-    )
-    testthat::expect_type(
-        pdata$ch1_gender, "character"
-    )
-    testthat::expect_type(
-        pdata$ch1_race, "character"
-    )
-    testthat::expect_type(
-        pdata$ch1_pmi, "double"
-    )
-    testthat::expect_type(
-        pdata$ch1_ph, "double"
-    )
-    testthat::expect_type(
-        pdata$ch1_rin, "double"
-    )
-    testthat::expect_type(
-        pdata$ch1_tissue, "character"
-    )
-    testthat::expect_type(
-        pdata$`ch1_disease state`, "character"
-    )
+    testthat::expect_type(pdata$ch1_age, "integer")
+    testthat::expect_type(pdata$ch1_gender, "character")
+    testthat::expect_type(pdata$ch1_race, "character")
+    testthat::expect_type(pdata$ch1_pmi, "double")
+    testthat::expect_type(pdata$ch1_ph, "double")
+    testthat::expect_type(pdata$ch1_rin, "double")
+    testthat::expect_type(pdata$ch1_tissue, "character")
+    testthat::expect_type(pdata$`ch1_disease state`, "character")
 })

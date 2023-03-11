@@ -2,28 +2,52 @@
 % Please edit documentation in R/phenodata.R
 \name{parse_pdata}
 \alias{parse_pdata}
-\title{Parse key-value pairs in GEO series soft file}
+\title{Parse key-value pairs in GEO series matrix file}
 \usage{
-parse_pdata(gsm_list)
+parse_pdata(data, columns = NULL, sep = ":", split = ";")
 }
 \arguments{
-\item{gsm_list}{a list of GEOSoft, especially for @gsm slot in a \code{GEOSeries}
-object.}
+\item{data}{A data.frame like object, tibble and data.table are also okay.}
+
+\item{columns}{A character vector, should be ended with "(ch\\d*)(\\.\\d*)?".
+these columns in \code{data} will be parsed. If \code{NULL}, all columns started with
+\code{"characteristics_ch"} will be used.}
+
+\item{sep}{A string separating paired key-value, usually \code{":"}.}
+
+\item{split}{Passed to \link[base:strsplit]{strsplit} function. Default is ";"`.}
 }
 \value{
-a data.frame whose rows are samples and columns are the sample infos
+A modified data.frame.
 }
 \description{
-Lots of GSEs now use \code{"characteristics_ch*"} meta header data for key-value
-pairs of annotation. If that is the case, this simply cleans the GSM
-\code{GEOSoft} @meta slot up and transforms the keys to column names and the
-values to column values.
+Lots of GSEs now use \code{"characteristics_ch*"} for key-value pairs of
+annotation. If that is the case, this simply cleans those up and transforms
+the keys to column names and the values to column values.
+}
+\details{
+A characteristics annotation column usually contains multiple
+key-value items, so we should first split these columns by \code{split} and then
+extract \code{key-value} pairs. A new column will be added whose name is the first
+group in the "(ch\\d*)(\\.\\d*)?$" regex pattern of the orginal column name
+connected with \code{key} element in \code{key-value} pair by string "_" and the new
+column value is the character vector of \code{value} element in all \code{key-value}
+pair.
 }
 \examples{
-gse201530_soft <- rgeo::get_geo(
-    "GSE201530",
-    dest_dir = tempdir(),
-    gse_matrix = FALSE
+gse53987 <- rgeo::get_geo(
+    "gse53987", tempdir(),
+    gse_matrix = TRUE, add_gpl = FALSE,
+    pdata_from_soft = FALSE
 )
-rgeo::parse_pdata(rgeo::gsm(gse201530_soft))
+gse53987_smp_info <- Biobase::pData(gse53987)
+gse53987_smp_info$characteristics_ch1 <- stringr::str_replace_all(
+    gse53987_smp_info$characteristics_ch1,
+    "gender|race|pmi|ph|rin|tissue|disease state",
+    function(x) paste0("; ", x)
+)
+gse53987_smp_info <- rgeo::parse_pdata(gse53987_smp_info)
+gse53987_smp_info[grepl(
+    "^ch1_|characteristics_ch1", names(gse53987_smp_info)
+)]
 }
