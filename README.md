@@ -30,7 +30,7 @@ database](https://www.ncbi.nlm.nih.gov/geo/).
   full use of R to analyze GEO datasets.
 - Enable mapping bettween GPL id and Bioconductor annotation package.
 - Provide some useful utils function to work with GEO datasets like
-  `parse_pdata`, `set_pdata`, `log_trans` and `show_geo`.
+  `parse_gsm_list`, `parse_pdata`, `log_trans` and `show_geo`.
 
 ## Installation
 
@@ -38,7 +38,7 @@ You can install the development version of rgeo from
 [GitHub](https://github.com/) with:
 
 ``` r
-if (!require(pak)) {
+if (!requireNamespace("pak")) {
     install.packages("pak",
         repos = sprintf(
             "https://r-lib.github.io/p/pak/devel/%s/%s/%s",
@@ -397,7 +397,7 @@ columns in series matrix files often lacks separate strings.
 `pdata_from_soft`, which indicates whether retrieve phenoData from GEO
 Soft file, can help handle this problem well. When the soft file is
 large and we don’t want to use it, we can set `pdata_from_soft` to
-`FALSE` and use `set_pdata` function to parse it manully. Another
+`FALSE` and use `parse_pdata` function to parse it manully. Another
 important parameter is `add_gpl`, where `FALSE` indicates `get_geo` will
 try to map the current GPL accession id into a Bioconductor annotation
 package, then we can use the latest bioconductor annotation package to
@@ -438,62 +438,191 @@ gse_matrix_with_pdata <- get_geo(
     pdata_from_soft = FALSE,
     add_gpl = FALSE
 )
-#> Downloading GSE53987_series_matrix.txt.gz from FTP site:
+#> Downloading 1 GSE matrix file from FTP site
+#> Parsing 1 series matrix file of GSE53987
 #> Warning: Cannot parse characteristic column correctly
-#> • Details see `characteristics_ch1` column in `phenoData`
-#> Warning: Please use `set_pdata` or `parse_pdata` function to convert it manually
-#> if necessary!
+#> ℹ Details see "characteristics_ch1" column in phenoData
+#> ℹ Please use `parse_pdata()` or `parse_gsm_list()` function to convert it
+#>   manually if necessary!
 gse_matrix_smp_info <- Biobase::pData(gse_matrix_with_pdata)
-data.table::setDT(gse_matrix_smp_info)
-gse_matrix_smp_info[, characteristics_ch1 := stringr::str_replace_all(
-    characteristics_ch1,
+gse_matrix_smp_info$characteristics_ch1 <- stringr::str_replace_all(
+    gse_matrix_smp_info$characteristics_ch1,
     "gender|race|pmi|ph|rin|tissue|disease state",
     function(x) paste0("; ", x)
+)
+gse_matrix_smp_info <- parse_pdata(gse_matrix_smp_info)
+gse_matrix_smp_info[grepl(
+    "^ch1_|characteristics_ch1", names(gse_matrix_smp_info)
 )]
-set_pdata(gse_matrix_smp_info)
-gse_matrix_smp_info[
-    , .SD,
-    .SDcols = patterns("^ch1_|characteristics_ch1")
-]
-#>      ch1_age ch1_gender ch1_race ch1_pmi ch1_ph ch1_rin           ch1_tissue
-#>        <int>     <char>   <char>   <num>  <num>   <num>               <char>
-#>   1:      52          M        W    23.5   6.70     6.3          hippocampus
-#>   2:      50          F        W    11.7   6.40     6.8          hippocampus
-#>   3:      28          F        W    22.3   6.30     7.7          hippocampus
-#>   4:      55          F        W    17.5   6.40     7.6          hippocampus
-#>   5:      58          M        W    27.7   6.80     7.0          hippocampus
-#>  ---                                                                        
-#> 201:      62          M        W    22.7   7.14     7.8 Associative striatum
-#> 202:      32          M        W    30.8   6.18     7.1 Associative striatum
-#> 203:      47          F        B    20.1   7.30     8.8 Associative striatum
-#> 204:      50          F        B    22.9   6.25     8.0 Associative striatum
-#> 205:      44          F        W    24.5   6.63     9.0 Associative striatum
-#>      ch1_disease state
-#>                 <char>
-#>   1:  bipolar disorder
-#>   2:  bipolar disorder
-#>   3:  bipolar disorder
-#>   4:  bipolar disorder
-#>   5:  bipolar disorder
-#>  ---                  
-#> 201:            schizo
-#> 202:            schizo
-#> 203:            schizo
-#> 204:            schizo
-#> 205:            schizo
-#>                                                                                                           characteristics_ch1
-#>                                                                                                                        <char>
-#>   1:          age: 52; gender: M; race: W; pmi: 23.5; ph: 6.7; rin: 6.3; tissue: hippocampus; disease state: bipolar disorder
-#>   2:          age: 50; gender: F; race: W; pmi: 11.7; ph: 6.4; rin: 6.8; tissue: hippocampus; disease state: bipolar disorder
-#>   3:          age: 28; gender: F; race: W; pmi: 22.3; ph: 6.3; rin: 7.7; tissue: hippocampus; disease state: bipolar disorder
-#>   4:          age: 55; gender: F; race: W; pmi: 17.5; ph: 6.4; rin: 7.6; tissue: hippocampus; disease state: bipolar disorder
-#>   5:            age: 58; gender: M; race: W; pmi: 27.7; ph: 6.8; rin: 7; tissue: hippocampus; disease state: bipolar disorder
-#>  ---                                                                                                                         
-#> 201: age: 62; gender: M; race: W; pmi: 22.7; ph: 7.14; rin: 7.8; tissue: Associative striatum; disease state: schizo; phrenia
-#> 202: age: 32; gender: M; race: W; pmi: 30.8; ph: 6.18; rin: 7.1; tissue: Associative striatum; disease state: schizo; phrenia
-#> 203:  age: 47; gender: F; race: B; pmi: 20.1; ph: 7.3; rin: 8.8; tissue: Associative striatum; disease state: schizo; phrenia
-#> 204:   age: 50; gender: F; race: B; pmi: 22.9; ph: 6.25; rin: 8; tissue: Associative striatum; disease state: schizo; phrenia
-#> 205:   age: 44; gender: F; race: W; pmi: 24.5; ph: 6.63; rin: 9; tissue: Associative striatum; disease state: schizo; phrenia
+#>            ch1_age ch1_gender ch1_race ch1_pmi ch1_ph ch1_rin  ch1_tissue
+#> GSM1304852      52          M        W   23.50   6.70     6.3 hippocampus
+#> GSM1304853      50          F        W   11.70   6.40     6.8 hippocampus
+#> GSM1304854      28          F        W   22.30   6.30     7.7 hippocampus
+#> GSM1304855      55          F        W   17.50   6.40     7.6 hippocampus
+#> GSM1304856      58          M        W   27.70   6.80     7.0 hippocampus
+#> GSM1304857      28          M        W   27.40   6.20     7.7 hippocampus
+#> GSM1304858      49          F        W   21.50   6.70     8.2 hippocampus
+#> GSM1304859      42          F        W   31.20   6.50     5.6 hippocampus
+#> GSM1304860      43          F        W   31.90   6.70     6.3 hippocampus
+#> GSM1304861      50          M        W   12.10   6.70     7.4 hippocampus
+#> GSM1304862      40          M        W   18.50   6.40     6.5 hippocampus
+#> GSM1304863      39          F        W   22.20   6.70     7.9 hippocampus
+#> GSM1304864      45          M        W   27.20   7.10     8.1 hippocampus
+#> GSM1304865      42          M        W   12.50   6.70     8.2 hippocampus
+#> GSM1304866      65          M        W    8.90   6.70     6.6 hippocampus
+#> GSM1304867      51          F        W   21.50   6.70     7.0 hippocampus
+#> GSM1304868      39          M        W   24.20   6.60     7.8 hippocampus
+#> GSM1304869      48          M        W   18.10   6.90     7.0 hippocampus
+#> GSM1304870      51          M        W   24.20   6.60     7.8 hippocampus
+#> GSM1304871      51          F        W    7.80   6.60     7.2 hippocampus
+#> GSM1304872      36          F        W   14.50   6.40     8.0 hippocampus
+#> GSM1304873      65          F        W   18.50   6.50     7.0 hippocampus
+#> GSM1304874      55          M        W   28.00   6.10     6.8 hippocampus
+#> GSM1304875      22          M        W   20.10   6.80     7.1 hippocampus
+#> GSM1304876      52          F        W   22.60   7.10     7.0 hippocampus
+#> GSM1304877      58          F        W   22.70   6.40     6.3 hippocampus
+#> GSM1304878      40          F        B   16.60   6.80     7.9 hippocampus
+#> GSM1304879      41          F        W   15.40   6.60     8.5 hippocampus
+#> GSM1304880      49          M        W   21.20   6.50     7.8 hippocampus
+#> GSM1304881      48          M        W   21.68   6.60     7.3 hippocampus
+#> GSM1304882      39          F        W   24.50   6.80     8.2 hippocampus
+#> GSM1304883      48          M        W   24.50   6.50     7.0 hippocampus
+#> GSM1304884      43          M        W   13.80   6.60     7.6 hippocampus
+#> GSM1304885      68          M        W   11.80   6.80     6.1 hippocampus
+#> GSM1304886      58          F        W   18.80   6.60     7.2 hippocampus
+#> GSM1304887      43          M        W   22.30   6.70     7.9 hippocampus
+#> GSM1304888      51          M        W   24.60   6.50     7.7 hippocampus
+#> GSM1304889      53          F        W   11.90   6.70     8.1 hippocampus
+#> GSM1304890      26          F        W   13.40   6.40     7.5 hippocampus
+#> GSM1304891      52          F        W   10.30   6.50     6.6 hippocampus
+#> GSM1304892      62          M        W   26.00   6.50     6.8 hippocampus
+#> GSM1304893      29          M        W   26.60   6.90     7.8 hippocampus
+#> GSM1304894      49          F        W   23.40   6.40     6.2 hippocampus
+#> GSM1304895      54          F        W   17.90   6.20     6.1 hippocampus
+#> GSM1304896      28          F        B   24.80   6.60     8.2 hippocampus
+#> GSM1304897      42          M        W   14.30   6.40     6.2 hippocampus
+#> GSM1304898      44          M        W   19.30   6.50     6.3 hippocampus
+#> GSM1304899      40          F        W   22.20   6.60     8.0 hippocampus
+#> GSM1304900      47          M        W   24.00   6.60     5.5 hippocampus
+#> GSM1304901      59          M        W   13.00   6.60     7.2 hippocampus
+#> GSM1304902      47          F        W   22.30   6.60     6.5 hippocampus
+#> GSM1304903      34          M        W   24.40   6.60     8.4 hippocampus
+#> GSM1304904      51          M        W   28.30   7.30     7.0 hippocampus
+#> GSM1304905      49          M        W   21.50   5.97     6.0 hippocampus
+#> GSM1304906      47          F        W   14.37   6.35     6.3 hippocampus
+#>                    ch1_disease state
+#> GSM1304852          bipolar disorder
+#> GSM1304853          bipolar disorder
+#> GSM1304854          bipolar disorder
+#> GSM1304855          bipolar disorder
+#> GSM1304856          bipolar disorder
+#> GSM1304857          bipolar disorder
+#> GSM1304858          bipolar disorder
+#> GSM1304859          bipolar disorder
+#> GSM1304860          bipolar disorder
+#> GSM1304861          bipolar disorder
+#> GSM1304862          bipolar disorder
+#> GSM1304863          bipolar disorder
+#> GSM1304864          bipolar disorder
+#> GSM1304865          bipolar disorder
+#> GSM1304866          bipolar disorder
+#> GSM1304867          bipolar disorder
+#> GSM1304868          bipolar disorder
+#> GSM1304869          bipolar disorder
+#> GSM1304870                   control
+#> GSM1304871                   control
+#> GSM1304872                   control
+#> GSM1304873                   control
+#> GSM1304874                   control
+#> GSM1304875                   control
+#> GSM1304876                   control
+#> GSM1304877                   control
+#> GSM1304878                   control
+#> GSM1304879                   control
+#> GSM1304880                   control
+#> GSM1304881                   control
+#> GSM1304882                   control
+#> GSM1304883                   control
+#> GSM1304884                   control
+#> GSM1304885                   control
+#> GSM1304886                   control
+#> GSM1304887                   control
+#> GSM1304888 major depressive disorder
+#> GSM1304889 major depressive disorder
+#> GSM1304890 major depressive disorder
+#> GSM1304891 major depressive disorder
+#> GSM1304892 major depressive disorder
+#> GSM1304893 major depressive disorder
+#> GSM1304894 major depressive disorder
+#> GSM1304895 major depressive disorder
+#> GSM1304896 major depressive disorder
+#> GSM1304897 major depressive disorder
+#> GSM1304898 major depressive disorder
+#> GSM1304899 major depressive disorder
+#> GSM1304900 major depressive disorder
+#> GSM1304901 major depressive disorder
+#> GSM1304902 major depressive disorder
+#> GSM1304903 major depressive disorder
+#> GSM1304904 major depressive disorder
+#> GSM1304905                    schizo
+#> GSM1304906                    schizo
+#>                                                                                                                 characteristics_ch1
+#> GSM1304852          age: 52; gender: M; race: W; pmi: 23.5; ph: 6.7; rin: 6.3; tissue: hippocampus; disease state: bipolar disorder
+#> GSM1304853          age: 50; gender: F; race: W; pmi: 11.7; ph: 6.4; rin: 6.8; tissue: hippocampus; disease state: bipolar disorder
+#> GSM1304854          age: 28; gender: F; race: W; pmi: 22.3; ph: 6.3; rin: 7.7; tissue: hippocampus; disease state: bipolar disorder
+#> GSM1304855          age: 55; gender: F; race: W; pmi: 17.5; ph: 6.4; rin: 7.6; tissue: hippocampus; disease state: bipolar disorder
+#> GSM1304856            age: 58; gender: M; race: W; pmi: 27.7; ph: 6.8; rin: 7; tissue: hippocampus; disease state: bipolar disorder
+#> GSM1304857          age: 28; gender: M; race: W; pmi: 27.4; ph: 6.2; rin: 7.7; tissue: hippocampus; disease state: bipolar disorder
+#> GSM1304858          age: 49; gender: F; race: W; pmi: 21.5; ph: 6.7; rin: 8.2; tissue: hippocampus; disease state: bipolar disorder
+#> GSM1304859          age: 42; gender: F; race: W; pmi: 31.2; ph: 6.5; rin: 5.6; tissue: hippocampus; disease state: bipolar disorder
+#> GSM1304860          age: 43; gender: F; race: W; pmi: 31.9; ph: 6.7; rin: 6.3; tissue: hippocampus; disease state: bipolar disorder
+#> GSM1304861          age: 50; gender: M; race: W; pmi: 12.1; ph: 6.7; rin: 7.4; tissue: hippocampus; disease state: bipolar disorder
+#> GSM1304862          age: 40; gender: M; race: W; pmi: 18.5; ph: 6.4; rin: 6.5; tissue: hippocampus; disease state: bipolar disorder
+#> GSM1304863          age: 39; gender: F; race: W; pmi: 22.2; ph: 6.7; rin: 7.9; tissue: hippocampus; disease state: bipolar disorder
+#> GSM1304864          age: 45; gender: M; race: W; pmi: 27.2; ph: 7.1; rin: 8.1; tissue: hippocampus; disease state: bipolar disorder
+#> GSM1304865          age: 42; gender: M; race: W; pmi: 12.5; ph: 6.7; rin: 8.2; tissue: hippocampus; disease state: bipolar disorder
+#> GSM1304866           age: 65; gender: M; race: W; pmi: 8.9; ph: 6.7; rin: 6.6; tissue: hippocampus; disease state: bipolar disorder
+#> GSM1304867            age: 51; gender: F; race: W; pmi: 21.5; ph: 6.7; rin: 7; tissue: hippocampus; disease state: bipolar disorder
+#> GSM1304868          age: 39; gender: M; race: W; pmi: 24.2; ph: 6.6; rin: 7.8; tissue: hippocampus; disease state: bipolar disorder
+#> GSM1304869            age: 48; gender: M; race: W; pmi: 18.1; ph: 6.9; rin: 7; tissue: hippocampus; disease state: bipolar disorder
+#> GSM1304870                   age: 51; gender: M; race: W; pmi: 24.2; ph: 6.6; rin: 7.8; tissue: hippocampus; disease state: control
+#> GSM1304871                    age: 51; gender: F; race: W; pmi: 7.8; ph: 6.6; rin: 7.2; tissue: hippocampus; disease state: control
+#> GSM1304872                     age: 36; gender: F; race: W; pmi: 14.5; ph: 6.4; rin: 8; tissue: hippocampus; disease state: control
+#> GSM1304873                     age: 65; gender: F; race: W; pmi: 18.5; ph: 6.5; rin: 7; tissue: hippocampus; disease state: control
+#> GSM1304874                     age: 55; gender: M; race: W; pmi: 28; ph: 6.1; rin: 6.8; tissue: hippocampus; disease state: control
+#> GSM1304875                   age: 22; gender: M; race: W; pmi: 20.1; ph: 6.8; rin: 7.1; tissue: hippocampus; disease state: control
+#> GSM1304876                     age: 52; gender: F; race: W; pmi: 22.6; ph: 7.1; rin: 7; tissue: hippocampus; disease state: control
+#> GSM1304877                   age: 58; gender: F; race: W; pmi: 22.7; ph: 6.4; rin: 6.3; tissue: hippocampus; disease state: control
+#> GSM1304878                   age: 40; gender: F; race: B; pmi: 16.6; ph: 6.8; rin: 7.9; tissue: hippocampus; disease state: control
+#> GSM1304879                   age: 41; gender: F; race: W; pmi: 15.4; ph: 6.6; rin: 8.5; tissue: hippocampus; disease state: control
+#> GSM1304880                   age: 49; gender: M; race: W; pmi: 21.2; ph: 6.5; rin: 7.8; tissue: hippocampus; disease state: control
+#> GSM1304881                  age: 48; gender: M; race: W; pmi: 21.68; ph: 6.6; rin: 7.3; tissue: hippocampus; disease state: control
+#> GSM1304882                   age: 39; gender: F; race: W; pmi: 24.5; ph: 6.8; rin: 8.2; tissue: hippocampus; disease state: control
+#> GSM1304883                     age: 48; gender: M; race: W; pmi: 24.5; ph: 6.5; rin: 7; tissue: hippocampus; disease state: control
+#> GSM1304884                   age: 43; gender: M; race: W; pmi: 13.8; ph: 6.6; rin: 7.6; tissue: hippocampus; disease state: control
+#> GSM1304885                   age: 68; gender: M; race: W; pmi: 11.8; ph: 6.8; rin: 6.1; tissue: hippocampus; disease state: control
+#> GSM1304886                   age: 58; gender: F; race: W; pmi: 18.8; ph: 6.6; rin: 7.2; tissue: hippocampus; disease state: control
+#> GSM1304887                   age: 43; gender: M; race: W; pmi: 22.3; ph: 6.7; rin: 7.9; tissue: hippocampus; disease state: control
+#> GSM1304888 age: 51; gender: M; race: W; pmi: 24.6; ph: 6.5; rin: 7.7; tissue: hippocampus; disease state: major depressive disorder
+#> GSM1304889 age: 53; gender: F; race: W; pmi: 11.9; ph: 6.7; rin: 8.1; tissue: hippocampus; disease state: major depressive disorder
+#> GSM1304890 age: 26; gender: F; race: W; pmi: 13.4; ph: 6.4; rin: 7.5; tissue: hippocampus; disease state: major depressive disorder
+#> GSM1304891 age: 52; gender: F; race: W; pmi: 10.3; ph: 6.5; rin: 6.6; tissue: hippocampus; disease state: major depressive disorder
+#> GSM1304892   age: 62; gender: M; race: W; pmi: 26; ph: 6.5; rin: 6.8; tissue: hippocampus; disease state: major depressive disorder
+#> GSM1304893 age: 29; gender: M; race: W; pmi: 26.6; ph: 6.9; rin: 7.8; tissue: hippocampus; disease state: major depressive disorder
+#> GSM1304894 age: 49; gender: F; race: W; pmi: 23.4; ph: 6.4; rin: 6.2; tissue: hippocampus; disease state: major depressive disorder
+#> GSM1304895 age: 54; gender: F; race: W; pmi: 17.9; ph: 6.2; rin: 6.1; tissue: hippocampus; disease state: major depressive disorder
+#> GSM1304896 age: 28; gender: F; race: B; pmi: 24.8; ph: 6.6; rin: 8.2; tissue: hippocampus; disease state: major depressive disorder
+#> GSM1304897 age: 42; gender: M; race: W; pmi: 14.3; ph: 6.4; rin: 6.2; tissue: hippocampus; disease state: major depressive disorder
+#> GSM1304898 age: 44; gender: M; race: W; pmi: 19.3; ph: 6.5; rin: 6.3; tissue: hippocampus; disease state: major depressive disorder
+#> GSM1304899   age: 40; gender: F; race: W; pmi: 22.2; ph: 6.6; rin: 8; tissue: hippocampus; disease state: major depressive disorder
+#> GSM1304900   age: 47; gender: M; race: W; pmi: 24; ph: 6.6; rin: 5.5; tissue: hippocampus; disease state: major depressive disorder
+#> GSM1304901   age: 59; gender: M; race: W; pmi: 13; ph: 6.6; rin: 7.2; tissue: hippocampus; disease state: major depressive disorder
+#> GSM1304902 age: 47; gender: F; race: W; pmi: 22.3; ph: 6.6; rin: 6.5; tissue: hippocampus; disease state: major depressive disorder
+#> GSM1304903 age: 34; gender: M; race: W; pmi: 24.4; ph: 6.6; rin: 8.4; tissue: hippocampus; disease state: major depressive disorder
+#> GSM1304904   age: 51; gender: M; race: W; pmi: 28.3; ph: 7.3; rin: 7; tissue: hippocampus; disease state: major depressive disorder
+#> GSM1304905            age: 49; gender: M; race: W; pmi: 21.5; ph: 5.97; rin: 6; tissue: hippocampus; disease state: schizo; phrenia
+#> GSM1304906         age: 47; gender: F; race: W; pmi: 14.37; ph: 6.35; rin: 6.3; tissue: hippocampus; disease state: schizo; phrenia
+#>  [ reached 'max' / getOption("max.print") -- omitted 150 rows ]
 ```
 
 ### Download supplementary data from GEO database - `get_geo_suppl`
@@ -616,26 +745,19 @@ gse180383_smat_gsm_suppl <- get_geo_suppl(gse180383_smat_gsmids, tempdir())
 Another way, we can also derive sample accession ids from GSE soft
 files, which is what our laboratory prefers to since we can easily get
 exact sample traits information as described in the above by utilizing
-`parse_pdata` function.
+`parse_gsm_list` function.
 
 ``` r
 gse180383_soft <- get_geo(
     "GSE180383", tempdir(),
     gse_matrix = FALSE
 )
-#> Downloading GSE180383_family.soft.gz from FTP site:
-#> Found 7 entities...
-#> GPL21359 (1 of 7 entities)
-#> GSM5461787 (2 of 7 entities)
-#> GSM5461788 (3 of 7 entities)
-#> GSM5461789 (4 of 7 entities)
-#> GSM5461790 (5 of 7 entities)
-#> GSM5461791 (6 of 7 entities)
-#> GSM5461792 (7 of 7 entities)
-gse180383_soft_cli <- parse_pdata(gsm(gse180383_soft))
-#> Warning: More than one characters ":" found in meta characteristics data`: 
-#> • Details see: characteristics_ch1 column in returned data.
-#> • Please use `set_pdata` or combine `strsplit` and `parse_pdata` function to convert it manually if necessary!
+#> Downloading 1 GSE soft file from FTP site
+gse180383_soft_cli <- parse_gsm_list(gsm(gse180383_soft))
+#> Warning: More than one characters ":" found in meta characteristics data
+#> ℹ Details see: "characteristics_ch1" column in returned data.
+#> ℹ Please use `parse_pdata()` or combine `strsplit()` and `parse_gsm_list()`
+#>   function to convert it manually if necessary!
 head(gse180383_soft_cli[1:5])
 #>            channel_count
 #> GSM5461787             1
@@ -674,12 +796,7 @@ head(gse180383_soft_cli[1:5])
 #> GSM5461792 630 Rue Noetzlin
 gse180383_soft_gsmids <- names(gsm(gse180383_soft))
 gse180383_soft_gsm_suppl <- get_geo_suppl(gse180383_soft_gsmids, tempdir())
-#> Using locally cached version of GSM5461787_trim_RNA_Mono_1_S13_R1_001_countsMatrix.txt.gz found here: C:\Users\yunyu\AppData\Local\Temp\RtmpkxJgG3/GSM5461787_trim_RNA_Mono_1_S13_R1_001_countsMatrix.txt.gz
-#> Using locally cached version of GSM5461788_trim_RNA_Mono_2_S14_R1_001_countsMatrix.txt.gz found here: C:\Users\yunyu\AppData\Local\Temp\RtmpkxJgG3/GSM5461788_trim_RNA_Mono_2_S14_R1_001_countsMatrix.txt.gz
-#> Using locally cached version of GSM5461789_trim_RNA_Mono_3_S15_R1_001_countsMatrix.txt.gz found here: C:\Users\yunyu\AppData\Local\Temp\RtmpkxJgG3/GSM5461789_trim_RNA_Mono_3_S15_R1_001_countsMatrix.txt.gz
-#> Using locally cached version of GSM5461790_trim_RNA_ab_1_S16_R1_001_countsMatrix.txt.gz found here: C:\Users\yunyu\AppData\Local\Temp\RtmpkxJgG3/GSM5461790_trim_RNA_ab_1_S16_R1_001_countsMatrix.txt.gz
-#> Using locally cached version of GSM5461791_trim_RNA_ab_2_S17_R1_001_countsMatrix.txt.gz found here: C:\Users\yunyu\AppData\Local\Temp\RtmpkxJgG3/GSM5461791_trim_RNA_ab_2_S17_R1_001_countsMatrix.txt.gz
-#> Using locally cached version of GSM5461792_trim_RNA_ab_3_S18_R1_001_countsMatrix.txt.gz found here: C:\Users\yunyu\AppData\Local\Temp\RtmpkxJgG3/GSM5461792_trim_RNA_ab_3_S18_R1_001_countsMatrix.txt.gz
+#> Downloading 6 GSM suppl files from FTP site
 ```
 
 ### Other utilities
@@ -698,9 +815,9 @@ GEO.
 
 ``` r
 sessionInfo()
-#> R version 4.2.1 (2022-06-23 ucrt)
+#> R version 4.2.2 (2022-10-31 ucrt)
 #> Platform: x86_64-w64-mingw32/x64 (64-bit)
-#> Running under: Windows 10 x64 (build 22000)
+#> Running under: Windows 10 x64 (build 22621)
 #> 
 #> Matrix products: default
 #> 
@@ -715,19 +832,24 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] magrittr_2.0.3  rgeo_0.0.1.9000
+#> [1] kableExtra_1.3.4 magrittr_2.0.3   rgeo_0.0.1.9000 
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] knitr_1.39           tidyselect_1.1.2     R6_2.5.1            
-#>  [4] ragg_1.2.2.9000      rlang_1.0.4          fastmap_1.1.0       
-#>  [7] fansi_1.0.3          stringr_1.4.0        dplyr_1.0.9         
-#> [10] tools_4.2.1          data.table_1.14.3    xfun_0.31           
-#> [13] utf8_1.2.2           DBI_1.1.3            cli_3.3.0           
-#> [16] ellipsis_0.3.2       htmltools_0.5.3      systemfonts_1.0.4   
-#> [19] assertthat_0.2.1     yaml_2.3.5           digest_0.6.29       
-#> [22] tibble_3.1.8         lifecycle_1.0.1.9001 crayon_1.5.1        
-#> [25] textshaping_0.3.6    purrr_0.3.4          vctrs_0.4.1         
-#> [28] glue_1.6.2           evaluate_0.15        rmarkdown_2.14      
-#> [31] stringi_1.7.8        compiler_4.2.1       pillar_1.8.0        
-#> [34] generics_0.1.3       pkgconfig_2.0.3
+#>  [1] pillar_1.8.0        compiler_4.2.2      R.methodsS3_1.8.2  
+#>  [4] R.utils_2.12.0      tools_4.2.2         digest_0.6.29      
+#>  [7] viridisLite_0.4.0   evaluate_0.15       lifecycle_1.0.3    
+#> [10] tibble_3.1.8        pkgconfig_2.0.3     rlang_1.0.6        
+#> [13] cli_3.6.0           DBI_1.1.3           rstudioapi_0.13    
+#> [16] curl_5.0.0          yaml_2.3.5          xfun_0.31          
+#> [19] fastmap_1.1.0       dplyr_1.0.9         stringr_1.4.0      
+#> [22] httr_1.4.3          knitr_1.39          xml2_1.3.3         
+#> [25] generics_0.1.3      vctrs_0.5.1         systemfonts_1.0.4  
+#> [28] webshot_0.5.3       tidyselect_1.1.2    Biobase_2.56.0     
+#> [31] svglite_2.1.0       glue_1.6.2          data.table_1.14.9  
+#> [34] R6_2.5.1            textshaping_0.3.6   fansi_1.0.3        
+#> [37] rmarkdown_2.14      purrr_0.3.4         codetools_0.2-18   
+#> [40] BiocGenerics_0.42.0 scales_1.2.0        htmltools_0.5.3    
+#> [43] ellipsis_0.3.2      assertthat_0.2.1    rvest_1.0.2        
+#> [46] colorspace_2.0-3    ragg_1.2.2.9000     utf8_1.2.2         
+#> [49] stringi_1.7.8       munsell_0.5.0       R.oo_1.25.0
 ```

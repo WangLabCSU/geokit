@@ -38,14 +38,14 @@ The goal of `rgeo` is to provide a unified interface for most interactions betwe
 - Provide a searching interface of [GEO database](https://www.ncbi.nlm.nih.gov/geo/), in this way, we can filter the searching results using `R function`.
 - Provide a downloading interface of [GEO database](https://www.ncbi.nlm.nih.gov/geo/), in this way, we can make full use of R to analyze GEO datasets.
 - Enable mapping bettween GPL id and Bioconductor annotation package.
-- Provide some useful utils function to work with GEO datasets like `parse_pdata`, `set_pdata`, `log_trans` and `show_geo`.
+- Provide some useful utils function to work with GEO datasets like `parse_gsm_list`, `parse_pdata`, `log_trans` and `show_geo`.
 
 ## Installation
 
 You can install the development version of rgeo from [GitHub](https://github.com/) with:
 
 ```{r, eval=FALSE}
-if (!require(pak)) {
+if (!requireNamespace("pak")) {
     install.packages("pak",
         repos = sprintf(
             "https://r-lib.github.io/p/pak/devel/%s/%s/%s",
@@ -134,7 +134,7 @@ gse <- get_geo("GSE10", tempdir(), gse_matrix = FALSE)
 gse
 ```
 
-It's more common to use a series matrix file in our usual analysis workflow, we can also handle it easily in `rgeo`, as what we need to do is just set `gse_matrix` to `TRUE` in `get_geo` function, which is also the default value. When `gse_matrix` is `TRUE`, `get_geo` will return a `ExpressionSet` object which can interact with lots of Bioconductor packages. There are two parameters controling the processing details when parsing series matrix file. When parsing phenoData from series matrix files directly, it's common to fail to discern `characteristics_ch*` columns, which contain the important traits informations of corresponding samples, since many `characteristics_ch*` columns in series matrix files often lacks separate strings. `pdata_from_soft`, which indicates whether retrieve phenoData from GEO Soft file, can help handle this problem well. When the soft file is large and we don't want to use it, we can set `pdata_from_soft` to `FALSE` and use `set_pdata` function to parse it manully. Another important parameter is `add_gpl`, where `FALSE` indicates `get_geo` will try to map the current GPL accession id into a Bioconductor annotation package, then we can use the latest bioconductor annotation package to get the up-to-date featureData, otherwise, `get_geo` will add featureData from GPL soft file directly. 
+It's more common to use a series matrix file in our usual analysis workflow, we can also handle it easily in `rgeo`, as what we need to do is just set `gse_matrix` to `TRUE` in `get_geo` function, which is also the default value. When `gse_matrix` is `TRUE`, `get_geo` will return a `ExpressionSet` object which can interact with lots of Bioconductor packages. There are two parameters controling the processing details when parsing series matrix file. When parsing phenoData from series matrix files directly, it's common to fail to discern `characteristics_ch*` columns, which contain the important traits informations of corresponding samples, since many `characteristics_ch*` columns in series matrix files often lacks separate strings. `pdata_from_soft`, which indicates whether retrieve phenoData from GEO Soft file, can help handle this problem well. When the soft file is large and we don't want to use it, we can set `pdata_from_soft` to `FALSE` and use `parse_pdata` function to parse it manully. Another important parameter is `add_gpl`, where `FALSE` indicates `get_geo` will try to map the current GPL accession id into a Bioconductor annotation package, then we can use the latest bioconductor annotation package to get the up-to-date featureData, otherwise, `get_geo` will add featureData from GPL soft file directly. 
 
 ```{r gse_matrix, cache = TRUE}
 gse_matix <- get_geo("GSE10", tempdir())
@@ -148,17 +148,15 @@ gse_matrix_with_pdata <- get_geo(
     add_gpl = FALSE
 )
 gse_matrix_smp_info <- Biobase::pData(gse_matrix_with_pdata)
-data.table::setDT(gse_matrix_smp_info)
-gse_matrix_smp_info[, characteristics_ch1 := stringr::str_replace_all(
-    characteristics_ch1,
+gse_matrix_smp_info$characteristics_ch1 <- stringr::str_replace_all(
+    gse_matrix_smp_info$characteristics_ch1,
     "gender|race|pmi|ph|rin|tissue|disease state",
     function(x) paste0("; ", x)
+)
+gse_matrix_smp_info <- parse_pdata(gse_matrix_smp_info)
+gse_matrix_smp_info[grepl(
+    "^ch1_|characteristics_ch1", names(gse_matrix_smp_info)
 )]
-set_pdata(gse_matrix_smp_info)
-gse_matrix_smp_info[
-    , .SD,
-    .SDcols = patterns("^ch1_|characteristics_ch1")
-]
 ```
 
 ### Download supplementary data from GEO database - `get_geo_suppl` 
@@ -187,13 +185,13 @@ gse180383_smat_gsmids <- gse180383_smat_cli[["geo_accession"]]
 gse180383_smat_gsm_suppl <- get_geo_suppl(gse180383_smat_gsmids, tempdir())
 ```
 
-Another way, we can also derive sample accession ids from GSE soft files, which is what our laboratory prefers to since we can easily get exact sample traits information as described in the above by utilizing `parse_pdata` function.
+Another way, we can also derive sample accession ids from GSE soft files, which is what our laboratory prefers to since we can easily get exact sample traits information as described in the above by utilizing `parse_gsm_list` function.
 ```{r, cache = TRUE}
 gse180383_soft <- get_geo(
     "GSE180383", tempdir(),
     gse_matrix = FALSE
 )
-gse180383_soft_cli <- parse_pdata(gsm(gse180383_soft))
+gse180383_soft_cli <- parse_gsm_list(gsm(gse180383_soft))
 head(gse180383_soft_cli[1:5])
 gse180383_soft_gsmids <- names(gsm(gse180383_soft))
 gse180383_soft_gsm_suppl <- get_geo_suppl(gse180383_soft_gsmids, tempdir())
