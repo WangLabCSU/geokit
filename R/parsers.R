@@ -1,16 +1,36 @@
 #' For all parsers used in `get_geo.R`, return a list
 #' @noRd
-parse_gse_matrix <- function(file_text, pdata_from_soft) {
+parse_gse_matrix <- function(file_text, gse_sample_data, pdata_from_soft) {
     # extract series matrix data
     matrix_data <- read_data_table(file_text)
     data.table::setDF(matrix_data)
     matrix_data <- as.matrix(column_to_rownames(matrix_data, 1L))
-    meta_data <- parse_gse_matrix_meta(
-        file_text,
-        pdata_from_soft = pdata_from_soft
-    )
+    meta_data <- parse_gse_matrix_meta(file_text)
 
-    # fetch phenoData and experiment data
+    # fetch phenoData
+    if (pdata_from_soft) {
+        gse_sample_data <- parse_gse_soft_sample_characteristics(
+            gse_sample_data[colnames(matrix_data)]
+        )
+        data.table::setDF(
+            gse_sample_data,
+            rownames = gse_sample_data[["geo_accession"]]
+        )
+        pheno_data <- Biobase::AnnotatedDataFrame(
+            data = gse_sample_data[colnames(matrix_data), , drop = FALSE]
+        )
+    } else {
+        parse_gse_matrix_sample_characteristics(meta_data$Sample)
+        data.table::setDF(
+            meta_data$Sample,
+            rownames = as.character(meta_data$Sample[["geo_accession"]])
+        )
+        pheno_data <- Biobase::AnnotatedDataFrame(
+            data = meta_data$Sample[colnames(matrix_data), , drop = FALSE]
+        )
+    }
+
+    # fetch experiment data
     experiment_data <- Biobase::MIAME(
         name = meta_data$Series$contact_name %||% "",
         title = meta_data$Series$title,
@@ -28,9 +48,6 @@ parse_gse_matrix <- function(file_text, pdata_from_soft) {
             "https://www.ncbi.nlm.nih.gov/geo/"
         },
         other = meta_data$Series
-    )
-    pheno_data <- Biobase::AnnotatedDataFrame(
-        data = meta_data$Sample[colnames(matrix_data), , drop = FALSE]
     )
     # fetch GPL accession
     gpl_id <- meta_data$Sample[[grep(
@@ -192,33 +209,24 @@ parse_gds_soft <- function(file_text, only_meta = FALSE) {
     )
 }
 
-parse_gse_matrix_meta <- function(file_text, pdata_from_soft) {
+#' @importFrom data.table %chin%
+parse_gse_matrix_meta <- function(file_text) {
     meta_groups <- c("Series", "Sample")
     names(meta_groups) <- meta_groups
-    meta_data <- lapply(
-        meta_groups, function(group) {
-            meta_text <- grep(
-                paste0("^!", group, "_"), file_text,
-                value = TRUE,
-                fixed = FALSE, perl = TRUE
-            )
-            meta_data <- parse_meta(meta_text)
-            rlang::set_names(
-                meta_data,
-                function(x) sub(paste0("^", group, "_"), "", x, perl = TRUE)
-            )
-        }
-    )
+    meta_data <- lapply(meta_groups, function(group) {
+        meta_text <- grep(
+            paste0("^!", group, "_"), file_text,
+            value = TRUE, fixed = FALSE, perl = TRUE
+        )
+        meta_data <- parse_meta(meta_text)
+        rlang::set_names(
+            meta_data,
+            function(x) sub(paste0("^", group, "_"), "", x, perl = TRUE)
+        )
+    })
     data.table::setDT(meta_data$Sample)
-    if (!pdata_from_soft) {
-        parse_gse_matrix_sample_characteristics(meta_data$Sample)
-    }
-    data.table::setDF(
-        meta_data$Sample,
-        rownames = as.character(meta_data$Sample[["geo_accession"]])
-    )
     for (x in c("sample_id", "pubmed_id", "platform_id")) {
-        if (x %in% names(meta_data$Series)) {
+        if (x %chin% names(meta_data$Series)) {
             meta_data$Series[[x]] <- strsplit(
                 meta_data$Series[[x]],
                 split = ";?+ ", fixed = FALSE,
