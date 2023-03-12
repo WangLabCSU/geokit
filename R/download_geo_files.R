@@ -208,7 +208,11 @@ download_inform <- function(urls, file_paths, site, mode, msg = "", handle_opts 
     }
     if (length(urls) > 0L) {
         cli::cli_inform(sprintf(
-            "Downloading {.val {length(urls)}} %s file{?s} from {switch(site, ftp = \"FTP site\",  acc = \"GEO Accession Site\")}", msg
+            "Downloading {.val {length(urls)}} %s file{?s} from %s", msg,
+            switch(site,
+                ftp = "FTP site",
+                acc = "GEO Accession Site"
+            )
         ))
         arg_list <- c(
             list(
