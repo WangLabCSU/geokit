@@ -29,7 +29,8 @@ get_gse_matrix <- function(ids, dest_dir = getwd(), pdata_from_soft = TRUE, add_
         total = length(ids),
         clear = FALSE
     )
-    es_elements_list <- .mapply(function(id, file_paths, gse_sample_data = NULL) {
+    # pass id in order to update progress bar
+    es_elements_list <- .mapply(function(id, file_paths, ...) {
         cli::cli_progress_update(id = bar_id)
         # For GEO series soft files, there is only one file corresponding to
         # all GSE matrix fiels, so we should extract the sample data
@@ -37,11 +38,7 @@ get_gse_matrix <- function(ids, dest_dir = getwd(), pdata_from_soft = TRUE, add_
         # For each GSE matrix file, we extract the `ExpressionSet` elements
         names(file_paths) <- basename(file_paths)
         lapply(file_paths, function(file_path) {
-            parse_gse_matrix(
-                file_text = read_lines(file_path),
-                gse_sample_data = gse_sample_data,
-                pdata_from_soft = pdata_from_soft
-            )
+            parse_gse_matrix(file_text = read_lines(file_path), ...)
         })
     }, arg_list, NULL)
 

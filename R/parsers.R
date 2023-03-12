@@ -1,6 +1,6 @@
 #' For all parsers used in `get_geo.R`, return a list
 #' @noRd
-parse_gse_matrix <- function(file_text, gse_sample_data, pdata_from_soft) {
+parse_gse_matrix <- function(file_text, gse_sample_data = NULL) {
     # extract series matrix data
     matrix_data <- read_data_table(file_text)
     data.table::setDF(matrix_data)
@@ -8,7 +8,16 @@ parse_gse_matrix <- function(file_text, gse_sample_data, pdata_from_soft) {
     meta_data <- parse_gse_matrix_meta(file_text)
 
     # fetch phenoData
-    if (pdata_from_soft) {
+    if (is.null(gse_sample_data)) {
+        parse_gse_matrix_sample_characteristics(meta_data$Sample)
+        data.table::setDF(
+            meta_data$Sample,
+            rownames = as.character(meta_data$Sample[["geo_accession"]])
+        )
+        pheno_data <- Biobase::AnnotatedDataFrame(
+            data = meta_data$Sample[colnames(matrix_data), , drop = FALSE]
+        )
+    } else {
         gse_sample_data <- parse_gse_soft_sample_characteristics(
             gse_sample_data[colnames(matrix_data)]
         )
@@ -18,15 +27,6 @@ parse_gse_matrix <- function(file_text, gse_sample_data, pdata_from_soft) {
         )
         pheno_data <- Biobase::AnnotatedDataFrame(
             data = gse_sample_data[colnames(matrix_data), , drop = FALSE]
-        )
-    } else {
-        parse_gse_matrix_sample_characteristics(meta_data$Sample)
-        data.table::setDF(
-            meta_data$Sample,
-            rownames = as.character(meta_data$Sample[["geo_accession"]])
-        )
-        pheno_data <- Biobase::AnnotatedDataFrame(
-            data = meta_data$Sample[colnames(matrix_data), , drop = FALSE]
         )
     }
 
@@ -63,19 +63,22 @@ parse_gse_matrix <- function(file_text, gse_sample_data, pdata_from_soft) {
     )
 }
 
-#' @param entity_type One of "sample", "platform" or "all".
+#' @param entity_type One of "sample", "platform" or "all". If all, metadata
+#'   will be extracted, otherwise, metadata will always be `NULL`. 
+#' @param only_meta Whether to extracte metadata only, if `TRUE`, entity_type
+#'   must be "all".
 #' @noRd
 parse_gse_soft <- function(file_text, entity_type = "all", only_meta = FALSE) {
-    meta_idx <- grep("^\\^(SAMPLE|PLATFORM)", file_text,
-        perl = TRUE, value = FALSE
-    )
-    soft_meta <- parse_meta(file_text[seq_len(meta_idx[[1L]] - 1L)])
-    if (only_meta) {
-        return(list(meta = soft_meta, gsm = NULL, gpl = NULL))
-    }
     if (entity_type == "all") {
-        entity_indices <- meta_idx
+        entity_indices <- grep("^\\^(SAMPLE|PLATFORM)", file_text,
+            perl = TRUE, value = FALSE
+        )
+        soft_meta <- parse_meta(file_text[seq_len(entity_indices[[1L]] - 1L)])
+        if (only_meta) {
+            return(list(meta = soft_meta, gsm = NULL, gpl = NULL))
+        }
     } else {
+        soft_meta <- NULL
         entity_marker <- paste0(
             "^\\^", switch(entity_type,
                 sample = "SAMPLE",
