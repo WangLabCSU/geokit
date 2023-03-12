@@ -113,10 +113,10 @@ na_string <- c("NA", "null", "NULL", "Null")
 
 check_ids <- function(ids, arg = rlang::caller_arg(ids), call = parent.frame()) {
     geotypes <- substring(ids, 1L, 3L)
-    is_geo_types <- geotypes %in% c("GSE", "GPL", "GSM", "GDS")
+    is_geo_types <- geotypes %chin% c("GSE", "GPL", "GSM", "GDS")
     if (any(!is_geo_types)) {
         cli::cli_abort(c(
-            "Invalid {.arg {arg}} provided: {.val {unique(geotypes[!is_geo_types])}}"
+            "Invalid values provided in {.arg {arg}}: {.val {unique(geotypes[!is_geo_types])}}"
         ), call = call)
     }
     if (any(geotypes != geotypes[1L])) {

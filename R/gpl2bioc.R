@@ -4,6 +4,7 @@
 #' @noRd
 gpl2bioc <- function(gpl) {
     if (has_bioc_annotation_pkg(gpl)) {
+        cli::cli_alert_success("Found Bioconductor annotation package for {.val {gpl}}")
         gpl2bioc_dt[
             Platform_geo_accession == gpl, bioc_pkg,
             env = list(gpl = I(gpl))
@@ -16,6 +17,7 @@ gpl2bioc <- function(gpl) {
     }
 }
 
+#' @importFrom data.table %chin%
 has_bioc_annotation_pkg <- function(gpl) {
-    gpl %in% gpl2bioc_dt$Platform_geo_accession
+    gpl %chin% gpl2bioc_dt$Platform_geo_accession
 }
