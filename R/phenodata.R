@@ -50,7 +50,7 @@ parse_pdata <- function(data, columns = NULL, sep = ":", split = ";") {
     if (!rlang::is_scalar_character(split)) {
         cli::cli_abort("{.arg split} must be a single string")
     }
-    rlang::try_fetch(
+    tryCatch(
         parse_gse_matrix_sample_characteristics(
             sample_dt = data,
             characteristics_cols = columns,
