@@ -29,4 +29,5 @@ get_geo_meta <- function(ids, dest_dir = getwd(), handle_opts = list(connecttime
     })
     out <- data.table::rbindlist(meta_list, use.names = TRUE, fill = TRUE)
     data.table::setDF(out)
+    out
 }
