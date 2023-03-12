@@ -232,7 +232,7 @@ download_inform <- function(urls, file_paths, site, mode, msg = "", handle_opts 
                 failed_files <- sum(!is_success) # nolint
                 cli::cli_abort(c(
                     "Cannot download {.val {failed_files}} file{?s}",
-                    "i" = "url{?s}: {.url {urls}}",
+                    "i" = "url{?s}: {.url {urls[!is_success]}}",
                     "!" = "status {cli::qty(failed_files)} code{?s}: {.val {status$status_code[!is_success]}}",
                     x = "error {cli::qty(failed_files)} message{?s}: {.val {status$error[!is_success]}}"
                 ))
