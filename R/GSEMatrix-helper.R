@@ -12,7 +12,7 @@ get_gse_matrix <- function(ids, dest_dir = getwd(), pdata_from_soft = TRUE, add_
         )
         gse_sample_data_list <- lapply(gse_soft_file_paths, function(x) {
             cli::cli_alert_info(
-                "Parsing series {.field soft} file {.file {basename(x)}} "
+                "Parsing series {.field soft} file {.file {basename(x)}}"
             )
             parse_gse_soft(read_lines(x), entity_type = "sample")[["gsm"]]
         })
@@ -23,15 +23,11 @@ get_gse_matrix <- function(ids, dest_dir = getwd(), pdata_from_soft = TRUE, add_
     }
 
     # parsing GSE metrix files --------------------------------------
-    bar_id <- cli::cli_progress_bar(
-        format = "{cli::pb_spin} Parsing series {.field matrix} file of {.field {id}} | {cli::pb_current}/{cli::pb_total}", # nolint
-        format_done = "Parsing {.val {cli::pb_total}} series {.field matrix} file{?s} in {cli::pb_elapsed}",
-        total = length(ids),
-        clear = FALSE
-    )
-    # pass id in order to update progress bar
+    # pass id in order to update message
     es_elements_list <- .mapply(function(id, file_paths, ...) {
-        cli::cli_progress_update(id = bar_id)
+        cli::cli_alert_info(
+            "Parsing {.val {length(file_paths)}} series {.field matrix} file{?s} of {.field {id}}"
+        )
         # For GEO series soft files, there is only one file corresponding to
         # all GSE matrix fiels, so we should extract the sample data
         # firstly, and then split it into pieces.
@@ -41,8 +37,10 @@ get_gse_matrix <- function(ids, dest_dir = getwd(), pdata_from_soft = TRUE, add_
             parse_gse_matrix(file_text = read_lines(file_path), ...)
         })
     }, arg_list, NULL)
+    cli::cli_alert_success("Parsing {.val {length(ids)}} {.strong GSE} series matrix successfully!")
 
     # adding featureData and contructing ExpressionSet object
+    cli::cli_alert_info("Constructing {.cls ExpressionSet}")
     lapply(es_elements_list, function(es_elements) {
         es_list <- lapply(es_elements, function(es_element) {
             if (is.null(add_gpl) || !add_gpl) {
