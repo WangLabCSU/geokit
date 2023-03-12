@@ -228,7 +228,8 @@ download_inform <- function(urls, file_paths, site, mode, msg = "", handle_opts 
         if (length(urls) > 0L && !all(is_success)) {
             cli::cli_abort(c(
                 "Cannot download {sum(!is_success)} file{?s}",
-                x = "status code: {status$status_code[!is_success]}",
+                "!" = "status code: {status$status_code[!is_success]}",
+                "!" = "url{?s}: {.url {urls}}",
                 x = "error message: {status$error[!is_success]}"
             ))
         } else {
