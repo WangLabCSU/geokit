@@ -121,7 +121,7 @@ check_ids <- function(ids, arg = rlang::caller_arg(ids), call = parent.frame()) 
     }
     if (any(geotypes != geotypes[1L])) {
         cli::cli_abort(c(
-            "All {.arg {arg}} must in the same GEO types"
+            "All {.arg {arg}} must be the same GEO types"
         ), call = call)
     }
 }
