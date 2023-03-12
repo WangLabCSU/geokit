@@ -27,10 +27,12 @@ files when handling a \code{GSE} GEO entity. When set to \code{TRUE}, an
 
 \item{pdata_from_soft}{A logical value indicates whether derive \code{phenoData}
 from GSE series soft file when parsing
-\link[Biobase:class.ExpressionSet]{ExpressionSet} Object. Defaults to \code{TRUE}, if
-\code{FALSE}, \code{phenoData} will be parsed directly from GEO series matrix file,
-which is what \code{GEOquery} do, in this way, \verb{characteristics_ch*} column
-sometimes cannot be parsed correctly.}
+\link[Biobase:class.ExpressionSet]{ExpressionSet} Object. Defaults to \code{TRUE}.
+Sometimes soft file can be in large size, you can disable the downloading of
+soft file by setting pdata_from_soft into \code{FALSE}. if \code{FALSE}, \code{phenoData}
+will be parsed directly from GEO series matrix file, which is what
+\code{GEOquery} do, in this way, \verb{characteristics_ch*} column sometimes cannot be
+parsed correctly.}
 
 \item{add_gpl}{A logical value indicates whether to add \strong{platform} (namely
 the \link[Biobase:featureData]{featureData} slot in the

@@ -60,10 +60,12 @@
 #'  [ExpressionSet][Biobase::ExpressionSet] Object will be returned.
 #' @param pdata_from_soft A logical value indicates whether derive `phenoData`
 #'  from GSE series soft file when parsing
-#'  [ExpressionSet][Biobase::ExpressionSet] Object. Defaults to `TRUE`, if
-#'  `FALSE`, `phenoData` will be parsed directly from GEO series matrix file,
-#'  which is what `GEOquery` do, in this way, `characteristics_ch*` column
-#'  sometimes cannot be parsed correctly.
+#'  [ExpressionSet][Biobase::ExpressionSet] Object. Defaults to `TRUE`.
+#'  Sometimes soft file can be in large size, you can disable the downloading of
+#'  soft file by setting pdata_from_soft into `FALSE`. if `FALSE`, `phenoData`
+#'  will be parsed directly from GEO series matrix file, which is what
+#'  `GEOquery` do, in this way, `characteristics_ch*` column sometimes cannot be
+#'  parsed correctly. 
 #' @param add_gpl A logical value indicates whether to add **platform** (namely
 #'  the [featureData][Biobase::featureData] slot in the
 #'  [ExpressionSet][Biobase::ExpressionSet] Object) information when handling a
