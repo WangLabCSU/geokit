@@ -172,7 +172,7 @@ list_file_helper <- function(id, url, handle_opts) {
         )),
         perl = TRUE, value = TRUE
     )
-    if (!length(file_names)) {
+    if (length(file_names) == 0L) {
         return(NULL)
     }
     file.path(url, file_names)
@@ -223,22 +223,25 @@ download_inform <- function(urls, file_paths, site, mode, msg = "", handle_opts 
         if (any(is_need_deleted)) {
             file.remove(file_paths[is_need_deleted])
         }
+        if (fail) {
+            if (!all(is_success)) {
+                failed_files <- sum(!is_success) # nolint
+                cli::cli_abort(c(
+                    "Cannot download {.val {failed_files}} file{?s}",
+                    "i" = "url{?s}: {.url {urls}}",
+                    "!" = "status {cli::qty(failed_files)} code{?s}: {.val {status$status_code[!is_success]}}",
+                    x = "error {cli::qty(failed_files)} message{?s}: {.val {status$error[!is_success]}}"
+                ))
+            }
+        } else {
+            out$is_success[!is_existed] <- is_success
+        }
     }
     if (fail) {
-        if (length(urls) > 0L && !all(is_success)) {
-            cli::cli_abort(c(
-                "Cannot download {sum(!is_success)} file{?s}",
-                "!" = "status code: {status$status_code[!is_success]}",
-                "!" = "url{?s}: {.url {urls}}",
-                x = "error message: {status$error[!is_success]}"
-            ))
-        } else {
-            return(out$destfiles)
-        }
-    } else if (length(urls) > 0L) {
-        out$is_success[!is_existed] <- is_success
+        out$destfiles
+    } else {
+        out
     }
-    out
 }
 
 #' @param status A data frame returned by [multi_download][curl::multi_download]
