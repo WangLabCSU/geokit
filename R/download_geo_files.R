@@ -143,12 +143,16 @@ download_with_acc <- function(ids, dest_dir, scope = "self", amount = "full", fo
     )
 }
 
-list_file_helper <- function(url, handle_opts) {
+list_file_helper <- function(id, url, handle_opts) {
     url_connection <- curl::curl(
         url,
         handle = do.call(curl::new_handle, handle_opts)
     )
-    open(url_connection, "rb")
+    tryCatch(open(url_connection, "rb"), error = function(err) {
+        cli::cli_abort("Cannot open {.url {url}} for {.field {id}}",
+            parent = err
+        )
+    })
     on.exit(close(url_connection))
 
     xml_doc <- xml2::read_html(url_connection)
@@ -176,7 +180,7 @@ list_file_helper <- function(url, handle_opts) {
 
 list_geo_file_url <- function(id, file_type, handle_opts = list()) {
     url <- build_geo_ftp_url(id, file_type)
-    file_urls <- list_file_helper(url, handle_opts = handle_opts)
+    file_urls <- list_file_helper(id = id, url, handle_opts = handle_opts)
     if (is.null(file_urls)) {
         cli::cli_alert_warning(
             "No {.field {file_type}} file found for {.val {id}}"
