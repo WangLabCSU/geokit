@@ -178,7 +178,7 @@ list_geo_file_url <- function(id, file_type, handle_opts = list()) {
     url <- build_geo_ftp_url(id, file_type)
     file_urls <- list_file_helper(url, handle_opts = handle_opts)
     if (is.null(file_urls)) {
-        cli::cli_alert_info(
+        cli::cli_alert_warning(
             "No {.field {file_type}} file found for {.val {id}}"
         )
     }
