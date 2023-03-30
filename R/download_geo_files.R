@@ -145,10 +145,10 @@ download_with_acc <- function(ids, dest_dir, scope = "self", amount = "full", fo
 }
 
 list_file_helper <- function(id, url, handle_opts) {
-    url_connection <- curl::curl(
-        url,
-        handle = do.call(curl::new_handle, handle_opts)
-    )
+    curl_handle <- curl::new_handle()
+    curl::handle_setopt(curl_handle, .list = handle_opts)
+    curl::handle_setopt(curl_handle, noprogress = TRUE)
+    url_connection <- curl::curl(url, handle = curl_handle)
     tryCatch(open(url_connection, "rb"), error = function(err) {
         cli::cli_abort("Cannot open {.url {url}} for {.field {id}}",
             parent = err
@@ -161,7 +161,7 @@ list_file_helper <- function(id, url, handle_opts) {
     #     xml2::xml_text(xml_doc),
     #     "G\\S++"
     # )
-    # if (identical(length(file_names), 1L) && !length(file_names[[1L]])) {
+    # if (length(file_names) == 1L && length(file_names[[1L]]) == 0L) {
     #     return(NULL)
     # }
     # use HTTPS to connect GEO FTP site
