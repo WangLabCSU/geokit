@@ -115,14 +115,16 @@ check_ids <- function(ids, arg = rlang::caller_arg(ids), call = parent.frame()) 
     geotypes <- substring(ids, 1L, 3L)
     is_geo_types <- geotypes %chin% c("GSE", "GPL", "GSM", "GDS")
     if (any(!is_geo_types)) {
-        cli::cli_abort(c(
-            "Invalid values provided in {.arg {arg}}: {.val {unique(geotypes[!is_geo_types])}}"
-        ), call = call)
+        cli::cli_abort(
+            "Invalid values provided in {.arg {arg}}: {.val {unique(geotypes[!is_geo_types])}}",
+            call = call
+        )
     }
     if (any(geotypes != geotypes[1L])) {
-        cli::cli_abort(c(
-            "All {.arg {arg}} must be the same GEO types"
-        ), call = call)
+        cli::cli_abort(
+            "All {.arg {arg}} must be the same GEO types",
+            call = call
+        )
     }
 }
 
