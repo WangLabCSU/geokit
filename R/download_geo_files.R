@@ -148,14 +148,15 @@ list_file_helper <- function(id, url, handle_opts) {
     curl_handle <- curl::new_handle()
     curl::handle_setopt(curl_handle, .list = handle_opts)
     curl::handle_setopt(curl_handle, noprogress = TRUE)
-    url_connection <- curl::curl(url, handle = curl_handle)
-    tryCatch(open(url_connection, "rb"), error = function(err) {
-        cli::cli_abort("Cannot open {.url {url}} for {.field {id}}",
-            parent = err
-        )
-    })
+    tryCatch(
+        url_connection <- curl::curl(url, "rb", handle = curl_handle),
+        error = function(err) {
+            cli::cli_abort("Cannot open {.url {url}} for {.field {id}}",
+                parent = err
+            )
+        }
+    )
     on.exit(close(url_connection))
-
     xml_doc <- xml2::read_html(url_connection)
     # file_names <- str_extract_all(
     #     xml2::xml_text(xml_doc),
@@ -192,7 +193,8 @@ list_geo_file_url <- function(id, file_type, handle_opts = list()) {
 
 #' Download utils function with good message.
 #' @return If fail is `TRUE`, always return a character path if downloading
-#'   successed. Otherwise always return a list.
+#'   successed, otherwise, stop with error message. If fail is `FALSE`, always
+#'   return a list.
 #' @noRd
 download_inform <- function(urls, file_paths, site, mode, msg_id = "", handle_opts = list(), fail = TRUE) {
     out <- list(
