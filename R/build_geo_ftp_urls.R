@@ -3,15 +3,20 @@
 #' @param file_type A character string in one of "soft", "soft_full", "annot",
 #' "miniml" or "suppl".
 #' @noRd
-build_geo_ftp_url <- function(ids, file_type = "soft") {
+build_geo_ftp_url <- function(ids, file_type = "soft", ftp_over_https = FALSE) {
     geo_type <- substring(ids, 1L, 3L)[1L]
     file_type <- match.arg(
         tolower(file_type),
         c("soft", "soft_full", "annot", "miniml", "suppl", "matrix")
     )
     super_ids <- sub("\\d{1,3}$", "nnn", ids, perl = TRUE)
+    if (ftp_over_https) {
+        geo_ftp_site <- geo_ftp_over_https
+    } else {
+        geo_ftp_site <- geo_ftp
+    }
     file.path(
-        geo_ftp,
+        geo_ftp_site,
         parse_geo_type(geo_type),
         super_ids, ids, file_type,
         parse_file_name(ids, file_type, geo_type)
@@ -20,7 +25,8 @@ build_geo_ftp_url <- function(ids, file_type = "soft") {
 
 # Use https to connect GEO FTP site
 # When connecting GEO FTP site directly, it often failed to derive data.
-geo_ftp <- "https://ftp.ncbi.nlm.nih.gov/geo"
+geo_ftp <- "ftp://ftp.ncbi.nlm.nih.gov/geo"
+geo_ftp_over_https <- "https://ftp.ncbi.nlm.nih.gov/geo"
 
 parse_geo_type <- function(x) {
     switch(x,
