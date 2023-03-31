@@ -215,14 +215,11 @@ download_inform <- function(urls, file_paths, site, mode, msg_id = "", handle_op
                 acc = "GEO Accession Site"
             )
         ))
-        arg_list <- c(
-            list(
-                urls = urls, destfiles = file_paths, resume = FALSE,
-                progress = interactive(), timeout = Inf
-            ),
-            handle_opts
+        arg_list <- list(
+            urls = urls, destfiles = file_paths,
+            progress = interactive(), handle_opts = handle_opts
         )
-        status <- do.call(curl::multi_download, arg_list)
+        status <- do.call(multi_download, arg_list)
         is_success <- is_download_success(status)
         is_need_deleted <- !is_success & file.exists(file_paths)
         if (any(is_need_deleted)) {
