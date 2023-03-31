@@ -1,7 +1,7 @@
 #' Get a GEO object from GEO FTP site
 #'
 #' This function is the main user-level function in the `rgeo` package. It
-#' implements the downloading and parsing of GEO files into an R data structure.
+#' implements the downloading and parsing of GEO files.
 #'
 #' Use `get_geo` functions to download and parse information available from
 #' [NCBI GEO](http://www.ncbi.nlm.nih.gov/geo). Here are some details about what
@@ -51,8 +51,8 @@
 #' provided through GDS subsets.
 #'
 #' @param ids A character vector representing the GEO entity for downloading and
-#'  parsing. All ids must in the same GEO identity
-#'  ('GDS505','GSE2','GSM2','GPL96' eg.).
+#'  parsing. All ids must in the same GEO identity (`c("GDS505", "GDS606")` are
+#'  all GEO DataSets, `c("GSE2", "GSE22")` are all GEO series eg.).
 #' @param dest_dir The destination directory for any downloads. Defaults to
 #'  current working dir.
 #' @param gse_matrix A logical value indicates whether to retrieve Series Matrix
@@ -76,8 +76,12 @@
 #'  [ExpressionSet][Biobase::ExpressionSet] object will be set to the found
 #'  Bioconductor annotation package and the `add_gpl` will be set to `FALSE`,
 #'  otherwise, `add_gpl` will be set to `TRUE`.
-#' @param handle_opts A list of arguments passed to
-#'  [new_handle][curl::new_handle].
+#' @param ftp_over_https A scalar logical value indicates whether to connect GEO
+#'  FTP site with https traffic. If `TRUE`, will download FTP files from
+#'  <https://ftp.ncbi.nlm.nih.gov/geo>, which is used by GEOquery, otherwise,
+#'  will use <ftp://ftp.ncbi.nlm.nih.gov/geo> directly.
+#' @param handle_opts A list of named options / headers to be set in the
+#'  [handle][curl::new_handle]. 
 #' @return An object of the appropriate class (GDS, GPL, GSM, or GSE) is
 #'  returned. For `GSE` entity, if `gse_matrix` parameter is `FALSE`, an
 #'  [GEOSeries-class] object is returned and if `gse_matrix` parameter is
@@ -100,7 +104,7 @@
 #' gds <- get_geo("GDS10", tempdir())
 #'
 #' @export
-get_geo <- function(ids, dest_dir = getwd(), gse_matrix = TRUE, pdata_from_soft = TRUE, add_gpl = NULL, handle_opts = list(connecttimeout = 60L)) {
+get_geo <- function(ids, dest_dir = getwd(), gse_matrix = TRUE, pdata_from_soft = TRUE, add_gpl = NULL, ftp_over_https = FALSE, handle_opts = list(connecttimeout = 60L)) {
     ids <- toupper(ids)
     check_ids(ids)
     if (!dir.exists(dest_dir)) {
@@ -113,11 +117,13 @@ get_geo <- function(ids, dest_dir = getwd(), gse_matrix = TRUE, pdata_from_soft 
             dest_dir = dest_dir,
             pdata_from_soft = pdata_from_soft,
             add_gpl = add_gpl,
+            ftp_over_https = ftp_over_https,
             handle_opts = handle_opts
         )
     } else {
         out_list <- get_geo_soft(ids,
             geo_type = geo_type, dest_dir = dest_dir,
+            ftp_over_https = ftp_over_https,
             handle_opts = handle_opts
         )
     }

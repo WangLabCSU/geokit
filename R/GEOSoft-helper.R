@@ -1,7 +1,9 @@
-get_geo_soft <- function(ids, geo_type, dest_dir, handle_opts) {
+get_geo_soft <- function(ids, geo_type, dest_dir, ftp_over_https, handle_opts) {
     soft_data_list <- download_and_parse_soft(
         ids = ids, geo_type = geo_type,
-        dest_dir = dest_dir, handle_opts = handle_opts,
+        dest_dir = dest_dir, 
+        ftp_over_https = ftp_over_https,
+        handle_opts = handle_opts,
         only_meta = FALSE
     )
     .mapply(
@@ -34,7 +36,7 @@ new_geo_obj <- function(id, geo_type, soft_data) {
     )
 }
 
-download_and_parse_soft <- function(ids, geo_type, dest_dir, handle_opts, only_meta) {
+download_and_parse_soft <- function(ids, geo_type, dest_dir, handle_opts, only_meta, ftp_over_https) {
     file_paths <- switch(geo_type,
         GSM = download_gsm_files(ids,
             dest_dir = dest_dir,
@@ -43,15 +45,18 @@ download_and_parse_soft <- function(ids, geo_type, dest_dir, handle_opts, only_m
         GPL = download_gpl_files(
             ids,
             dest_dir = dest_dir, amount = "full",
-            handle_opts = handle_opts
+            handle_opts = handle_opts,
+            ftp_over_https = ftp_over_https
         ),
         GSE = download_gse_soft_files(ids,
             dest_dir = dest_dir,
-            handle_opts = handle_opts
+            handle_opts = handle_opts,
+            ftp_over_https = ftp_over_https
         ),
         GDS = download_gds_files(ids,
             dest_dir = dest_dir,
-            handle_opts = handle_opts
+            handle_opts = handle_opts,
+            ftp_over_https = ftp_over_https
         )
     )
     bar_id <- cli::cli_progress_bar(

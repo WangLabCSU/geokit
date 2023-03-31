@@ -6,7 +6,7 @@
 #' @inheritParams get_geo
 #' @return A data.frame contains metadata of all ids.
 #' @export
-get_geo_meta <- function(ids, dest_dir = getwd(), handle_opts = list(connecttimeout = 60L)) {
+get_geo_meta <- function(ids, dest_dir = getwd(), ftp_over_https = FALSE, handle_opts = list(connecttimeout = 60L)) {
     ids <- toupper(ids)
     check_ids(ids)
     if (!dir.exists(dest_dir)) {
@@ -16,6 +16,7 @@ get_geo_meta <- function(ids, dest_dir = getwd(), handle_opts = list(connecttime
         ids = ids,
         geo_type = substring(ids, 1L, 3L)[1L],
         dest_dir = dest_dir,
+        ftp_over_https = ftp_over_https,
         handle_opts = handle_opts,
         only_meta = TRUE
     )

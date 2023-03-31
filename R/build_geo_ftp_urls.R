@@ -15,11 +15,13 @@ build_geo_ftp_url <- function(ids, file_type = "soft", ftp_over_https = FALSE) {
     } else {
         geo_ftp_site <- geo_ftp
     }
-    file.path(
+    # file.path will omit the ending / in windows, so we just use paste
+    paste(
         geo_ftp_site,
         parse_geo_type(geo_type),
         super_ids, ids, file_type,
-        parse_file_name(ids, file_type, geo_type)
+        parse_file_name(ids, file_type, geo_type),
+        sep = "/"
     )
 }
 

@@ -4,18 +4,28 @@
 \alias{get_geo_meta}
 \title{Get the metadata of multiple GEO identities}
 \usage{
-get_geo_meta(ids, dest_dir = getwd(), handle_opts = list(connecttimeout = 60L))
+get_geo_meta(
+  ids,
+  dest_dir = getwd(),
+  ftp_over_https = FALSE,
+  handle_opts = list(connecttimeout = 60L)
+)
 }
 \arguments{
 \item{ids}{A character vector representing the GEO entity for downloading and
-parsing. All ids must in the same GEO identity
-('GDS505','GSE2','GSM2','GPL96' eg.).}
+parsing. All ids must in the same GEO identity (\code{c("GDS505", "GDS606")} are
+all GEO DataSets, \code{c("GSE2", "GSE22")} are all GEO series eg.).}
 
 \item{dest_dir}{The destination directory for any downloads. Defaults to
 current working dir.}
 
-\item{handle_opts}{A list of arguments passed to
-\link[curl:handle]{new_handle}.}
+\item{ftp_over_https}{A scalar logical value indicates whether to connect GEO
+FTP site with https traffic. If \code{TRUE}, will download FTP files from
+\url{https://ftp.ncbi.nlm.nih.gov/geo}, which is used by GEOquery, otherwise,
+will use \url{ftp://ftp.ncbi.nlm.nih.gov/geo} directly.}
+
+\item{handle_opts}{A list of named options / headers to be set in the
+\link[curl:handle]{handle}.}
 }
 \value{
 A data.frame contains metadata of all ids.

@@ -18,7 +18,7 @@
 #' a
 #'
 #' @export
-get_geo_suppl <- function(ids, dest_dir = getwd(), pattern = NULL, handle_opts = list(connecttimeout = 60L)) {
+get_geo_suppl <- function(ids, dest_dir = getwd(), pattern = NULL, ftp_over_https = FALSE, handle_opts = list(connecttimeout = 60L)) {
     ids <- toupper(ids)
     check_ids(ids)
     if (!dir.exists(dest_dir)) {
@@ -27,7 +27,9 @@ get_geo_suppl <- function(ids, dest_dir = getwd(), pattern = NULL, handle_opts =
     file_paths <- download_geo_suppl_or_gse_matrix_files(
         ids,
         dest_dir = dest_dir, file_type = "suppl",
-        pattern = pattern, handle_opts = handle_opts
+        pattern = pattern, 
+        ftp_over_https = ftp_over_https,
+        handle_opts = handle_opts
     )
     if (length(file_paths) == 1L) {
         file_paths[[1L]]

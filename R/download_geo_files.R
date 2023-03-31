@@ -1,9 +1,6 @@
 #' Return a character vector of file paths
 #' @noRd
 download_geo_suppl_or_gse_matrix_files <- function(ids, dest_dir, file_type, pattern = NULL, handle_opts = list(), ftp_over_https = FALSE, msg_id = sprintf("{.strong %s} {.field %s}", substring(ids[1L], 1L, 3L), file_type)) {
-    if (!ftp_over_https) {
-        handle_opts <- set_ftp_handle_opts(handle_opts)
-    }
     url_list <- lapply(ids, list_geo_file_url,
         file_type = file_type, handle_opts = handle_opts,
         ftp_over_https = ftp_over_https
@@ -26,6 +23,7 @@ download_geo_suppl_or_gse_matrix_files <- function(ids, dest_dir, file_type, pat
         unlist(file_path_list, recursive = FALSE, use.names = FALSE),
         site = "ftp",
         handle_opts = handle_opts,
+        ftp_over_https = ftp_over_https,
         msg_id = msg_id
     )
     file_path_list
@@ -128,15 +126,13 @@ download_with_ftp <- function(ids, dest_dir, file_type = "soft", handle_opts = l
         ids = ids, file_type = file_type,
         ftp_over_https = ftp_over_https
     )
-    if (!ftp_over_https) {
-        handle_opts <- set_ftp_handle_opts(handle_opts)
-    }
     download_inform(urls,
         file.path(dest_dir, basename(urls)),
         site = "ftp",
         handle_opts = handle_opts,
         fail = fail,
-        msg_id = msg_id
+        msg_id = msg_id,
+        ftp_over_https = ftp_over_https
     )
 }
 
@@ -165,9 +161,14 @@ list_geo_file_url <- function(id, file_type, handle_opts = list(), ftp_over_http
     )
 
     # connect to remote dir ---------------------------------
+    if (!ftp_over_https) {
+        handle_opts <- set_ftp_handle_opts(handle_opts)
+        handle_opts$ftp_use_epsv <- TRUE
+        handle_opts$dirlistonly <- TRUE
+    }
+    handle_opts$noprogress <- TRUE
     curl_handle <- curl::new_handle()
     curl::handle_setopt(curl_handle, .list = handle_opts)
-    curl::handle_setopt(curl_handle, noprogress = TRUE)
     tryCatch(
         url_connection <- curl::curl(url, "rb", handle = curl_handle),
         error = function(err) {
@@ -183,17 +184,13 @@ list_geo_file_url <- function(id, file_type, handle_opts = list(), ftp_over_http
         # use HTTPS to connect GEO FTP site
         # See https://github.com/seandavi/GEOquery/blob/master/R/getGEOSuppFiles.R
         xml_doc <- xml2::read_html(url_connection)
-        file_names <- grep(
-            "^G",
-            xml2::xml_text(xml2::xml_find_all(
-                xml_doc, "//a/@href"
-            )),
-            perl = TRUE, value = TRUE
-        )
+        file_names <- xml2::xml_text(xml2::xml_find_all(
+            xml_doc, "//a/@href"
+        ))
     } else {
         file_names <- readLines(url_connection)
     }
-
+    file_names <- grep("^G", file_names, perl = TRUE, value = TRUE)
     # build urls for all found files ------------------------
     if (length(file_names) == 0L) {
         file_urls <- NULL
@@ -206,22 +203,12 @@ list_geo_file_url <- function(id, file_type, handle_opts = list(), ftp_over_http
     file_urls
 }
 
-set_ftp_handle_opts <- function(handle_opts) {
-    if (is.null(handle_opts$buffersize)) {
-        handle_opts$buffersize <- 33554432L
-    }
-    # if (is.null(handle_opts$upload_buffersize)) {
-    #     handle_opts$upload_buffersize <- 33554432L
-    # }
-    handle_opts
-}
-
 #' Download utils function with good message.
 #' @return If fail is `TRUE`, always return a character path if downloading
 #'   successed, otherwise, stop with error message. If fail is `FALSE`, always
 #'   return a list.
 #' @noRd
-download_inform <- function(urls, file_paths, site, msg_id = "", handle_opts = list(), fail = TRUE) {
+download_inform <- function(urls, file_paths, site, msg_id = "", handle_opts = list(), fail = TRUE, ftp_over_https = FALSE) {
     out <- list(
         urls = urls, destfiles = file_paths,
         is_success = rep_len(TRUE, length(urls))
@@ -242,6 +229,12 @@ download_inform <- function(urls, file_paths, site, msg_id = "", handle_opts = l
                 acc = "GEO Accession Site"
             )
         ))
+        if (site == "ftp" && !ftp_over_https) {
+            handle_opts <- set_ftp_handle_opts(handle_opts)
+            successful_code <- c(200L, 206L, 416L, 226L)
+        } else {
+            successful_code <- c(200L, 206L, 416L)
+        }
         arg_list <- c(
             list(
                 urls = urls, destfiles = file_paths, resume = FALSE,
@@ -250,7 +243,7 @@ download_inform <- function(urls, file_paths, site, msg_id = "", handle_opts = l
             handle_opts
         )
         status <- do.call(curl::multi_download, arg_list)
-        is_success <- is_download_success(status)
+        is_success <- is_download_success(status, successful_code)
         is_need_deleted <- !is_success & file.exists(file_paths)
         if (any(is_need_deleted)) {
             file.remove(file_paths[is_need_deleted])
@@ -276,9 +269,19 @@ download_inform <- function(urls, file_paths, site, msg_id = "", handle_opts = l
     }
 }
 
+set_ftp_handle_opts <- function(handle_opts) {
+    if (is.null(handle_opts$buffersize)) {
+        handle_opts$buffersize <- 33554432L
+    }
+    # if (is.null(handle_opts$upload_buffersize)) {
+    #     handle_opts$upload_buffersize <- 33554432L
+    # }
+    handle_opts
+}
+
 #' @param status A data frame returned by [multi_download][curl::multi_download]
 #' @noRd
-is_download_success <- function(status) {
+is_download_success <- function(status, successful_code) {
     status$success & !is.na(status$success) &
-        status$status_code %in% c(200L, 206L, 416L)
+        status$status_code %in% successful_code
 }
