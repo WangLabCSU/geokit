@@ -48,6 +48,8 @@ str_match <- function(string, pattern, ignore.case = FALSE) {
     out
 }
 
+# .data must be a data.frame
+# For data.table, we use setDF firstly
 column_to_rownames <- function(.data, var) {
     rownames(.data) <- as.character(.data[[var]])
     .data[[var]] <- NULL
