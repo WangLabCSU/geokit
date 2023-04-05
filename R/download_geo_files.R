@@ -169,8 +169,8 @@ list_geo_file_url <- function(id, file_type, handle_opts = list(), ftp_over_http
     handle_opts$noprogress <- TRUE
     curl_handle <- curl::new_handle()
     curl::handle_setopt(curl_handle, .list = handle_opts)
-    tryCatch(
-        url_connection <- curl::curl(url, "rb", handle = curl_handle),
+    url_connection <- tryCatch(
+        curl::curl(url, "rb", handle = curl_handle),
         error = function(err) {
             cli::cli_abort("Cannot open {.url {url}} for {.field {id}}",
                 parent = err
@@ -216,7 +216,7 @@ download_inform <- function(urls, file_paths, site, msg_id = "", handle_opts = l
     is_existed <- file.exists(file_paths)
     if (any(is_existed)) {
         cli::cli_inform(sprintf(
-            "Finding {.val {sum(is_existed)}} %s file{?s} already downloaded: {.file {basename(file_paths[is_existed])}}", msg_id
+            "Finding {.val {sum(is_existed)}} %s file{?s} already downloaded: {.file {basename(file_paths[is_existed])}}", msg_id # nolint
         ))
         urls <- urls[!is_existed]
         file_paths <- file_paths[!is_existed]
@@ -269,6 +269,8 @@ download_inform <- function(urls, file_paths, site, msg_id = "", handle_opts = l
     }
 }
 
+# this is recommended by GEO FTP site
+# since we don't upload files, we just set beffersize only.
 set_ftp_handle_opts <- function(handle_opts) {
     if (is.null(handle_opts$buffersize)) {
         handle_opts$buffersize <- 33554432L
