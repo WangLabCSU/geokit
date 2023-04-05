@@ -64,7 +64,7 @@ parse_gse_matrix <- function(file_text, gse_sample_data = NULL) {
 }
 
 #' @param entity_type One of "sample", "platform" or "all". If all, metadata
-#'   will be extracted, otherwise, metadata will always be `NULL`. 
+#'   will be extracted, otherwise, metadata will always be `NULL`.
 #' @param only_meta Whether to extracte metadata only, if `TRUE`, entity_type
 #'   must be "all".
 #' @noRd
@@ -200,11 +200,9 @@ parse_gds_soft <- function(file_text, only_meta = FALSE) {
         by = "V1",
         all.x = TRUE, sort = FALSE
     )
+    column_data <- column_data[colnames(data_table), on = "V1"]
     data.table::setDF(column_data)
-    column_data <- column_to_rownames(column_data, "V1")[
-        colnames(data_table), ,
-        drop = FALSE
-    ]
+    column_data <- column_to_rownames(column_data, "V1")
     list(
         data_table = data_table,
         meta = meta_data,
@@ -296,10 +294,7 @@ parse_columns <- function(file_text, target_rownames) {
     # than 1L and the last value of which is a blank string ""; after above
     # transformation, a tail "; " will be inserted in this element, So we just
     # remove the tail "; " string.
-    labelDescription <- sub(
-        ";\\s*$", "", labelDescription,
-        perl = TRUE
-    )
+    labelDescription <- sub(";\\s*$", "", labelDescription, perl = TRUE)
     labelDescription <- data.table::fifelse(
         labelDescription == "",
         NA_character_, labelDescription,
