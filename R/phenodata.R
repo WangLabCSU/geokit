@@ -98,12 +98,12 @@ parse_gse_matrix_sample_characteristics <- function(sample_dt, characteristics_c
             characteristic_list <- lapply(characteristic_list, function(x) {
                 grep(sep, x, perl = TRUE, value = TRUE)
             })
-            is_more_than_one_sep_chr <- vapply(
+            have_more_than_one_sep <- vapply(
                 characteristic_list,
                 function(x) any(lengths(str_extract_all(x, sep)) > 1L),
                 logical(1L)
             )
-            if (any(is_more_than_one_sep_chr)) {
+            if (any(have_more_than_one_sep)) {
                 cli::cli_warn(
                     c(
                         "Cannot parse characteristic column correctly",
@@ -207,32 +207,34 @@ parse_gse_soft_sample_characteristics <- function(gsm_list) {
     # For GEO use ":" string to separate Key-value pairs.
     characteristics_cols <- startsWith(
         colnames(sample_meta_dt), "characteristics_ch"
-    ) &
-        vapply(sample_meta_dt, function(list_col) {
-            mean(vapply(list_col, function(x) {
-                all(grepl(":", x, fixed = TRUE))
-            }, logical(1L)), na.rm = TRUE) >= 0.5
+    )
+    column_have_sep <- sample_meta_dt[, vapply(.SD, function(list_col) {
+        have_sep <- vapply(list_col, function(x) {
+            all(grepl(":", x, fixed = TRUE), na.rm = TRUE)
         }, logical(1L))
-    characteristics_cols <- colnames(sample_meta_dt)[characteristics_cols]
+        mean(have_sep, na.rm = TRUE) >= 0.5
+    }, logical(1L)), .SDcols = characteristics_cols]
+    characteristics_cols <- colnames(sample_meta_dt)[
+        characteristics_cols[column_have_sep]
+    ]
 
     if (length(characteristics_cols) > 0L) {
-        is_more_than_one_connection_chr <- sample_meta_dt[
-            , lapply(.SD, function(x) {
-                vapply(x, function(sub_element) {
-                    any(lengths(str_extract_all(sub_element, ":")) > 1L)
-                }, logical(1L))
-            }),
+        any_more_than_one_seps <- sample_meta_dt[
+            , vapply(.SD, function(list_col) {
+                # for a column with characteristics
+                # we check if any elements have more than one ":"
+                have_more_than_one_seps <- vapply(
+                    list_col, function(x) {
+                        any(lengths(str_extract_all(x, ":")) > 1L)
+                    }, logical(1L)
+                )
+                any(have_more_than_one_seps)
+            }, logical(1L)),
             .SDcols = characteristics_cols
         ]
-        any_more_than_one_connection_chr <- vapply(
-            is_more_than_one_connection_chr,
-            function(x) any(x), logical(1L)
-        )
-        if (any(any_more_than_one_connection_chr)) {
+        if (any(any_more_than_one_seps)) {
             # column names with more than one ":"
-            warn_column_names <- characteristics_cols[ # nolint
-                any_more_than_one_connection_chr
-            ]
+            warn_column_names <- characteristics_cols[any_more_than_one_seps] # nolint
             cli::cli_warn(
                 c(
                     "More than one characters {.val :} found in meta characteristics data",
@@ -291,15 +293,16 @@ parse_gse_soft_sample_characteristics <- function(gsm_list) {
 #' @return a list, every element of which corresponds to each key-value pairs
 #' group by key in the paris.
 #' @noRd
-parse_name_value_pairs <- function(chr_list, sep = ":") {
-    .characteristic_list <- lapply(chr_list, function(x) {
+parse_name_value_pairs <- function(pair_list, sep = ":") {
+    .characteristic_list <- lapply(pair_list, function(x) {
         if (length(x) == 0L) {
             return(data.table::data.table())
         }
         # Don't use `data.table::tstrsplit`, as it will split string into three
         # or more elements.
         name_value_pairs <- data.table::transpose(
-            str_split(x, paste0("(\\s*+)", sep, "(\\s*+)"))
+            str_split(x, paste0("(\\s*+)", sep, "(\\s*+)")),
+            fill = NA_character_
         )
         if (length(name_value_pairs) < 2L) {
             out <- rep_len(NA_character_, length(name_value_pairs[[1L]]))
@@ -307,7 +310,7 @@ parse_name_value_pairs <- function(chr_list, sep = ":") {
             out <- name_value_pairs[[2L]]
         }
         out <- as.list(out)
-        names(out) <- name_value_pairs[[1L]]
+        data.table::setattr(out, "names", name_value_pairs[[1L]])
         data.table::setDT(out)
         out
     })
