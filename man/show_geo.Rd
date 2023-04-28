@@ -7,7 +7,7 @@
 show_geo(id, browser = getOption("browser"))
 }
 \arguments{
-\item{id}{A character string representing the GEO entity
+\item{id}{A string representing the GEO entity
 ('GDS505','GSE2','GSM2','GPL96' eg.).}
 
 \item{browser}{a non-empty character string giving the name of the program to

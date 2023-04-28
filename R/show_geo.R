@@ -1,6 +1,6 @@
 #' Load GEO Accession site into a HTML Browser
 #' 
-#' @param id A character string representing the GEO entity
+#' @param id A string representing the GEO entity
 #' ('GDS505','GSE2','GSM2','GPL96' eg.).
 #' @param browser a non-empty character string giving the name of the program to
 #' be used as the HTML browser. It should be in the PATH, or a full path
@@ -12,7 +12,10 @@
 #' @details See [utils::browseURL()]
 #' @export
 show_geo <- function(id, browser = getOption("browser")) {
-    id <- toupper(id[[1L]])
+    if (!(length(id) == 1L && is.character(id))) {
+        stop("`id` must be a string", call. = FALSE)
+    }
+    id <- toupper(id)
     check_ids(id)
     utils::browseURL(
         build_geo_acc_url(
