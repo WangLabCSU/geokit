@@ -73,7 +73,13 @@ parse_gse_soft <- function(file_text, entity_type = "all", only_meta = FALSE) {
         entity_indices <- grep("^\\^(SAMPLE|PLATFORM)", file_text,
             perl = TRUE, value = FALSE
         )
-        soft_meta <- parse_meta(file_text[seq_len(entity_indices[[1L]] - 1L)])
+        if (length(entity_indices)) {
+            soft_meta <- parse_meta(
+                file_text[seq_len(entity_indices[[1L]] - 1L)]
+            )
+        } else {
+            soft_meta <- parse_meta(file_text)
+        }
         if (only_meta) {
             return(list(meta = soft_meta, gsm = NULL, gpl = NULL))
         }
