@@ -85,6 +85,7 @@ read_lines <- function(file) {
         FUN(file, exdir = tmpdir)
         decompFile <- file.path(tmpdir, fnames)
         file <- decompFile
+        file <- enc2native(file)
         on.exit(unlink(decompFile), add = TRUE)
     } else {
         if (endsWith(file, ".gz") ||
@@ -99,19 +100,17 @@ read_lines <- function(file) {
                 as.raw(c(66, 90, 104))
             )) {
             FUN <- bzfile
+        } else if (endsWith(file, ".xz") || endsWith(file, ".lzma")) {
+            FUN <- xzfile
         }
         if (!is.null(FUN)) {
-            decompFile <- tempfile(tmpdir = tmpdir)
-            R.utils::decompressFile(
-                file, decompFile,
-                ext = NULL, FUN = FUN,
-                remove = FALSE
-            )
-            file <- decompFile
-            on.exit(unlink(decompFile), add = TRUE)
+            file <- FUN(file, open = "rt")
+            on.exit(close(file), add = TRUE)
+        } else {
+            file <- enc2native(file)
         }
     }
-    brio::read_lines(enc2native(file))
+    readLines(file)
 }
 
 # comment code to benchmark writeLines
@@ -144,17 +143,17 @@ read_text <- function(text, ...) {
         return(data.table::data.table())
     }
     file <- tempfile()
-    # data.table::fwrite(list(text),
-    #     file = file,
-    #     quote = FALSE,
-    #     na = "NA",
-    #     col.names = FALSE,
-    #     logical01 = FALSE,
-    #     showProgress = FALSE,
-    #     compress = "none",
-    #     verbose = FALSE
-    # )
-    brio::write_lines(text, file)
+    data.table::fwrite(list(text),
+        file = file,
+        quote = FALSE,
+        na = "NA",
+        col.names = FALSE,
+        logical01 = FALSE,
+        showProgress = FALSE,
+        compress = "none",
+        verbose = FALSE
+    )
+    # brio::write_lines(text, file)
     on.exit(file.remove(file))
     data.table::fread(
         file = file, ...,
