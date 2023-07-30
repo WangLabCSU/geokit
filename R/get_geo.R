@@ -104,7 +104,7 @@
 #' gds <- get_geo("GDS10", tempdir())
 #'
 #' @export
-get_geo <- function(ids, dest_dir = getwd(), gse_matrix = TRUE, pdata_from_soft = TRUE, add_gpl = NULL, ftp_over_https = FALSE, handle_opts = list(connecttimeout = 60L)) {
+get_geo <- function(ids, dest_dir = getwd(), gse_matrix = TRUE, pdata_from_soft = TRUE, add_gpl = NULL, ftp_over_https = TRUE, handle_opts = list(connecttimeout = 60L)) {
     ids <- toupper(ids)
     check_ids(ids)
     if (!dir.exists(dest_dir)) {

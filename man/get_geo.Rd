@@ -10,7 +10,7 @@ get_geo(
   gse_matrix = TRUE,
   pdata_from_soft = TRUE,
   add_gpl = NULL,
-  ftp_over_https = FALSE,
+  ftp_over_https = TRUE,
   handle_opts = list(connecttimeout = 60L)
 )
 }

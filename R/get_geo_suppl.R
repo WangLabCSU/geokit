@@ -18,7 +18,7 @@
 #' a
 #'
 #' @export
-get_geo_suppl <- function(ids, dest_dir = getwd(), pattern = NULL, ftp_over_https = FALSE, handle_opts = list(connecttimeout = 60L)) {
+get_geo_suppl <- function(ids, dest_dir = getwd(), pattern = NULL, ftp_over_https = TRUE, handle_opts = list(connecttimeout = 60L)) {
     ids <- toupper(ids)
     check_ids(ids)
     if (!dir.exists(dest_dir)) {

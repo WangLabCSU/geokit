@@ -8,7 +8,7 @@ get_geo_suppl(
   ids,
   dest_dir = getwd(),
   pattern = NULL,
-  ftp_over_https = FALSE,
+  ftp_over_https = TRUE,
   handle_opts = list(connecttimeout = 60L)
 )
 }
