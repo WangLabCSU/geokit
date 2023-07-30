@@ -57,11 +57,61 @@ column_to_rownames <- function(.data, var) {
 }
 
 read_lines <- function(file) {
-    data.table::fread(
-        file = file, sep = "", header = FALSE,
-        colClasses = "character",
-        showProgress = FALSE
-    )[[1L]]
+    # data.table::fread(
+    #     file = file, sep = "", header = FALSE,
+    #     colClasses = "character",
+    #     showProgress = FALSE
+    # )[[1L]]
+    tmpdir <- tempdir()
+    file_signature <- readBin(file, raw(), 8L)
+    FUN <- NULL
+    if (endsWith(file, ".tar")) {
+        FUN <- utils::untar
+    } else if (endsWith(file, ".zip") ||
+        identical(
+            utils::head(file_signature, 4L),
+            charToRaw("PK\003\004")
+        )) {
+        FUN <- utils::unzip
+    }
+    if (!is.null(FUN)) {
+        fnames <- FUN(file, list = TRUE)
+        if (inherits(fnames, "data.frame")) {
+            fnames <- fnames[[1L]]
+        }
+        if (length(fnames) > 1L) {
+            cli::cli_abort("Compressed files containing more than 1 file are currently not supported.")
+        }
+        FUN(file, exdir = tmpdir)
+        decompFile <- file.path(tmpdir, fnames)
+        file <- decompFile
+        on.exit(unlink(decompFile), add = TRUE)
+    } else {
+        if (endsWith(file, ".gz") ||
+            (identical(
+                utils::head(file_signature, 2L),
+                as.raw(c(31, 139))
+            ))) {
+            FUN <- gzfile
+        } else if (endsWith(file, ".bz2") ||
+            identical(
+                utils::head(file_signature, 3L),
+                as.raw(c(66, 90, 104))
+            )) {
+            FUN <- bzfile
+        }
+        if (!is.null(FUN)) {
+            decompFile <- tempfile(tmpdir = tmpdir)
+            R.utils::decompressFile(
+                file, decompFile,
+                ext = NULL, FUN = FUN,
+                remove = FALSE
+            )
+            file <- decompFile
+            on.exit(unlink(decompFile), add = TRUE)
+        }
+    }
+    brio::read_lines(enc2native(file))
 }
 
 # comment code to benchmark writeLines
@@ -94,16 +144,17 @@ read_text <- function(text, ...) {
         return(data.table::data.table())
     }
     file <- tempfile()
-    data.table::fwrite(list(text),
-        file = file,
-        quote = FALSE,
-        na = "NA",
-        col.names = FALSE,
-        logical01 = FALSE,
-        showProgress = FALSE,
-        compress = "none",
-        verbose = FALSE
-    )
+    # data.table::fwrite(list(text),
+    #     file = file,
+    #     quote = FALSE,
+    #     na = "NA",
+    #     col.names = FALSE,
+    #     logical01 = FALSE,
+    #     showProgress = FALSE,
+    #     compress = "none",
+    #     verbose = FALSE
+    # )
+    brio::write_lines(text, file)
     on.exit(file.remove(file))
     data.table::fread(
         file = file, ...,
