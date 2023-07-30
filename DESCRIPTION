@@ -16,7 +16,8 @@ Imports:
     curl (>= 5.0.0),
     methods,
     rentrez,
-    xml2
+    xml2,
+    R.utils
 Remotes: Rdatatable/data.table
 Suggests: 
     BiocGenerics,

@@ -57,21 +57,11 @@ column_to_rownames <- function(.data, var) {
 }
 
 read_lines <- function(file) {
-    # data.table::fread(
-    #     file = file, sep = "", header = FALSE,
-    #     colClasses = "character",
-    #     showProgress = FALSE
-    # )[[1L]]
     tmpdir <- tempdir()
-    file_signature <- readBin(file, raw(), 8L)
     FUN <- NULL
     if (endsWith(file, ".tar")) {
         FUN <- utils::untar
-    } else if (endsWith(file, ".zip") ||
-        identical(
-            utils::head(file_signature, 4L),
-            charToRaw("PK\003\004")
-        )) {
+    } else if (endsWith(file, ".zip")) {
         FUN <- utils::unzip
     }
     if (!is.null(FUN)) {
@@ -85,32 +75,29 @@ read_lines <- function(file) {
         FUN(file, exdir = tmpdir)
         decompFile <- file.path(tmpdir, fnames)
         file <- decompFile
-        file <- enc2native(file)
         on.exit(unlink(decompFile), add = TRUE)
     } else {
-        if (endsWith(file, ".gz") ||
-            (identical(
-                utils::head(file_signature, 2L),
-                as.raw(c(31, 139))
-            ))) {
+        if (endsWith(file, ".gz")) {
             FUN <- gzfile
-        } else if (endsWith(file, ".bz2") ||
-            identical(
-                utils::head(file_signature, 3L),
-                as.raw(c(66, 90, 104))
-            )) {
+        } else if (endsWith(file, ".bz2")) {
             FUN <- bzfile
         } else if (endsWith(file, ".xz") || endsWith(file, ".lzma")) {
             FUN <- xzfile
         }
         if (!is.null(FUN)) {
-            file <- FUN(file, open = "rt")
-            on.exit(close(file), add = TRUE)
-        } else {
-            file <- enc2native(file)
+            decompFile <- tempfile(tmpdir = tmpdir)
+            R.utils::decompressFile(file, decompFile,
+                ext = NULL, FUN = FUN, remove = FALSE
+            )
+            file <- decompFile
+            on.exit(unlink(decompFile), add = TRUE)
         }
     }
-    readLines(file)
+    data.table::fread(
+        file = file, sep = "", header = FALSE,
+        colClasses = "character",
+        showProgress = FALSE
+    )[[1L]]
 }
 
 # comment code to benchmark writeLines
