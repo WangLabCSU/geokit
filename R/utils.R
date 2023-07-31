@@ -57,42 +57,6 @@ column_to_rownames <- function(.data, var) {
 }
 
 read_lines <- function(file) {
-    tmpdir <- tempdir()
-    FUN <- NULL
-    if (endsWith(file, ".tar")) {
-        FUN <- utils::untar
-    } else if (endsWith(file, ".zip")) {
-        FUN <- utils::unzip
-    }
-    if (!is.null(FUN)) {
-        fnames <- FUN(file, list = TRUE)
-        if (inherits(fnames, "data.frame")) {
-            fnames <- fnames[[1L]]
-        }
-        if (length(fnames) > 1L) {
-            cli::cli_abort("Compressed files containing more than 1 file are currently not supported.")
-        }
-        FUN(file, exdir = tmpdir)
-        decompFile <- file.path(tmpdir, fnames)
-        file <- decompFile
-        on.exit(unlink(decompFile), add = TRUE)
-    } else {
-        if (endsWith(file, ".gz")) {
-            FUN <- gzfile
-        } else if (endsWith(file, ".bz2")) {
-            FUN <- bzfile
-        } else if (endsWith(file, ".xz") || endsWith(file, ".lzma")) {
-            FUN <- xzfile
-        }
-        if (!is.null(FUN)) {
-            decompFile <- tempfile(tmpdir = tmpdir)
-            R.utils::decompressFile(file, decompFile,
-                ext = NULL, FUN = FUN, remove = FALSE
-            )
-            file <- decompFile
-            on.exit(unlink(decompFile), add = TRUE)
-        }
-    }
     data.table::fread(
         file = file, sep = "", header = FALSE,
         colClasses = "character",
