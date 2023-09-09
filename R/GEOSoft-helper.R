@@ -68,7 +68,7 @@ download_and_parse_soft <- function(ids, geo_type, dest_dir, handle_opts, only_m
     .mapply(function(id, file_path) {
         cli::cli_progress_update(id = bar_id)
         file_text <- read_lines(file_path)
-        out <- switch(geo_type,
+        switch(geo_type,
             GSM = ,
             GPL = parse_gpl_or_gsm_soft(file_text, only_meta = only_meta),
             GSE = parse_gse_soft(file_text,
@@ -77,6 +77,5 @@ download_and_parse_soft <- function(ids, geo_type, dest_dir, handle_opts, only_m
             ),
             GDS = parse_gds_soft(file_text, only_meta = only_meta)
         )
-        if (only_meta) out$meta else out
     }, list(id = ids, file_path = file_paths), NULL)
 }

@@ -81,7 +81,7 @@ parse_gse_soft <- function(file_text, entity_type = "all", only_meta = FALSE) {
             soft_meta <- parse_meta(file_text)
         }
         if (only_meta) {
-            return(list(meta = soft_meta, gsm = NULL, gpl = NULL))
+            return(soft_meta)
         }
     } else {
         soft_meta <- NULL
@@ -141,7 +141,7 @@ parse_gpl_or_gsm_soft <- function(file_text, only_meta = FALSE) {
     # parse meta data
     meta_data <- parse_meta(file_text)
     if (only_meta) {
-        return(list(data_table = NULL, meta = meta_data, columns = NULL))
+        return(meta_data)
     }
 
     # parse data table data - which is the feature data
@@ -183,7 +183,7 @@ parse_gds_soft <- function(file_text, only_meta = FALSE) {
     # parse meta data
     meta_data <- parse_meta(file_text[-subset_lines])
     if (only_meta) {
-        return(list(data_table = NULL, meta = meta_data, columns = NULL))
+        return(meta_data)
     }
 
     # parse data_table data
