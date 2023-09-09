@@ -6,8 +6,8 @@ Authors@R:
 Description: R interface for Gene Expression Omnibus (GEO) database.
 License: GPL (>= 3)
 Encoding: UTF-8
-Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
+Depends: 
+    R (>= 3.5.0)
 Imports: 
     data.table (>= 1.14.9),
     rlang (>= 0.4.11),
@@ -18,7 +18,6 @@ Imports:
     rentrez,
     xml2,
     R.utils
-Remotes: Rdatatable/data.table
 Suggests: 
     BiocGenerics,
     bit64,
@@ -26,8 +25,9 @@ Suggests:
     stringr,
     testthat (>= 3.0.0),
     utils
+Remotes: Rdatatable/data.table
+ByteCompile: true
 Config/testthat/edition: 3
 Config/testthat/parallel: true
-ByteCompile: true
-Depends: 
-    R (>= 3.5.0)
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3

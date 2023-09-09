@@ -13,3 +13,8 @@
 #' @importFrom data.table data.table
 ## usethis namespace: end
 NULL
+
+
+ignore_unused_imports <- function() {
+    R.utils::decompressFile
+}
