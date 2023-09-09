@@ -20,11 +20,12 @@
 #'   [entrez_db_searchable][rentrez::entrez_db_searchable].
 #' @param step the number of records to fetch from the database each time. You
 #' may choose a smaller value if failed.
+#' @param interval The time interval (seconds) between each step. 
 #' @return a data.frame contains the search results
 #' @examples
 #'   rgeo::search_geo("diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]")
 #' @export
-search_geo <- function(query, step = 500L) {
+search_geo <- function(query, step = 500L, interval = 1L) {
     records_num <- rentrez::entrez_search(
         "gds", query,
         retmax = 0L
@@ -41,7 +42,7 @@ search_geo <- function(query, step = 500L) {
             rettype = "summary", retmode = "text",
             retmax = step, retstart = seq_starts[[i]]
         )
-        Sys.sleep(1L)
+        Sys.sleep(interval)
     }
     records <- strsplit(
         gsub("^\\n|\\n$", "", paste0(records, collapse = "")),

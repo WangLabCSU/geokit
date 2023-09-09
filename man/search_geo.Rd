@@ -4,7 +4,7 @@
 \alias{search_geo}
 \title{Search GEO database}
 \usage{
-search_geo(query, step = 500L)
+search_geo(query, step = 500L, interval = 1L)
 }
 \arguments{
 \item{query}{character, the search term. The NCBI uses a search term syntax
@@ -17,6 +17,8 @@ definitions of these fields can be identified using
 
 \item{step}{the number of records to fetch from the database each time. You
 may choose a smaller value if failed.}
+
+\item{interval}{The time interval (seconds) between each step.}
 }
 \value{
 a data.frame contains the search results
