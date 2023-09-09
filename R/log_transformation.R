@@ -16,7 +16,7 @@
 log_trans <- function(data, pseudo = 1) {
     if (inherits(data, "ExpressionSet")) {
         expr_data <- Biobase::exprs(data)
-    } else if (inherits(data, "matrix")) {
+    } else if (is.matrix(data)) {
         expr_data <- data
     } else {
         cli::cli_abort("data should must be a {.cls matrix} or {.cls ExpressionSet}")
