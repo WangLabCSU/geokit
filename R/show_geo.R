@@ -13,7 +13,7 @@
 #' @export
 show_geo <- function(id, browser = getOption("browser")) {
     if (!(length(id) == 1L && is.character(id))) {
-        stop("`id` must be a string", call. = FALSE)
+        cli::cli_abort("{.arg id} must be a string")
     }
     id <- toupper(id)
     check_ids(id)

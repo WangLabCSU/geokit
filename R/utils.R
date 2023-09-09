@@ -48,12 +48,13 @@ str_match <- function(string, pattern, ignore.case = FALSE) {
     out
 }
 
-# .data must be a data.frame
-# For data.table, we use setDF firstly
-column_to_rownames <- function(.data, var) {
-    rownames(.data) <- as.character(.data[[var]])
-    .data[[var]] <- NULL
-    .data
+return_object_or_list <- function(x, names = NULL) {
+    if (length(x) == 1L) {
+        x[[1L]]
+    } else {
+        if (!is.null(names)) names(x) <- names
+        x
+    }
 }
 
 read_lines <- function(file) {
@@ -90,7 +91,7 @@ read_lines <- function(file) {
 #' @param text A character vector
 #' @noRd
 read_text <- function(text, ...) {
-    if (length(text) == 0L) {
+    if (!length(text)) {
         return(data.table::data.table())
     }
     file <- tempfile()

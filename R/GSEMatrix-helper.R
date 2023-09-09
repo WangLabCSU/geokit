@@ -68,11 +68,7 @@ get_gse_matrix <- function(ids, dest_dir = getwd(), pdata_from_soft = TRUE, add_
             }
             do.call(Biobase::ExpressionSet, es_element)
         })
-        if (length(es_list) == 1L) {
-            es_list[[1L]]
-        } else {
-            es_list
-        }
+        return_object_or_list(es_list)
     })
 }
 

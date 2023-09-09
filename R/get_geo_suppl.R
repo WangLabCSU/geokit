@@ -31,10 +31,5 @@ get_geo_suppl <- function(ids, dest_dir = getwd(), pattern = NULL, ftp_over_http
         ftp_over_https = ftp_over_https,
         handle_opts = handle_opts
     )
-    if (length(file_paths) == 1L) {
-        file_paths[[1L]]
-    } else {
-        names(file_paths) <- ids
-        file_paths
-    }
+    return_object_or_list(file_paths, ids)
 }

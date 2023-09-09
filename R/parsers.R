@@ -3,8 +3,7 @@
 parse_gse_matrix <- function(file_text, gse_sample_data = NULL) {
     # extract series matrix data
     matrix_data <- read_data_table(file_text)
-    data.table::setDF(matrix_data)
-    matrix_data <- as.matrix(column_to_rownames(matrix_data, 1L))
+    matrix_data <- as.matrix(matrix_data, names(matrix_data)[[1L]])
     meta_data <- parse_gse_matrix_meta(file_text)
 
     # fetch phenoData
@@ -207,8 +206,7 @@ parse_gds_soft <- function(file_text, only_meta = FALSE) {
         all.x = TRUE, sort = FALSE
     )
     column_data <- column_data[colnames(data_table), on = "V1"]
-    data.table::setDF(column_data)
-    column_data <- column_to_rownames(column_data, "V1")
+    column_data <- as.data.frame(column_data[, !1L], column_data$V1)
     list(
         data_table = data_table,
         meta = meta_data,

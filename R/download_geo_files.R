@@ -13,10 +13,11 @@ download_geo_suppl_or_gse_matrix_files <- function(ids, dest_dir, file_type, pat
     }
     file_path_list <- lapply(url_list, function(urls) {
         # urls may be NULL or character(0L)
-        if (length(urls) == 0L) {
-            return(NULL)
+        if (length(urls)) {
+            file.path(dest_dir, basename(urls))
+        } else {
+            NULL
         }
-        file.path(dest_dir, basename(urls))
     })
     download_inform(
         unlist(url_list, recursive = FALSE, use.names = FALSE),
@@ -184,21 +185,20 @@ list_geo_file_url <- function(id, file_type, handle_opts = list(), ftp_over_http
         # use HTTPS to connect GEO FTP site
         # See https://github.com/seandavi/GEOquery/blob/master/R/getGEOSuppFiles.R
         xml_doc <- xml2::read_html(url_connection)
-        file_names <- xml2::xml_text(xml2::xml_find_all(
-            xml_doc, "//a/@href"
-        ))
+        file_names <- xml2::xml_text(xml2::xml_find_all(xml_doc, "//a/@href"))
     } else {
         file_names <- readLines(url_connection)
     }
     file_names <- grep("^G", file_names, perl = TRUE, value = TRUE)
+
     # build urls for all found files ------------------------
-    if (length(file_names) == 0L) {
+    if (length(file_names)) {
+        file_urls <- file.path(url, file_names)
+    } else {
         file_urls <- NULL
         cli::cli_alert_warning(
             "No {.field {file_type}} file found for {.val {id}}"
         )
-    } else {
-        file_urls <- file.path(url, file_names)
     }
     file_urls
 }
@@ -221,7 +221,7 @@ download_inform <- function(urls, file_paths, site, msg_id = "", handle_opts = l
         urls <- urls[!is_existed]
         file_paths <- file_paths[!is_existed]
     }
-    if (length(urls) > 0L) {
+    if (length(urls)) {
         cli::cli_inform(sprintf(
             "Downloading {.val {length(urls)}} %s file{?s} from %s", msg_id,
             switch(site,

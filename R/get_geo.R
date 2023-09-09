@@ -127,11 +127,5 @@ get_geo <- function(ids, dest_dir = getwd(), gse_matrix = TRUE, pdata_from_soft 
             handle_opts = handle_opts
         )
     }
-
-    if (length(out_list) == 1L) {
-        out_list[[1L]]
-    } else {
-        names(out_list) <- ids
-        out_list
-    }
+    return_object_or_list(out_list, ids)
 }

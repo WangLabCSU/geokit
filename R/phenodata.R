@@ -218,7 +218,7 @@ parse_gse_soft_sample_characteristics <- function(gsm_list) {
         characteristics_cols[column_have_sep]
     ]
 
-    if (length(characteristics_cols) > 0L) {
+    if (length(characteristics_cols)) {
         any_more_than_one_seps <- sample_meta_dt[
             , vapply(.SD, function(list_col) {
                 # for a column with characteristics
@@ -295,7 +295,7 @@ parse_gse_soft_sample_characteristics <- function(gsm_list) {
 #' @noRd
 parse_name_value_pairs <- function(pair_list, sep = ":") {
     .characteristic_list <- lapply(pair_list, function(x) {
-        if (length(x) == 0L) {
+        if (!length(x)) {
             return(data.table::data.table())
         }
         # Don't use `data.table::tstrsplit`, as it will split string into three
