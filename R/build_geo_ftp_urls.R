@@ -50,7 +50,7 @@ parse_geo_type <- function(x) {
 #' | Supplementaryfiles (suppl) |  x  |  o  |  o  |  o  |
 #' @noRd
 parse_file_name <- function(ids, file_type, geo_type) {
-    # file.path will add / for "" in the end 
+    # file.path will add / for "" in the end
     file_suffix <- switch(geo_type,
         GDS = switch(file_type,
             soft = ".soft.gz",
@@ -71,8 +71,12 @@ parse_file_name <- function(ids, file_type, geo_type) {
         GSM = if (file_type == "suppl") "" else NULL
     )
     if (is.null(file_suffix)) {
-        cli::cli_abort(
-            "{.field {parse_geo_type(geo_type)}} never own {.val {file_type}} file."
+        rlang::abort(
+            sprintf(
+                "%s never own %s file",
+                format_field(parse_geo_type(geo_type)),
+                format_val(file_type)
+            )
         )
     }
     if (nzchar(file_suffix)) {

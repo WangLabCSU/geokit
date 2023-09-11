@@ -1,6 +1,6 @@
 #' Return a character vector of file paths
 #' @noRd
-download_geo_suppl_or_gse_matrix_files <- function(ids, dest_dir, file_type, pattern = NULL, handle_opts = list(), ftp_over_https = FALSE, msg_id = sprintf("{.strong %s} {.field %s}", substring(ids[1L], 1L, 3L), file_type)) {
+download_geo_suppl_or_gse_matrix_files <- function(ids, dest_dir, file_type, pattern = NULL, handle_opts = list(), ftp_over_https = FALSE, msg_id = sprintf("%s %s", substring(ids[1L], 1L, 3L), format_field(file_type))) {
     url_list <- lapply(ids, list_geo_file_url,
         file_type = file_type, handle_opts = handle_opts,
         ftp_over_https = ftp_over_https
@@ -45,18 +45,24 @@ download_gpl_files <- function(ids, dest_dir = getwd(), amount = "data", handle_
             handle_opts = handle_opts,
             ftp_over_https = ftp_over_https,
             fail = FALSE,
-            msg_id = "{.strong GPL} {.field annot}"
+            msg_id = sprintf("%s annot", format_field("GPL"))
         )
         out <- download_status$destfiles
         if (any(!download_status$is_success)) {
-            cli::cli_alert_info(
-                "{.field annot} file in FTP site for {.val {ids[!download_status$is_success]}} is not available, so will use {.field {amount}} amount file from GEO Accession Site instead" # nolint
+            rlang::inform(
+                sprintf(
+                    "%s file in FTP site for %s is not available, so will use %s amount file from GEO Accession Site instead",
+                    format_field("annot"),
+                    oxford_comma(format_val(ids[!download_status$is_success])),
+                    format_field(amount)
+                )
+                # nolint
             )
             out[!download_status$is_success] <- download_with_acc(
                 ids = ids[!download_status$is_success], dest_dir = dest_dir,
                 scope = "self", amount = amount, format = "text",
                 handle_opts = handle_opts,
-                msg_id = sprintf("{.strong GPL} {.field %s} amount", amount)
+                msg_id = sprintf("%s %s amount", format_field("GPL"), amount)
             )
         }
     } else {
@@ -65,19 +71,24 @@ download_gpl_files <- function(ids, dest_dir = getwd(), amount = "data", handle_
             scope = "self", amount = amount, format = "text",
             handle_opts = handle_opts,
             fail = FALSE,
-            msg_id = sprintf("{.strong GPL} {.field %s} amount", amount)
+            msg_id = sprintf("%s %s amount", format_field("GPL"), amount)
         )
         out <- download_status$destfiles
         if (any(!download_status$is_success)) {
-            cli::cli_alert_info(
-                "{.field {amount}} amount file in ACC site for {.val {ids[!download_status$is_success]}} is not available, so will use {.field soft} format from GEO FTP Site instead" # nolint
+            rlang::inform(
+                sprintf(
+                    "%s amount file in ACC site for %s is not available, so will use %s format from GEO FTP Site instead",
+                    format_field(amount),
+                    oxford_comma(format_val(ids[!download_status$is_success])),
+                    format_field("soft")
+                )
             )
             out[!download_status$is_success] <- download_with_ftp(
                 ids = ids[!download_status$is_success], dest_dir = dest_dir,
                 file_type = "soft",
                 handle_opts = handle_opts,
                 ftp_over_https = ftp_over_https,
-                msg_id = "{.strong GPL} {.field soft}"
+                msg_id = sprintf("%s soft", format_field("GPL"))
             )
         }
     }
@@ -93,7 +104,7 @@ download_gse_soft_files <- function(ids, dest_dir = getwd(), handle_opts = list(
         file_type = "soft",
         handle_opts = handle_opts,
         ftp_over_https = ftp_over_https,
-        msg_id = "{.strong GSE} {.field soft}"
+        msg_id = sprintf("%s soft", format_field("GSE"))
     )
 }
 
@@ -104,7 +115,7 @@ download_gsm_files <- function(ids, dest_dir = getwd(), handle_opts = list()) {
         ids = ids, dest_dir = dest_dir,
         scope = "self", amount = "full", format = "text",
         handle_opts = handle_opts,
-        msg_id = "{.strong GSM} {.field full} amount"
+        msg_id = sprintf("%s full amount", format_field("GSM"))
     )
 }
 
@@ -116,13 +127,13 @@ download_gds_files <- function(ids, dest_dir = getwd(), handle_opts = list(), ft
         file_type = "soft",
         handle_opts = handle_opts,
         ftp_over_https = ftp_over_https,
-        msg_id = "{.strong GDS} {.field soft}"
+        msg_id = sprintf("%s soft", format_field("GDS"))
     )
 }
 
 #' Return a character vector, the length of it is the same with `ids`.
 #' @noRd
-download_with_ftp <- function(ids, dest_dir, file_type = "soft", handle_opts = list(), fail = TRUE, ftp_over_https = FALSE, msg_id = sprintf("{.field %s}", file_type)) {
+download_with_ftp <- function(ids, dest_dir, file_type = "soft", handle_opts = list(), fail = TRUE, ftp_over_https = FALSE, msg_id = format_field(file_type)) {
     urls <- build_geo_ftp_url(
         ids = ids, file_type = file_type,
         ftp_over_https = ftp_over_https
@@ -137,7 +148,7 @@ download_with_ftp <- function(ids, dest_dir, file_type = "soft", handle_opts = l
     )
 }
 
-download_with_acc <- function(ids, dest_dir, scope = "self", amount = "full", format = "text", handle_opts = list(), fail = TRUE, msg_id = sprintf("{.field %s} amount", amount)) {
+download_with_acc <- function(ids, dest_dir, scope = "self", amount = "full", format = "text", handle_opts = list(), fail = TRUE, msg_id = sprintf("%s amount", format_field(amount))) {
     urls <- build_geo_acc_url(
         ids = ids, scope = scope, amount = amount, format = format
     )
@@ -173,7 +184,11 @@ list_geo_file_url <- function(id, file_type, handle_opts = list(), ftp_over_http
     url_connection <- tryCatch(
         curl::curl(url, "rb", handle = curl_handle),
         error = function(err) {
-            cli::cli_abort("Cannot open {.url {url}} for {.field {id}}",
+            rlang::abort(
+                sprintf(
+                    "Cannot open %s for %s",
+                    format_url(url), format_field(id)
+                ),
                 parent = err
             )
         }
@@ -196,8 +211,11 @@ list_geo_file_url <- function(id, file_type, handle_opts = list(), ftp_over_http
         file_urls <- file.path(url, file_names)
     } else {
         file_urls <- NULL
-        cli::cli_alert_warning(
-            "No {.field {file_type}} file found for {.val {id}}"
+        rlang::warn(
+            sprintf(
+                "No %s file found for %s",
+                format_field(file_type), format_val(id)
+            )
         )
     }
     file_urls
@@ -215,15 +233,20 @@ download_inform <- function(urls, file_paths, site, msg_id = "", handle_opts = l
     )
     is_existed <- file.exists(file_paths)
     if (any(is_existed)) {
-        cli::cli_inform(sprintf(
-            "Finding {.val {sum(is_existed)}} %s file{?s} already downloaded: {.file {basename(file_paths[is_existed])}}", msg_id # nolint
-        ))
+        rlang::inform(
+            sprintf(
+                "Finding %s %s files already downloaded: %s",
+                format_val(sum(is_existed)), msg_id,
+                oxford_comma(format_file(basename(file_paths[is_existed])))
+            )
+        )
         urls <- urls[!is_existed]
         file_paths <- file_paths[!is_existed]
     }
     if (length(urls)) {
-        cli::cli_inform(sprintf(
-            "Downloading {.val {length(urls)}} %s file{?s} from %s", msg_id,
+        rlang::inform(sprintf(
+            "Downloading %s %s files from %s",
+            format_val(length(urls)), msg_id,
             switch(site,
                 ftp = "FTP site",
                 acc = "GEO Accession Site"
@@ -251,11 +274,23 @@ download_inform <- function(urls, file_paths, site, msg_id = "", handle_opts = l
         if (fail) {
             if (!all(is_success)) {
                 n_failed_files <- sum(!is_success) # nolint
-                cli::cli_abort(c(
-                    "Cannot download {.val {n_failed_files}} file{?s}",
-                    "i" = "url{?s}: {.url {urls[!is_success]}}",
-                    "!" = "status {cli::qty(n_failed_files)} code{?s}: {.val {status$status_code[!is_success]}}",
-                    x = "error {cli::qty(n_failed_files)} message{?s}: {.val {status$error[!is_success]}}"
+                rlang::abort(c(
+                    sprintf(
+                        "Cannot download %s files",
+                        format_val(n_failed_files)
+                    ),
+                    "i" = sprintf(
+                        "failed url: %s",
+                        oxford_comma(format_url(urls[!is_success]))
+                    ),
+                    "!" = sprintf(
+                        "status code: %s",
+                        oxford_comma(format_val(status$status_code[!is_success]))
+                    ),
+                    x = sprintf(
+                        "error message: %s",
+                        oxford_comma(format_val(status$error[!is_success]))
+                    )
                 ))
             }
         } else {

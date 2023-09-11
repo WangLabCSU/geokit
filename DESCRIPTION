@@ -10,21 +10,21 @@ Depends:
     R (>= 3.5.0)
 Imports: 
     data.table (>= 1.14.9),
-    rlang (>= 0.4.11),
-    cli (>= 3.6.0),
+    rlang (>= 1.1.0),
     Biobase,
     curl (>= 5.0.0),
     methods,
     rentrez,
     xml2,
-    R.utils
+    R.utils,
+    utils
 Suggests: 
     BiocGenerics,
     bit64,
     stats,
+    cli (>= 3.6.0),
     stringr,
-    testthat (>= 3.0.0),
-    utils
+    testthat (>= 3.0.0)
 Remotes: Rdatatable/data.table
 ByteCompile: true
 Config/testthat/edition: 3
