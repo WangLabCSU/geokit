@@ -9,7 +9,7 @@ build_geo_ftp_url <- function(ids, file_type = "soft", ftp_over_https = FALSE) {
         tolower(file_type),
         c("soft", "soft_full", "annot", "miniml", "suppl", "matrix")
     )
-    super_ids <- sub("\\d{1,3}$", "nnn", ids, perl = TRUE)
+    super_ids <- str_replace(ids, "\\d{1,3}$", "nnn")
     if (ftp_over_https) {
         geo_ftp_site <- geo_ftp_over_https
     } else {

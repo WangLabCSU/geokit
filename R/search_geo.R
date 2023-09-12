@@ -20,7 +20,7 @@
 #'   [entrez_db_searchable][rentrez::entrez_db_searchable].
 #' @param step the number of records to fetch from the database each time. You
 #' may choose a smaller value if failed.
-#' @param interval The time interval (seconds) between each step. 
+#' @param interval The time interval (seconds) between each step.
 #' @return a data.frame contains the search results
 #' @examples
 #'   rgeo::search_geo("diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]")
@@ -44,8 +44,8 @@ search_geo <- function(query, step = 500L, interval = 1L) {
         )
         Sys.sleep(interval)
     }
-    records <- strsplit(
-        gsub("^\\n|\\n$", "", paste0(records, collapse = "")),
+    records <- str_split(
+        str_replace_all(paste0(records, collapse = ""), "^\\n|\\n$", ""),
         "\\n\\n"
     )[[1L]]
     name_value_pairs <- parse_name_value_pairs(preprocess_records(records))
@@ -54,12 +54,13 @@ search_geo <- function(query, step = 500L, interval = 1L) {
             c("Contains", "Datasets", "Series", "Platforms"),
             names(name_value_pairs)
         ),
-        grep("Accession$", names(name_value_pairs), perl = TRUE, value = TRUE)
+        str_subset(names(name_value_pairs), "Accession$")
     )
     data.table::setDT(name_value_pairs)
     data.table::setcolorder(
-        name_value_pairs, 
-        tail_col, after = ncol(name_value_pairs)
+        name_value_pairs,
+        tail_col,
+        after = ncol(name_value_pairs)
     )
     data.table::setDF(name_value_pairs)
     name_value_pairs
@@ -68,23 +69,22 @@ search_geo <- function(query, step = 500L, interval = 1L) {
 # this function just processed GEO searched results returned by `entrez_fetch`
 # into key-values paris
 preprocess_records <- function(x) {
-    x <- sub("^\\d+\\.", "Title:", x, perl = TRUE)
-    x <- sub(
-        "(Title:[^\\n]*\\n)(?:\\(Submitter supplied\\))?\\s*",
-        "\\1Summary: ", x,
-        perl = TRUE
+    x <- str_replace(x, "^\\d+\\.", "Title:")
+    x <- str_replace(
+        x, "(Title:[^\\n]*\\n)(?:\\(Submitter supplied\\))?\\s*",
+        "\\1Summary: "
     )
-    x <- gsub(
+    x <- str_replace_all(
+        x,
         "(Platform|Dataset|Serie)s?: *((?:GPL\\d+ *|GDS\\d+ *|GSE\\d+ *)+)",
-        "\\1s: \\2\n", x,
-        perl = TRUE
+        "\\1s: \\2\n"
     )
-    x <- sub("\\tID:\\s*", "\nID: ", x, perl = TRUE)
-    x <- sub(
+    x <- str_replace(x, "\\tID:\\s*", "\nID: ")
+    x <- str_replace(
+        x,
         "\\n((\\d+( Related| related)? (DataSet|Platform|Sample|Serie)s? *)+)\\n",
-        "\nContains: \\1\n", x,
-        perl = TRUE
+        "\nContains: \\1\n"
     )
-    x <- gsub("\\t+", " ", x, perl = TRUE)
-    strsplit(x, "\\n\\n?", perl = TRUE)
+    x <- str_replace_all(x, "\\t+", " ")
+    str_split(x, "\\n\\n?")
 }

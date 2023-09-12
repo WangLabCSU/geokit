@@ -76,27 +76,22 @@ parse_pdata <- function(data, columns = NULL, sep = ":", split = ";") {
 # `sample_dt` should be a data.table
 parse_gse_matrix_sample_characteristics <- function(sample_dt, characteristics_cols = NULL, sep = ":", split = ";") {
     if (is.null(characteristics_cols)) {
-        characteristics_cols <- grep(
-            "^characteristics_ch",
-            colnames(sample_dt),
-            value = TRUE, perl = TRUE
+        characteristics_cols <- str_subset(
+            colnames(sample_dt), "^characteristics_ch"
         )
     } else {
-        characteristics_cols <- grep(
-            "ch\\d*(\\.\\d*)?$",
-            characteristics_cols,
-            value = TRUE, perl = TRUE
+        characteristics_cols <- str_subset(
+            characteristics_cols, "ch\\d*(\\.\\d*)?$"
         )
     }
     if (length(characteristics_cols)) {
         split <- paste0("(\\s*+)", split, "(\\s*+)")
         for (.characteristic_col in characteristics_cols) {
-            characteristic_list <- strsplit(
-                sample_dt[[as.character(.characteristic_col)]],
-                split = split, perl = TRUE
+            characteristic_list <- str_split(
+                sample_dt[[as.character(.characteristic_col)]], split
             )
             characteristic_list <- lapply(characteristic_list, function(x) {
-                grep(sep, x, perl = TRUE, value = TRUE)
+                str_subset(x, sep)
             })
             have_more_than_one_sep <- vapply(
                 characteristic_list,
@@ -200,7 +195,7 @@ parse_gse_soft_sample_characteristics <- function(gsm_list) {
     )
     data.table::setnames(
         sample_meta_dt,
-        function(x) sub("^Sample_", "", x, perl = TRUE)
+        function(x) str_replace(x, "^Sample_", "")
     )
     # We select columns with names starting with "characteristics_ch" and at
     # least 50% of the elements in the column contains character ":",
@@ -210,7 +205,7 @@ parse_gse_soft_sample_characteristics <- function(gsm_list) {
     )
     column_have_sep <- sample_meta_dt[, vapply(.SD, function(list_col) {
         have_sep <- vapply(list_col, function(x) {
-            all(grepl(":", x, fixed = TRUE), na.rm = TRUE)
+            all(str_detect(x, ":", fixed = TRUE), na.rm = TRUE)
         }, logical(1L))
         mean(have_sep, na.rm = TRUE) >= 0.5
     }, logical(1L)), .SDcols = characteristics_cols]
@@ -301,7 +296,7 @@ parse_name_value_pairs <- function(pair_list, sep = ":") {
         # Don't use `data.table::tstrsplit`, as it will split string into three
         # or more elements.
         name_value_pairs <- data.table::transpose(
-            str_split(x, paste0("(\\s*+)", sep, "(\\s*+)")),
+            str_split_fixed(x, paste0("(\\s*+)", sep, "(\\s*+)")),
             fill = NA_character_
         )
         if (length(name_value_pairs) < 2L) {

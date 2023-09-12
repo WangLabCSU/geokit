@@ -6,10 +6,7 @@ download_geo_suppl_or_gse_matrix_files <- function(ids, dest_dir, file_type, pat
         ftp_over_https = ftp_over_https
     )
     if (!is.null(pattern)) {
-        url_list <- lapply(url_list, grep,
-            pattern = pattern,
-            perl = TRUE, value = TRUE
-        )
+        url_list <- lapply(url_list, str_subset, pattern = pattern)
     }
     file_path_list <- lapply(url_list, function(urls) {
         # urls may be NULL or character(0L)
@@ -189,7 +186,7 @@ list_geo_file_url <- function(id, file_type, handle_opts = list(), ftp_over_http
     } else {
         file_names <- readLines(url_connection)
     }
-    file_names <- grep("^G", file_names, perl = TRUE, value = TRUE)
+    file_names <- str_subset(file_names, "^G")
 
     # build urls for all found files ------------------------
     if (length(file_names)) {
