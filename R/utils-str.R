@@ -36,7 +36,7 @@ str_extract <- function(string, pattern, ..., fixed = FALSE) {
     start <- as.vector(matches)
     end <- start + attr(matches, "match.length") - 1L
     start[start == -1L] <- NA_integer_
-    substring(string, start, end)
+    substr(string, start, end)
 }
 str_extract_all <- function(string, pattern, ..., fixed = FALSE) {
     regmatches(

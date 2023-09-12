@@ -4,7 +4,7 @@
 #' "miniml" or "suppl".
 #' @noRd
 build_geo_ftp_url <- function(ids, file_type = "soft", ftp_over_https = FALSE) {
-    geo_type <- substring(ids, 1L, 3L)[1L]
+    geo_type <- substr(ids, 1L, 3L)[1L]
     file_type <- match.arg(
         tolower(file_type),
         c("soft", "soft_full", "annot", "miniml", "suppl", "matrix")

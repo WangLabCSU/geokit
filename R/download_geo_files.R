@@ -1,6 +1,6 @@
 #' Return a character vector of file paths
 #' @noRd
-download_geo_suppl_or_gse_matrix_files <- function(ids, dest_dir, file_type, pattern = NULL, handle_opts = list(), ftp_over_https = FALSE, msg_id = sprintf("{.strong %s} {.field %s}", substring(ids[1L], 1L, 3L), file_type)) {
+download_geo_suppl_or_gse_matrix_files <- function(ids, dest_dir, file_type, pattern = NULL, handle_opts = list(), ftp_over_https = FALSE, msg_id = sprintf("{.strong %s} {.field %s}", substr(ids[1L], 1L, 3L), file_type)) {
     url_list <- lapply(ids, list_geo_file_url,
         file_type = file_type, handle_opts = handle_opts,
         ftp_over_https = ftp_over_https
