@@ -116,7 +116,7 @@ read_text <- function(text, ...) {
 na_string <- c("NA", "null", "NULL", "Null")
 
 check_ids <- function(ids, arg = rlang::caller_arg(ids), call = parent.frame()) {
-    geotypes <- substring(ids, 1L, 3L)
+    geotypes <- stringi::stri_sub(ids, 1L, 3L, use_matrix = FALSE)
     is_geo_types <- geotypes %chin% c("GSE", "GPL", "GSM", "GDS")
     if (any(!is_geo_types)) {
         cli::cli_abort(

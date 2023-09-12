@@ -224,10 +224,13 @@ parse_gse_matrix_meta <- function(file_text) {
             value = TRUE, fixed = FALSE, perl = TRUE
         )
         meta_data <- parse_meta(meta_text)
-        rlang::set_names(
-            meta_data,
-            function(x) sub(paste0("^", group, "_"), "", x, perl = TRUE)
-        )
+        rlang::set_names(meta_data, function(x) {
+            stringi::stri_replace(
+                x,
+                replacement = "",
+                regex = paste0("^", group, "_")
+            )
+        })
     })
     data.table::setDT(meta_data$Sample)
     for (x in c("sample_id", "pubmed_id", "platform_id")) {
@@ -298,7 +301,9 @@ parse_columns <- function(file_text, target_rownames) {
     # than 1L and the last value of which is a blank string ""; after above
     # transformation, a tail "; " will be inserted in this element, So we just
     # remove the tail "; " string.
-    labelDescription <- sub(";\\s*$", "", labelDescription, perl = TRUE)
+    labelDescription <- stringi::stri_replace(labelDescription,
+        regex = ";\\s*$", replacement = ""
+    )
     labelDescription <- data.table::fifelse(
         labelDescription == "",
         NA_character_, labelDescription,
@@ -349,8 +354,10 @@ parse_line_sep_by_equality <- function(dt) {
         str_split(dt[[1L]], "\\s*=\\s*")
     )
     split(
-        name_value_pairs[[2L]],
-        factor(sub("^[#!]\\s*+", "", name_value_pairs[[1L]], perl = TRUE))
+        name_value_pairs[[2L]], factor(stringi::stri_replace(
+            name_value_pairs[[1L]],
+            regex = "^[#!]\\s*+", replacement = ""
+        ))
     )
 }
 
@@ -361,7 +368,9 @@ parse_line_sep_by_table <- function(dt) {
     if (!nrow(dt) || ncol(dt) == 1L) {
         return(NULL)
     }
-    dt[, V1 := factor(sub("^!\\s*+", "", V1, perl = TRUE))]
+    dt[, V1 := factor(stringi::stri_replace(V1,
+        regex = "^!\\s*+", replacement = ""
+    ))]
     meta_list <- split(
         dt[, lapply(.SD, paste0, collapse = ""), by = "V1"],
         by = "V1", drop = TRUE,

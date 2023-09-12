@@ -14,7 +14,7 @@ get_geo_meta <- function(ids, dest_dir = getwd(), ftp_over_https = FALSE, handle
     }
     meta_list <- download_and_parse_soft(
         ids = ids,
-        geo_type = substring(ids, 1L, 3L)[1L],
+        geo_type = stringi::stri_sub(ids, 1L, 3L, use_matrix = FALSE)[1L],
         dest_dir = dest_dir,
         ftp_over_https = ftp_over_https,
         handle_opts = handle_opts,

@@ -200,7 +200,11 @@ parse_gse_soft_sample_characteristics <- function(gsm_list) {
     )
     data.table::setnames(
         sample_meta_dt,
-        function(x) sub("^Sample_", "", x, perl = TRUE)
+        function(x) {
+            stringi::stri_replace(x,
+                regex = "^Sample_", replacement = ""
+            )
+        }
     )
     # We select columns with names starting with "characteristics_ch" and at
     # least 50% of the elements in the column contains character ":",
