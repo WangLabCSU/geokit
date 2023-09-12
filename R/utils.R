@@ -6,26 +6,29 @@
 #         value = FALSE
 #     )
 # }
-# str_extract <- function(string, pattern, ...) {
-#     matches <- regexpr(pattern, string, perl = TRUE)
+# str_extract <- function(string, pattern, ignore.case = FALSE) {
+#     matches <- regexpr(pattern, string,
+#         perl = TRUE, fixed = FALSE,
+#         ignore.case = ignore.case
+#     )
 #     start <- as.vector(matches)
 #     end <- start + attr(matches, "match.length") - 1L
 #     start[start == -1L] <- NA_integer_
 #     substring(string, start, end)
 # }
-# str_extract_all <- function(string, pattern, ..., invert = FALSE) {
+# str_extract_all <- function(string, pattern, ...) {
 #     regmatches(
 #         string,
-#         m = gregexpr(pattern = pattern, text = string, perl = TRUE, ...),
-#         invert = invert
+#         m = gregexpr(pattern = pattern, text = string, perl = TRUE, ...)
 #     )
 # }
-# split string based on pattern, Only split once, Return a list of character,
-# the length of every element is two
+# # split string based on pattern, Only split once, Return a list of character,
+# # the length of every element is two
 # str_split_fixed <- function(string, pattern, ...) {
 #     regmatches(
 #         string,
-#         regexpr(pattern = pattern, text = string,
+#         regexpr(
+#             pattern = pattern, text = string,
 #             perl = TRUE, ...
 #         ),
 #         invert = TRUE
@@ -34,7 +37,8 @@
 # str_match <- function(string, pattern, ...) {
 #     out <- regmatches(
 #         string,
-#         regexec(pattern = pattern, text = string,
+#         regexec(
+#             pattern = pattern, text = string,
 #             perl = TRUE, ...
 #         ),
 #         invert = FALSE
@@ -45,6 +49,16 @@
 #     out <- do.call("rbind", out)
 #     out[out == ""] <- NA_character_
 #     out
+# }
+# str_match_all <- function(string, pattern, ...) {
+#     regmatches(
+#         string,
+#         gregexec(
+#             pattern = pattern, text = string,
+#             perl = TRUE, ...
+#         ),
+#         invert = FALSE
+#     )
 # }
 
 # stingr from stringi --------------------------
