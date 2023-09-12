@@ -8,7 +8,7 @@ str_which <- function(string, pattern, ..., fixed = FALSE) {
 }
 
 str_detect <- function(string, pattern, ..., fixed = FALSE) {
-    grepl(pattern = pattern, x = string, ..., perl = !fixed)
+    grepl(pattern = pattern, x = string, ..., perl = !fixed, fixed = fixed)
 }
 
 str_subset <- function(string, pattern, ..., fixed = FALSE) {
