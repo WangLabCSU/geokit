@@ -57,7 +57,7 @@ str_detect <- function(string, ...) {
 }
 
 str_which <- function(string, ..., use_names = FALSE) {
-    which(str_detect(str = string, ...), useNames = use_names)
+    which(str_detect(string = string, ...), useNames = use_names)
 }
 
 str_sub <- function(string, from = 1L, to = -1L, ..., use_matrix = FALSE) {
