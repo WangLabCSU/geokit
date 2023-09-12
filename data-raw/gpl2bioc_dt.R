@@ -30,7 +30,7 @@ if (length(new_gpl2bioc)) {
                 NA_character_
             } else if (length(x) > 1L) {
                 x <- x[x != "" & !is.na(x)]
-                paste0(x, collapse = "; ")
+                str_c(x, collapse = "; ")
             } else {
                 x
             }

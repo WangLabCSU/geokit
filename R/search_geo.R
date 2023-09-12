@@ -44,8 +44,8 @@ search_geo <- function(query, step = 500L, interval = 1L) {
         )
         Sys.sleep(interval)
     }
-    records <- stringi::stri_split(
-        stringi::stri_replace_all(stringi::stri_c(records, collapse = ""),
+    records <- str_split(
+        str_replace_all(str_c(records, collapse = ""),
             regex = "^\\n|\\n$", replacement = ""
         ),
         regex = "\\n\\n"
@@ -56,7 +56,7 @@ search_geo <- function(query, step = 500L, interval = 1L) {
             c("Contains", "Datasets", "Series", "Platforms"),
             names(name_value_pairs)
         ),
-        grep("Accession$", names(name_value_pairs), perl = TRUE, value = TRUE)
+        str_subset(names(name_value_pairs), regex = "Accession$")
     )
     data.table::setDT(name_value_pairs)
     data.table::setcolorder(
@@ -71,23 +71,23 @@ search_geo <- function(query, step = 500L, interval = 1L) {
 # this function just processed GEO searched results returned by `entrez_fetch`
 # into key-values paris
 preprocess_records <- function(x) {
-    x <- stringi::stri_replace(x, regex = "^\\d+\\.", replacement = "Title:")
-    x <- stringi::stri_replace(
+    x <- str_replace(x, regex = "^\\d+\\.", replacement = "Title:")
+    x <- str_replace(
         x,
         regex = "(Title:[^\\n]*\\n)(?:\\(Submitter supplied\\))?\\s*",
         replacement = "$1Summary: "
     )
-    x <- stringi::stri_replace_all(
+    x <- str_replace_all(
         x,
         regex = "(Platform|Dataset|Serie)s?: *((?:GPL\\d+ *|GDS\\d+ *|GSE\\d+ *)+)",
         replacement = "$1s: $2\n"
     )
-    x <- stringi::stri_replace(x, regex = "\\tID:\\s*", replacement = "\nID: ")
-    x <- stringi::stri_replace(
+    x <- str_replace(x, regex = "\\tID:\\s*", replacement = "\nID: ")
+    x <- str_replace(
         x,
         regex = "\\n((\\d+( Related| related)? (DataSet|Platform|Sample|Serie)s? *)+)\\n",
         replacement = "\nContains: $1\n"
     )
-    x <- stringi::stri_replace_all(x, regex = "\\t+", replacement = " ")
-    stringi::stri_split(x, regex = "\\n\\n?")
+    x <- str_replace_all(x, regex = "\\t+", replacement = " ")
+    str_split(x, regex = "\\n\\n?")
 }

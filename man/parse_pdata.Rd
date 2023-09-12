@@ -44,7 +44,7 @@ gse53987_smp_info <- Biobase::pData(gse53987)
 gse53987_smp_info$characteristics_ch1 <- stringr::str_replace_all(
     gse53987_smp_info$characteristics_ch1,
     "gender|race|pmi|ph|rin|tissue|disease state",
-    function(x) paste0("; ", x)
+    function(x) str_c("; ", x)
 )
 gse53987_smp_info <- rgeo::parse_pdata(gse53987_smp_info)
 gse53987_smp_info[grepl(

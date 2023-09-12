@@ -110,7 +110,7 @@ get_geo <- function(ids, dest_dir = getwd(), gse_matrix = TRUE, pdata_from_soft 
     if (!dir.exists(dest_dir)) {
         dir.create(dest_dir, recursive = TRUE)
     }
-    geo_type <- stringi::stri_sub(ids, 1L, 3L, use_matrix = FALSE)[1L]
+    geo_type <- str_sub(ids, 1L, 3L)[1L]
     if (geo_type == "GSE" && gse_matrix) {
         out_list <- get_gse_matrix(
             ids,

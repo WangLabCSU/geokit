@@ -1,14 +1,13 @@
 #' Return a character vector of file paths
 #' @noRd
-download_geo_suppl_or_gse_matrix_files <- function(ids, dest_dir, file_type, pattern = NULL, handle_opts = list(), ftp_over_https = FALSE, msg_id = sprintf("{.strong %s} {.field %s}", stringi::stri_sub(ids[1L], 1L, 3L, use_matrix = FALSE), file_type)) {
+download_geo_suppl_or_gse_matrix_files <- function(ids, dest_dir, file_type, pattern = NULL, handle_opts = list(), ftp_over_https = FALSE, msg_id = sprintf("{.strong %s} {.field %s}", str_sub(ids[1L], 1L, 3L), file_type)) {
     url_list <- lapply(ids, list_geo_file_url,
         file_type = file_type, handle_opts = handle_opts,
         ftp_over_https = ftp_over_https
     )
     if (!is.null(pattern)) {
-        url_list <- lapply(url_list, grep,
-            pattern = pattern,
-            perl = TRUE, value = TRUE
+        url_list <- lapply(url_list, str_subset,
+            regex = pattern
         )
     }
     file_path_list <- lapply(url_list, function(urls) {
@@ -147,7 +146,7 @@ download_with_acc <- function(ids, dest_dir, scope = "self", amount = "full", fo
         html = "html"
     )
     download_inform(urls,
-        file.path(dest_dir, paste(ids, file_ext, sep = ".")),
+        file.path(dest_dir, str_c(ids, file_ext, sep = ".")),
         site = "acc",
         handle_opts = handle_opts,
         fail = fail,
@@ -189,7 +188,7 @@ list_geo_file_url <- function(id, file_type, handle_opts = list(), ftp_over_http
     } else {
         file_names <- readLines(url_connection)
     }
-    file_names <- grep("^G", file_names, perl = TRUE, value = TRUE)
+    file_names <- str_subset(file_names, regex = "^G")
 
     # build urls for all found files ------------------------
     if (length(file_names)) {

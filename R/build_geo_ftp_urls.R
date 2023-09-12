@@ -4,12 +4,12 @@
 #' "miniml" or "suppl".
 #' @noRd
 build_geo_ftp_url <- function(ids, file_type = "soft", ftp_over_https = FALSE) {
-    geo_type <- stringi::stri_sub(ids, 1L, 3L, use_matrix = FALSE)[1L]
+    geo_type <- str_sub(ids, 1L, 3L)[1L]
     file_type <- match.arg(
         tolower(file_type),
         c("soft", "soft_full", "annot", "miniml", "suppl", "matrix")
     )
-    super_ids <- stringi::stri_replace(
+    super_ids <- str_replace(
         ids, replacement = "nnn", regex = "\\d{1,3}$"
     )
     if (ftp_over_https) {
@@ -18,7 +18,7 @@ build_geo_ftp_url <- function(ids, file_type = "soft", ftp_over_https = FALSE) {
         geo_ftp_site <- geo_ftp
     }
     # file.path will omit the ending / in windows, so we just use paste
-    paste(
+    str_c(
         geo_ftp_site,
         parse_geo_type(geo_type),
         super_ids, ids, file_type,
@@ -78,7 +78,7 @@ parse_file_name <- function(ids, file_type, geo_type) {
         )
     }
     if (nzchar(file_suffix)) {
-        paste0(ids, file_suffix)
+        str_c(ids, file_suffix)
     } else {
         file_suffix
     }
@@ -106,9 +106,9 @@ parse_file_name <- function(ids, file_type, geo_type) {
 #         )
 #     }
 #     if (nchar(file_suffix)) {
-#         file_ids <- paste0(ids, file_suffix)
+#         file_ids <- str_c(ids, file_suffix)
 #     } else {
 #         file_ids <- file_suffix
 #     }
-#     paste0(file_type, "/", file_ids)
+#     str_c(file_type, "/", file_ids)
 # }

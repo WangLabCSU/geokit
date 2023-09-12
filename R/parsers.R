@@ -39,7 +39,7 @@ parse_gse_matrix <- function(file_text, gse_sample_data = NULL) {
         url = if (!is.null(meta_data$Series$web_link)) {
             meta_data$Series$web_link
         } else if (!is.null(meta_data$Series$geo_accession)) {
-            paste0(
+            str_c(
                 "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=",
                 meta_data$Series$geo_accession
             )
@@ -49,9 +49,10 @@ parse_gse_matrix <- function(file_text, gse_sample_data = NULL) {
         other = meta_data$Series
     )
     # fetch GPL accession
-    gpl_id <- meta_data$Sample[[grep(
-        "platform_id", colnames(meta_data$Sample),
-        ignore.case = TRUE, value = FALSE
+    gpl_id <- meta_data$Sample[[str_which(
+        colnames(meta_data$Sample),
+        regex = "platform_id", ,
+        case_insensitive = TRUE
     )]][[1L]]
 
     list(
@@ -69,8 +70,9 @@ parse_gse_matrix <- function(file_text, gse_sample_data = NULL) {
 #' @noRd
 parse_gse_soft <- function(file_text, entity_type = "all", only_meta = FALSE) {
     if (entity_type == "all") {
-        entity_indices <- grep("^\\^(SAMPLE|PLATFORM)", file_text,
-            perl = TRUE, value = FALSE
+        entity_indices <- str_which(
+            file_text,
+            regex = "^\\^(SAMPLE|PLATFORM)"
         )
         if (length(entity_indices)) {
             soft_meta <- parse_meta(
@@ -84,14 +86,15 @@ parse_gse_soft <- function(file_text, entity_type = "all", only_meta = FALSE) {
         }
     } else {
         soft_meta <- NULL
-        entity_marker <- paste0(
+        entity_marker <- str_c(
             "^\\^", switch(entity_type,
                 sample = "SAMPLE",
                 platform = "PLATFORM"
             )
         )
-        entity_indices <- grep(entity_marker, file_text,
-            perl = TRUE, value = FALSE
+        entity_indices <- str_which(
+            file_text,
+            regex = entity_marker
         )
     }
     soft_data_list <- vector(mode = "list", length = length(entity_indices))
@@ -99,7 +102,7 @@ parse_gse_soft <- function(file_text, entity_type = "all", only_meta = FALSE) {
     # Don't use `data.table::tstrsplit`, as it will split string into three or
     # more element.
     entity <- data.table::transpose(
-        str_split(file_text[entity_indices], "\\s*=\\s*")
+        str_split_fixed(file_text[entity_indices], n = 2L, regex = "\\s*=\\s*")
     )
     names(soft_data_list) <- entity[[2L]]
     seq_line_temp <- c(entity_indices, length(file_text))
@@ -154,7 +157,7 @@ parse_gpl_or_gsm_soft <- function(file_text, only_meta = FALSE) {
         if (anyDuplicated(data_table[[1L]])) {
             data_table <- data_table[
                 , lapply(.SD, function(x) {
-                    paste(unique(x), collapse = "; ")
+                    str_c(unique(x), collapse = "; ")
                 }),
                 by = names(data_table)[[1L]]
             ]
@@ -175,10 +178,7 @@ parse_gpl_or_gsm_soft <- function(file_text, only_meta = FALSE) {
 
 #' @importFrom data.table merge.data.table
 parse_gds_soft <- function(file_text, only_meta = FALSE) {
-    subset_lines <- grep(
-        "^!subset", file_text,
-        perl = TRUE, value = FALSE
-    )
+    subset_lines <- str_which(file_text, regex = "^!subset")
     # parse meta data
     meta_data <- parse_meta(file_text[-subset_lines])
     if (only_meta) {
@@ -219,26 +219,24 @@ parse_gse_matrix_meta <- function(file_text) {
     meta_groups <- c("Series", "Sample")
     names(meta_groups) <- meta_groups
     meta_data <- lapply(meta_groups, function(group) {
-        meta_text <- grep(
-            paste0("^!", group, "_"), file_text,
-            value = TRUE, fixed = FALSE, perl = TRUE
+        meta_text <- str_subset(
+            file_text,
+            regex = str_c("^!", group, "_")
         )
         meta_data <- parse_meta(meta_text)
         rlang::set_names(meta_data, function(x) {
-            stringi::stri_replace(
+            str_replace(
                 x,
                 replacement = "",
-                regex = paste0("^", group, "_")
+                regex = str_c("^", group, "_")
             )
         })
     })
     data.table::setDT(meta_data$Sample)
     for (x in c("sample_id", "pubmed_id", "platform_id")) {
         if (x %chin% names(meta_data$Series)) {
-            meta_data$Series[[x]] <- strsplit(
-                meta_data$Series[[x]],
-                split = ";?+ ", fixed = FALSE,
-                perl = TRUE
+            meta_data$Series[[x]] <- str_split(meta_data$Series[[x]],
+                regex = ";?+ "
             )[[1L]]
         }
     }
@@ -255,7 +253,7 @@ parse_gds_subset <- function(subset_file_text) {
     # group by `subset_sample_id`
     subset_data[
         , unlist(
-            strsplit(subset_sample_id, ",", perl = TRUE),
+            str_split(subset_sample_id, regex = ","),
             use.names = FALSE
         ),
         by = c(
@@ -263,7 +261,7 @@ parse_gds_subset <- function(subset_file_text) {
             "subset_description",
             "subset_type"
         )
-    ][, lapply(.SD, paste0, collapse = "; "), by = V1]
+    ][, lapply(.SD, str_c, collapse = "; "), by = V1]
 }
 
 #' There are four different types of line that are recognized in SOFT. The
@@ -292,7 +290,7 @@ parse_columns <- function(file_text, target_rownames) {
         if (is.null(x)) {
             NA_character_
         } else if (length(x) > 1L) {
-            paste0(x, collapse = "; ")
+            str_c(x, collapse = "; ")
         } else {
             x
         }
@@ -301,7 +299,7 @@ parse_columns <- function(file_text, target_rownames) {
     # than 1L and the last value of which is a blank string ""; after above
     # transformation, a tail "; " will be inserted in this element, So we just
     # remove the tail "; " string.
-    labelDescription <- stringi::stri_replace(labelDescription,
+    labelDescription <- str_replace(labelDescription,
         regex = ";\\s*$", replacement = ""
     )
     labelDescription <- data.table::fifelse(
@@ -322,10 +320,7 @@ parse_columns <- function(file_text, target_rownames) {
 #' @return a list
 #' @noRd
 parse_meta <- function(file_text) {
-    line_with_equality <- grepl(
-        "^[^\\t]*=", file_text,
-        fixed = FALSE, perl = TRUE
-    )
+    line_with_equality <- str_detect(file_text, regex = "^[^\\t]*=")
     # For lines seperated by "="
     meta_sep_by_equality <- read_meta(file_text[line_with_equality], "equality")
     meta_sep_by_equality <- parse_line_sep_by_equality(meta_sep_by_equality)
@@ -351,10 +346,10 @@ parse_line_sep_by_equality <- function(dt) {
         return(NULL)
     }
     name_value_pairs <- data.table::transpose(
-        str_split(dt[[1L]], "\\s*=\\s*")
+        str_split_fixed(dt[[1L]], n = 2L, regex = "\\s*=\\s*")
     )
     split(
-        name_value_pairs[[2L]], factor(stringi::stri_replace(
+        name_value_pairs[[2L]], factor(str_replace(
             name_value_pairs[[1L]],
             regex = "^[#!]\\s*+", replacement = ""
         ))
@@ -368,11 +363,11 @@ parse_line_sep_by_table <- function(dt) {
     if (!nrow(dt) || ncol(dt) == 1L) {
         return(NULL)
     }
-    dt[, V1 := factor(stringi::stri_replace(V1,
+    dt[, V1 := factor(str_replace(V1,
         regex = "^!\\s*+", replacement = ""
     ))]
     meta_list <- split(
-        dt[, lapply(.SD, paste0, collapse = ""), by = "V1"],
+        dt[, lapply(.SD, str_c, collapse = ""), by = "V1"],
         by = "V1", drop = TRUE,
         keep.by = FALSE
     )
@@ -383,8 +378,9 @@ parse_line_sep_by_table <- function(dt) {
 
 read_data_table <- function(file_text) {
     read_text(
-        text = grep("^[\\^!#]", file_text,
-            value = TRUE, fixed = FALSE, perl = TRUE, invert = TRUE
+        text = str_subset(file_text,
+            regex = "^[\\^!#]",
+            negate = TRUE
         ),
         sep = "\t", header = TRUE, blank.lines.skip = TRUE,
         check.names = FALSE
@@ -392,9 +388,7 @@ read_data_table <- function(file_text) {
 }
 read_meta <- function(file_text, meta_type = "table") {
     read_text(
-        text = grep("^!\\w*", file_text,
-            value = TRUE, fixed = FALSE, perl = TRUE
-        ),
+        text = str_subset(file_text, regex = "^!\\w*"),
         sep = switch(meta_type,
             table = "\t",
             equality = ""
@@ -409,9 +403,7 @@ read_meta <- function(file_text, meta_type = "table") {
 }
 read_column <- function(file_text) {
     read_text(
-        text = grep("^#\\w[^\\t]*=", file_text,
-            value = TRUE, fixed = FALSE, perl = TRUE
-        ),
+        text = str_subset(file_text, regex = "^#\\w[^\\t]*="),
         sep = "", header = FALSE, blank.lines.skip = TRUE,
         colClasses = "character",
         check.names = FALSE

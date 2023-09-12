@@ -17,7 +17,7 @@ testthat::test_that("GSE/GSM with characteristic column seperated by no special 
     pdata$characteristics_ch1 <- stringr::str_replace_all(
         pdata$characteristics_ch1,
         "gender|race|pmi|ph|rin|tissue|disease state",
-        function(x) paste0("; ", x)
+        function(x) str_c("; ", x)
     )
     pdata <- rgeo::parse_pdata(pdata)
     testthat::expect_true(

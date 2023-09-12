@@ -1,53 +1,109 @@
-str_extract <- function(string, pattern, ignore.case = FALSE) {
-    matches <- regexpr(pattern, string,
-        perl = TRUE, fixed = FALSE,
-        ignore.case = ignore.case
-    )
-    start <- as.vector(matches)
-    end <- start + attr(matches, "match.length") - 1L
-    start[start == -1L] <- NA_integer_
-    substring(string, start, end)
-}
-str_extract_all <- function(string, pattern, ignore.case = FALSE) {
-    regmatches(
-        string,
-        gregexpr(pattern, string,
-            perl = TRUE, fixed = FALSE,
-            ignore.case = ignore.case
-        ),
-        invert = FALSE
-    )
-}
+# stingr from base R ---------------------------------
+# str_which <- function(string, pattern, ...) {
+#     grep(
+#         pattern = pattern, x = string, ...,
+#         perl = TRUE,
+#         value = FALSE
+#     )
+# }
+# str_extract <- function(string, pattern, ...) {
+#     matches <- regexpr(pattern, string, perl = TRUE)
+#     start <- as.vector(matches)
+#     end <- start + attr(matches, "match.length") - 1L
+#     start[start == -1L] <- NA_integer_
+#     substring(string, start, end)
+# }
+# str_extract_all <- function(string, pattern, ..., invert = FALSE) {
+#     regmatches(
+#         string,
+#         m = gregexpr(pattern = pattern, text = string, perl = TRUE, ...),
+#         invert = invert
+#     )
+# }
 # split string based on pattern, Only split once, Return a list of character,
 # the length of every element is two
-str_split <- function(string, pattern, ignore.case = FALSE) {
-    regmatches(
-        string,
-        regexpr(pattern, string,
-            perl = TRUE, fixed = FALSE,
-            ignore.case = ignore.case
-        ),
-        invert = TRUE
+# str_split_fixed <- function(string, pattern, ...) {
+#     regmatches(
+#         string,
+#         regexpr(pattern = pattern, text = string,
+#             perl = TRUE, ...
+#         ),
+#         invert = TRUE
+#     )
+# }
+# str_match <- function(string, pattern, ...) {
+#     out <- regmatches(
+#         string,
+#         regexec(pattern = pattern, text = string,
+#             perl = TRUE, ...
+#         ),
+#         invert = FALSE
+#     )
+#     out <- lapply(out, function(x) {
+#         if (!length(x)) "" else x
+#     })
+#     out <- do.call("rbind", out)
+#     out[out == ""] <- NA_character_
+#     out
+# }
+
+# stingr from stringi --------------------------
+str_c <- function(...) {
+    stringi::stri_c(...)
+}
+
+str_detect <- function(string, ...) {
+    stringi::stri_detect(str = string, ...)
+}
+
+str_which <- function(string, ..., use_names = FALSE) {
+    which(str_detect(str = string, ...), useNames = use_names)
+}
+
+str_sub <- function(string, from = 1L, to = -1L, ..., use_matrix = FALSE) {
+    stringi::stri_sub(
+        str = string, from = from, to = to,
+        use_matrix = use_matrix
     )
 }
 
-str_match <- function(string, pattern, ignore.case = FALSE) {
-    out <- regmatches(
-        string,
-        regexec(pattern, string,
-            perl = TRUE, fixed = FALSE,
-            ignore.case = ignore.case
-        ),
-        invert = FALSE
-    )
-    out <- lapply(out, function(x) {
-        if (!length(x)) "" else x
-    })
-    out <- do.call("rbind", out)
-    out[out == ""] <- NA_character_
-    out
+str_subset <- function(string, ...) {
+    stringi::stri_subset(str = string, ...)
 }
 
+str_replace <- function(string, ...) {
+    stringi::stri_replace(str = string, ...)
+}
+
+str_replace_all <- function(string, ...) {
+    stringi::stri_replace_all(str = string, ...)
+}
+
+str_extract <- function(string, ...) {
+    stringi::stri_extract(str = string, ...)
+}
+
+str_extract_all <- function(string, ...) {
+    stringi::stri_extract_all(str = string, ...)
+}
+
+#' @return A list, each element with the same length
+#' @noRd
+str_split_fixed <- function(string, n, ...) {
+    stringi::stri_split(str = string, n = n, ...)
+}
+
+#' @return A list
+#' @noRd
+str_split <- function(string, n = -1L, ...) {
+    stringi::stri_split(str = string, ..., n = n)
+}
+
+str_match <- function(string, ...) {
+    stringi::stri_match(str = string, ...)
+}
+
+# Other utilities -------------------------------
 return_object_or_list <- function(x, names = NULL) {
     if (length(x) == 1L) {
         x[[1L]]
@@ -139,18 +195,18 @@ wrap_cat <- function(label, names, indent = 0L, exdent = 2L) {
     ext <- if (total == 0L) {
         "none"
     } else if (total <= 6L) {
-        paste(names, collapse = " ")
+        str_c(names, collapse = " ")
     } else {
-        paste(
-            paste(names[1:3], collapse = " "),
+        str_c(
+            str_c(names[1:3], collapse = " "),
             "...",
-            paste(names[(total - 1L):total], collapse = " "),
+            str_c(names[(total - 1L):total], collapse = " "),
             sprintf("(%d total)", total),
             sep = " "
         )
     }
     cat(strwrap(
-        paste(label, ext, sep = " "),
+        str_c(label, ext, sep = " "),
         indent = indent, exdent = exdent
     ), sep = "\n")
 }

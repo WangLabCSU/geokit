@@ -44,7 +44,7 @@ methods::setClass(
 #' @export
 #' @rdname GEO-class
 methods::setMethod("show", "GEOData", function(object) {
-    cat(paste0("An object of ", methods::is(object)[[1L]]), sep = "\n")
+    cat(str_c("An object of ", methods::is(object)[[1L]]), sep = "\n")
     wrap_cat("meta", names = names(object@meta))
     wrap_cat("accession", names = object@accession)
 })
@@ -131,15 +131,15 @@ methods::setValidity("GEOSoft", function(object) {
 #' @export
 #' @rdname GEO-class
 methods::setMethod("show", "GEOSoft", function(object) {
-    cat(paste0("An object of ", methods::is(object)[[1L]]), sep = "\n")
+    cat(str_c("An object of ", methods::is(object)[[1L]]), sep = "\n")
     datatable_dim <- dim(object@datatable)
     cat(
-        strwrap(paste0("datatable: a ", datatable_dim[[1L]], " * ", datatable_dim[[2L]], " data.frame"), exdent = 2L),
+        strwrap(str_c("datatable: a ", datatable_dim[[1L]], " * ", datatable_dim[[2L]], " data.frame"), exdent = 2L),
         sep = "\n"
     )
     columns_dim <- dim(object@columns)
     cat(
-        strwrap(paste0("columns: a ", columns_dim[[1L]], " * ", columns_dim[[2L]], " data.frame"), exdent = 2L),
+        strwrap(str_c("columns: a ", columns_dim[[1L]], " * ", columns_dim[[2L]], " data.frame"), exdent = 2L),
         sep = "\n"
     )
     wrap_cat("columnsData", names = names(object@columns), 2L, 4L)
@@ -233,7 +233,7 @@ methods::setValidity("GEOSeries", function(object) {
 #' @export
 #' @rdname GEO-class
 methods::setMethod("show", "GEOSeries", function(object) {
-    cat(paste0("An object of ", methods::is(object)[[1L]]), sep = "\n")
+    cat(str_c("An object of ", methods::is(object)[[1L]]), sep = "\n")
     wrap_cat("gsm", names = names(object@gsm))
     wrap_cat("gpl", names = names(object@gpl))
     wrap_cat("meta", names = names(object@meta))

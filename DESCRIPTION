@@ -17,7 +17,8 @@ Imports:
     methods,
     rentrez,
     xml2,
-    R.utils
+    R.utils,
+    stringi
 Suggests: 
     BiocGenerics,
     bit64,
