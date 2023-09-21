@@ -107,7 +107,6 @@ parse_gse_soft <- function(file_text, entity_type = "all", only_meta = FALSE) {
     )
     for (i in seq_along(entity_indices)) {
         accession <- entity[[2L]][[i]]
-        cli::cli_progress_update()
         entity_data <- parse_gpl_or_gsm_soft(file_text[
             seq_line_temp[[i]]:(seq_line_temp[[i + 1L]] - 1L)
         ])
@@ -118,6 +117,7 @@ parse_gse_soft <- function(file_text, entity_type = "all", only_meta = FALSE) {
             datatable = entity_data$data_table,
             accession = accession
         )
+        cli::cli_progress_update()
     }
     soft_data_list <- split(
         soft_data_list,
