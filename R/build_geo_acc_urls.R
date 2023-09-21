@@ -21,20 +21,20 @@
 build_geo_acc_url <- function(ids, scope = "self", amount = "data", format = "text") {
     sprintf(
         "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=%s&targ=%s&view=%s&form=%s", 
-        tolower(ids),
-        match.arg(
-            tolower(scope),
-            c("self", "gsm", "gpl", "gse", "all")
-        ),
-        match.arg(
-            tolower(amount),
-            c("brief", "quick", "data", "full")
-        ),
+        tolower(ids), scope, amount, format
+        # match.arg(
+        #     tolower(scope),
+        #     c("self", "gsm", "gpl", "gse", "all")
+        # ),
+        # match.arg(
+        #     tolower(amount),
+        #     c("brief", "quick", "data", "full")
+        # ),
         # GEO use "text" to refer to "soft" format
         # GEO use "xml" to refer to "miniml" format
-        match.arg(
-            tolower(format),
-            c("text", "html", "xml")
-        )
+        # match.arg(
+        #     tolower(format),
+        #     c("text", "html", "xml")
+        # )
     )
 }
