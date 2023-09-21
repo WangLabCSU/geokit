@@ -141,8 +141,8 @@ parse_gpl_or_gsm_soft <- function(file_text, only_meta = FALSE) {
 
     # parse data table data - which is the feature data
     data_table <- read_data_table(file_text)
-    data.table::setnames(data_table, make.unique)
     if (nrow(data_table)) {
+        data.table::setnames(data_table, make.unique)
         # GEO uses 'TAG' instead of 'ID' for SAGE GSE/GPL entries,
         # but it is always the first column;
         # some dataset may contain duplicated feature names,
