@@ -28,7 +28,7 @@ will use \url{ftp://ftp.ncbi.nlm.nih.gov/geo} directly.}
 \link[curl:handle]{handle}.}
 }
 \value{
-A data.frame contains metadata of all ids.
+A \link{data.table} contains metadata of all ids.
 }
 \description{
 This is useful to combine with \code{\link[=search_geo]{search_geo()}} and filter results since

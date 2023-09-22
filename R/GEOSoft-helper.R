@@ -1,7 +1,7 @@
 get_geo_soft <- function(ids, geo_type, dest_dir, ftp_over_https, handle_opts) {
     soft_data_list <- download_and_parse_soft(
         ids = ids, geo_type = geo_type,
-        dest_dir = dest_dir, 
+        dest_dir = dest_dir,
         ftp_over_https = ftp_over_https,
         handle_opts = handle_opts,
         only_meta = FALSE
@@ -22,8 +22,8 @@ new_geo_obj <- function(id, geo_type, soft_data) {
         GDS = methods::new(
             "GEOSoft",
             meta = soft_data$meta,
-            columns = soft_data$columns,
-            datatable = soft_data$data_table,
+            columns = column_to_rownames(soft_data$columns),
+            datatable = set_rownames(soft_data$data_table),
             accession = id
         ),
         GSE = methods::new(

@@ -4,7 +4,7 @@
 #' `search_geo()` cannot get all long metadata of GEO identities.
 #'
 #' @inheritParams get_geo
-#' @return A data.frame contains metadata of all ids.
+#' @return A [data.table][data.table] contains metadata of all ids.
 #' @export
 get_geo_meta <- function(ids, dest_dir = getwd(), ftp_over_https = TRUE, handle_opts = list(connecttimeout = 60L)) {
     ids <- toupper(ids)
@@ -28,7 +28,5 @@ get_geo_meta <- function(ids, dest_dir = getwd(), ftp_over_https = TRUE, handle_
         )
         data.table::setDT(meta)
     })
-    out <- data.table::rbindlist(meta_list, use.names = TRUE, fill = TRUE)
-    data.table::setDF(out)
-    out
+    data.table::rbindlist(meta_list, use.names = TRUE, fill = TRUE)
 }

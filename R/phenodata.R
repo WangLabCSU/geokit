@@ -139,6 +139,7 @@ parse_gse_matrix_sample_characteristics <- function(sample_dt, characteristics_c
             }
         }
     }
+    sample_dt
 }
 
 #' Parse key-value pairs in GEO series soft file
@@ -174,8 +175,7 @@ parse_gsm_list <- function(gsm_list) {
         )
     }
     res <- parse_gse_soft_sample_characteristics(gsm_list)
-    data.table::setDF(res, rownames = res[["geo_accession"]])
-    res
+    set_rownames(res, "geo_accession")
 }
 
 parse_gse_soft_sample_characteristics <- function(gsm_list) {
@@ -187,7 +187,6 @@ parse_gse_soft_sample_characteristics <- function(gsm_list) {
             )
         }
         data.table::setDT(sample_meta_data)
-        sample_meta_data
     })
     sample_meta_dt <- data.table::rbindlist(
         sample_meta_list,

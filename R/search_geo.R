@@ -21,7 +21,7 @@
 #' @param step the number of records to fetch from the database each time. You
 #' may choose a smaller value if failed.
 #' @param interval The time interval (seconds) between each step.
-#' @return a data.frame contains the search results
+#' @return A [data.table][data.table] contains the search results
 #' @examples
 #'   rgeo::search_geo("diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]")
 #' @export
@@ -62,8 +62,6 @@ search_geo <- function(query, step = 500L, interval = 1L) {
         tail_col,
         after = ncol(name_value_pairs)
     )
-    data.table::setDF(name_value_pairs)
-    name_value_pairs
 }
 
 # this function just processed GEO searched results returned by `entrez_fetch`

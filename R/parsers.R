@@ -8,26 +8,18 @@ parse_gse_matrix <- function(file_text, gse_sample_data = NULL) {
 
     # fetch phenoData
     if (is.null(gse_sample_data)) {
-        parse_gse_matrix_sample_characteristics(meta_data$Sample)
-        data.table::setDF(
-            meta_data$Sample,
-            rownames = as.character(meta_data$Sample[["geo_accession"]])
-        )
-        pheno_data <- Biobase::AnnotatedDataFrame(
-            data = meta_data$Sample[colnames(matrix_data), , drop = FALSE]
-        )
+        gse_sample_data <- meta_data$Sample
+        parse_gse_matrix_sample_characteristics(gse_sample_data)
     } else {
         gse_sample_data <- parse_gse_soft_sample_characteristics(
             gse_sample_data[colnames(matrix_data)]
         )
-        data.table::setDF(
-            gse_sample_data,
-            rownames = gse_sample_data[["geo_accession"]]
-        )
-        pheno_data <- Biobase::AnnotatedDataFrame(
-            data = gse_sample_data[colnames(matrix_data), , drop = FALSE]
-        )
     }
+    gse_sample_data <- gse_sample_data[colnames(matrix_data),
+        on = "geo_accession"
+    ]
+    set_rownames(gse_sample_data, "geo_accession")
+    pheno_data <- Biobase::AnnotatedDataFrame(data = gse_sample_data)
 
     # fetch experiment data
     experiment_data <- Biobase::MIAME(
@@ -39,8 +31,8 @@ parse_gse_matrix <- function(file_text, gse_sample_data = NULL) {
         url = if (!is.null(meta_data$Series$web_link)) {
             meta_data$Series$web_link
         } else if (!is.null(meta_data$Series$geo_accession)) {
-            paste0(
-                "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=",
+            sprintf(
+                "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=%s",
                 meta_data$Series$geo_accession
             )
         } else {
@@ -113,8 +105,8 @@ parse_gse_soft <- function(file_text, entity_type = "all", only_meta = FALSE) {
         soft_data_list[[i]] <- methods::new(
             "GEOSoft",
             meta = entity_data$meta,
-            columns = entity_data$columns,
-            datatable = entity_data$data_table,
+            columns = column_to_rownames(entity_data$columns),
+            datatable = set_rownames(entity_data$data_table),
             accession = accession
         )
         cli::cli_progress_update()
@@ -155,9 +147,6 @@ parse_gpl_or_gsm_soft <- function(file_text, only_meta = FALSE) {
                 by = names(data_table)[[1L]]
             ]
         }
-        data.table::setDF(data_table, rownames = as.character(data_table[[1L]]))
-    } else {
-        data.table::setDF(data_table)
     }
 
     # parse column data
@@ -180,26 +169,18 @@ parse_gds_soft <- function(file_text, only_meta = FALSE) {
 
     # parse data_table data
     data_table <- read_data_table(file_text[-subset_lines])
-    if (nrow(data_table)) {
-        data.table::setDF(data_table, rownames = as.character(data_table[[1L]]))
-    } else {
-        data.table::setDF(data_table)
-    }
 
     # parse column data
     column_data <- parse_columns(file_text[-subset_lines], colnames(data_table))
-    data.table::setDT(column_data, keep.rownames = "V1")
 
     subset_data <- parse_gds_subset(file_text[subset_lines])
     # Merge subset data into column data
-    column_data <- merge(
-        column_data,
-        subset_data,
+    column_data <- merge(column_data, subset_data,
         by = "V1",
         all.x = TRUE, sort = FALSE
     )
     column_data <- column_data[colnames(data_table), on = "V1"]
-    column_data <- as.data.frame(column_data[, !1L], column_data$V1)
+    # column_data <- as.data.frame(column_data[, !1L], column_data$V1)
     list(
         data_table = data_table,
         meta = meta_data,
@@ -246,7 +227,7 @@ parse_gds_subset <- function(subset_file_text) {
             "subset_description",
             "subset_type"
         )
-    ][, lapply(.SD, paste0, collapse = "; "), by = V1]
+    ][, lapply(.SD, paste0, collapse = "; "), by = "V1"]
 }
 
 #' There are four different types of line that are recognized in SOFT. The
@@ -266,7 +247,7 @@ parse_gds_subset <- function(subset_file_text) {
 # names and values; For line seperated by "=", every row represents a item. But
 # every item in `columns` data should only own a value of length one, so we
 # collapse it.
-#' @return a data.frame
+#' @return a data.table
 #' @noRd
 parse_columns <- function(file_text, target_rownames) {
     column_data <- read_column(file_text)
@@ -290,9 +271,9 @@ parse_columns <- function(file_text, target_rownames) {
         NA_character_, labelDescription,
         na = NA_character_
     )
-    data.frame(
-        labelDescription = labelDescription,
-        row.names = target_rownames
+    data.table::data.table(
+        V1 = target_rownames,
+        labelDescription = labelDescription
     )
 }
 

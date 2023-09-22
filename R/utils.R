@@ -7,6 +7,20 @@ return_object_or_list <- function(x, names = NULL) {
     }
 }
 
+set_rownames <- function(x, var = 1L) {
+    if (nrow(x)) {
+        data.table::setDF(x, rownames = as.character(x[[var]]))
+    } else {
+        data.table::setDF(x)
+    }
+}
+
+column_to_rownames <- function(x, var = 1L) {
+    data.table::setDF(x[, .SD, .SDcols = !var],
+        rownames = as.character(x[[var]])
+    )
+}
+
 read_lines <- function(file) {
     data.table::fread(
         file = file, sep = "", header = FALSE,

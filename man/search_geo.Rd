@@ -21,7 +21,7 @@ may choose a smaller value if failed.}
 \item{interval}{The time interval (seconds) between each step.}
 }
 \value{
-a data.frame contains the search results
+A \link{data.table} contains the search results
 }
 \description{
 This function searchs \href{https://www.ncbi.nlm.nih.gov/gds}{GDS} database,

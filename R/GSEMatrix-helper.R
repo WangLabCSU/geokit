@@ -81,20 +81,24 @@ download_and_parse_annotation <- function(annotation, assay, dest_dir, ftp_over_
     )
     gpl_data <- parse_gpl_or_gsm_soft(read_lines(gpl_file_path))
     if (nrow(gpl_data$data_table)) {
+        feature_data <- set_rownames(gpl_data$data_table)
         # NCBI GEO uses case-insensitive matching between platform
         # IDs and series ID Refs
-        feature_data <- gpl_data$data_table[
+        feature_data <- feature_data[
             data.table::chmatch(
                 tolower(rownames(assay)),
-                tolower(rownames(gpl_data$data_table))
+                tolower(rownames(feature_data))
             ), ,
             drop = FALSE
         ]
         rownames(feature_data) <- rownames(assay)
         Biobase::AnnotatedDataFrame(feature_data,
-            varMetadata = gpl_data$columns
+            varMetadata = column_to_rownames(gpl_data$columns)
         )
     } else {
-        Biobase::AnnotatedDataFrame(data.frame(row.names = rownames(assay)))
+        Biobase::AnnotatedDataFrame(
+            data.frame(row.names = rownames(assay)),
+            varMetadata = column_to_rownames(gpl_data$columns)
+        )
     }
 }
