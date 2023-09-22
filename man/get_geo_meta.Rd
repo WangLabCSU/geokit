@@ -7,7 +7,7 @@
 get_geo_meta(
   ids,
   dest_dir = getwd(),
-  ftp_over_https = FALSE,
+  ftp_over_https = TRUE,
   handle_opts = list(connecttimeout = 60L)
 )
 }
