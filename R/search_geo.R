@@ -21,7 +21,7 @@
 #' @param step the number of records to fetch from the database each time. You
 #' may choose a smaller value if failed.
 #' @param interval The time interval (seconds) between each step.
-#' @return A [data.table][data.table] contains the search results
+#' @return A [data.table][data.table::data.table] contains the search results
 #' @examples
 #'   rgeo::search_geo("diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]")
 #' @export
