@@ -235,7 +235,7 @@ download_inform <- function(urls, file_paths, site, msg_id = "", handle_opts = l
         arg_list <- c(
             list(
                 urls = urls, destfiles = file_paths, resume = FALSE,
-                progress = interactive(), timeout = Inf
+                progress = interactive(), multi_timeout = Inf
             ),
             handle_opts
         )
