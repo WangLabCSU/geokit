@@ -17,9 +17,7 @@ get_gse_matrix <- function(ids, odir = getwd(), pdata_from_soft = TRUE,
             handle_opts = handle_opts
         )
         gse_sample_data_list <- lapply(gse_soft_file_paths, function(x) {
-            cli::cli_alert_info(
-                "Parsing series {.field soft} file {.file {basename(x)}}"
-            )
+            cli::cli_alert("Parsing series {.field soft} file {.file {basename(x)}}")
             parse_gse_soft(read_lines(x), entity_type = "sample")[["gsm"]]
         })
         cli::cli_alert_success(
@@ -31,7 +29,7 @@ get_gse_matrix <- function(ids, odir = getwd(), pdata_from_soft = TRUE,
     # parsing GSE metrix files --------------------------------------
     # pass id in order to update message
     es_elements_list <- .mapply(function(id, file_paths, ...) {
-        cli::cli_alert_info(
+        cli::cli_alert(
             "Parsing {.val {length(file_paths)}} series {.field matrix} file{?s} of {.field {id}}"
         )
         # For GEO series soft files, there is only one file corresponding to
@@ -46,7 +44,7 @@ get_gse_matrix <- function(ids, odir = getwd(), pdata_from_soft = TRUE,
     cli::cli_alert_success("Parsing {.val {length(ids)}} {.strong GSE} series matrix successfully!")
 
     # adding featureData and contructing ExpressionSet object
-    cli::cli_alert_info("Constructing {.cls ExpressionSet}")
+    cli::cli_alert("Constructing {.cls ExpressionSet}")
     lapply(es_elements_list, function(es_elements) {
         es_list <- lapply(es_elements, function(es_element) {
             if (is.null(add_gpl) || !add_gpl) {
