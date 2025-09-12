@@ -1,4 +1,4 @@
-#' For all parsers used in `get_geo.R`, return a list
+#' For all parsers used in `geo.R`, return a list
 #' @noRd
 parse_gse_matrix <- function(file_text, gse_sample_data = NULL) {
     # extract series matrix data

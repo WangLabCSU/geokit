@@ -23,9 +23,9 @@
 #' @param interval The time interval (seconds) between each step.
 #' @return A [data.table][data.table::data.table] contains the search results
 #' @examples
-#'   search_geo("diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]")
+#' geo_search("diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]")
 #' @export
-search_geo <- function(query, step = 500L, interval = 1L) {
+geo_search <- function(query, step = 500L, interval = 1L) {
     records_num <- rentrez::entrez_search(
         "gds", query,
         retmax = 0L

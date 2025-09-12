@@ -1,6 +1,9 @@
-get_gse_matrix <- function(ids, odir = getwd(), pdata_from_soft = TRUE, add_gpl = NULL, ftp_over_https = FALSE, handle_opts = list()) {
+get_gse_matrix <- function(ids, odir = getwd(), pdata_from_soft = TRUE,
+                           add_gpl = NULL, ftp_over_https = FALSE,
+                           handle_opts = list()) {
     file_paths_list <- download_suppl_or_gse_matrix_files(
-        ids = ids, odir = odir,
+        ids = ids,
+        odir = odir,
         file_type = "matrix",
         ftp_over_https = ftp_over_https,
         handle_opts = handle_opts
@@ -8,7 +11,8 @@ get_gse_matrix <- function(ids, odir = getwd(), pdata_from_soft = TRUE, add_gpl 
     arg_list <- list(id = ids, file_paths = file_paths_list)
     if (pdata_from_soft) {
         gse_soft_file_paths <- download_gse_soft_files(
-            ids, odir,
+            ids,
+            odir = odir,
             ftp_over_https = ftp_over_https,
             handle_opts = handle_opts
         )
@@ -72,8 +76,10 @@ get_gse_matrix <- function(ids, odir = getwd(), pdata_from_soft = TRUE, add_gpl 
     })
 }
 
-download_and_parse_annotation <- function(annotation, assay, odir, ftp_over_https, handle_opts) {
-    gpl_file_path <- download_gpl_files(annotation,
+download_and_parse_annotation <- function(annotation, assay, odir,
+                                          ftp_over_https, handle_opts) {
+    gpl_file_path <- download_gpl_files(
+        annotation,
         odir,
         amount = "data",
         ftp_over_https = ftp_over_https,

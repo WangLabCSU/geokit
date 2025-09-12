@@ -36,7 +36,8 @@ new_geo_obj <- function(id, geo_type, soft_data) {
     )
 }
 
-download_and_parse_soft <- function(ids, geo_type, odir, handle_opts, only_meta, ftp_over_https) {
+download_and_parse_soft <- function(ids, geo_type, odir, handle_opts,
+                                    only_meta, ftp_over_https) {
     file_paths <- switch(geo_type,
         GSM = download_gsm_files(ids,
             odir = odir,

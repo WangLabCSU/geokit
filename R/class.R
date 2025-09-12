@@ -5,20 +5,20 @@
 #' `GEOSeries` class contains extra two slots `gsm` and `gpl` special for `GSE`
 #' entity soft file and `GEOSoft` contains extra two slots `columns` and
 #' `datatable` special for GEO samples, platforms, and datasets.
-#' 
+#'
 #' @param object A [GEO-class] Class Object.
 #' @param value A R object with the same class of corresponding slots.
 #' @name GEO-class
 #' @docType class
 #' @keywords classes
 #' @examples
-#'  gse <- get_geo("GSE10", odir = tempdir(), gse_matrix = FALSE)
-#'  accession(gse)
-#'  gpllist <- gpl(gse)
-#'  meta(gpllist[[1L]])
-#'  accession(gpllist[[1L]])
-#'  columns(gpllist[[1L]])
-#'  datatable(gpllist[[1L]])
+#' gse <- geo("GSE10", odir = tempdir(), gse_matrix = FALSE)
+#' accession(gse)
+#' gpllist <- gpl(gse)
+#' meta(gpllist[[1L]])
+#' accession(gpllist[[1L]])
+#' columns(gpllist[[1L]])
+#' datatable(gpllist[[1L]])
 #' @rdname GEO-class
 NULL
 
@@ -52,6 +52,7 @@ methods::setMethod("show", "GEOData", function(object) {
 methods::setGeneric("meta", function(object) {
     methods::makeStandardGeneric("meta")
 })
+
 methods::setGeneric("meta<-", function(object, value) {
     methods::makeStandardGeneric("meta<-")
 })
@@ -77,6 +78,7 @@ methods::setMethod("meta<-", "GEOData", function(object, value) {
 methods::setGeneric("accession", function(object) {
     methods::makeStandardGeneric("accession")
 })
+
 methods::setGeneric("accession<-", function(object, value) {
     methods::makeStandardGeneric("accession<-")
 })
@@ -178,9 +180,11 @@ methods::setMethod("columns<-", "GEOSoft", function(object, value) {
 methods::setGeneric("datatable", function(object) {
     methods::makeStandardGeneric("datatable")
 })
+
 methods::setGeneric("datatable<-", function(object, value) {
     methods::makeStandardGeneric("datatable<-")
 })
+
 #' @method datatable GEOSoft
 #' @aliases datatable
 #' @export
@@ -188,6 +192,7 @@ methods::setGeneric("datatable<-", function(object, value) {
 methods::setMethod("datatable", "GEOSoft", function(object) {
     object@datatable
 })
+
 #' @method datatable<- GEOSoft
 #' @aliases datatable<-
 #' @export
@@ -205,10 +210,10 @@ methods::setMethod("datatable<-", "GEOSoft", function(object, value) {
 #' of current GEO series.
 #' @rdname GEO-class
 methods::setClass(
-    "GEOSeries", 
+    "GEOSeries",
     slots = list(gsm = "list", gpl = "list"),
     prototype = list(
-        gsm = list(), 
+        gsm = list(),
         gpl = list()
     ),
     contains = "GEOData"
@@ -241,13 +246,15 @@ methods::setMethod("show", "GEOSeries", function(object) {
 })
 
 ## Accessors -----
-### Accessors `gsm` ---- 
+### Accessors `gsm` ----
 methods::setGeneric("gsm", function(object) {
     methods::makeStandardGeneric("gsm")
 })
+
 methods::setGeneric("gsm<-", function(object, value) {
     methods::makeStandardGeneric("gsm<-")
 })
+
 #' @method gsm GEOSeries
 #' @aliases gsm
 #' @export
@@ -270,9 +277,11 @@ methods::setMethod("gsm<-", "GEOSeries", function(object, value) {
 methods::setGeneric("gpl", function(object) {
     methods::makeStandardGeneric("gpl")
 })
+
 methods::setGeneric("gpl<-", function(object, value) {
     methods::makeStandardGeneric("gpl<-")
 })
+
 #' @method gpl GEOSeries
 #' @aliases gpl
 #' @export
@@ -280,6 +289,7 @@ methods::setGeneric("gpl<-", function(object, value) {
 methods::setMethod("gpl", "GEOSeries", function(object) {
     object@gpl
 })
+
 #' @method gpl<- GEOSeries
 #' @aliases gpl<-
 #' @export

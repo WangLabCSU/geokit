@@ -1,9 +1,9 @@
 testthat::test_that("GSE/GSM with characteristic column seperated by no special string warned and parsing column names worked well", {
     testthat::expect_s4_class(
-        get_geo("GSE8462", odir = tempdir()), "ExpressionSet"
+        geo("GSE8462", odir = tempdir()), "ExpressionSet"
     )
     testthat::expect_warning(
-        gse <- get_geo(
+        gse <- geo(
             "GSE53987",
             odir = tempdir(),
             pdata_from_soft = FALSE, add_gpl = FALSE

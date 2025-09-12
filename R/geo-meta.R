@@ -1,19 +1,16 @@
 #' Get the metadata of multiple GEO identities
 #'
-#' This is useful to combine with [search_geo()] and filter results since
-#' `search_geo()` cannot get all long metadata of GEO identities.
+#' This is useful to combine with [geo_search()] and filter results since
+#' `geo_search()` cannot get all long metadata of GEO identities.
 #'
-#' @inheritParams get_geo
+#' @inheritParams geo
 #' @return A [data.table][data.table] contains metadata of all ids.
 #' @export
-get_geo_meta <- function(ids, ftp_over_https = TRUE,
-                         handle_opts = list(connecttimeout = 60L),
-                         odir = getwd()) {
-    ids <- toupper(ids)
-    check_ids(ids)
-    if (!dir.exists(odir)) {
-        dir.create(odir, recursive = TRUE)
-    }
+geo_meta <- function(ids, ftp_over_https = TRUE,
+                     handle_opts = list(connecttimeout = 60L),
+                     odir = getwd()) {
+    ids <- check_ids(ids)
+    odir <- dir_create(odir, recursive = TRUE)
     meta_list <- download_and_parse_soft(
         ids = ids,
         geo_type = substr(ids, 1L, 3L)[1L],

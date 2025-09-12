@@ -626,7 +626,7 @@ we can make full use of R to analyze GEO datasets.</li>
 package.</li>
 <li>Provide some useful utils function to work with GEO datasets like
 <code>parse_gsm_list</code>, <code>parse_pdata</code>,
-<code>log_trans</code> and <code>show_geo</code>.</li>
+<code>log_trans</code> and <code>geo_show</code>.</li>
 </ul>
 <h2 id="installation">Installation</h2>
 <p>You can install the development version of rgeo from <a href="https://github.com/">GitHub</a> with:</p>
@@ -642,25 +642,25 @@ package.</li>
 <h2 id="vignettes">Vignettes</h2>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">library</span>(rgeo)</span>
 <span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="fu">library</span>(magrittr)</span></code></pre></div>
-<h3 id="search-geo-database---search_geo">Search GEO database -
-<code>search_geo</code></h3>
+<h3 id="search-geo-database---geo_search">Search GEO database -
+<code>geo_search</code></h3>
 <p>The NCBI uses a search term syntax which can be associated with a
 specific search field enclosed by a pair of square brackets. So, for
 instance <code>&quot;Homo sapiens[ORGN]&quot;</code> denotes a search for
 <code>Homo sapiens</code> in the <code>“Organism”</code> field. Details
 see <a href="https://www.ncbi.nlm.nih.gov/geo/info/qqtutorial.html">https://www.ncbi.nlm.nih.gov/geo/info/qqtutorial.html</a>.
 We can use the same term to query our desirable results in
-<code>search_geo</code>. <code>search_geo</code> will parse the
+<code>geo_search</code>. <code>geo_search</code> will parse the
 searching results and return a <code>data.frame</code> object containing
 all the records based on the search term. The internal of
-<code>search_geo</code> is based on <a href="https://github.com/ropensci/rentrez"><code>rentrez</code></a>
+<code>geo_search</code> is based on <a href="https://github.com/ropensci/rentrez"><code>rentrez</code></a>
 package, which provides functions working with the <a href="http://www.ncbi.nlm.nih.gov/books/NBK25500/">NCBI Eutils</a> API,
 so we can utilize <code>NCBI API key</code> to increase the downloading
 speed, details see <a href="https://docs.ropensci.org/rentrez/articles/rentrez_tutorial.html#rate-limiting-and-api-keys">https://docs.ropensci.org/rentrez/articles/rentrez_tutorial.html#rate-limiting-and-api-keys</a>.</p>
 <p>Providing we want <em><strong>GSE</strong></em> GEO records related
 to <em><strong>human diabetes</strong></em>, we can get these records by
 following code, the returned object is a <code>data.frame</code>:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>diabetes_gse_records <span class="ot">&lt;-</span> <span class="fu">search_geo</span>(</span>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>diabetes_gse_records <span class="ot">&lt;-</span> <span class="fu">geo_search</span>(</span>
 <span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>    <span class="st">&quot;diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]&quot;</span></span>
 <span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>)</span>
 <span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="fu">head</span>(diabetes_gse_records[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>])</span>
@@ -1186,20 +1186,20 @@ directly.</p>
 <span id="cb10-188"><a href="#cb10-188" tabindex="-1"></a><span class="co">#&gt; GSM1304905            age: 49; gender: M; race: W; pmi: 21.5; ph: 5.97; rin: 6; tissue: hippocampus; disease state: schizo; phrenia</span></span>
 <span id="cb10-189"><a href="#cb10-189" tabindex="-1"></a><span class="co">#&gt; GSM1304906         age: 47; gender: F; race: W; pmi: 14.37; ph: 6.35; rin: 6.3; tissue: hippocampus; disease state: schizo; phrenia</span></span>
 <span id="cb10-190"><a href="#cb10-190" tabindex="-1"></a><span class="co">#&gt;  [ reached &#39;max&#39; / getOption(&quot;max.print&quot;) -- omitted 150 rows ]</span></span></code></pre></div>
-<h3 id="download-supplementary-data-from-geo-database---get_geo_suppl">Download
-supplementary data from GEO database - <code>get_geo_suppl</code></h3>
+<h3 id="download-supplementary-data-from-geo-database---geo_suppl">Download
+supplementary data from GEO database - <code>geo_suppl</code></h3>
 <p>GEO stores raw data and processed sequence data files as the external
 supplementary data files. Sometimes, we may want to preprocess and
 normalize the rawdata by ourselves, in addition, it’s not uncommon that
 a GSE entity series matrix won’t contain the expression matrix, which is
 almost the case of high-throughout sequencing data.
-<code>get_geo_suppl</code> is designed for these conditions. Usually,
+<code>geo_suppl</code> is designed for these conditions. Usually,
 the expression matrix will be provided in the GSE supplementary files or
 in the GSM supplementary files.</p>
 <p>If the expression matrix is given in the GSE supplementary files, we
-can download it directly use <code>get_geo_suppl</code>, which will
+can download it directly use <code>geo_suppl</code>, which will
 return a character vector containing the path of downloaded files.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>gse160724 <span class="ot">&lt;-</span> <span class="fu">get_geo_suppl</span>(</span>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>gse160724 <span class="ot">&lt;-</span> <span class="fu">geo_suppl</span>(</span>
 <span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>    <span class="at">ids =</span> <span class="st">&quot;GSE160724&quot;</span>, <span class="fu">tempdir</span>(), </span>
 <span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>    <span class="at">pattern =</span> <span class="st">&quot;counts_anno&quot;</span></span>
 <span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>)</span>
@@ -1281,7 +1281,7 @@ contains the samples informations.</p>
 <span id="cb12-26"><a href="#cb12-26" tabindex="-1"></a><span class="co">#&gt; GSM5461791     Jul 19 2021      Feb 15 2022</span></span>
 <span id="cb12-27"><a href="#cb12-27" tabindex="-1"></a><span class="co">#&gt; GSM5461792     Jul 19 2021      Feb 15 2022</span></span>
 <span id="cb12-28"><a href="#cb12-28" tabindex="-1"></a>gse180383_smat_gsmids <span class="ot">&lt;-</span> gse180383_smat_cli[[<span class="st">&quot;geo_accession&quot;</span>]]</span>
-<span id="cb12-29"><a href="#cb12-29" tabindex="-1"></a>gse180383_smat_gsm_suppl <span class="ot">&lt;-</span> <span class="fu">get_geo_suppl</span>(gse180383_smat_gsmids, <span class="fu">tempdir</span>())</span>
+<span id="cb12-29"><a href="#cb12-29" tabindex="-1"></a>gse180383_smat_gsm_suppl <span class="ot">&lt;-</span> <span class="fu">geo_suppl</span>(gse180383_smat_gsmids, <span class="fu">tempdir</span>())</span>
 <span id="cb12-30"><a href="#cb12-30" tabindex="-1"></a><span class="co">#&gt; Downloading GSM5461787_trim_RNA_Mono_1_S13_R1_001_countsMatrix.txt.gz from FTP</span></span>
 <span id="cb12-31"><a href="#cb12-31" tabindex="-1"></a><span class="co">#&gt; site:</span></span>
 <span id="cb12-32"><a href="#cb12-32" tabindex="-1"></a><span class="co">#&gt; Downloading GSM5461788_trim_RNA_Mono_2_S14_R1_001_countsMatrix.txt.gz from FTP</span></span>
@@ -1345,13 +1345,13 @@ exact sample traits information as described in the above by utilizing
 <span id="cb13-45"><a href="#cb13-45" tabindex="-1"></a><span class="co">#&gt; GSM5461791 630 Rue Noetzlin</span></span>
 <span id="cb13-46"><a href="#cb13-46" tabindex="-1"></a><span class="co">#&gt; GSM5461792 630 Rue Noetzlin</span></span>
 <span id="cb13-47"><a href="#cb13-47" tabindex="-1"></a>gse180383_soft_gsmids <span class="ot">&lt;-</span> <span class="fu">names</span>(<span class="fu">gsm</span>(gse180383_soft))</span>
-<span id="cb13-48"><a href="#cb13-48" tabindex="-1"></a>gse180383_soft_gsm_suppl <span class="ot">&lt;-</span> <span class="fu">get_geo_suppl</span>(gse180383_soft_gsmids, <span class="fu">tempdir</span>())</span>
+<span id="cb13-48"><a href="#cb13-48" tabindex="-1"></a>gse180383_soft_gsm_suppl <span class="ot">&lt;-</span> <span class="fu">geo_suppl</span>(gse180383_soft_gsmids, <span class="fu">tempdir</span>())</span>
 <span id="cb13-49"><a href="#cb13-49" tabindex="-1"></a><span class="co">#&gt; Downloading 6 GSM suppl files from FTP site</span></span></code></pre></div>
 <h3 id="other-utilities">Other utilities</h3>
 <p><code>rgeo</code> also provide some useful function to help better
 interact with GEO.</p>
 <ul>
-<li><code>show_geo</code> function: Require a geo entity id and open GEO
+<li><code>geo_show</code> function: Require a geo entity id and open GEO
 Accession site in the default browser.</li>
 <li><code>log_trans</code> function: Require a expression matrix and
 this function will check whether this expression matrix has experienced

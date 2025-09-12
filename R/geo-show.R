@@ -1,5 +1,5 @@
 #' Load GEO Accession site into a HTML Browser
-#' 
+#'
 #' @param id A string representing the GEO entity
 #' ('GDS505','GSE2','GSM2','GPL96' eg.).
 #' @param browser a non-empty character string giving the name of the program to
@@ -11,15 +11,13 @@
 #' that the file association mechanism will be used.
 #' @details See [utils::browseURL()]
 #' @export
-show_geo <- function(id, browser = getOption("browser")) {
-    if (!(length(id) == 1L && is.character(id))) {
-        cli::cli_abort("{.arg id} must be a string")
-    }
-    id <- toupper(id)
-    check_ids(id)
+geo_show <- function(id, browser = getOption("browser")) {
+    assert_string(id, allow_empty = FALSE)
+    id <- check_ids(id)
     utils::browseURL(
         build_geo_acc_url(
-            id, scope = "self", amount = "quick", format = "html"
+            id,
+            scope = "self", amount = "quick", format = "html"
         ),
         browser = browser
     )

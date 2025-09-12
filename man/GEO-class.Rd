@@ -99,12 +99,12 @@ of current GEO series.}
 }}
 
 \examples{
- gse <- get_geo("GSE10", odir = tempdir(), gse_matrix = FALSE)
- accession(gse)
- gpllist <- gpl(gse)
- meta(gpllist[[1L]])
- accession(gpllist[[1L]])
- columns(gpllist[[1L]])
- datatable(gpllist[[1L]])
+gse <- geo("GSE10", odir = tempdir(), gse_matrix = FALSE)
+accession(gse)
+gpllist <- gpl(gse)
+meta(gpllist[[1L]])
+accession(gpllist[[1L]])
+columns(gpllist[[1L]])
+datatable(gpllist[[1L]])
 }
 \keyword{classes}

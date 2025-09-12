@@ -30,7 +30,7 @@ database](https://www.ncbi.nlm.nih.gov/geo/).
   full use of R to analyze GEO datasets.
 - Enable mapping bettween GPL id and Bioconductor annotation package.
 - Provide some useful utils function to work with GEO datasets like
-  `parse_gsm_list`, `parse_pdata`, `log_trans` and `show_geo`.
+  `parse_gsm_list`, `parse_pdata`, `log_trans` and `geo_show`.
 
 ## Installation
 
@@ -56,17 +56,17 @@ library(geokit)
 library(magrittr)
 ```
 
-### Search GEO database - `search_geo`
+### Search GEO database - `geo_search`
 
 The NCBI uses a search term syntax which can be associated with a
 specific search field enclosed by a pair of square brackets. So, for
 instance `"Homo sapiens[ORGN]"` denotes a search for `Homo sapiens` in
 the `“Organism”` field. Details see
 <https://www.ncbi.nlm.nih.gov/geo/info/qqtutorial.html>. We can use the
-same term to query our desirable results in `search_geo`. `search_geo`
+same term to query our desirable results in `geo_search`. `geo_search`
 will parse the searching results and return a `data.frame` object
 containing all the records based on the search term. The internal of
-`search_geo` is based on
+`geo_search` is based on
 [`rentrez`](https://github.com/ropensci/rentrez) package, which provides
 functions working with the [NCBI
 Eutils](http://www.ncbi.nlm.nih.gov/books/NBK25500/) API, so we can
@@ -78,7 +78,7 @@ we can get these records by following code, the returned object is a
 `data.frame`:
 
 ``` r
-diabetes_gse_records <- search_geo(
+diabetes_gse_records <- geo_search(
     "diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"
 )
 head(diabetes_gse_records[1:5])
@@ -195,7 +195,7 @@ example code to get soft file from `GPL`, `GSM` and `GDS` entity
 respectively.
 
 ``` r
-gpl <- get_geo("gpl98", odir = tempdir())
+gpl <- geo("gpl98", odir = tempdir())
 #> Downloading GPL98.txt from GEO Accession Site:
 gpl
 #> An object of GEOSoft
@@ -281,7 +281,7 @@ head(columns(gpl))
 ```
 
 ``` r
-gsm <- get_geo("GSM1", tempdir())
+gsm <- geo("GSM1", tempdir())
 #> Downloading GSM1.txt from GEO Accession Site:
 gsm
 #> An object of GEOSoft
@@ -307,7 +307,7 @@ head(columns(gsm))
 ```
 
 ``` r
-gds <- get_geo("GDS10", tempdir())
+gds <- geo("GDS10", tempdir())
 #> Downloading GDS10.soft.gz from FTP site:
 gds
 #> An object of GEOSoft
@@ -366,7 +366,7 @@ and `gsm` slots as a list of `GEOSoft`. To download GSE soft file, we
 just set `gse_matrix` to `FALSE` in `get_geo` function.
 
 ``` r
-gse <- get_geo("GSE10", tempdir(), gse_matrix = FALSE)
+gse <- geo("GSE10", tempdir(), gse_matrix = FALSE)
 #> Downloading GSE10_family.soft.gz from FTP site:
 #> Found 5 entities...
 #> GPL4 (1 of 5 entities)
@@ -405,7 +405,7 @@ get the up-to-date featureData, otherwise, `get_geo` will add
 featureData from GPL soft file directly.
 
 ``` r
-gse_matix <- get_geo("GSE10", tempdir())
+gse_matix <- geo("GSE10", tempdir())
 #> Downloading GSE10_series_matrix.txt.gz from FTP site:
 #> Downloading GSE10_family.soft.gz from FTP site:
 #> Cannot map GPL4 to a Bioconductor annotation package
@@ -433,7 +433,7 @@ gse_matix
 ```
 
 ``` r
-gse_matrix_with_pdata <- get_geo(
+gse_matrix_with_pdata <- geo(
     "gse53987", tempdir(),
     pdata_from_soft = FALSE,
     add_gpl = FALSE
@@ -625,23 +625,23 @@ gse_matrix_smp_info[grepl(
 #>  [ reached 'max' / getOption("max.print") -- omitted 150 rows ]
 ```
 
-### Download supplementary data from GEO database - `get_geo_suppl`
+### Download supplementary data from GEO database - `geo_suppl`
 
 GEO stores raw data and processed sequence data files as the external
 supplementary data files. Sometimes, we may want to preprocess and
 normalize the rawdata by ourselves, in addition, it’s not uncommon that
 a GSE entity series matrix won’t contain the expression matrix, which is
-almost the case of high-throughout sequencing data. `get_geo_suppl` is
+almost the case of high-throughout sequencing data. `geo_suppl` is
 designed for these conditions. Usually, the expression matrix will be
 provided in the GSE supplementary files or in the GSM supplementary
 files.
 
 If the expression matrix is given in the GSE supplementary files, we can
-download it directly use `get_geo_suppl`, which will return a character
+download it directly use `geo_suppl`, which will return a character
 vector containing the path of downloaded files.
 
 ``` r
-gse160724 <- get_geo_suppl(
+gse160724 <- geo_suppl(
     ids = "GSE160724", tempdir(), 
     pattern = "counts_anno"
 )
@@ -699,7 +699,7 @@ Although no expression matrix in the series matrix file, it still
 contains the samples informations.
 
 ``` r
-gse180383_smat <- get_geo(
+gse180383_smat <- geo(
     "GSE180383", tempdir(),
     gse_matrix = TRUE, add_gpl = FALSE,
     pdata_from_soft = FALSE
@@ -727,7 +727,7 @@ head(gse180383_smat_cli[1:5])
 #> GSM5461791     Jul 19 2021      Feb 15 2022
 #> GSM5461792     Jul 19 2021      Feb 15 2022
 gse180383_smat_gsmids <- gse180383_smat_cli[["geo_accession"]]
-gse180383_smat_gsm_suppl <- get_geo_suppl(gse180383_smat_gsmids, tempdir())
+gse180383_smat_gsm_suppl <- geo_suppl(gse180383_smat_gsmids, tempdir())
 #> Downloading GSM5461787_trim_RNA_Mono_1_S13_R1_001_countsMatrix.txt.gz from FTP
 #> site:
 #> Downloading GSM5461788_trim_RNA_Mono_2_S14_R1_001_countsMatrix.txt.gz from FTP
@@ -748,7 +748,7 @@ exact sample traits information as described in the above by utilizing
 `parse_gsm_list` function.
 
 ``` r
-gse180383_soft <- get_geo(
+gse180383_soft <- geo(
     "GSE180383", tempdir(),
     gse_matrix = FALSE
 )
@@ -795,7 +795,7 @@ head(gse180383_soft_cli[1:5])
 #> GSM5461791 630 Rue Noetzlin
 #> GSM5461792 630 Rue Noetzlin
 gse180383_soft_gsmids <- names(gsm(gse180383_soft))
-gse180383_soft_gsm_suppl <- get_geo_suppl(gse180383_soft_gsmids, tempdir())
+gse180383_soft_gsm_suppl <- geo_suppl(gse180383_soft_gsmids, tempdir())
 #> Downloading 6 GSM suppl files from FTP site
 ```
 
@@ -804,7 +804,7 @@ gse180383_soft_gsm_suppl <- get_geo_suppl(gse180383_soft_gsmids, tempdir())
 `rgeo` also provide some useful function to help better interact with
 GEO.
 
-- `show_geo` function: Require a geo entity id and open GEO Accession
+- `geo_show` function: Require a geo entity id and open GEO Accession
   site in the default browser.
 - `log_trans` function: Require a expression matrix and this function
   will check whether this expression matrix has experienced logarithmic

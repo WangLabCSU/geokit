@@ -20,7 +20,7 @@ pairs of annotation. If that is the case, this simply cleans the GSM
 values to column values.
 }
 \examples{
-gse201530_soft <- get_geo(
+gse201530_soft <- geo(
     "GSE201530",
     odir = tempdir(),
     gse_matrix = FALSE

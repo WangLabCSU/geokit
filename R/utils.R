@@ -23,11 +23,22 @@ column_to_rownames <- function(x, var = 1L) {
     )
 }
 
-read_lines <- function(file) {
+dir_create <- function(path, ...) {
+    if (!dir.exists(path) &&
+        !dir.create(path = path, showWarnings = FALSE, ...)) {
+        cli::cli_abort("Cannot create directory {.path {path}}")
+    }
+    invisible(path)
+}
+
+read_lines <- function(file, ...) {
     data.table::fread(
-        file = file, sep = "", header = FALSE,
+        file = file,
+        sep = "",
+        header = FALSE,
         colClasses = "character",
-        showProgress = FALSE
+        showProgress = FALSE,
+        ...
     )[[1L]]
 }
 
@@ -86,6 +97,7 @@ na_string <- c("NA", "null", "NULL", "Null")
 #' @importFrom data.table %chin%
 #' @importFrom rlang caller_arg caller_env
 check_ids <- function(ids, arg = caller_arg(ids), call = caller_env()) {
+    ids <- toupper(ids)
     geotypes <- substr(ids, 1L, 3L)
     is_geo_types <- geotypes %chin% c("GSE", "GPL", "GSM", "GDS")
     if (any(!is_geo_types)) {
@@ -100,6 +112,7 @@ check_ids <- function(ids, arg = caller_arg(ids), call = caller_env()) {
             call = call
         )
     }
+    ids
 }
 
 wrap_cat <- function(label, names, indent = 0L, exdent = 2L) {

@@ -22,8 +22,9 @@
 #' @return A modified data.frame.
 #'
 #' @examples
-#' gse53987 <- get_geo(
-#'     "gse53987", odir = tempdir(),
+#' gse53987 <- geo(
+#'     "gse53987",
+#'     odir = tempdir(),
 #'     gse_matrix = TRUE, add_gpl = FALSE,
 #'     pdata_from_soft = FALSE
 #' )
@@ -155,7 +156,7 @@ parse_gse_matrix_sample_characteristics <- function(sample_dt, characteristics_c
 #' @return a data.frame whose rows are samples and columns are the sample infos
 #'
 #' @examples
-#' gse201530_soft <- get_geo(
+#' gse201530_soft <- geo(
 #'     "GSE201530",
 #'     odir = tempdir(),
 #'     gse_matrix = FALSE
@@ -170,9 +171,10 @@ parse_gsm_list <- function(gsm_list) {
         }, logical(1L)
     ))
     if (!test_gsm_list) {
-        cli::cli_abort(
-            "{.arg gsm_list} must be a list of {.cls GEOSoft} object, especially for {.field @gsm} slot in a GEOSeries object."
-        )
+        cli::cli_abort(paste0(
+            "{.arg gsm_list} must be a list of {.cls GEOSoft} object, ",
+            "especially for {.field @gsm} slot in a GEOSeries object."
+        ))
     }
     res <- parse_gse_soft_sample_characteristics(gsm_list)
     set_rownames(res, "geo_accession")
@@ -267,11 +269,9 @@ parse_gse_soft_sample_characteristics <- function(gsm_list) {
             }
         }
     }
-    list_column_names <- names(
-        sample_meta_dt[, .SD, .SDcols = is.list]
-    )
+    list_column_names <- names(sample_meta_dt[, .SD, .SDcols = is.list]) # nolint
     sample_meta_dt[
-        , (list_column_names) := lapply(.SD, function(x) {
+        , (list_column_names) := lapply(.SD, function(x) { # nolint
             vapply(x, paste0, character(1L), collapse = "; ")
         }),
         .SDcols = list_column_names
