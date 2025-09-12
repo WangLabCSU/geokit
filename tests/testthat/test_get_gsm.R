@@ -1,5 +1,5 @@
 testthat::test_that("basic GSM works", {
-    gsm <- geo("GSM11805", tempdir())
+    gsm <- geo("GSM11805", odir = tempdir())
 
     testthat::expect_s4_class(gsm, "GEOSoft")
     testthat::expect_s4_class(gsm, "GEOData")
