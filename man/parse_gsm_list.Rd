@@ -20,10 +20,10 @@ pairs of annotation. If that is the case, this simply cleans the GSM
 values to column values.
 }
 \examples{
-gse201530_soft <- rgeo::get_geo(
+gse201530_soft <- get_geo(
     "GSE201530",
     dest_dir = tempdir(),
     gse_matrix = FALSE
 )
-rgeo::parse_gsm_list(rgeo::gsm(gse201530_soft))
+parse_gsm_list(gsm(gse201530_soft))
 }

@@ -1,9 +1,9 @@
 testthat::test_that("GSE/GSM with characteristic column seperated by no special string warned and parsing column names worked well", {
     testthat::expect_s4_class(
-        rgeo::get_geo("GSE8462", tempdir()), "ExpressionSet"
+        get_geo("GSE8462", tempdir()), "ExpressionSet"
     )
     testthat::expect_warning(
-        gse <- rgeo::get_geo(
+        gse <- get_geo(
             "GSE53987", tempdir(),
             pdata_from_soft = FALSE, add_gpl = FALSE
         ),
@@ -11,7 +11,7 @@ testthat::test_that("GSE/GSM with characteristic column seperated by no special 
     )
     pdata <- Biobase::pData(gse)
     testthat::expect_error(
-        rgeo::parse_pdata(pdata),
+        parse_pdata(pdata),
         regexp = "Please check if `sep` and `split` parameters can parse `columns`."
     )
     pdata$characteristics_ch1 <- stringr::str_replace_all(
@@ -19,7 +19,7 @@ testthat::test_that("GSE/GSM with characteristic column seperated by no special 
         "gender|race|pmi|ph|rin|tissue|disease state",
         function(x) paste0("; ", x)
     )
-    pdata <- rgeo::parse_pdata(pdata)
+    pdata <- parse_pdata(pdata)
     testthat::expect_true(
         length(
             grep("^ch1_", names(pdata),

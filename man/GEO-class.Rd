@@ -99,7 +99,7 @@ of current GEO series.}
 }}
 
 \examples{
- gse <- rgeo::get_geo("GSE10", tempdir(), gse_matrix = FALSE)
+ gse <- get_geo("GSE10", tempdir(), gse_matrix = FALSE)
  accession(gse)
  gpllist <- gpl(gse)
  meta(gpllist[[1L]])

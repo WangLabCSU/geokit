@@ -52,7 +52,7 @@ pak::pkg_install("Yunuuuu/rgeo")
 ## Vignettes
 
 ``` r
-library(rgeo)
+library(geokit)
 library(magrittr)
 ```
 

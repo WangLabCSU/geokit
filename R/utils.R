@@ -1,3 +1,5 @@
+`%||%` <- function(x, y) if (is.null(x)) y else x
+
 return_object_or_list <- function(x, names = NULL) {
     if (length(x) == 1L) {
         x[[1L]]
@@ -16,7 +18,7 @@ set_rownames <- function(x, var = 1L) {
 }
 
 column_to_rownames <- function(x, var = 1L) {
-    data.table::setDF(x[, .SD, .SDcols = !var],
+    data.table::setDF(x[, .SD, .SDcols = !var], # nolint
         rownames = as.character(x[[var]])
     )
 }
@@ -59,7 +61,8 @@ read_text <- function(text, ...) {
         return(data.table::data.table())
     }
     file <- tempfile()
-    data.table::fwrite(list(text),
+    data.table::fwrite(
+        list(text),
         file = file,
         quote = FALSE,
         na = "NA",
@@ -77,9 +80,12 @@ read_text <- function(text, ...) {
         showProgress = FALSE
     )
 }
+
 na_string <- c("NA", "null", "NULL", "Null")
 
-check_ids <- function(ids, arg = rlang::caller_arg(ids), call = parent.frame()) {
+#' @importFrom data.table %chin%
+#' @importFrom rlang caller_arg caller_env
+check_ids <- function(ids, arg = caller_arg(ids), call = caller_env()) {
     geotypes <- substr(ids, 1L, 3L)
     is_geo_types <- geotypes %chin% c("GSE", "GPL", "GSM", "GDS")
     if (any(!is_geo_types)) {
@@ -118,5 +124,3 @@ wrap_cat <- function(label, names, indent = 0L, exdent = 2L) {
         indent = indent, exdent = exdent
     ), sep = "\n")
 }
-
-`%||%` <- function(x, y) if (is.null(x)) y else x

@@ -7,6 +7,6 @@
 # * https://testthat.r-lib.org/reference/test_package.html#special-files
 
 library(testthat)
-library(rgeo)
+library(geokit)
 
-test_check("rgeo")
+test_check("geokit")

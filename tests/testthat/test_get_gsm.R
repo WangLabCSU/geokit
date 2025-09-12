@@ -1,5 +1,5 @@
 testthat::test_that("basic GSM works", {
-    gsm <- rgeo::get_geo("GSM11805", tempdir())
+    gsm <- get_geo("GSM11805", tempdir())
 
     testthat::expect_s4_class(gsm, "GEOSoft")
     testthat::expect_s4_class(gsm, "GEOData")

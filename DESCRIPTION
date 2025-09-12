@@ -1,33 +1,34 @@
-Package: rgeo
-Title: R interface for GEO database
+Package: geokit
+Title: Tools for Accessing and Working with the Gene Expression Omnibus (GEO)
 Version: 0.0.1.9000
 Authors@R: 
     person("Yun", "Peng", , "yunyunpp96@outlook.com", role = c("aut", "cre"))
-Description: R interface for Gene Expression Omnibus (GEO) database.
-License: GPL (>= 3)
-Encoding: UTF-8
-Depends: 
+Description: Provides a tidy and convenient R interface to the NCBI Gene
+    Expression Omnibus (GEO) database. Functions are included to query,
+    download, and parse GEO metadata and expression data, making it easier to
+    integrate GEO datasets into downstream analyses and workflows.
+License: MIT + file LICENSE
+Depends:
     R (>= 3.5.0)
-Imports: 
-    data.table (>= 1.14.9),
-    rlang (>= 0.4.11),
+Imports:
+    data.table,
+    rlang,
     cli (>= 3.6.0),
     Biobase,
     curl (>= 6.0.0),
     methods,
     rentrez,
     xml2,
-    R.utils
+    R.utils,
+    utils
 Suggests: 
     BiocGenerics,
     bit64,
     stats,
     stringr,
-    testthat (>= 3.0.0),
-    utils
-Remotes: Rdatatable/data.table
+    testthat (>= 3.0.0)
 ByteCompile: true
 Config/testthat/edition: 3
-Config/testthat/parallel: true
+Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.2

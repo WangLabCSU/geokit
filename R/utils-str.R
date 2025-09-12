@@ -20,13 +20,15 @@ str_subset <- function(string, pattern, ..., fixed = FALSE) {
 }
 
 str_replace <- function(string, pattern, replacement, ..., fixed = FALSE) {
-    sub(pattern = pattern, replacement = replacement, x = string, 
+    sub(
+        pattern = pattern, replacement = replacement, x = string,
         perl = !fixed, fixed = fixed, ...
     )
 }
 
 str_replace_all <- function(string, pattern, replacement, ..., fixed = FALSE) {
-    gsub(pattern = pattern, replacement = replacement, x = string, 
+    gsub(
+        pattern = pattern, replacement = replacement, x = string,
         perl = !fixed, fixed = fixed, ...
     )
 }
@@ -38,6 +40,7 @@ str_extract <- function(string, pattern, ..., fixed = FALSE) {
     start[start == -1L] <- NA_integer_
     substr(string, start, end)
 }
+
 str_extract_all <- function(string, pattern, ..., fixed = FALSE) {
     regmatches(
         string,

@@ -22,7 +22,7 @@
 #' @return A modified data.frame.
 #'
 #' @examples
-#' gse53987 <- rgeo::get_geo(
+#' gse53987 <- get_geo(
 #'     "gse53987", tempdir(),
 #'     gse_matrix = TRUE, add_gpl = FALSE,
 #'     pdata_from_soft = FALSE
@@ -33,7 +33,7 @@
 #'     "gender|race|pmi|ph|rin|tissue|disease state",
 #'     function(x) paste0("; ", x)
 #' )
-#' gse53987_smp_info <- rgeo::parse_pdata(gse53987_smp_info)
+#' gse53987_smp_info <- parse_pdata(gse53987_smp_info)
 #' gse53987_smp_info[grepl(
 #'     "^ch1_|characteristics_ch1", names(gse53987_smp_info)
 #' )]
@@ -155,12 +155,12 @@ parse_gse_matrix_sample_characteristics <- function(sample_dt, characteristics_c
 #' @return a data.frame whose rows are samples and columns are the sample infos
 #'
 #' @examples
-#' gse201530_soft <- rgeo::get_geo(
+#' gse201530_soft <- get_geo(
 #'     "GSE201530",
 #'     dest_dir = tempdir(),
 #'     gse_matrix = FALSE
 #' )
-#' rgeo::parse_gsm_list(rgeo::gsm(gse201530_soft))
+#' parse_gsm_list(gsm(gse201530_soft))
 #' @export
 parse_gsm_list <- function(gsm_list) {
     test_gsm_list <- is.list(gsm_list) && all(vapply(

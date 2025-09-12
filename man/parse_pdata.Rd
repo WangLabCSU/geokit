@@ -35,7 +35,7 @@ column value is the character vector of \code{value} element in all \code{key-va
 pair.
 }
 \examples{
-gse53987 <- rgeo::get_geo(
+gse53987 <- get_geo(
     "gse53987", tempdir(),
     gse_matrix = TRUE, add_gpl = FALSE,
     pdata_from_soft = FALSE
@@ -46,7 +46,7 @@ gse53987_smp_info$characteristics_ch1 <- stringr::str_replace_all(
     "gender|race|pmi|ph|rin|tissue|disease state",
     function(x) paste0("; ", x)
 )
-gse53987_smp_info <- rgeo::parse_pdata(gse53987_smp_info)
+gse53987_smp_info <- parse_pdata(gse53987_smp_info)
 gse53987_smp_info[grepl(
     "^ch1_|characteristics_ch1", names(gse53987_smp_info)
 )]
