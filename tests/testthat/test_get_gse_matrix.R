@@ -1,3 +1,5 @@
+testthat::skip_if_not_installed("Biobase")
+
 testthat::test_that("Create dir correctly", {
     geo("GSE11413", odir = file.path(tempdir(), "test"))
     testthat::expect_true(dir.exists(file.path(tempdir(), "test")))

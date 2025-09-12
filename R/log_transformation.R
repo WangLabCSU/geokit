@@ -1,40 +1,45 @@
-#' Apply log2 transformation for matrix data if not.
+#' Apply log2 Transformation to Expression Data
+#'
+#' Checks whether the input data is already log-transformed; if not,
+#' applies a log2 transformation. This helps ensure comparability
+#' of expression values across datasets.
 #'
 #' @param data A matrix-like data object.
-#' @param pseudo Since expression values for a gene can be zero in some
-#' conditions (and non-zero in others), some advocate the use of
-#' pseudo-expression values, i.e. transformations of the form: log2(exprs +
-#' pseudo)
-#' @details Automatically check whether `data` has been logarithmically
-#' transformed, if not, applying a log2 transformation. The test methodology for
-#' logarithm transformation is based on
-#' [GEO2R](https://www.ncbi.nlm.nih.gov/geo/geo2r/)
-#' @references [geo2r
-#' analysis](https://www.ncbi.nlm.nih.gov/geo/geo2r/?acc=GSE1122)
-#' @return A `matrix` or an [ExpressionSet][Biobase::ExpressionSet] object
+#' @param pseudo A numeric value added before transformation to avoid
+#'   taking log of zero. For example, `log2(exprs + pseudo)`.
+#' @param ... Additional arguments passed to methods.
+#' @details
+#' The function heuristically determines whether `data` has been
+#' log-transformed, following the methodology used in
+#' [GEO2R](https://www.ncbi.nlm.nih.gov/geo/geo2r/). If not, it
+#' applies `log2()` with the specified `pseudo` offset.
+#' @references
+#' NCBI GEO2R: <https://www.ncbi.nlm.nih.gov/geo/geo2r/?acc=GSE1122>
+#' @return A `matrix` or an [ExpressionSet][Biobase::ExpressionSet] with
+#'   log2-transformed expression values.
 #' @export
-log_trans <- function(data, pseudo = 1) {
-    if (inherits(data, "ExpressionSet")) {
-        expr_data <- Biobase::exprs(data)
-    } else if (is.matrix(data)) {
-        expr_data <- data
-    } else {
-        cli::cli_abort("data should must be a {.cls matrix} or {.cls ExpressionSet}")
-    }
-    if (is_log_trans(expr_data)) {
+log_trans <- function(data, pseudo = 1, ...) {
+    assert_number_decimal(pseudo, allow_infinite = FALSE)
+    UseMethod("log_trans")
+}
+
+#' @export
+#' @rdname log_trans
+log_trans.matrix <- function(data, pseudo = 1, ...) {
+    if (is_log_trans(data)) {
         cli::cli_inform("log2 transformation wasn't needed")
-        return(data)
     } else {
         cli::cli_inform("Doing log2 transformation")
-        expr_data <- log2(expr_data + pseudo)
+        data <- log2(data + pseudo)
     }
-    if (inherits(data, "ExpressionSet")) {
-        Biobase::exprs(data) <- expr_data
-        return(data)
-    }
-    if (inherits(data, "matrix")) {
-        return(expr_data)
-    }
+    data
+}
+
+#' @export
+#' @rdname log_trans
+log_trans.ExpressionSet <- function(data, pseudo = 1, ...) {
+    Biobase::exprs(data) <- log_trans.matrix(Biobase::exprs(data), pseudo)
+    data
 }
 
 # check whether vector is log transformation ------------------------------

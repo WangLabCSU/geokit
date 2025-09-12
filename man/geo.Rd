@@ -115,11 +115,13 @@ consistent across the dataset. Information reflecting experimental design is
 provided through GDS subsets.
 }
 \examples{
-gse_matix <- geo("GSE10", odir = tempdir())
 gse <- geo("GSE10", gse_matrix = FALSE, odir = tempdir())
 gpl <- geo("gpl98", odir = tempdir())
 gsm <- geo("GSM1", odir = tempdir())
 gds <- geo("GDS10", odir = tempdir())
+if (require("Biobase")) {
+    gse_matix <- geo("GSE10", odir = tempdir())
+}
 
 }
 \references{

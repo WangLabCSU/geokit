@@ -97,11 +97,13 @@
 #' * <https://www.ncbi.nlm.nih.gov/geo/info/soft.html#format>
 #' * [Programmatic access to GEO FTP site](https://ftp.ncbi.nlm.nih.gov/geo/README.txt)
 #' @examples
-#' gse_matix <- geo("GSE10", odir = tempdir())
 #' gse <- geo("GSE10", gse_matrix = FALSE, odir = tempdir())
 #' gpl <- geo("gpl98", odir = tempdir())
 #' gsm <- geo("GSM1", odir = tempdir())
 #' gds <- geo("GDS10", odir = tempdir())
+#' if (require("Biobase")) {
+#'     gse_matix <- geo("GSE10", odir = tempdir())
+#' }
 #'
 #' @export
 geo <- function(ids, gse_matrix = TRUE, pdata_from_soft = TRUE,
@@ -111,6 +113,7 @@ geo <- function(ids, gse_matrix = TRUE, pdata_from_soft = TRUE,
     odir <- dir_create(odir, recursive = TRUE)
     geo_type <- substr(ids, 1L, 3L)[1L]
     if (geo_type == "GSE" && gse_matrix) {
+        check_bioc_installed("Biobase", "to build ExpressionSet")
         out_list <- get_gse_matrix(
             ids,
             odir = odir,

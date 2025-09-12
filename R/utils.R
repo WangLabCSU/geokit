@@ -50,6 +50,40 @@ read_lines <- function(file, ...) {
     )[[1L]]
 }
 
+check_bioc_installed <- function(pkg, reason = NULL, ...) {
+    rlang::check_installed(
+        pkg,
+        reason = reason,
+        ...,
+        action = function(pkgs, ...) {
+            if (is_installed("pak")) {
+                getExportedValue("pak", "pkg_install")(pkgs, ask = FALSE, ...)
+            } else if (is_installed("BiocManager")) {
+                getExportedValue("BiocManager", "install")(pkgs, ...)
+            } else {
+                choosed <- utils::menu(
+                    c("pak", "BiocManager"),
+                    title = paste(
+                        "Would you like to install `pak`/`BiocManager`",
+                        "in order to install", oxford_and(pkgs)
+                    )
+                )
+                if (choosed == 1L) {
+                    utils::install.packages("pak")
+                    getExportedValue("pak", "pkg_install")(
+                        pkgs, ask = FALSE, ...
+                    )
+                } else if (choosed == 2L) {
+                    utils::install.packages("BiocManager")
+                    getExportedValue("BiocManager", "install")(pkgs, ...)
+                } else {
+                    invokeRestart("abort")
+                }
+            }
+        }
+    )
+}
+
 # comment code to benchmark writeLines
 # gen_random <- function(characters, num_lines, min, max) {
 #     line_lengths <- sample.int(max - min, num_lines, replace = TRUE) + min
