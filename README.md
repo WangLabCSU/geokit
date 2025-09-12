@@ -7,7 +7,7 @@
 
 [![R-CMD-check](https://github.com/Yunuuuu/geokit/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Yunuuuu/geokit/actions/workflows/R-CMD-check.yaml)
 [![Codecov test
-coverage](https://codecov.io/gh/Yunuuuu/rgeo/graph/badge.svg)](https://app.codecov.io/gh/Yunuuuu/rgeo)
+coverage](https://codecov.io/gh/Yunuuuu/geokit/graph/badge.svg)](https://app.codecov.io/gh/Yunuuuu/geokit)
 <!-- badges: end -->
 
 The goal of `geokit` is to provide a unified interface for most
@@ -36,7 +36,7 @@ database](https://www.ncbi.nlm.nih.gov/geo/).
 
 ## Installation
 
-You can install the development version of rgeo from
+You can install the development version of `geokit` from
 [GitHub](https://github.com/) with:
 
 ``` r

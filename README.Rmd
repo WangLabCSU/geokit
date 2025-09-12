@@ -1,15 +1,7 @@
 ---
-output: 
-    github_document:
-        html_preview: true
-        keep_html: true
-always_allow_html: true
-knit: (function(input, ...) {
-    rmarkdown::render(
-      input,
-      output_format = "all"
-    )
-  })
+output:
+  github_document:
+    html_preview: FALSE
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -28,7 +20,7 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/Yunuuuu/geokit/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Yunuuuu/geokit/actions/workflows/R-CMD-check.yaml)
-[![Codecov test coverage](https://codecov.io/gh/Yunuuuu/rgeo/graph/badge.svg)](https://app.codecov.io/gh/Yunuuuu/rgeo)
+[![Codecov test coverage](https://codecov.io/gh/Yunuuuu/geokit/graph/badge.svg)](https://app.codecov.io/gh/Yunuuuu/geokit)
 <!-- badges: end -->
 
 The goal of `geokit` is to provide a unified interface for most interactions
@@ -55,7 +47,8 @@ between R and [GEO database](https://www.ncbi.nlm.nih.gov/geo/).
 
 ## Installation
 
-You can install the development version of rgeo from [GitHub](https://github.com/) with:
+You can install the development version of `geokit` from
+[GitHub](https://github.com/) with:
 
 ```{r, eval=FALSE}
 if (!requireNamespace("pak")) {
