@@ -6,6 +6,7 @@
 \usage{
 geo(
   ids,
+  amount = NULL,
   gse_matrix = TRUE,
   pdata_from_soft = TRUE,
   add_gpl = NULL,
@@ -20,6 +21,18 @@ All IDs must belong to the same GEO entity type. Examples:
 \itemize{
 \item DataSets: \code{c("GDS505", "GDS606")}
 \item Series: \code{c("GSE2", "GSE22")}
+}}
+
+\item{amount}{A character string specifying the amount of data to retrieve.
+One of \code{"brief"}, \code{"quick"}, \code{"data"}, or \code{"full"}.
+\itemize{
+\item \code{"brief"}: shows only the accession's attributes.
+\item \code{"quick"}: shows the accession's attributes and the first 20 rows of
+its data table.
+\item \code{"full"} (default): shows the accession's attributes and the complete
+data table.
+\item \code{"data"}: omits the accession's attributes, showing only links to other
+accessions and the full data table.
 }}
 
 \item{gse_matrix}{Logical, whether to retrieve Series Matrix files for

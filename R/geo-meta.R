@@ -6,23 +6,22 @@
 #' @inheritParams geo
 #' @return A [data.table][data.table::data.table] contains metadata of all ids.
 #' @export
-geo_meta <- function(ids, ftp_over_https = TRUE,
+geo_meta <- function(ids, amount = NULL, ftp_over_https = TRUE,
                      handle_opts = list(), odir = getwd()) {
     ids <- check_ids(ids)
     odir <- dir_create(odir, recursive = TRUE)
+    amount <- check_amount(amount)
     meta_list <- download_and_parse_soft(
         ids = ids,
         geo_type = substr(ids, 1L, 3L)[1L],
-        odir = odir,
-        ftp_over_https = ftp_over_https,
+        amount = amount,
         handle_opts = handle_opts,
         only_meta = TRUE,
+        ftp_over_https = ftp_over_https,
+        odir = odir,
         post_process = function(id, meta) {
-            meta[lengths(meta) != 1L] <- lapply(
-                meta[lengths(meta) != 1L],
-                paste0,
-                collapse = "; "
-            )
+            collapsed <- lengths(meta) != 1L
+            meta[collapsed] <- lapply(meta[collapsed], paste0, collapse = "; ")
             data.table::setDT(meta)
         }
     )

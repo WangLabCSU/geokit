@@ -24,6 +24,15 @@
 #'   All IDs must belong to the same GEO entity type. Examples:
 #'   - DataSets: `c("GDS505", "GDS606")`
 #'   - Series: `c("GSE2", "GSE22")`
+#' @param amount A character string specifying the amount of data to retrieve.
+#'   One of `"brief"`, `"quick"`, `"data"`, or `"full"`.
+#'   - `"brief"`: shows only the accession's attributes.
+#'   - `"quick"`: shows the accession's attributes and the first 20 rows of
+#'     its data table.
+#'   - `"full"` (default): shows the accession's attributes and the complete
+#'     data table.
+#'   - `"data"`: omits the accession's attributes, showing only links to other
+#'     accessions and the full data table.
 #' @param gse_matrix Logical, whether to retrieve Series Matrix files for
 #'   `GSE` entities. If `TRUE`, an [`ExpressionSet`][Biobase::ExpressionSet] is
 #'   returned.
@@ -107,7 +116,7 @@
 #' }
 #'
 #' @export
-geo <- function(ids, gse_matrix = TRUE, pdata_from_soft = TRUE,
+geo <- function(ids, amount = NULL, gse_matrix = TRUE, pdata_from_soft = TRUE,
                 add_gpl = NULL, ftp_over_https = TRUE,
                 handle_opts = list(), odir = getwd()) {
     ids <- check_ids(ids)
@@ -124,11 +133,14 @@ geo <- function(ids, gse_matrix = TRUE, pdata_from_soft = TRUE,
             handle_opts = handle_opts
         )
     } else {
+        amount <- check_amount(amount)
         out_list <- get_geo_soft(
             ids,
-            geo_type = geo_type, odir = odir,
+            geo_type = geo_type,
+            amount = amount,
             ftp_over_https = ftp_over_https,
-            handle_opts = handle_opts
+            handle_opts = handle_opts,
+            odir = odir
         )
     }
     return_object_or_list(out_list, ids)

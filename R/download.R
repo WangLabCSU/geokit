@@ -36,15 +36,15 @@ download_suppl_or_gse_matrix_files <- function(ids, odir, file_type,
     file_path_list
 }
 
-#' For GPL data, if we only need datatable data, we firstly try to download
+#' For GPL data, if we only need `datatable` data, we firstly try to download
 #' `annot` file in FTP site and then download "data" text file if it failed
 #' If we need full amount of data, we try to download it in ACC site since file
 #' in ACC site is much smaller than in FTP site.
 #' @param amount "data" or "full"
 #' @noRd
-download_gpl_files <- function(ids, odir = getwd(), amount = "data",
-                               handle_opts = list(), ftp_over_https = FALSE) {
-    amount <- match.arg(amount, c("data", "full"))
+download_gpl_files <- function(ids, amount = "data",
+                               handle_opts = list(), ftp_over_https = FALSE,
+                               odir = getwd()) {
     if (amount == "data") {
         download_status <- download_with_ftp(
             ids = ids, odir = odir,
@@ -66,7 +66,7 @@ download_gpl_files <- function(ids, odir = getwd(), amount = "data",
                 file_label = sprintf("{.strong GPL} {.field %s} amount", amount)
             )
         }
-    } else {
+    } else if (amount == "full") {
         download_status <- download_with_acc(
             ids = ids, odir = odir,
             scope = "self", amount = amount, format = "text",
@@ -87,39 +87,57 @@ download_gpl_files <- function(ids, odir = getwd(), amount = "data",
                 file_label = "{.strong GPL} {.field soft}"
             )
         }
+    } else {
+        download_with_acc(
+            ids = ids, odir = odir,
+            scope = "self", amount = amount, format = "text",
+            handle_opts = handle_opts,
+            file_label = sprintf("{.strong GPL} {.field %s} amount", amount)
+        )
     }
     out
 }
 
-#' For GSE files, try FTP site only, soft file in ACC site for GSE entitty is
-#' not full of all records
+#' For GSM files, Only try ACC site
 #' @noRd
-download_gse_soft_files <- function(ids, odir = getwd(), handle_opts = list(),
-                                    ftp_over_https = FALSE) {
-    download_with_ftp(
+download_gsm_files <- function(ids, amount = "full", handle_opts = list(),
+                               odir = getwd()) {
+    download_with_acc(
         ids = ids, odir = odir,
-        file_type = "soft",
+        scope = "self", amount = amount, format = "text",
         handle_opts = handle_opts,
-        ftp_over_https = ftp_over_https,
-        file_label = "{.strong GSE} {.field soft}"
+        file_label = sprintf("{.strong GSM} {.field %s} amount", amount)
     )
 }
 
-#' For GSM files, Only try ACC site
+#' For GSE series, full files should be downloaded from the FTP site.
+#' Soft files on the ACC site for GSE entities may not contain all records.
+#'
 #' @noRd
-download_gsm_files <- function(ids, odir = getwd(), handle_opts = list()) {
-    download_with_acc(
-        ids = ids, odir = odir,
-        scope = "self", amount = "full", format = "text",
-        handle_opts = handle_opts,
-        file_label = "{.strong GSM} {.field full} amount"
-    )
+download_gse_soft_files <- function(ids, amount = "full", handle_opts = list(),
+                                    ftp_over_https = FALSE, odir = getwd()) {
+    if (amount == "full") {
+        download_with_ftp(
+            ids = ids, odir = odir,
+            file_type = "soft",
+            handle_opts = handle_opts,
+            ftp_over_https = ftp_over_https,
+            file_label = "{.strong GSE} {.field soft}"
+        )
+    } else {
+        download_with_acc(
+            ids = ids, odir = odir,
+            scope = "self", amount = amount, format = "text",
+            handle_opts = handle_opts,
+            file_label = sprintf("{.strong GSE} {.field %s} amount", amount)
+        )
+    }
 }
 
 #' For GDS files, Only try FTP site
 #' @noRd
-download_gds_files <- function(ids, odir = getwd(), handle_opts = list(),
-                               ftp_over_https = FALSE) {
+download_gds_files <- function(ids, handle_opts = list(),
+                               ftp_over_https = FALSE, odir = getwd()) {
     download_with_ftp(
         ids = ids, odir = odir,
         file_type = "soft",
@@ -163,8 +181,12 @@ download_with_acc <- function(ids, odir, scope = "self", amount = "full",
         xml = "xml",
         html = "html"
     )
-    download_inform(urls,
-        file.path(odir, paste(ids, file_ext, sep = ".")),
+    download_inform(
+        urls,
+        file.path(
+            odir,
+            paste(paste(ids, amount, sep = "_"), file_ext, sep = ".")
+        ),
         site = "acc",
         handle_opts = handle_opts,
         fail = fail,
@@ -235,9 +257,9 @@ download_inform <- function(urls, file_paths, site, file_label = "",
     )
     is_existed <- file.exists(file_paths)
     if (any(is_existed)) {
-        cli::cli_inform(paste(
-            "Finding {.val {sum(is_existed)}} {file_label} file{?s} already",
-            "downloaded: {.file {basename(file_paths[is_existed])}}"
+        cli::cli_inform(sprintf(
+            "Finding {.val {sum(is_existed)}} %s file{?s} already %s",
+            file_label, "downloaded: {.file {basename(file_paths[is_existed])}}"
         ))
         urls <- urls[!is_existed]
         file_paths <- file_paths[!is_existed]

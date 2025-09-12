@@ -4,7 +4,13 @@
 \alias{geo_meta}
 \title{Get the metadata of multiple GEO identities}
 \usage{
-geo_meta(ids, ftp_over_https = TRUE, handle_opts = list(), odir = getwd())
+geo_meta(
+  ids,
+  amount = NULL,
+  ftp_over_https = TRUE,
+  handle_opts = list(),
+  odir = getwd()
+)
 }
 \arguments{
 \item{ids}{Character vector of GEO accession IDs to download and parse.
@@ -12,6 +18,18 @@ All IDs must belong to the same GEO entity type. Examples:
 \itemize{
 \item DataSets: \code{c("GDS505", "GDS606")}
 \item Series: \code{c("GSE2", "GSE22")}
+}}
+
+\item{amount}{A character string specifying the amount of data to retrieve.
+One of \code{"brief"}, \code{"quick"}, \code{"data"}, or \code{"full"}.
+\itemize{
+\item \code{"brief"}: shows only the accession's attributes.
+\item \code{"quick"}: shows the accession's attributes and the first 20 rows of
+its data table.
+\item \code{"full"} (default): shows the accession's attributes and the complete
+data table.
+\item \code{"data"}: omits the accession's attributes, showing only links to other
+accessions and the full data table.
 }}
 
 \item{ftp_over_https}{Logical scalar. If \code{TRUE}, connects to GEO FTP via

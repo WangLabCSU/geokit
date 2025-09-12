@@ -157,6 +157,19 @@ check_ids <- function(ids, arg = caller_arg(ids), call = caller_env()) {
     ids
 }
 
+#' @importFrom rlang arg_match0
+check_amount <- function(amount, arg = caller_arg(amount),
+                         call = caller_env()) {
+    if (is.null(amount)) {
+        "full"
+    } else {
+        arg_match0(
+            amount, c("brief", "quick", "data", "full"),
+            arg_nm = arg, error_call = call
+        )
+    }
+}
+
 wrap_cat <- function(label, names, indent = 0L, exdent = 2L) {
     label <- sprintf("%s:", label)
     total <- length(names)
