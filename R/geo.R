@@ -1,56 +1,57 @@
-#' Get a GEO object from GEO FTP site
+#' Retrieve GEO Objects from NCBI GEO
 #'
-#' This function is the main user-level function in the `rgeo` package. It
-#' implements the downloading and parsing of GEO files.
+#' @description
+#' This is the main user-facing function in the `r pkg_nm()` package. It
+#' downloads and parses GEO files, returning objects corresponding to different
+#' GEO entity types.
 #'
-#' @param ids A character vector representing the GEO entity for downloading and
-#'  parsing. All ids must in the same GEO identity (`c("GDS505", "GDS606")` are
-#'  all GEO DataSets, `c("GSE2", "GSE22")` are all GEO series eg.).
-#' @param gse_matrix A logical value indicates whether to retrieve Series Matrix
-#'  files when handling a `GSE` GEO entity. When set to `TRUE`, an
-#'  [`ExpressionSet`][Biobase::ExpressionSet] Object will be returned.
-#' @param pdata_from_soft A logical value indicates whether derive `phenoData`
-#'  from GSE series soft file when parsing
-#'  [`ExpressionSet`][Biobase::ExpressionSet] Object. Defaults to `TRUE`.
-#'  Sometimes soft file can be in large size, you can disable the downloading of
-#'  soft file by setting `pdata_from_soft` into `FALSE`. if `FALSE`, `phenoData`
-#'  will be parsed directly from GEO series matrix file, which is what
-#'  `GEOquery` do, in this way, `characteristics_ch*` column sometimes cannot be
-#'  parsed correctly.
-#' @param add_gpl A logical value indicates whether to add **platform** (namely
-#'  the [`featureData`][Biobase::featureData] slot in the
-#'  [`ExpressionSet`][Biobase::ExpressionSet] Object) information when handling
-#'  a `GSE` GEO entity with `gse_matrix` option `TRUE`. `add_gpl` is set to
-#'  `NULL` by default, which means the internal will try to map the GPL
-#'  accession ID into a Bioconductor annotation package firstly, if it succeed,
-#'  the [`annotation`][Biobase::eSet] slot in the returned
-#'  [`ExpressionSet`][Biobase::ExpressionSet] object will be set to the found
-#'  Bioconductor annotation package and the `add_gpl` will be set to `FALSE`,
-#'  otherwise, `add_gpl` will be set to `TRUE`.
-#' @param ftp_over_https A scalar logical value indicates whether to connect GEO
-#'  FTP site with https traffic. If `TRUE`, will download FTP files from
-#'  <https://ftp.ncbi.nlm.nih.gov/geo>, which is used by GEOquery, otherwise,
-#'  will use <ftp://ftp.ncbi.nlm.nih.gov/geo> directly.
+#' `geo()` allows programmatic access to
+#' [NCBI GEO](http://www.ncbi.nlm.nih.gov/geo) data. GEO stores high-throughput
+#' experimental data, including microarrays, SAGE, and mass spectrometry
+#' proteomics. Entities handled by `geo()` include:
+#'
+#' - **Platform (GPLxxx)**: Defines probe elements or detectable molecules.
+#' - **Sample (GSMxxx)**: Describes conditions and measurements for individual
+#'   samples.
+#' - **Series (GSExxx)**: Groups related samples, describing experimental
+#'   context.
+#' - **DataSet (GDSxxx)**: Curated sets of comparable samples.
+#'
+#' The function downloads and parses the relevant SOFT or Series Matrix files,
+#' optionally mapping platform IDs to Bioconductor annotation packages.
+#'
+#' @param ids Character vector of GEO accession IDs to download and parse.
+#'   All IDs must belong to the same GEO entity type. Examples:
+#'   - DataSets: `c("GDS505", "GDS606")`
+#'   - Series: `c("GSE2", "GSE22")`
+#' @param gse_matrix Logical, whether to retrieve Series Matrix files for
+#'   `GSE` entities. If `TRUE`, an [`ExpressionSet`][Biobase::ExpressionSet] is
+#'   returned.
+#' @param pdata_from_soft Logical, whether to derive `phenoData` from the GSE
+#'   series SOFT file when creating an
+#'   [`ExpressionSet`][Biobase::ExpressionSet].  Defaults to `TRUE`. If `FALSE`,
+#'   `phenoData` is parsed from the series matrix file; note that some
+#'   `characteristics_ch*` columns may not parse correctly.
+#' @param add_gpl Logical or `NULL`. Whether to include platform information
+#'   (the [`featureData`][Biobase::featureData] slot) when handling `GSE`
+#'   entities with `gse_matrix = TRUE`. If `NULL` (default), the function
+#'   attempts to map the GPL accession to a Bioconductor annotation package. If
+#'   successful, the [`annotation`][Biobase::eSet] slot is updated and `add_gpl`
+#'   is set to `FALSE`; otherwise, `add_gpl` is set to `TRUE`.
+#' @param ftp_over_https Logical scalar. If `TRUE`, connects to GEO FTP via
+#'   HTTPS (`https://ftp.ncbi.nlm.nih.gov/geo`); otherwise, uses plain FTP.
 #' @param handle_opts A list of named options / headers to be set in the
-#'  [handle][curl::new_handle].
-#' @param odir The destination directory for any downloads. Defaults to
-#'  current working dir.
-#' @return An object of the appropriate class (GDS, GPL, GSM, or GSE) is
-#'  returned. For `GSE` entity, if `gse_matrix` parameter is `FALSE`, an
-#'  [GEOSeries-class] object is returned and if `gse_matrix` parameter is
-#'  `TRUE`, a [`ExpressionSet`][Biobase::ExpressionSet] Object or a list of
-#'  [`ExpressionSet`][Biobase::ExpressionSet] Objects is returned with every
-#'  element correspongding to each Series Matrix file associated with the GSE
-#'  accesion. And for other GEO entity, a [GEOSoft-class] object is returned.
+#'  [`multi_download`][curl::multi_download].
+#' @param odir Destination directory for downloads. Defaults to the current
+#' working directory.
+#' @return Returns an object corresponding to the GEO entity type:
+#' - `GSE` with `gse_matrix = FALSE`: [GEOSeries-class] object.
+#' - `GSE` with `gse_matrix = TRUE`: an
+#'   [`ExpressionSet`][Biobase::ExpressionSet] or a list of `ExpressionSet`s,
+#'   one per Series Matrix file.
+#' - Other entities: [GEOSoft-class] object.
+#'
 #' @details
-#'
-#' Use `geo` functions to download and parse information available from [NCBI
-#' GEO](http://www.ncbi.nlm.nih.gov/geo). Here are some details about what is
-#' avaible from GEO. All entity types are handled by `geo` and essentially any
-#' information in the GEO SOFT format is reflected in the resulting data
-#' structure.
-#'
-#' From the GEO website:
 #'
 #' The Gene Expression Omnibus (GEO) from NCBI serves as a public repository
 #' for a wide range of high-throughput experimental data. These data include

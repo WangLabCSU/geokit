@@ -7,20 +7,21 @@
 geo_meta(ids, ftp_over_https = TRUE, handle_opts = list(), odir = getwd())
 }
 \arguments{
-\item{ids}{A character vector representing the GEO entity for downloading and
-parsing. All ids must in the same GEO identity (\code{c("GDS505", "GDS606")} are
-all GEO DataSets, \code{c("GSE2", "GSE22")} are all GEO series eg.).}
+\item{ids}{Character vector of GEO accession IDs to download and parse.
+All IDs must belong to the same GEO entity type. Examples:
+\itemize{
+\item DataSets: \code{c("GDS505", "GDS606")}
+\item Series: \code{c("GSE2", "GSE22")}
+}}
 
-\item{ftp_over_https}{A scalar logical value indicates whether to connect GEO
-FTP site with https traffic. If \code{TRUE}, will download FTP files from
-\url{https://ftp.ncbi.nlm.nih.gov/geo}, which is used by GEOquery, otherwise,
-will use \url{ftp://ftp.ncbi.nlm.nih.gov/geo} directly.}
+\item{ftp_over_https}{Logical scalar. If \code{TRUE}, connects to GEO FTP via
+HTTPS (\verb{https://ftp.ncbi.nlm.nih.gov/geo}); otherwise, uses plain FTP.}
 
 \item{handle_opts}{A list of named options / headers to be set in the
-\link[curl:handle]{handle}.}
+\code{\link[curl:multi_download]{multi_download}}.}
 
-\item{odir}{The destination directory for any downloads. Defaults to
-current working dir.}
+\item{odir}{Destination directory for downloads. Defaults to the current
+working directory.}
 }
 \value{
 A \link{data.table} contains metadata of all ids.

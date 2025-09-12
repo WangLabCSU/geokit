@@ -2,7 +2,7 @@
 % Please edit documentation in R/geo.R
 \name{geo}
 \alias{geo}
-\title{Get a GEO object from GEO FTP site}
+\title{Retrieve GEO Objects from NCBI GEO}
 \usage{
 geo(
   ids,
@@ -15,66 +15,71 @@ geo(
 )
 }
 \arguments{
-\item{ids}{A character vector representing the GEO entity for downloading and
-parsing. All ids must in the same GEO identity (\code{c("GDS505", "GDS606")} are
-all GEO DataSets, \code{c("GSE2", "GSE22")} are all GEO series eg.).}
+\item{ids}{Character vector of GEO accession IDs to download and parse.
+All IDs must belong to the same GEO entity type. Examples:
+\itemize{
+\item DataSets: \code{c("GDS505", "GDS606")}
+\item Series: \code{c("GSE2", "GSE22")}
+}}
 
-\item{gse_matrix}{A logical value indicates whether to retrieve Series Matrix
-files when handling a \code{GSE} GEO entity. When set to \code{TRUE}, an
-\code{\link[Biobase:class.ExpressionSet]{ExpressionSet}} Object will be returned.}
+\item{gse_matrix}{Logical, whether to retrieve Series Matrix files for
+\code{GSE} entities. If \code{TRUE}, an \code{\link[Biobase:class.ExpressionSet]{ExpressionSet}} is
+returned.}
 
-\item{pdata_from_soft}{A logical value indicates whether derive \code{phenoData}
-from GSE series soft file when parsing
-\code{\link[Biobase:class.ExpressionSet]{ExpressionSet}} Object. Defaults to \code{TRUE}.
-Sometimes soft file can be in large size, you can disable the downloading of
-soft file by setting \code{pdata_from_soft} into \code{FALSE}. if \code{FALSE}, \code{phenoData}
-will be parsed directly from GEO series matrix file, which is what
-\code{GEOquery} do, in this way, \verb{characteristics_ch*} column sometimes cannot be
-parsed correctly.}
+\item{pdata_from_soft}{Logical, whether to derive \code{phenoData} from the GSE
+series SOFT file when creating an
+\code{\link[Biobase:class.ExpressionSet]{ExpressionSet}}.  Defaults to \code{TRUE}. If \code{FALSE},
+\code{phenoData} is parsed from the series matrix file; note that some
+\verb{characteristics_ch*} columns may not parse correctly.}
 
-\item{add_gpl}{A logical value indicates whether to add \strong{platform} (namely
-the \code{\link[Biobase:featureData]{featureData}} slot in the
-\code{\link[Biobase:class.ExpressionSet]{ExpressionSet}} Object) information when handling
-a \code{GSE} GEO entity with \code{gse_matrix} option \code{TRUE}. \code{add_gpl} is set to
-\code{NULL} by default, which means the internal will try to map the GPL
-accession ID into a Bioconductor annotation package firstly, if it succeed,
-the \code{\link[Biobase:class.eSet]{annotation}} slot in the returned
-\code{\link[Biobase:class.ExpressionSet]{ExpressionSet}} object will be set to the found
-Bioconductor annotation package and the \code{add_gpl} will be set to \code{FALSE},
-otherwise, \code{add_gpl} will be set to \code{TRUE}.}
+\item{add_gpl}{Logical or \code{NULL}. Whether to include platform information
+(the \code{\link[Biobase:featureData]{featureData}} slot) when handling \code{GSE}
+entities with \code{gse_matrix = TRUE}. If \code{NULL} (default), the function
+attempts to map the GPL accession to a Bioconductor annotation package. If
+successful, the \code{\link[Biobase:class.eSet]{annotation}} slot is updated and \code{add_gpl}
+is set to \code{FALSE}; otherwise, \code{add_gpl} is set to \code{TRUE}.}
 
-\item{ftp_over_https}{A scalar logical value indicates whether to connect GEO
-FTP site with https traffic. If \code{TRUE}, will download FTP files from
-\url{https://ftp.ncbi.nlm.nih.gov/geo}, which is used by GEOquery, otherwise,
-will use \url{ftp://ftp.ncbi.nlm.nih.gov/geo} directly.}
+\item{ftp_over_https}{Logical scalar. If \code{TRUE}, connects to GEO FTP via
+HTTPS (\verb{https://ftp.ncbi.nlm.nih.gov/geo}); otherwise, uses plain FTP.}
 
 \item{handle_opts}{A list of named options / headers to be set in the
-\link[curl:handle]{handle}.}
+\code{\link[curl:multi_download]{multi_download}}.}
 
-\item{odir}{The destination directory for any downloads. Defaults to
-current working dir.}
+\item{odir}{Destination directory for downloads. Defaults to the current
+working directory.}
 }
 \value{
-An object of the appropriate class (GDS, GPL, GSM, or GSE) is
-returned. For \code{GSE} entity, if \code{gse_matrix} parameter is \code{FALSE}, an
-\linkS4class{GEOSeries} object is returned and if \code{gse_matrix} parameter is
-\code{TRUE}, a \code{\link[Biobase:class.ExpressionSet]{ExpressionSet}} Object or a list of
-\code{\link[Biobase:class.ExpressionSet]{ExpressionSet}} Objects is returned with every
-element correspongding to each Series Matrix file associated with the GSE
-accesion. And for other GEO entity, a \linkS4class{GEOSoft} object is returned.
+Returns an object corresponding to the GEO entity type:
+\itemize{
+\item \code{GSE} with \code{gse_matrix = FALSE}: \linkS4class{GEOSeries} object.
+\item \code{GSE} with \code{gse_matrix = TRUE}: an
+\code{\link[Biobase:class.ExpressionSet]{ExpressionSet}} or a list of \code{ExpressionSet}s,
+one per Series Matrix file.
+\item Other entities: \linkS4class{GEOSoft} object.
+}
 }
 \description{
-This function is the main user-level function in the \code{rgeo} package. It
-implements the downloading and parsing of GEO files.
+This is the main user-facing function in the geokit package. It
+downloads and parses GEO files, returning objects corresponding to different
+GEO entity types.
+
+\code{geo()} allows programmatic access to
+\href{http://www.ncbi.nlm.nih.gov/geo}{NCBI GEO} data. GEO stores high-throughput
+experimental data, including microarrays, SAGE, and mass spectrometry
+proteomics. Entities handled by \code{geo()} include:
+\itemize{
+\item \strong{Platform (GPLxxx)}: Defines probe elements or detectable molecules.
+\item \strong{Sample (GSMxxx)}: Describes conditions and measurements for individual
+samples.
+\item \strong{Series (GSExxx)}: Groups related samples, describing experimental
+context.
+\item \strong{DataSet (GDSxxx)}: Curated sets of comparable samples.
+}
+
+The function downloads and parses the relevant SOFT or Series Matrix files,
+optionally mapping platform IDs to Bioconductor annotation packages.
 }
 \details{
-Use \code{geo} functions to download and parse information available from \href{http://www.ncbi.nlm.nih.gov/geo}{NCBI GEO}. Here are some details about what is
-avaible from GEO. All entity types are handled by \code{geo} and essentially any
-information in the GEO SOFT format is reflected in the resulting data
-structure.
-
-From the GEO website:
-
 The Gene Expression Omnibus (GEO) from NCBI serves as a public repository
 for a wide range of high-throughput experimental data. These data include
 single and dual channel microarray-based experiments measuring mRNA, genomic
