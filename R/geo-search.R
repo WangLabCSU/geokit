@@ -31,8 +31,8 @@ geo_search <- function(query, step = 500L, interval = NULL) {
     assert_number_decimal(interval, min = 0, allow_null = TRUE)
     interval <- interval %||% 0
     records_num <- rentrez::entrez_search("gds", query, retmax = 0L)$count
-    seq_starts <- seq(1L, records_num, step)
-    records <- character(length(seq_starts))
+    retstarts <- seq(0L, records_num, step)
+    records <- character(length(retstarts))
     search_res <- rentrez::entrez_search(
         "gds", query,
         use_history = TRUE, retmax = 0L
@@ -44,16 +44,16 @@ geo_search <- function(query, step = 500L, interval = NULL) {
         total = records_num,
         clear = FALSE
     )
-    for (i in seq_along(seq_starts)) {
-        records[[i]] <- rentrez::entrez_fetch(
+    for (i in seq_along(retstarts)) {
+        records[i] <- rentrez::entrez_fetch(
             db = "gds", web_history = search_res$web_history,
             rettype = "summary", retmode = "text",
-            retmax = step, retstart = seq_starts[[i]]
+            retmax = step, retstart = retstarts[[i]]
         )
-        if (i == length(seq_starts)) {
-            n_records <- records_num - seq_starts[[i]] + 1L
+        if (i == length(retstarts)) {
+            n_records <- records_num - retstarts[[i]] + 1L
         } else {
-            n_records <- seq_starts[[i + 1L]] - seq_starts[[i]]
+            n_records <- retstarts[[i + 1L]] - retstarts[[i]]
         }
         cli::cli_progress_update(inc = n_records, id = bar)
         if (interval > 0) Sys.sleep(interval)
