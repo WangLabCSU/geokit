@@ -106,7 +106,7 @@
 #' @export
 geo <- function(ids, gse_matrix = TRUE, pdata_from_soft = TRUE,
                 add_gpl = NULL, ftp_over_https = TRUE,
-                handle_opts = list(connecttimeout = 60L), odir = getwd()) {
+                handle_opts = list(), odir = getwd()) {
     ids <- check_ids(ids)
     odir <- dir_create(odir, recursive = TRUE)
     geo_type <- substr(ids, 1L, 3L)[1L]

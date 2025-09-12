@@ -7,8 +7,7 @@
 #' @return A [data.table][data.table] contains metadata of all ids.
 #' @export
 geo_meta <- function(ids, ftp_over_https = TRUE,
-                     handle_opts = list(connecttimeout = 60L),
-                     odir = getwd()) {
+                     handle_opts = list(), odir = getwd()) {
     ids <- check_ids(ids)
     odir <- dir_create(odir, recursive = TRUE)
     meta_list <- download_and_parse_soft(

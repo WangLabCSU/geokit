@@ -4,12 +4,7 @@
 \alias{geo_meta}
 \title{Get the metadata of multiple GEO identities}
 \usage{
-geo_meta(
-  ids,
-  ftp_over_https = TRUE,
-  handle_opts = list(connecttimeout = 60L),
-  odir = getwd()
-)
+geo_meta(ids, ftp_over_https = TRUE, handle_opts = list(), odir = getwd())
 }
 \arguments{
 \item{ids}{A character vector representing the GEO entity for downloading and

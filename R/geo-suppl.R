@@ -15,8 +15,7 @@
 #' geo_suppl("GSM1137", odir = tempdir())
 #' @export
 geo_suppl <- function(ids, pattern = NULL, ftp_over_https = TRUE,
-                      handle_opts = list(connecttimeout = 60L),
-                      odir = getwd()) {
+                      handle_opts = list(), odir = getwd()) {
     ids <- check_ids(ids)
     odir <- dir_create(odir, recursive = TRUE)
     file_paths <- download_suppl_or_gse_matrix_files(

@@ -2,9 +2,11 @@
 #' @noRd
 download_suppl_or_gse_matrix_files <- function(ids, odir, file_type,
                                                pattern = NULL,
-                                               handle_opts = list(), ftp_over_https = FALSE,
-                                               msg_id = NULL) {
-    url_list <- lapply(ids, list_geo_file_url,
+                                               handle_opts = list(),
+                                               ftp_over_https = FALSE,
+                                               file_label = NULL) {
+    url_list <- lapply(
+        ids, list_geo_file_url,
         file_type = file_type, handle_opts = handle_opts,
         ftp_over_https = ftp_over_https
     )
@@ -19,7 +21,7 @@ download_suppl_or_gse_matrix_files <- function(ids, odir, file_type,
             NULL
         }
     })
-    msg_id <- msg_id %||% sprintf(
+    file_label <- file_label %||% sprintf(
         "{.strong %s} {.field %s}",
         substr(ids[1L], 1L, 3L), file_type
     )
@@ -29,7 +31,7 @@ download_suppl_or_gse_matrix_files <- function(ids, odir, file_type,
         site = "ftp",
         handle_opts = handle_opts,
         ftp_over_https = ftp_over_https,
-        msg_id = msg_id
+        file_label = file_label
     )
     file_path_list
 }
@@ -50,7 +52,7 @@ download_gpl_files <- function(ids, odir = getwd(), amount = "data",
             handle_opts = handle_opts,
             ftp_over_https = ftp_over_https,
             fail = FALSE,
-            msg_id = "{.strong GPL} {.field annot}"
+            file_label = "{.strong GPL} {.field annot}"
         )
         out <- download_status$destfiles
         if (any(!download_status$is_success)) {
@@ -61,7 +63,7 @@ download_gpl_files <- function(ids, odir = getwd(), amount = "data",
                 ids = ids[!download_status$is_success], odir = odir,
                 scope = "self", amount = amount, format = "text",
                 handle_opts = handle_opts,
-                msg_id = sprintf("{.strong GPL} {.field %s} amount", amount)
+                file_label = sprintf("{.strong GPL} {.field %s} amount", amount)
             )
         }
     } else {
@@ -70,7 +72,7 @@ download_gpl_files <- function(ids, odir = getwd(), amount = "data",
             scope = "self", amount = amount, format = "text",
             handle_opts = handle_opts,
             fail = FALSE,
-            msg_id = sprintf("{.strong GPL} {.field %s} amount", amount)
+            file_label = sprintf("{.strong GPL} {.field %s} amount", amount)
         )
         out <- download_status$destfiles
         if (any(!download_status$is_success)) {
@@ -82,7 +84,7 @@ download_gpl_files <- function(ids, odir = getwd(), amount = "data",
                 file_type = "soft",
                 handle_opts = handle_opts,
                 ftp_over_https = ftp_over_https,
-                msg_id = "{.strong GPL} {.field soft}"
+                file_label = "{.strong GPL} {.field soft}"
             )
         }
     }
@@ -99,7 +101,7 @@ download_gse_soft_files <- function(ids, odir = getwd(), handle_opts = list(),
         file_type = "soft",
         handle_opts = handle_opts,
         ftp_over_https = ftp_over_https,
-        msg_id = "{.strong GSE} {.field soft}"
+        file_label = "{.strong GSE} {.field soft}"
     )
 }
 
@@ -110,7 +112,7 @@ download_gsm_files <- function(ids, odir = getwd(), handle_opts = list()) {
         ids = ids, odir = odir,
         scope = "self", amount = "full", format = "text",
         handle_opts = handle_opts,
-        msg_id = "{.strong GSM} {.field full} amount"
+        file_label = "{.strong GSM} {.field full} amount"
     )
 }
 
@@ -123,7 +125,7 @@ download_gds_files <- function(ids, odir = getwd(), handle_opts = list(),
         file_type = "soft",
         handle_opts = handle_opts,
         ftp_over_https = ftp_over_https,
-        msg_id = "{.strong GDS} {.field soft}"
+        file_label = "{.strong GDS} {.field soft}"
     )
 }
 
@@ -132,7 +134,8 @@ download_gds_files <- function(ids, odir = getwd(), handle_opts = list(),
 download_with_ftp <- function(ids, odir, file_type = "soft",
                               handle_opts = list(), fail = TRUE,
                               ftp_over_https = FALSE,
-                              msg_id = sprintf("{.field %s}", file_type)) {
+                              file_label = NULL) {
+    file_label <- file_label %||% sprintf("{.field %s}", file_type)
     urls <- build_geo_ftp_url(
         ids = ids, file_type = file_type,
         ftp_over_https = ftp_over_https
@@ -142,15 +145,16 @@ download_with_ftp <- function(ids, odir, file_type = "soft",
         site = "ftp",
         handle_opts = handle_opts,
         fail = fail,
-        msg_id = msg_id,
+        file_label = file_label,
         ftp_over_https = ftp_over_https
     )
 }
 
 download_with_acc <- function(ids, odir, scope = "self", amount = "full",
-                              format = "text", handle_opts = list(),
-                              fail = TRUE,
-                              msg_id = sprintf("{.field %s} amount", amount)) {
+                              format = "text",
+                              handle_opts = list(), fail = TRUE,
+                              file_label = NULL) {
+    file_label <- file_label %||% sprintf("{.field %s} amount", amount)
     urls <- build_geo_acc_url(
         ids = ids, scope = scope, amount = amount, format = format
     )
@@ -164,7 +168,7 @@ download_with_acc <- function(ids, odir, scope = "self", amount = "full",
         site = "acc",
         handle_opts = handle_opts,
         fail = fail,
-        msg_id = msg_id
+        file_label = file_label
     )
 }
 
@@ -222,7 +226,7 @@ list_geo_file_url <- function(id, file_type, handle_opts = list(),
 #'   successed, otherwise, stop with error message. If fail is `FALSE`, always
 #'   return a list.
 #' @noRd
-download_inform <- function(urls, file_paths, site, msg_id = "",
+download_inform <- function(urls, file_paths, site, file_label = "",
                             handle_opts = list(), fail = TRUE,
                             ftp_over_https = FALSE) {
     out <- list(
@@ -232,7 +236,7 @@ download_inform <- function(urls, file_paths, site, msg_id = "",
     is_existed <- file.exists(file_paths)
     if (any(is_existed)) {
         cli::cli_inform(paste(
-            "Finding {.val {sum(is_existed)}} {msg_id} file{?s} already",
+            "Finding {.val {sum(is_existed)}} {file_label} file{?s} already",
             "downloaded: {.file {basename(file_paths[is_existed])}}"
         ))
         urls <- urls[!is_existed]
@@ -240,7 +244,7 @@ download_inform <- function(urls, file_paths, site, msg_id = "",
     }
     if (length(urls)) {
         cli::cli_inform(sprintf(
-            "Downloading {.val {length(urls)}} %s file{?s} from %s", msg_id,
+            "Downloading {.val {length(urls)}} %s file{?s} from %s", file_label,
             switch(site,
                 ftp = "FTP site",
                 acc = "GEO Accession Site"
@@ -252,14 +256,13 @@ download_inform <- function(urls, file_paths, site, msg_id = "",
         } else {
             successful_code <- c(200L, 206L, 416L)
         }
-        arg_list <- c(
-            list(
-                urls = urls, destfiles = file_paths, resume = FALSE,
-                progress = interactive(), multi_timeout = Inf
-            ),
-            handle_opts
-        )
-        status <- do.call(curl::multi_download, arg_list)
+        handle_opts$progress <- handle_opts$progress %||% interactive()
+        handle_opts$multi_timeout <- handle_opts$multi_timeout %||% Inf
+        handle_opts$connecttimeout <- handle_opts$connecttimeout %||% 60L
+        status <- rlang::inject(curl::multi_download(
+            urls = urls, destfiles = file_paths, resume = FALSE,
+            !!!handle_opts
+        ))
         is_success <- is_download_success(status, successful_code)
         is_need_deleted <- !is_success & file.exists(file_paths)
         if (any(is_need_deleted)) file.remove(file_paths[is_need_deleted])

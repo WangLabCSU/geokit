@@ -54,8 +54,8 @@ parse_pdata <- function(data, columns = NULL, sep = ":", split = ";") {
         ),
         warn_cannot_parse_characteristics = function(cnd) {
             cli::cli_abort(c(
-                "There remains more than one {.arg sep} ({.val {sep}}) characters after splitting {.arg columns} by {.arg split} ({.val {split}})",
-                i = "Please check if {.arg sep} and {.arg split} parameters can parse {.arg columns}."
+                "Parsing failed: multiple {.arg sep} ({.val {sep}}) characters remain after splitting {.arg columns} by {.arg split} ({.val {split}}).", # nolint
+                i = "Check if {.arg sep} and {.arg split} are correctly specified for {.arg columns}."
             ), parent = cnd)
         }
     )
