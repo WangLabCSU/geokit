@@ -11,8 +11,8 @@ License: MIT + file LICENSE
 Depends:
     R (>= 3.5.0)
 Imports:
-    data.table,
-    rlang,
+    data.table (>= 1.14.9),
+    rlang (>= 0.4.11),
     cli (>= 3.6.0),
     curl (>= 6.0.0),
     methods,
