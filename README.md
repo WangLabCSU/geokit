@@ -1,14 +1,16 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# rgeo
+# geokit
 
 <!-- badges: start -->
 
-[![R-CMD-check](https://github.com/Yunuuuu/rgeo/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Yunuuuu/rgeo/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://github.com/Yunuuuu/geokit/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Yunuuuu/geokit/actions/workflows/R-CMD-check.yaml)
+[![Codecov test
+coverage](https://codecov.io/gh/Yunuuuu/rgeo/graph/badge.svg)](https://app.codecov.io/gh/Yunuuuu/rgeo)
 <!-- badges: end -->
 
-The goal of `rgeo` is to provide a unified interface for most
+The goal of `geokit` is to provide a unified interface for most
 interactions between R and [GEO
 database](https://www.ncbi.nlm.nih.gov/geo/).
 
@@ -46,14 +48,13 @@ if (!requireNamespace("pak")) {
         )
     )
 }
-pak::pkg_install("Yunuuuu/rgeo")
+pak::pkg_install("Yunuuuu/geokit")
 ```
 
 ## Vignettes
 
 ``` r
 library(geokit)
-library(magrittr)
 ```
 
 ### Search GEO database - `geo_search`
@@ -81,35 +82,61 @@ we can get these records by following code, the returned object is a
 diabetes_gse_records <- geo_search(
     "diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"
 )
+#> ■■■■■■■■■■                       500/1690 [484/s] | ETA:  2s
+#> ■■■■■■■■■■■■■■■■■■■              1000/1690 [387/s] | ETA:  2s
+#> Get records from NCBI for 1690 queries in 4.8s
+#> 
+#> → Parsing GEO records
 head(diabetes_gse_records[1:5])
-#>                                                                                                                                                                                                          Title
-#> 1                                                                                      Neutrophil extracellular traps induce glomerular endothelial cell dysfunction and pyroptosis in diabetic kidney disease
-#> 2 The expression of mRNA and lncRNA in peripheral blood mononuclear cells (PBMCs) of diabetes mellitus, diabetic retinopathy (DR), diabetic peripheral neuropathy (DPN) and diabetic nephropathy (DN) patients
-#> 3                                                                                                                                           Mitochondrial DNA atlas reveals physiopathology of type 2 diabetes
-#> 4                                                                                                           DNA methylation profiling in cord blood neonatal monocytes from women with pre-gestational obesity
-#> 5                                                                            Transcriptomic signatures responding to PKM2 activator TEPP-46 in the hyperglycemic human renal proximal epithelial tubular cells
-#> 6                                                                                                                                               Global microRNA and protein expression in human term placenta.
-#>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    Summary
-#> 1                                                                                                                                                                          Diabetic kidney disease (DKD) is the leading cause of end-stage renal disease. Neutrophil extracellular traps (NETs) are a network structure composed of loose chromatin and embedded with multiple proteins. Here, we observed increased NETs deposition in the glomeruli of DKD patients and diabetic mice (streptozotocin-induced or db/db mice). After degrading NETs with DNase I, diabetic mice exhibited attenuated glomerulopathy and glomerular endothelial cell (GEC) injury. more...
-#> 2                                     DR, DPN and DN are common complications in diabetes, and the differentially expressed mRNAs and lncRNAs in these diabetic complications may help to identify the molecular markers for the onset and progression of diseases. In our study, high-throughput sequencing technique was used to analyze the expression profile of mRNA and lncRNA in the peripheral blood of health control, T2DM, DR, DPN and DN patients, in order to determine the differentially expressed  transcriptomic profiles changes in diabetic complications and identify the shared and specific biological signaling pathways related to DR, DPN and DN.
-#> 3                                                                                                             Type 2 diabetes (T2D), one of the most common metabolic diseases, is the result of insulin resistance or impaired insulin secretion by mitochondrial dysfunctions. Mitochondrial DNA (mtDNA) polymorphisms play an important role in physiological and pathological characteristics of T2D, however, their mechanism is poorly understood. To directly identify candidate mtDNA variants associated with T2D at the genome-wide level, we constructed forty libraries from ten patients with T2D and thirty control individuals for deep sequencing. more...
-#> 4                                                                                                                                  Obesity represents a global burden with an increasing worldwide prevalence, especially in women of reproductive age. Obesity in women, defined as a body mass index (BMI) > 30 kg/m2, has a worldwide prevalence ~21%, however, it exceeds 30% in countries such as Chile, Mexico, United States, and the United Kingdom. Growing evidence support the notion that pre-gestational obesity confers an increased risk for the development of diabetes, obesity and chronic inflammatory diseases in the offspring later in life. more...
-#> 5 Pyruvate kinase M2 (PKM2), as the terminal and last rate-limiting enzyme of the glycolytic pathway, is an ideal enzyme for regulating metabolic phenotype. PKM2 tetramer activation has shown a protective role against diabetic kidney disease (DKD). However, the molecular mechanisms involved in diabetic tubular has not been investigated so far. In this study, we performed transcriptome gene expression profiling in human renal proximal tubular epithelial cell line (HK-2 cells) treated with high D-glucose (HG) for 7 days before the addition of 10-μM TEPP-46, an activator of PKM2 tetramerization, for a further 1 day in the presence of HG. more...
-#> 6                                                                                                                                                                                          Description of the global expression of microRNAs (miRNAs) and proteins in healthy human term placentas may increase our knowledge of molecular biological pathways that are important for normal fetal growth and development in term pregnancy. The aim of this study was to explore the global expression of miRNAs and proteins, and to point out functions of importance in healthy term placentas. Placental samples (n = 19) were identified in a local biobank. more...
-#>       Organism                                                     Type
-#> 1 Homo sapiens       Expression profiling by high throughput sequencing
-#> 2 Homo sapiens       Expression profiling by high throughput sequencing
-#> 3 Homo sapiens Genome variation profiling by high throughput sequencing
-#> 4 Homo sapiens             Methylation profiling by genome tiling array
-#> 5 Homo sapiens       Expression profiling by high throughput sequencing
-#> 6 Homo sapiens   Non-coding RNA profiling by high throughput sequencing
-#>                                                                FTP download
-#> 1      GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE189nnn/GSE189875/
-#> 2 GEO (GTF, TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE185nnn/GSE185011/
-#> 3      GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE136nnn/GSE136892/
-#> 4      GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE212nnn/GSE212174/
-#> 5      GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE205nnn/GSE205674/
-#> 6      GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE211nnn/GSE211791/
+#>                                                                                                                    Title
+#>                                                                                                                   <char>
+#> 1:             Coxsackievirus B infection invokes unique cell-type specific responses in primary human pancreatic islets
+#> 2: Expression data from type 2 diabetes mellitus adipose-derived stem cells cultured with basic fibroblast growth factor
+#> 3:                 Engineered vasculature induces functional maturation of pluripotent stem cell-derived islet organoids
+#> 4:                               Recessive TMEM167A variants cause neonatal diabetes, microcephaly and epilepsy syndrome
+#> 5:                   Recessive TMEM167A variants cause neonatal diabetes, microcephaly and epilepsy syndrome [scRNA-seq]
+#>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      Summary
+#>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       <char>
+#> 1:                                                                                                               Coxsackievirus B (CVB) infection has long been considered an environmental factor precipitating Type 1 diabetes (T1D), an autoimmune disease marked by loss of insulin-producing b cells within pancreatic islets. Previous studies have shown CVB infection negatively impacts islet function and viability but do not report on how virus infection individually affects the multiple cell types present in human primary islets. more...
+#> 2:                  Diabetes affects ASCs characteristics such as: proliferation, differentiation and angiogenic capacity. MicroRNAs are able to target genes involved in vascular remodeling and promote or inhibit structural changes in the vessel wall. Adipose tissue-derived stem cells (ASCs) have the capacity to contribute to vascular remodeling. We used microarrays to detail the global miRNA expression profile underlying cell differentiation and identified distinct classes of up-regulated and down-regulated genes during this process.
+#> 3: Blood vessels play a critical role in pancreatic islet function, yet current methods for deriving islet organoids from human pluripotent stem cells (SC-islets) lack vasculature. We engineered 3D vascularized SC-islet organoids by assembling SC-islet cells, human primary endothelial cells (ECs) and fibroblasts in a non-perfused model and a microfluidic device with perfused vessels. Vasculature improved stimulus-dependent Ca2+ influx into SC-β-cells, a hallmark of β-cell function that is blunted in non-vascularized SC-islets. more...
+#> 4:                                  Understanding the genetic causes of diseases affecting pancreatic β cells and neurons can give insights into pathways essential for both cell types. Microcephaly, epilepsy and diabetes syndrome (MEDS) is a congenital disorder with two known aetiological genes, IER3IP1 and YIPF5. Both genes encode proteins involved in endoplasmic reticulum (ER) to Golgi trafficking.  We used genome sequencing to identify 6 individuals with MEDS caused by biallelic variants in the novel disease gene, TMEM167A. more...
+#> 5:                                  Understanding the genetic causes of diseases affecting pancreatic β cells and neurons can give insights into pathways essential for both cell types. Microcephaly, epilepsy and diabetes syndrome (MEDS) is a congenital disorder with two known aetiological genes, IER3IP1 and YIPF5. Both genes encode proteins involved in endoplasmic reticulum (ER) to Golgi trafficking.  We used genome sequencing to identify 6 individuals with MEDS caused by biallelic variants in the novel disease gene, TMEM167A. more...
+#>                             Organism
+#>                               <char>
+#> 1:                      Homo sapiens
+#> 2: Homo sapiens; synthetic construct
+#> 3:                      Homo sapiens
+#> 4:                      Homo sapiens
+#> 5:                      Homo sapiens
+#>                                                  Type
+#>                                                <char>
+#> 1: Expression profiling by high throughput sequencing
+#> 2:                  Non-coding RNA profiling by array
+#> 3: Expression profiling by high throughput sequencing
+#> 4: Expression profiling by high throughput sequencing
+#> 5: Expression profiling by high throughput sequencing
+#>                                                                 FTP download
+#>                                                                       <char>
+#> 1: GEO (MTX, TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE274nnn/GSE274264/
+#> 2:      GEO (CEL) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE283nnn/GSE283040/
+#> 3: GEO (MTX, TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE276nnn/GSE276815/
+#> 4:      GEO (CSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE302nnn/GSE302570/
+#> 5: GEO (MTX, TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE302nnn/GSE302421/
+#>           ID SRA Run Selector Project   Contains Datasets Platforms
+#>        <int>           <char>  <char>     <char>   <char>    <char>
+#> 1: 200274264             <NA>    <NA> 10 Samples     <NA>  GPL24676
+#> 2: 200283040             <NA>    <NA> 16 Samples     <NA>  GPL19117
+#> 3: 200276815             <NA>    <NA>  2 Samples     <NA>  GPL24676
+#> 4: 200302570             <NA>    <NA> 40 Samples     <NA>  GPL34284
+#> 5: 200302421             <NA>    <NA>  3 Samples     <NA>  GPL24676
+#>    Series Accession
+#>              <char>
+#> 1:        GSE274264
+#> 2:        GSE283040
+#> 3:        GSE276815
+#> 4:        GSE302570
+#> 5:        GSE302421
 ```
 
 Then, we can use whatever we’re famaliar to filter the searching
@@ -118,13 +145,13 @@ nephropathy samples containing expression profiling. Here is the example
 code:
 
 ``` r
-diabetes_nephropathy_gse_records <- diabetes_gse_records %>%
+diabetes_nephropathy_gse_records <- diabetes_gse_records |>
     dplyr::mutate(
         number_of_samples = stringr::str_match(
             Contains, "(\\d+) Samples?"
         )[, 2L, drop = TRUE],
         number_of_samples = as.integer(number_of_samples)
-    ) %>%
+    ) |>
     dplyr::filter(
         dplyr::if_any(
             c(Title, Summary),
@@ -138,41 +165,55 @@ diabetes_nephropathy_gse_records <- diabetes_gse_records %>%
         number_of_samples >= 6L
     )
 head(diabetes_nephropathy_gse_records[1:5])
-#>                                                                                                                                                                                                          Title
-#> 1 The expression of mRNA and lncRNA in peripheral blood mononuclear cells (PBMCs) of diabetes mellitus, diabetic retinopathy (DR), diabetic peripheral neuropathy (DPN) and diabetic nephropathy (DN) patients
-#> 2                                                     Secretory Leukocyte Peptidase Inhibitor (SLPI) is a Novel Predictor of Tubulointerstitial Injury and Renal Outcome in Patients with Diabetic Nephropathy
-#> 3                                                                                                                    Bulk RNA-seq on mouse model of diabetic nephropathy and in vitro model of SRSF7 knockdown
-#> 4                                                                            RNA-seq profiling of tubulointerstitial tissue reveals a potential therapeutic role of dual anti-phosphatase 1 in kidney diseases
-#> 5                                                                                                  Human Tubular Epithelial Cells Activate a Coordinated Stress Response after Serum Exposure [RNAseq-pid2019]
-#> 6                                                                                                  Human Tubular Epithelial Cells Activate a Coordinated Stress Response after Serum Exposure [RNAseq-pid1830]
-#>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                Summary
-#> 1 DR, DPN and DN are common complications in diabetes, and the differentially expressed mRNAs and lncRNAs in these diabetic complications may help to identify the molecular markers for the onset and progression of diseases. In our study, high-throughput sequencing technique was used to analyze the expression profile of mRNA and lncRNA in the peripheral blood of health control, T2DM, DR, DPN and DN patients, in order to determine the differentially expressed  transcriptomic profiles changes in diabetic complications and identify the shared and specific biological signaling pathways related to DR, DPN and DN.
-#> 2                                                                                                                                                                                                          Tubulointerstitial injury plays an important role in diabetic nephropathy (DN) progression; however, no reliable urinary molecule has been used to predict tubulointerstitial injury and renal outcome of DN clinically. In this study, based on tubulointerstitial transcriptome, we identified secretory leukocyte peptidase inhibitor (SLPI) as the molecule associated with renal fibrosis and prognosis of DN. more...
-#> 3                                                                                                                                                                                                                  In this dataset, we utilized the db/db, uninephrectomy and renin-hypertension mouse model. We performed bulk RNA-seq and compared vehicle to ACE inhibitor, Rosiglitizone, SGLT2 inhibitor, ACEi + Rosiglitizone and ACEi + SGLT2i at two time points (2 days and 2 weeks). To study the mechanism, we also performed bulk RNA-seq on human primary tubular epithelial cells with or without SRSF7 siRNA knockdown.
-#> 4                                                                                                                                                                                                                                 We profiled manually microdissected tubulointerstitial tissue from 43 IgA nephropathy, 3 diabetes mellitus nephropathy, 3 focal segmental glomerulosclerosis, 3 lupus nephritis, 4 membranous nephropathy, and 9 minimal change disease biopsy cores and 22 nephrectomy controls by RNA sequencing. The 3 outliers which were not included in our main analysis were also uploaded in this database.
-#> 5                                                                                                                                                                                                   Proteinuria, the spillage of serum proteins into the urine, is a feature of glomerulonephritides, podocyte disorders and diabetic nephropathy. However, the response of tubular epithelial cells to serum protein exposure has not been systematically characterized. Using transcriptomic profiling we studied serum-induced changes in primary human tubular epithelial cells cultured in 3D microphysiological devices. more...
-#> 6                                                                                                                                                                                                   Proteinuria, the spillage of serum proteins into the urine, is a feature of glomerulonephritides, podocyte disorders and diabetic nephropathy. However, the response of tubular epithelial cells to serum protein exposure has not been systematically characterized. Using transcriptomic profiling we studied serum-induced changes in primary human tubular epithelial cells cultured in 3D microphysiological devices. more...
-#>                     Organism                                               Type
-#> 1               Homo sapiens Expression profiling by high throughput sequencing
-#> 2               Homo sapiens Expression profiling by high throughput sequencing
-#> 3 Mus musculus; Homo sapiens Expression profiling by high throughput sequencing
-#> 4               Homo sapiens Expression profiling by high throughput sequencing
-#> 5               Homo sapiens Expression profiling by high throughput sequencing
-#> 6               Homo sapiens Expression profiling by high throughput sequencing
-#>                                                                FTP download
-#> 1 GEO (GTF, TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE185nnn/GSE185011/
-#> 2      GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE158nnn/GSE158230/
-#> 3      GEO (CSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE199nnn/GSE199437/
-#> 4      GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE175nnn/GSE175759/
-#> 5      GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE159nnn/GSE159586/
-#> 6      GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE159nnn/GSE159554/
+#>                                                                                                                                Title
+#>                                                                                                                               <char>
+#> 1:   Endothelial Kallikrein-Related Peptidase 8 Promotes Diabetic Nephropathy via Reducing SDC4 Expression and Enhancing LIF Release
+#> 2:         Upregulation of FGF13 promotes type 2 diabetic nephropathy by modulating glomerular endothelial mitochondrial homeostasis
+#> 3:                   Sodium Butyrate Ameliorates Renal Tubular Lipid Accumulation Through the PP2A-TFEB axis in Diabetic Nephropathy
+#> 4: Deciphering the Transcriptomic Landscape of Type 2 Diabetes: Insights from Bulk RNA Sequencing and Single-Cell Analysis [RNA-seq]
+#> 5:                                                                  Effect of overexpssion Kallistatin(SERPINA4) in HGC-27 cell line
+#>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      Summary
+#>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       <char>
+#> 1:                                                                                                                                                                                                                                                                                                                                                       The molecular mechanisms underlying diabetic nephropathy (DN) are poorly defined. We sought to investigate the roles of kallikrein-related peptidases (KLKs) in DN pathogenesis. Screening of renal tissue from diabetic mice revealed KLK8 as the most highly induced gene in KLK family. KLK8 expression was greater in glomerular endothelial cells (GECs) than other glomerular cells in DN patients and diabetic mice. more...
+#> 2:                                                                                           Studies of diabetic glomerular injury raise the possibility of developing useful early biomarkers and therapeutic approaches for the treatment of type 2 diabetic nephropathy (T2DN). In this study, it is found that FGF13 expression is induced in glomerular endothelial cells (GECs) during T2DN progression, and endothelial-specific deletion of Fgf13 potentially alleviates T2DN damage. Fgf13 deficiency restores the expression of Parkin both in the cytosolic, mitochondrial, and nuclear fractions under diabetic conditions, resulting in improved mitochondrial homeostasis and endothelial barrier integrity due to promotion of mitophagy and inhibition of apoptosis. more...
+#> 3:                                                                                                                                                                                                                                                                                                                         Background: Diabetic kidney disease (DKD) is the leading cause of end-stage renal disease worldwide with limited treatment options. The intricate pathogenesis of dysregulated lipid metabolism leading to the development of DKD remains obscure. Lipophagy, which refers to the autophagic degradation of intracellular lipid droplets, has been found to be impaired in DKD, resulting in renal tubule dysfunction and ectopic lipid deposition (ELD). more...
+#> 4:                                                                                                                                                            Type 2 diabetes (T2D) is a chronic metabolic disorder characterized by insulin resistance and relative insulin deficiency. It is a significant public health concern worldwide, with an estimated prevalence of over 422 million individuals affected globally. This number is projected to rise, making diabetes one of the leading causes of morbidity and mortality. It is associated with numerous severe microvascular and macrovascular complications, including retinopathy, nephropathy, cardiovascular diseases, and neuropathy, which substantially impact patients' quality of life and healthcare systems. more...
+#> 5: Kallistatin has been demonstrated to possess inhibitory effects across several malignancies, including hepatocellular carcinoma, gastric cancer and breast cancer. Subsequent evidence has increasingly suggested that KS has pleiotropic roles in modulating a broad spectrum of diseases, including in diabetic nephropathy, idiopathic pulmonary fibrosis and autoimmune uveitis. However, the precise function and molecular mechanisms underlying tumor-induced immune escape attributed to KS remain unclear, necessitating further investigation to determine its role in this context.For this propose, we establish SERPINA4 stably expressed cell line(and control) in HGC-27 cells, and RNA-seq was performed to reveal the trancriptome changes between there two cell lines.
+#>        Organism                                               Type
+#>          <char>                                             <char>
+#> 1: Homo sapiens Expression profiling by high throughput sequencing
+#> 2: Homo sapiens Expression profiling by high throughput sequencing
+#> 3: Homo sapiens Expression profiling by high throughput sequencing
+#> 4: Homo sapiens Expression profiling by high throughput sequencing
+#> 5: Homo sapiens Expression profiling by high throughput sequencing
+#>                                                            FTP download
+#>                                                                  <char>
+#> 1: GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE255nnn/GSE255028/
+#> 2: GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE192nnn/GSE192889/
+#> 3: GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE266nnn/GSE266108/
+#> 4: GEO (TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE280nnn/GSE280402/
+#> 5: GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE262nnn/GSE262922/
+#>           ID SRA Run Selector Project   Contains Datasets Platforms
+#>        <int>           <char>  <char>     <char>   <char>    <char>
+#> 1: 200255028             <NA>    <NA>  9 Samples     <NA>  GPL24676
+#> 2: 200192889             <NA>    <NA>  9 Samples     <NA>  GPL24676
+#> 3: 200266108             <NA>    <NA>  6 Samples     <NA>  GPL24676
+#> 4: 200280402             <NA>    <NA> 16 Samples     <NA>  GPL16791
+#> 5: 200262922             <NA>    <NA>  6 Samples     <NA>  GPL20301
+#>    Series Accession number_of_samples
+#>              <char>             <int>
+#> 1:        GSE255028                 9
+#> 2:        GSE192889                 9
+#> 3:        GSE266108                 6
+#> 4:        GSE280402                16
+#> 5:        GSE262922                 6
 ```
 
-After filtering, we got 19 candidate datasets. This can reduce a lot of
+After filtering, we got 36 candidate datasets. This can reduce a lot of
 time of us comparing with refining datasets by reading the summary
 records.
 
-### Download data from GEO database - `get_geo`
+### Download data from GEO database - `geo`
 
 GEO database mainly provides SOFT (Simple Omnibus Format in Text)
 formatted files for GPL, GSM and GDS entity. SOFT is designed for rapid
@@ -180,23 +221,23 @@ batch submission and download of data. SOFT is a simple line-based,
 plain text format, meaning that SOFT files may be readily generated from
 common spreadsheet and database applications. A single SOFT file can
 hold both data tables and accompanying descriptive information for
-multiple, concatenated Platforms, Samples, and/or Series records. `rgeo`
-provide a `GEOSoft` class object to store SOFT file contents, `GEOSoft`
-object contains four slots (“accession”, “meta”, “datatable”, and
-“columns”). `accession` slot stores the GEO accession ID, `meta` slot
-contains the metadata header in the SOFT formatted file, and `datatable`
-slot contains the the data table in SOFT file which is the main data for
-us to use, along with a `columns` slot providing descriptive column
-header for the `datatable` data. We can use the function with the same
-name of these slots to extract the data.
+multiple, concatenated Platforms, Samples, and/or Series records.
+`geokit` provide a `GEOSoft` class object to store SOFT file contents,
+`GEOSoft` object contains four slots (“accession”, “meta”, “datatable”,
+and “columns”). `accession` slot stores the GEO accession ID, `meta`
+slot contains the metadata header in the SOFT formatted file, and
+`datatable` slot contains the the data table in SOFT file which is the
+main data for us to use, along with a `columns` slot providing
+descriptive column header for the `datatable` data. We can use the
+function with the same name of these slots to extract the data.
 
-`get_geo` can download SOFT files and preprocess them well, here is some
+`geo` can download SOFT files and preprocess them well, here is some
 example code to get soft file from `GPL`, `GSM` and `GDS` entity
 respectively.
 
 ``` r
 gpl <- geo("gpl98", odir = tempdir())
-#> Downloading GPL98.txt from GEO Accession Site:
+#> Downloading 1 GPL full amount file from GEO Accession Site
 gpl
 #> An object of GEOSoft
 #> datatable: a 8934 * 16 data.frame
@@ -281,8 +322,8 @@ head(columns(gpl))
 ```
 
 ``` r
-gsm <- geo("GSM1", tempdir())
-#> Downloading GSM1.txt from GEO Accession Site:
+gsm <- geo("GSM1", odir = tempdir())
+#> Downloading 1 GSM full amount file from GEO Accession Site
 gsm
 #> An object of GEOSoft
 #> datatable: a 5494 * 3 data.frame
@@ -307,8 +348,8 @@ head(columns(gsm))
 ```
 
 ``` r
-gds <- geo("GDS10", tempdir())
-#> Downloading GDS10.soft.gz from FTP site:
+gds <- geo("GDS10", odir = tempdir())
+#> Downloading 1 GDS soft file from FTP site
 gds
 #> An object of GEOSoft
 #> datatable: a 39114 * 30 data.frame
@@ -358,22 +399,16 @@ head(columns(gds))
 ```
 
 For GSE entity, there is also a soft file associated with it. But the
-structure is different with `GPL`, `GSM` and `GDS` entity, `rgeo`
+structure is different with `GPL`, `GSM` and `GDS` entity, `geokit`
 provide `GEOSeries` class to keep contents in GSE soft file. Actually, a
 GSE soft file contains almost all contents in its subsets soft file
 including both `GPL` and `GSM`, so `GEOSeries` class provides both `gpl`
 and `gsm` slots as a list of `GEOSoft`. To download GSE soft file, we
-just set `gse_matrix` to `FALSE` in `get_geo` function.
+just set `gse_matrix` to `FALSE` in `geo` function.
 
 ``` r
-gse <- geo("GSE10", tempdir(), gse_matrix = FALSE)
-#> Downloading GSE10_family.soft.gz from FTP site:
-#> Found 5 entities...
-#> GPL4 (1 of 5 entities)
-#> GSM571 (2 of 5 entities)
-#> GSM572 (3 of 5 entities)
-#> GSM573 (4 of 5 entities)
-#> GSM574 (5 of 5 entities)
+gse <- geo("GSE10", odir = tempdir(), gse_matrix = FALSE)
+#> Downloading 1 GSE soft file from FTP site
 gse
 #> An object of GEOSeries
 #> gsm: GSM571 GSM572 GSM573 GSM574
@@ -384,9 +419,9 @@ gse
 ```
 
 It’s more common to use a series matrix file in our usual analysis
-workflow, we can also handle it easily in `rgeo`, as what we need to do
-is just set `gse_matrix` to `TRUE` in `get_geo` function, which is also
-the default value. When `gse_matrix` is `TRUE`, `get_geo` will return a
+workflow, we can also handle it easily in `geokit`, as what we need to
+do is just set `gse_matrix` to `TRUE` in `geo` function, which is also
+the default value. When `gse_matrix` is `TRUE`, `geo` will return a
 `ExpressionSet` object which can interact with lots of Bioconductor
 packages. There are two parameters controling the processing details
 when parsing series matrix file. When parsing phenoData from series
@@ -398,22 +433,33 @@ columns in series matrix files often lacks separate strings.
 Soft file, can help handle this problem well. When the soft file is
 large and we don’t want to use it, we can set `pdata_from_soft` to
 `FALSE` and use `parse_pdata` function to parse it manully. Another
-important parameter is `add_gpl`, where `FALSE` indicates `get_geo` will
-try to map the current GPL accession id into a Bioconductor annotation
+important parameter is `add_gpl`, where `FALSE` indicates `geo` will try
+to map the current GPL accession id into a Bioconductor annotation
 package, then we can use the latest bioconductor annotation package to
-get the up-to-date featureData, otherwise, `get_geo` will add
-featureData from GPL soft file directly.
+get the up-to-date featureData, otherwise, `geo` will add featureData
+from GPL soft file directly.
 
 ``` r
-gse_matix <- geo("GSE10", tempdir())
-#> Downloading GSE10_series_matrix.txt.gz from FTP site:
-#> Downloading GSE10_family.soft.gz from FTP site:
-#> Cannot map GPL4 to a Bioconductor annotation package
-#> • Setting `add_gpl` to `TRUE`
-#> Downloading GPL4.annot.gz from FTP site:
+gse_matix <- geo("GSE10", odir = tempdir())
+#> Downloading 1 GSE matrix file from FTP site
+#> Finding 1 {.strong GSE} {.field soft} file already downloaded:
+#> 'GSE10_family.soft.gz'
+#> → Parsing series soft file 'GSE10_family.soft.gz'
 #> 
-#> annot file in FTP site for GPL4 is not available, so will use data amount of SOFT file from GEO Accession Site instead.
-#> Downloading GPL4.txt from GEO Accession Site:
+#> ✔ Parsing 1 series soft file successfully!
+#> 
+#> → Parsing 1 series matrix file of GSE10
+#> 
+#> ✔ Parsing 1 GSE series matrix successfully!
+#> 
+#> → Constructing <ExpressionSet>
+#> 
+#> ✔ Found Bioconductor annotation package for "GPL4"
+#> 
+#> Downloading 1 GPL annot file from FTP site
+#> ℹ annot file in FTP site for "GPL4" is not available, so will use data amount file from GEO Accession Site instead
+#> 
+#> Downloading 1 GPL data amount file from GEO Accession Site
 gse_matix
 #> ExpressionSet (storageMode: lockedEnvironment)
 #> assayData: 96903 features, 4 samples 
@@ -434,16 +480,20 @@ gse_matix
 
 ``` r
 gse_matrix_with_pdata <- geo(
-    "gse53987", tempdir(),
+    "gse53987",
+    odir = tempdir(),
     pdata_from_soft = FALSE,
     add_gpl = FALSE
 )
 #> Downloading 1 GSE matrix file from FTP site
-#> Parsing 1 series matrix file of GSE53987
+#> → Parsing 1 series matrix file of GSE53987
 #> Warning: Cannot parse characteristic column correctly
 #> ℹ Details see "characteristics_ch1" column in phenoData
 #> ℹ Please use `parse_pdata()` or `parse_gsm_list()` function to convert it
 #>   manually if necessary!
+#> ✔ Parsing 1 GSE series matrix successfully!
+#> → Constructing <ExpressionSet>
+#> ✔ Found Bioconductor annotation package for "GPL570"
 gse_matrix_smp_info <- Biobase::pData(gse_matrix_with_pdata)
 gse_matrix_smp_info$characteristics_ch1 <- stringr::str_replace_all(
     gse_matrix_smp_info$characteristics_ch1,
@@ -454,175 +504,624 @@ gse_matrix_smp_info <- parse_pdata(gse_matrix_smp_info)
 gse_matrix_smp_info[grepl(
     "^ch1_|characteristics_ch1", names(gse_matrix_smp_info)
 )]
-#>            ch1_age ch1_gender ch1_race ch1_pmi ch1_ph ch1_rin  ch1_tissue
-#> GSM1304852      52          M        W   23.50   6.70     6.3 hippocampus
-#> GSM1304853      50          F        W   11.70   6.40     6.8 hippocampus
-#> GSM1304854      28          F        W   22.30   6.30     7.7 hippocampus
-#> GSM1304855      55          F        W   17.50   6.40     7.6 hippocampus
-#> GSM1304856      58          M        W   27.70   6.80     7.0 hippocampus
-#> GSM1304857      28          M        W   27.40   6.20     7.7 hippocampus
-#> GSM1304858      49          F        W   21.50   6.70     8.2 hippocampus
-#> GSM1304859      42          F        W   31.20   6.50     5.6 hippocampus
-#> GSM1304860      43          F        W   31.90   6.70     6.3 hippocampus
-#> GSM1304861      50          M        W   12.10   6.70     7.4 hippocampus
-#> GSM1304862      40          M        W   18.50   6.40     6.5 hippocampus
-#> GSM1304863      39          F        W   22.20   6.70     7.9 hippocampus
-#> GSM1304864      45          M        W   27.20   7.10     8.1 hippocampus
-#> GSM1304865      42          M        W   12.50   6.70     8.2 hippocampus
-#> GSM1304866      65          M        W    8.90   6.70     6.6 hippocampus
-#> GSM1304867      51          F        W   21.50   6.70     7.0 hippocampus
-#> GSM1304868      39          M        W   24.20   6.60     7.8 hippocampus
-#> GSM1304869      48          M        W   18.10   6.90     7.0 hippocampus
-#> GSM1304870      51          M        W   24.20   6.60     7.8 hippocampus
-#> GSM1304871      51          F        W    7.80   6.60     7.2 hippocampus
-#> GSM1304872      36          F        W   14.50   6.40     8.0 hippocampus
-#> GSM1304873      65          F        W   18.50   6.50     7.0 hippocampus
-#> GSM1304874      55          M        W   28.00   6.10     6.8 hippocampus
-#> GSM1304875      22          M        W   20.10   6.80     7.1 hippocampus
-#> GSM1304876      52          F        W   22.60   7.10     7.0 hippocampus
-#> GSM1304877      58          F        W   22.70   6.40     6.3 hippocampus
-#> GSM1304878      40          F        B   16.60   6.80     7.9 hippocampus
-#> GSM1304879      41          F        W   15.40   6.60     8.5 hippocampus
-#> GSM1304880      49          M        W   21.20   6.50     7.8 hippocampus
-#> GSM1304881      48          M        W   21.68   6.60     7.3 hippocampus
-#> GSM1304882      39          F        W   24.50   6.80     8.2 hippocampus
-#> GSM1304883      48          M        W   24.50   6.50     7.0 hippocampus
-#> GSM1304884      43          M        W   13.80   6.60     7.6 hippocampus
-#> GSM1304885      68          M        W   11.80   6.80     6.1 hippocampus
-#> GSM1304886      58          F        W   18.80   6.60     7.2 hippocampus
-#> GSM1304887      43          M        W   22.30   6.70     7.9 hippocampus
-#> GSM1304888      51          M        W   24.60   6.50     7.7 hippocampus
-#> GSM1304889      53          F        W   11.90   6.70     8.1 hippocampus
-#> GSM1304890      26          F        W   13.40   6.40     7.5 hippocampus
-#> GSM1304891      52          F        W   10.30   6.50     6.6 hippocampus
-#> GSM1304892      62          M        W   26.00   6.50     6.8 hippocampus
-#> GSM1304893      29          M        W   26.60   6.90     7.8 hippocampus
-#> GSM1304894      49          F        W   23.40   6.40     6.2 hippocampus
-#> GSM1304895      54          F        W   17.90   6.20     6.1 hippocampus
-#> GSM1304896      28          F        B   24.80   6.60     8.2 hippocampus
-#> GSM1304897      42          M        W   14.30   6.40     6.2 hippocampus
-#> GSM1304898      44          M        W   19.30   6.50     6.3 hippocampus
-#> GSM1304899      40          F        W   22.20   6.60     8.0 hippocampus
-#> GSM1304900      47          M        W   24.00   6.60     5.5 hippocampus
-#> GSM1304901      59          M        W   13.00   6.60     7.2 hippocampus
-#> GSM1304902      47          F        W   22.30   6.60     6.5 hippocampus
-#> GSM1304903      34          M        W   24.40   6.60     8.4 hippocampus
-#> GSM1304904      51          M        W   28.30   7.30     7.0 hippocampus
-#> GSM1304905      49          M        W   21.50   5.97     6.0 hippocampus
-#> GSM1304906      47          F        W   14.37   6.35     6.3 hippocampus
-#>                    ch1_disease state
-#> GSM1304852          bipolar disorder
-#> GSM1304853          bipolar disorder
-#> GSM1304854          bipolar disorder
-#> GSM1304855          bipolar disorder
-#> GSM1304856          bipolar disorder
-#> GSM1304857          bipolar disorder
-#> GSM1304858          bipolar disorder
-#> GSM1304859          bipolar disorder
-#> GSM1304860          bipolar disorder
-#> GSM1304861          bipolar disorder
-#> GSM1304862          bipolar disorder
-#> GSM1304863          bipolar disorder
-#> GSM1304864          bipolar disorder
-#> GSM1304865          bipolar disorder
-#> GSM1304866          bipolar disorder
-#> GSM1304867          bipolar disorder
-#> GSM1304868          bipolar disorder
-#> GSM1304869          bipolar disorder
-#> GSM1304870                   control
-#> GSM1304871                   control
-#> GSM1304872                   control
-#> GSM1304873                   control
-#> GSM1304874                   control
-#> GSM1304875                   control
-#> GSM1304876                   control
-#> GSM1304877                   control
-#> GSM1304878                   control
-#> GSM1304879                   control
-#> GSM1304880                   control
-#> GSM1304881                   control
-#> GSM1304882                   control
-#> GSM1304883                   control
-#> GSM1304884                   control
-#> GSM1304885                   control
-#> GSM1304886                   control
-#> GSM1304887                   control
-#> GSM1304888 major depressive disorder
-#> GSM1304889 major depressive disorder
-#> GSM1304890 major depressive disorder
-#> GSM1304891 major depressive disorder
-#> GSM1304892 major depressive disorder
-#> GSM1304893 major depressive disorder
-#> GSM1304894 major depressive disorder
-#> GSM1304895 major depressive disorder
-#> GSM1304896 major depressive disorder
-#> GSM1304897 major depressive disorder
-#> GSM1304898 major depressive disorder
-#> GSM1304899 major depressive disorder
-#> GSM1304900 major depressive disorder
-#> GSM1304901 major depressive disorder
-#> GSM1304902 major depressive disorder
-#> GSM1304903 major depressive disorder
-#> GSM1304904 major depressive disorder
-#> GSM1304905                    schizo
-#> GSM1304906                    schizo
-#>                                                                                                                 characteristics_ch1
-#> GSM1304852          age: 52; gender: M; race: W; pmi: 23.5; ph: 6.7; rin: 6.3; tissue: hippocampus; disease state: bipolar disorder
-#> GSM1304853          age: 50; gender: F; race: W; pmi: 11.7; ph: 6.4; rin: 6.8; tissue: hippocampus; disease state: bipolar disorder
-#> GSM1304854          age: 28; gender: F; race: W; pmi: 22.3; ph: 6.3; rin: 7.7; tissue: hippocampus; disease state: bipolar disorder
-#> GSM1304855          age: 55; gender: F; race: W; pmi: 17.5; ph: 6.4; rin: 7.6; tissue: hippocampus; disease state: bipolar disorder
-#> GSM1304856            age: 58; gender: M; race: W; pmi: 27.7; ph: 6.8; rin: 7; tissue: hippocampus; disease state: bipolar disorder
-#> GSM1304857          age: 28; gender: M; race: W; pmi: 27.4; ph: 6.2; rin: 7.7; tissue: hippocampus; disease state: bipolar disorder
-#> GSM1304858          age: 49; gender: F; race: W; pmi: 21.5; ph: 6.7; rin: 8.2; tissue: hippocampus; disease state: bipolar disorder
-#> GSM1304859          age: 42; gender: F; race: W; pmi: 31.2; ph: 6.5; rin: 5.6; tissue: hippocampus; disease state: bipolar disorder
-#> GSM1304860          age: 43; gender: F; race: W; pmi: 31.9; ph: 6.7; rin: 6.3; tissue: hippocampus; disease state: bipolar disorder
-#> GSM1304861          age: 50; gender: M; race: W; pmi: 12.1; ph: 6.7; rin: 7.4; tissue: hippocampus; disease state: bipolar disorder
-#> GSM1304862          age: 40; gender: M; race: W; pmi: 18.5; ph: 6.4; rin: 6.5; tissue: hippocampus; disease state: bipolar disorder
-#> GSM1304863          age: 39; gender: F; race: W; pmi: 22.2; ph: 6.7; rin: 7.9; tissue: hippocampus; disease state: bipolar disorder
-#> GSM1304864          age: 45; gender: M; race: W; pmi: 27.2; ph: 7.1; rin: 8.1; tissue: hippocampus; disease state: bipolar disorder
-#> GSM1304865          age: 42; gender: M; race: W; pmi: 12.5; ph: 6.7; rin: 8.2; tissue: hippocampus; disease state: bipolar disorder
-#> GSM1304866           age: 65; gender: M; race: W; pmi: 8.9; ph: 6.7; rin: 6.6; tissue: hippocampus; disease state: bipolar disorder
-#> GSM1304867            age: 51; gender: F; race: W; pmi: 21.5; ph: 6.7; rin: 7; tissue: hippocampus; disease state: bipolar disorder
-#> GSM1304868          age: 39; gender: M; race: W; pmi: 24.2; ph: 6.6; rin: 7.8; tissue: hippocampus; disease state: bipolar disorder
-#> GSM1304869            age: 48; gender: M; race: W; pmi: 18.1; ph: 6.9; rin: 7; tissue: hippocampus; disease state: bipolar disorder
-#> GSM1304870                   age: 51; gender: M; race: W; pmi: 24.2; ph: 6.6; rin: 7.8; tissue: hippocampus; disease state: control
-#> GSM1304871                    age: 51; gender: F; race: W; pmi: 7.8; ph: 6.6; rin: 7.2; tissue: hippocampus; disease state: control
-#> GSM1304872                     age: 36; gender: F; race: W; pmi: 14.5; ph: 6.4; rin: 8; tissue: hippocampus; disease state: control
-#> GSM1304873                     age: 65; gender: F; race: W; pmi: 18.5; ph: 6.5; rin: 7; tissue: hippocampus; disease state: control
-#> GSM1304874                     age: 55; gender: M; race: W; pmi: 28; ph: 6.1; rin: 6.8; tissue: hippocampus; disease state: control
-#> GSM1304875                   age: 22; gender: M; race: W; pmi: 20.1; ph: 6.8; rin: 7.1; tissue: hippocampus; disease state: control
-#> GSM1304876                     age: 52; gender: F; race: W; pmi: 22.6; ph: 7.1; rin: 7; tissue: hippocampus; disease state: control
-#> GSM1304877                   age: 58; gender: F; race: W; pmi: 22.7; ph: 6.4; rin: 6.3; tissue: hippocampus; disease state: control
-#> GSM1304878                   age: 40; gender: F; race: B; pmi: 16.6; ph: 6.8; rin: 7.9; tissue: hippocampus; disease state: control
-#> GSM1304879                   age: 41; gender: F; race: W; pmi: 15.4; ph: 6.6; rin: 8.5; tissue: hippocampus; disease state: control
-#> GSM1304880                   age: 49; gender: M; race: W; pmi: 21.2; ph: 6.5; rin: 7.8; tissue: hippocampus; disease state: control
-#> GSM1304881                  age: 48; gender: M; race: W; pmi: 21.68; ph: 6.6; rin: 7.3; tissue: hippocampus; disease state: control
-#> GSM1304882                   age: 39; gender: F; race: W; pmi: 24.5; ph: 6.8; rin: 8.2; tissue: hippocampus; disease state: control
-#> GSM1304883                     age: 48; gender: M; race: W; pmi: 24.5; ph: 6.5; rin: 7; tissue: hippocampus; disease state: control
-#> GSM1304884                   age: 43; gender: M; race: W; pmi: 13.8; ph: 6.6; rin: 7.6; tissue: hippocampus; disease state: control
-#> GSM1304885                   age: 68; gender: M; race: W; pmi: 11.8; ph: 6.8; rin: 6.1; tissue: hippocampus; disease state: control
-#> GSM1304886                   age: 58; gender: F; race: W; pmi: 18.8; ph: 6.6; rin: 7.2; tissue: hippocampus; disease state: control
-#> GSM1304887                   age: 43; gender: M; race: W; pmi: 22.3; ph: 6.7; rin: 7.9; tissue: hippocampus; disease state: control
-#> GSM1304888 age: 51; gender: M; race: W; pmi: 24.6; ph: 6.5; rin: 7.7; tissue: hippocampus; disease state: major depressive disorder
-#> GSM1304889 age: 53; gender: F; race: W; pmi: 11.9; ph: 6.7; rin: 8.1; tissue: hippocampus; disease state: major depressive disorder
-#> GSM1304890 age: 26; gender: F; race: W; pmi: 13.4; ph: 6.4; rin: 7.5; tissue: hippocampus; disease state: major depressive disorder
-#> GSM1304891 age: 52; gender: F; race: W; pmi: 10.3; ph: 6.5; rin: 6.6; tissue: hippocampus; disease state: major depressive disorder
-#> GSM1304892   age: 62; gender: M; race: W; pmi: 26; ph: 6.5; rin: 6.8; tissue: hippocampus; disease state: major depressive disorder
-#> GSM1304893 age: 29; gender: M; race: W; pmi: 26.6; ph: 6.9; rin: 7.8; tissue: hippocampus; disease state: major depressive disorder
-#> GSM1304894 age: 49; gender: F; race: W; pmi: 23.4; ph: 6.4; rin: 6.2; tissue: hippocampus; disease state: major depressive disorder
-#> GSM1304895 age: 54; gender: F; race: W; pmi: 17.9; ph: 6.2; rin: 6.1; tissue: hippocampus; disease state: major depressive disorder
-#> GSM1304896 age: 28; gender: F; race: B; pmi: 24.8; ph: 6.6; rin: 8.2; tissue: hippocampus; disease state: major depressive disorder
-#> GSM1304897 age: 42; gender: M; race: W; pmi: 14.3; ph: 6.4; rin: 6.2; tissue: hippocampus; disease state: major depressive disorder
-#> GSM1304898 age: 44; gender: M; race: W; pmi: 19.3; ph: 6.5; rin: 6.3; tissue: hippocampus; disease state: major depressive disorder
-#> GSM1304899   age: 40; gender: F; race: W; pmi: 22.2; ph: 6.6; rin: 8; tissue: hippocampus; disease state: major depressive disorder
-#> GSM1304900   age: 47; gender: M; race: W; pmi: 24; ph: 6.6; rin: 5.5; tissue: hippocampus; disease state: major depressive disorder
-#> GSM1304901   age: 59; gender: M; race: W; pmi: 13; ph: 6.6; rin: 7.2; tissue: hippocampus; disease state: major depressive disorder
-#> GSM1304902 age: 47; gender: F; race: W; pmi: 22.3; ph: 6.6; rin: 6.5; tissue: hippocampus; disease state: major depressive disorder
-#> GSM1304903 age: 34; gender: M; race: W; pmi: 24.4; ph: 6.6; rin: 8.4; tissue: hippocampus; disease state: major depressive disorder
-#> GSM1304904   age: 51; gender: M; race: W; pmi: 28.3; ph: 7.3; rin: 7; tissue: hippocampus; disease state: major depressive disorder
-#> GSM1304905            age: 49; gender: M; race: W; pmi: 21.5; ph: 5.97; rin: 6; tissue: hippocampus; disease state: schizo; phrenia
-#> GSM1304906         age: 47; gender: F; race: W; pmi: 14.37; ph: 6.35; rin: 6.3; tissue: hippocampus; disease state: schizo; phrenia
-#>  [ reached 'max' / getOption("max.print") -- omitted 150 rows ]
+#>            ch1_age ch1_gender ch1_race ch1_pmi ch1_ph ch1_rin
+#> GSM1304852      52          M        W   23.50   6.70     6.3
+#> GSM1304853      50          F        W   11.70   6.40     6.8
+#> GSM1304854      28          F        W   22.30   6.30     7.7
+#> GSM1304855      55          F        W   17.50   6.40     7.6
+#> GSM1304856      58          M        W   27.70   6.80     7.0
+#> GSM1304857      28          M        W   27.40   6.20     7.7
+#> GSM1304858      49          F        W   21.50   6.70     8.2
+#> GSM1304859      42          F        W   31.20   6.50     5.6
+#> GSM1304860      43          F        W   31.90   6.70     6.3
+#> GSM1304861      50          M        W   12.10   6.70     7.4
+#> GSM1304862      40          M        W   18.50   6.40     6.5
+#> GSM1304863      39          F        W   22.20   6.70     7.9
+#> GSM1304864      45          M        W   27.20   7.10     8.1
+#> GSM1304865      42          M        W   12.50   6.70     8.2
+#> GSM1304866      65          M        W    8.90   6.70     6.6
+#> GSM1304867      51          F        W   21.50   6.70     7.0
+#> GSM1304868      39          M        W   24.20   6.60     7.8
+#> GSM1304869      48          M        W   18.10   6.90     7.0
+#> GSM1304870      51          M        W   24.20   6.60     7.8
+#> GSM1304871      51          F        W    7.80   6.60     7.2
+#> GSM1304872      36          F        W   14.50   6.40     8.0
+#> GSM1304873      65          F        W   18.50   6.50     7.0
+#> GSM1304874      55          M        W   28.00   6.10     6.8
+#> GSM1304875      22          M        W   20.10   6.80     7.1
+#> GSM1304876      52          F        W   22.60   7.10     7.0
+#> GSM1304877      58          F        W   22.70   6.40     6.3
+#> GSM1304878      40          F        B   16.60   6.80     7.9
+#> GSM1304879      41          F        W   15.40   6.60     8.5
+#> GSM1304880      49          M        W   21.20   6.50     7.8
+#> GSM1304881      48          M        W   21.68   6.60     7.3
+#> GSM1304882      39          F        W   24.50   6.80     8.2
+#> GSM1304883      48          M        W   24.50   6.50     7.0
+#> GSM1304884      43          M        W   13.80   6.60     7.6
+#> GSM1304885      68          M        W   11.80   6.80     6.1
+#> GSM1304886      58          F        W   18.80   6.60     7.2
+#> GSM1304887      43          M        W   22.30   6.70     7.9
+#> GSM1304888      51          M        W   24.60   6.50     7.7
+#> GSM1304889      53          F        W   11.90   6.70     8.1
+#> GSM1304890      26          F        W   13.40   6.40     7.5
+#> GSM1304891      52          F        W   10.30   6.50     6.6
+#> GSM1304892      62          M        W   26.00   6.50     6.8
+#> GSM1304893      29          M        W   26.60   6.90     7.8
+#> GSM1304894      49          F        W   23.40   6.40     6.2
+#> GSM1304895      54          F        W   17.90   6.20     6.1
+#> GSM1304896      28          F        B   24.80   6.60     8.2
+#> GSM1304897      42          M        W   14.30   6.40     6.2
+#> GSM1304898      44          M        W   19.30   6.50     6.3
+#> GSM1304899      40          F        W   22.20   6.60     8.0
+#> GSM1304900      47          M        W   24.00   6.60     5.5
+#> GSM1304901      59          M        W   13.00   6.60     7.2
+#> GSM1304902      47          F        W   22.30   6.60     6.5
+#> GSM1304903      34          M        W   24.40   6.60     8.4
+#> GSM1304904      51          M        W   28.30   7.30     7.0
+#> GSM1304905      49          M        W   21.50   5.97     6.0
+#> GSM1304906      47          F        W   14.37   6.35     6.3
+#> GSM1304907      25          F        B   20.10   6.73     5.6
+#> GSM1304908      62          M        W   22.70   7.14     6.3
+#> GSM1304909      44          F        W   24.50   6.63     7.8
+#> GSM1304910      46          F        W   23.80   6.61     6.9
+#> GSM1304911      50          M        W   11.00   6.23     7.2
+#> GSM1304912      46          M        W   15.80   6.19     6.2
+#> GSM1304913      41          F        W   20.10   6.27     6.7
+#> GSM1304914      47          M        W   28.90   6.58     6.7
+#> GSM1304915      37          M        B    5.98   6.07     6.4
+#> GSM1304916      58          M        W    7.70   6.22     6.7
+#> GSM1304917      44          F        B   18.70   6.20     6.4
+#> GSM1304918      38          M        W   28.80   6.56     6.6
+#> GSM1304919      52          M        B   27.10   6.68     6.3
+#> GSM1304920      52          M        W   23.50   6.70     7.2
+#> GSM1304921      50          F        W   11.70   6.40     8.6
+#> GSM1304922      28          F        W   22.30   6.30     8.6
+#> GSM1304923      55          F        W   17.50   6.40     8.0
+#> GSM1304924      58          M        W   27.70   6.80     7.5
+#> GSM1304925      28          M        W   27.40   6.20     7.9
+#> GSM1304926      49          F        W   21.50   6.70     8.1
+#> GSM1304927      56          F        W   24.50   6.10     6.9
+#> GSM1304928      50          M        W   12.10   6.70     7.6
+#> GSM1304929      40          M        W   18.50   6.40     7.9
+#> GSM1304930      39          F        W   22.20   6.70     7.8
+#> GSM1304931      45          M        W   27.20   7.10     7.3
+#> GSM1304932      42          M        W   12.50   6.70     7.6
+#> GSM1304933      65          M        W    8.90   6.70     6.9
+#> GSM1304934      51          F        W   21.50   6.70     7.7
+#> GSM1304935      39          M        W   24.20   6.60     7.3
+#> GSM1304936      48          M        W   18.10   6.90     8.2
+#> GSM1304937      51          M        W   24.20   6.60     7.9
+#> GSM1304938      51          F        W    7.80   6.60     8.6
+#> GSM1304939      36          F        W   14.50   6.40     8.6
+#> GSM1304940      65          F        W   18.50   6.50     8.3
+#> GSM1304941      55          M        W   28.00   6.10     7.9
+#> GSM1304942      22          M        W   20.10   6.80     8.1
+#> GSM1304943      52          F        W   22.60   7.10     8.2
+#> GSM1304944      58          F        W   22.70   6.40     8.0
+#> GSM1304945      40          F        B   16.60   6.80     8.2
+#> GSM1304946      41          F        W   15.40   6.60     8.2
+#> GSM1304947      49          M        W   21.20   6.50     7.9
+#> GSM1304948      48          M        W   21.68   6.60     7.5
+#> GSM1304949      39          F        W   24.50   6.80     7.4
+#> GSM1304950      48          M        W   24.50   6.50     6.8
+#> GSM1304951      43          M        W   13.80   6.60     7.5
+#> GSM1304952      68          M        W   11.80   6.80     6.7
+#> GSM1304953      58          F        W   18.80   6.60     8.7
+#> GSM1304954      43          M        W   22.30   6.70     8.0
+#> GSM1304955      46          M        W   22.00   6.30     6.6
+#> GSM1304956      51          M        W   24.60   6.50     7.8
+#> GSM1304957      53          F        W   11.90   6.70     8.4
+#> GSM1304958      26          F        W   13.40   6.40     8.4
+#> GSM1304959      52          F        W   10.30   6.50     8.1
+#> GSM1304960      62          M        W   26.00   6.50     7.8
+#> GSM1304961      29          M        W   26.60   6.90     8.2
+#> GSM1304962      49          F        W   23.40   6.40     7.6
+#> GSM1304963      54          F        W   17.90   6.20     7.5
+#> GSM1304964      28          F        B   24.80   6.60     7.9
+#> GSM1304965      42          M        W   14.30   6.40     8.4
+#> GSM1304966      40          F        W   22.20   6.60     7.7
+#> GSM1304967      47          M        W   24.00   6.60     6.8
+#> GSM1304968      44          M        W   11.00   6.50     7.2
+#> GSM1304969      59          M        W   13.00   6.60     7.7
+#> GSM1304970      47          F        W   22.30   6.60     6.7
+#> GSM1304971      34          M        W   24.40   6.60     7.8
+#> GSM1304972      51          M        W   28.30   7.30     7.7
+#> GSM1304973      49          M        W   21.50   5.97     7.0
+#> GSM1304974      47          F        W   14.37   6.35     9.0
+#> GSM1304975      25          F        B   20.10   6.73     7.2
+#> GSM1304976      41          F        W   17.10   6.90     8.3
+#> GSM1304977      62          M        W   22.70   7.14     8.1
+#> GSM1304978      47          F        B   20.10   7.30     8.1
+#> GSM1304979      44          F        W   24.50   6.63     7.6
+#> GSM1304980      46          F        W   23.80   6.61     8.0
+#> GSM1304981      50          M        W   11.00   6.23     8.4
+#> GSM1304982      41          F        W   20.10   6.27     7.4
+#> GSM1304983      47          M        W   28.90   6.58     7.0
+#> GSM1304984      37          M        B    5.98   6.07     6.3
+#> GSM1304985      58          M        W    7.70   6.22     7.3
+#> GSM1304986      44          F        B   18.70   6.20     7.6
+#> GSM1304987      52          M        B   27.10   6.68     7.4
+#> GSM1304988      50          M        W   12.10   6.70     8.6
+#> GSM1304989      40          M        W   18.50   6.40     8.4
+#> GSM1304990      39          F        W   22.20   6.70     9.1
+#> GSM1304991      45          M        W   27.20   7.10     8.7
+#> GSM1304992      42          M        W   12.50   6.70     8.7
+#> GSM1304993      65          M        W    8.90   6.70     8.3
+#> GSM1304994      51          F        W   21.50   6.70     8.4
+#> GSM1304995      39          M        W   24.20   6.60     8.5
+#> GSM1304996      48          M        W   18.10   6.90     8.8
+#> GSM1304997      52          M        W   23.50   6.70     9.1
+#> GSM1304998      50          F        W   11.70   6.40     8.4
+#> GSM1304999      28          F        W   22.30   6.30     9.0
+#> GSM1305000      55          F        W   17.50   6.40     6.0
+#> GSM1305001      58          M        W   27.70   6.80     6.6
+#> GSM1305002      49          F        W   21.50   6.70     8.7
+#> GSM1305003      56          F        W   24.50   6.10     7.7
+#> GSM1305004      42          F        W   31.20   6.50     6.8
+#> GSM1305005      49          M        W   21.20   6.50     8.4
+#> GSM1305006      48          M        W   21.68   6.60     7.5
+#> GSM1305007      39          F        W   24.50   6.80     7.5
+#> GSM1305008      48          M        W   24.50   6.50     7.6
+#> GSM1305009      43          M        W   13.80   6.60     8.7
+#> GSM1305010      68          M        W   11.80   6.80     8.5
+#> GSM1305011      58          F        W   18.80   6.60     8.6
+#> GSM1305012      43          M        W   22.30   6.70     8.5
+#> GSM1305013      46          M        W   22.00   6.30     7.0
+#> GSM1305014      51          M        W   24.20   6.60     8.3
+#> GSM1305015      51          F        W    7.80   6.60     9.0
+#> GSM1305016      36          F        W   14.50   6.40     9.3
+#> GSM1305017      65          F        W   18.50   6.50     7.4
+#> GSM1305018      55          M        W   28.00   6.10     7.6
+#> GSM1305019      22          M        W   20.10   6.80     7.4
+#> GSM1305020      52          F        W   22.60   7.10     8.8
+#> GSM1305021      58          F        W   22.70   6.40     9.0
+#> GSM1305022      40          F        B   16.60   6.80     8.7
+#> GSM1305023      42          M        W   14.30   6.40     8.7
+#> GSM1305024      44          M        W   19.30   6.50     8.5
+#> GSM1305025      47          M        W   24.00   6.60     7.3
+#> GSM1305026      44          M        W   11.00   6.50     7.7
+#> GSM1305027      59          M        W   13.00   6.60     8.4
+#> GSM1305028      47          F        W   22.30   6.60     8.2
+#> GSM1305029      34          M        W   24.40   6.60     9.1
+#> GSM1305030      51          M        W   28.30   7.30     8.6
+#> GSM1305031      51          M        W   24.60   6.50     8.3
+#> GSM1305032      53          F        W   11.90   6.70     8.8
+#> GSM1305033      26          F        W   13.40   6.40     9.2
+#> GSM1305034      52          F        W   10.30   6.50     6.7
+#> GSM1305035      62          M        W   26.00   6.50     7.5
+#> GSM1305036      29          M        W   26.60   6.90     9.2
+#> GSM1305037      49          F        W   23.40   6.40     6.7
+#> GSM1305038      54          F        W   17.90   6.20     9.0
+#> GSM1305039      50          M        W   11.00   6.23     8.5
+#> GSM1305040      46          M        W   15.80   6.19     7.8
+#> GSM1305041      41          F        W   20.10   6.27     8.6
+#> GSM1305042      47          M        W   28.90   6.58     8.4
+#> GSM1305043      37          M        B    5.98   6.07     6.9
+#> GSM1305044      58          M        W    7.70   6.22     6.7
+#> GSM1305045      44          F        B   18.70   6.20     6.9
+#> GSM1305046      38          M        W   28.80   6.56     6.8
+#> GSM1305047      52          M        B   27.10   6.68     8.5
+#> GSM1305048      49          M        W   21.50   5.97     8.4
+#> GSM1305049      47          F        W   14.37   6.35     8.9
+#> GSM1305050      25          F        B   20.10   6.73     7.3
+#> GSM1305051      41          F        W   17.10   6.90     7.3
+#> GSM1305052      62          M        W   22.70   7.14     7.8
+#> GSM1305053      32          M        W   30.80   6.18     7.1
+#> GSM1305054      47          F        B   20.10   7.30     8.8
+#> GSM1305055      50          F        B   22.90   6.25     8.0
+#> GSM1305056      44          F        W   24.50   6.63     9.0
+#>                           ch1_tissue         ch1_disease state
+#> GSM1304852               hippocampus          bipolar disorder
+#> GSM1304853               hippocampus          bipolar disorder
+#> GSM1304854               hippocampus          bipolar disorder
+#> GSM1304855               hippocampus          bipolar disorder
+#> GSM1304856               hippocampus          bipolar disorder
+#> GSM1304857               hippocampus          bipolar disorder
+#> GSM1304858               hippocampus          bipolar disorder
+#> GSM1304859               hippocampus          bipolar disorder
+#> GSM1304860               hippocampus          bipolar disorder
+#> GSM1304861               hippocampus          bipolar disorder
+#> GSM1304862               hippocampus          bipolar disorder
+#> GSM1304863               hippocampus          bipolar disorder
+#> GSM1304864               hippocampus          bipolar disorder
+#> GSM1304865               hippocampus          bipolar disorder
+#> GSM1304866               hippocampus          bipolar disorder
+#> GSM1304867               hippocampus          bipolar disorder
+#> GSM1304868               hippocampus          bipolar disorder
+#> GSM1304869               hippocampus          bipolar disorder
+#> GSM1304870               hippocampus                   control
+#> GSM1304871               hippocampus                   control
+#> GSM1304872               hippocampus                   control
+#> GSM1304873               hippocampus                   control
+#> GSM1304874               hippocampus                   control
+#> GSM1304875               hippocampus                   control
+#> GSM1304876               hippocampus                   control
+#> GSM1304877               hippocampus                   control
+#> GSM1304878               hippocampus                   control
+#> GSM1304879               hippocampus                   control
+#> GSM1304880               hippocampus                   control
+#> GSM1304881               hippocampus                   control
+#> GSM1304882               hippocampus                   control
+#> GSM1304883               hippocampus                   control
+#> GSM1304884               hippocampus                   control
+#> GSM1304885               hippocampus                   control
+#> GSM1304886               hippocampus                   control
+#> GSM1304887               hippocampus                   control
+#> GSM1304888               hippocampus major depressive disorder
+#> GSM1304889               hippocampus major depressive disorder
+#> GSM1304890               hippocampus major depressive disorder
+#> GSM1304891               hippocampus major depressive disorder
+#> GSM1304892               hippocampus major depressive disorder
+#> GSM1304893               hippocampus major depressive disorder
+#> GSM1304894               hippocampus major depressive disorder
+#> GSM1304895               hippocampus major depressive disorder
+#> GSM1304896               hippocampus major depressive disorder
+#> GSM1304897               hippocampus major depressive disorder
+#> GSM1304898               hippocampus major depressive disorder
+#> GSM1304899               hippocampus major depressive disorder
+#> GSM1304900               hippocampus major depressive disorder
+#> GSM1304901               hippocampus major depressive disorder
+#> GSM1304902               hippocampus major depressive disorder
+#> GSM1304903               hippocampus major depressive disorder
+#> GSM1304904               hippocampus major depressive disorder
+#> GSM1304905               hippocampus                    schizo
+#> GSM1304906               hippocampus                    schizo
+#> GSM1304907               hippocampus                    schizo
+#> GSM1304908               hippocampus                    schizo
+#> GSM1304909               hippocampus                    schizo
+#> GSM1304910               hippocampus                    schizo
+#> GSM1304911               hippocampus                    schizo
+#> GSM1304912               hippocampus                    schizo
+#> GSM1304913               hippocampus                    schizo
+#> GSM1304914               hippocampus                    schizo
+#> GSM1304915               hippocampus                    schizo
+#> GSM1304916               hippocampus                    schizo
+#> GSM1304917               hippocampus                    schizo
+#> GSM1304918               hippocampus                    schizo
+#> GSM1304919               hippocampus                    schizo
+#> GSM1304920 Pre-frontal cortex (BA46)          bipolar disorder
+#> GSM1304921 Pre-frontal cortex (BA46)          bipolar disorder
+#> GSM1304922 Pre-frontal cortex (BA46)          bipolar disorder
+#> GSM1304923 Pre-frontal cortex (BA46)          bipolar disorder
+#> GSM1304924 Pre-frontal cortex (BA46)          bipolar disorder
+#> GSM1304925 Pre-frontal cortex (BA46)          bipolar disorder
+#> GSM1304926 Pre-frontal cortex (BA46)          bipolar disorder
+#> GSM1304927 Pre-frontal cortex (BA46)          bipolar disorder
+#> GSM1304928 Pre-frontal cortex (BA46)          bipolar disorder
+#> GSM1304929 Pre-frontal cortex (BA46)          bipolar disorder
+#> GSM1304930 Pre-frontal cortex (BA46)          bipolar disorder
+#> GSM1304931 Pre-frontal cortex (BA46)          bipolar disorder
+#> GSM1304932 Pre-frontal cortex (BA46)          bipolar disorder
+#> GSM1304933 Pre-frontal cortex (BA46)          bipolar disorder
+#> GSM1304934 Pre-frontal cortex (BA46)          bipolar disorder
+#> GSM1304935 Pre-frontal cortex (BA46)          bipolar disorder
+#> GSM1304936 Pre-frontal cortex (BA46)          bipolar disorder
+#> GSM1304937 Pre-frontal cortex (BA46)                   control
+#> GSM1304938 Pre-frontal cortex (BA46)                   control
+#> GSM1304939 Pre-frontal cortex (BA46)                   control
+#> GSM1304940 Pre-frontal cortex (BA46)                   control
+#> GSM1304941 Pre-frontal cortex (BA46)                   control
+#> GSM1304942 Pre-frontal cortex (BA46)                   control
+#> GSM1304943 Pre-frontal cortex (BA46)                   control
+#> GSM1304944 Pre-frontal cortex (BA46)                   control
+#> GSM1304945 Pre-frontal cortex (BA46)                   control
+#> GSM1304946 Pre-frontal cortex (BA46)                   control
+#> GSM1304947 Pre-frontal cortex (BA46)                   control
+#> GSM1304948 Pre-frontal cortex (BA46)                   control
+#> GSM1304949 Pre-frontal cortex (BA46)                   control
+#> GSM1304950 Pre-frontal cortex (BA46)                   control
+#> GSM1304951 Pre-frontal cortex (BA46)                   control
+#> GSM1304952 Pre-frontal cortex (BA46)                   control
+#> GSM1304953 Pre-frontal cortex (BA46)                   control
+#> GSM1304954 Pre-frontal cortex (BA46)                   control
+#> GSM1304955 Pre-frontal cortex (BA46)                   control
+#> GSM1304956 Pre-frontal cortex (BA46) major depressive disorder
+#> GSM1304957 Pre-frontal cortex (BA46) major depressive disorder
+#> GSM1304958 Pre-frontal cortex (BA46) major depressive disorder
+#> GSM1304959 Pre-frontal cortex (BA46) major depressive disorder
+#> GSM1304960 Pre-frontal cortex (BA46) major depressive disorder
+#> GSM1304961 Pre-frontal cortex (BA46) major depressive disorder
+#> GSM1304962 Pre-frontal cortex (BA46) major depressive disorder
+#> GSM1304963 Pre-frontal cortex (BA46) major depressive disorder
+#> GSM1304964 Pre-frontal cortex (BA46) major depressive disorder
+#> GSM1304965 Pre-frontal cortex (BA46) major depressive disorder
+#> GSM1304966 Pre-frontal cortex (BA46) major depressive disorder
+#> GSM1304967 Pre-frontal cortex (BA46) major depressive disorder
+#> GSM1304968 Pre-frontal cortex (BA46) major depressive disorder
+#> GSM1304969 Pre-frontal cortex (BA46) major depressive disorder
+#> GSM1304970 Pre-frontal cortex (BA46) major depressive disorder
+#> GSM1304971 Pre-frontal cortex (BA46) major depressive disorder
+#> GSM1304972 Pre-frontal cortex (BA46) major depressive disorder
+#> GSM1304973 Pre-frontal cortex (BA46)                    schizo
+#> GSM1304974 Pre-frontal cortex (BA46)                    schizo
+#> GSM1304975 Pre-frontal cortex (BA46)                    schizo
+#> GSM1304976 Pre-frontal cortex (BA46)                    schizo
+#> GSM1304977 Pre-frontal cortex (BA46)                    schizo
+#> GSM1304978 Pre-frontal cortex (BA46)                    schizo
+#> GSM1304979 Pre-frontal cortex (BA46)                    schizo
+#> GSM1304980 Pre-frontal cortex (BA46)                    schizo
+#> GSM1304981 Pre-frontal cortex (BA46)                    schizo
+#> GSM1304982 Pre-frontal cortex (BA46)                    schizo
+#> GSM1304983 Pre-frontal cortex (BA46)                    schizo
+#> GSM1304984 Pre-frontal cortex (BA46)                    schizo
+#> GSM1304985 Pre-frontal cortex (BA46)                    schizo
+#> GSM1304986 Pre-frontal cortex (BA46)                    schizo
+#> GSM1304987 Pre-frontal cortex (BA46)                    schizo
+#> GSM1304988      Associative striatum          bipolar disorder
+#> GSM1304989      Associative striatum          bipolar disorder
+#> GSM1304990      Associative striatum          bipolar disorder
+#> GSM1304991      Associative striatum          bipolar disorder
+#> GSM1304992      Associative striatum          bipolar disorder
+#> GSM1304993      Associative striatum          bipolar disorder
+#> GSM1304994      Associative striatum          bipolar disorder
+#> GSM1304995      Associative striatum          bipolar disorder
+#> GSM1304996      Associative striatum          bipolar disorder
+#> GSM1304997      Associative striatum          bipolar disorder
+#> GSM1304998      Associative striatum          bipolar disorder
+#> GSM1304999      Associative striatum          bipolar disorder
+#> GSM1305000      Associative striatum          bipolar disorder
+#> GSM1305001      Associative striatum          bipolar disorder
+#> GSM1305002      Associative striatum          bipolar disorder
+#> GSM1305003      Associative striatum          bipolar disorder
+#> GSM1305004      Associative striatum          bipolar disorder
+#> GSM1305005      Associative striatum                   control
+#> GSM1305006      Associative striatum                   control
+#> GSM1305007      Associative striatum                   control
+#> GSM1305008      Associative striatum                   control
+#> GSM1305009      Associative striatum                   control
+#> GSM1305010      Associative striatum                   control
+#> GSM1305011      Associative striatum                   control
+#> GSM1305012      Associative striatum                   control
+#> GSM1305013      Associative striatum                   control
+#> GSM1305014      Associative striatum                   control
+#> GSM1305015      Associative striatum                   control
+#> GSM1305016      Associative striatum                   control
+#> GSM1305017      Associative striatum                   control
+#> GSM1305018      Associative striatum                   control
+#> GSM1305019      Associative striatum                   control
+#> GSM1305020      Associative striatum                   control
+#> GSM1305021      Associative striatum                   control
+#> GSM1305022      Associative striatum                   control
+#> GSM1305023      Associative striatum major depressive disorder
+#> GSM1305024      Associative striatum major depressive disorder
+#> GSM1305025      Associative striatum major depressive disorder
+#> GSM1305026      Associative striatum major depressive disorder
+#> GSM1305027      Associative striatum major depressive disorder
+#> GSM1305028      Associative striatum major depressive disorder
+#> GSM1305029      Associative striatum major depressive disorder
+#> GSM1305030      Associative striatum major depressive disorder
+#> GSM1305031      Associative striatum major depressive disorder
+#> GSM1305032      Associative striatum major depressive disorder
+#> GSM1305033      Associative striatum major depressive disorder
+#> GSM1305034      Associative striatum major depressive disorder
+#> GSM1305035      Associative striatum major depressive disorder
+#> GSM1305036      Associative striatum major depressive disorder
+#> GSM1305037      Associative striatum major depressive disorder
+#> GSM1305038      Associative striatum major depressive disorder
+#> GSM1305039      Associative striatum                    schizo
+#> GSM1305040      Associative striatum                    schizo
+#> GSM1305041      Associative striatum                    schizo
+#> GSM1305042      Associative striatum                    schizo
+#> GSM1305043      Associative striatum                    schizo
+#> GSM1305044      Associative striatum                    schizo
+#> GSM1305045      Associative striatum                    schizo
+#> GSM1305046      Associative striatum                    schizo
+#> GSM1305047      Associative striatum                    schizo
+#> GSM1305048      Associative striatum                    schizo
+#> GSM1305049      Associative striatum                    schizo
+#> GSM1305050      Associative striatum                    schizo
+#> GSM1305051      Associative striatum                    schizo
+#> GSM1305052      Associative striatum                    schizo
+#> GSM1305053      Associative striatum                    schizo
+#> GSM1305054      Associative striatum                    schizo
+#> GSM1305055      Associative striatum                    schizo
+#> GSM1305056      Associative striatum                    schizo
+#>                                                                                                                               characteristics_ch1
+#> GSM1304852                        age: 52; gender: M; race: W; pmi: 23.5; ph: 6.7; rin: 6.3; tissue: hippocampus; disease state: bipolar disorder
+#> GSM1304853                        age: 50; gender: F; race: W; pmi: 11.7; ph: 6.4; rin: 6.8; tissue: hippocampus; disease state: bipolar disorder
+#> GSM1304854                        age: 28; gender: F; race: W; pmi: 22.3; ph: 6.3; rin: 7.7; tissue: hippocampus; disease state: bipolar disorder
+#> GSM1304855                        age: 55; gender: F; race: W; pmi: 17.5; ph: 6.4; rin: 7.6; tissue: hippocampus; disease state: bipolar disorder
+#> GSM1304856                          age: 58; gender: M; race: W; pmi: 27.7; ph: 6.8; rin: 7; tissue: hippocampus; disease state: bipolar disorder
+#> GSM1304857                        age: 28; gender: M; race: W; pmi: 27.4; ph: 6.2; rin: 7.7; tissue: hippocampus; disease state: bipolar disorder
+#> GSM1304858                        age: 49; gender: F; race: W; pmi: 21.5; ph: 6.7; rin: 8.2; tissue: hippocampus; disease state: bipolar disorder
+#> GSM1304859                        age: 42; gender: F; race: W; pmi: 31.2; ph: 6.5; rin: 5.6; tissue: hippocampus; disease state: bipolar disorder
+#> GSM1304860                        age: 43; gender: F; race: W; pmi: 31.9; ph: 6.7; rin: 6.3; tissue: hippocampus; disease state: bipolar disorder
+#> GSM1304861                        age: 50; gender: M; race: W; pmi: 12.1; ph: 6.7; rin: 7.4; tissue: hippocampus; disease state: bipolar disorder
+#> GSM1304862                        age: 40; gender: M; race: W; pmi: 18.5; ph: 6.4; rin: 6.5; tissue: hippocampus; disease state: bipolar disorder
+#> GSM1304863                        age: 39; gender: F; race: W; pmi: 22.2; ph: 6.7; rin: 7.9; tissue: hippocampus; disease state: bipolar disorder
+#> GSM1304864                        age: 45; gender: M; race: W; pmi: 27.2; ph: 7.1; rin: 8.1; tissue: hippocampus; disease state: bipolar disorder
+#> GSM1304865                        age: 42; gender: M; race: W; pmi: 12.5; ph: 6.7; rin: 8.2; tissue: hippocampus; disease state: bipolar disorder
+#> GSM1304866                         age: 65; gender: M; race: W; pmi: 8.9; ph: 6.7; rin: 6.6; tissue: hippocampus; disease state: bipolar disorder
+#> GSM1304867                          age: 51; gender: F; race: W; pmi: 21.5; ph: 6.7; rin: 7; tissue: hippocampus; disease state: bipolar disorder
+#> GSM1304868                        age: 39; gender: M; race: W; pmi: 24.2; ph: 6.6; rin: 7.8; tissue: hippocampus; disease state: bipolar disorder
+#> GSM1304869                          age: 48; gender: M; race: W; pmi: 18.1; ph: 6.9; rin: 7; tissue: hippocampus; disease state: bipolar disorder
+#> GSM1304870                                 age: 51; gender: M; race: W; pmi: 24.2; ph: 6.6; rin: 7.8; tissue: hippocampus; disease state: control
+#> GSM1304871                                  age: 51; gender: F; race: W; pmi: 7.8; ph: 6.6; rin: 7.2; tissue: hippocampus; disease state: control
+#> GSM1304872                                   age: 36; gender: F; race: W; pmi: 14.5; ph: 6.4; rin: 8; tissue: hippocampus; disease state: control
+#> GSM1304873                                   age: 65; gender: F; race: W; pmi: 18.5; ph: 6.5; rin: 7; tissue: hippocampus; disease state: control
+#> GSM1304874                                   age: 55; gender: M; race: W; pmi: 28; ph: 6.1; rin: 6.8; tissue: hippocampus; disease state: control
+#> GSM1304875                                 age: 22; gender: M; race: W; pmi: 20.1; ph: 6.8; rin: 7.1; tissue: hippocampus; disease state: control
+#> GSM1304876                                   age: 52; gender: F; race: W; pmi: 22.6; ph: 7.1; rin: 7; tissue: hippocampus; disease state: control
+#> GSM1304877                                 age: 58; gender: F; race: W; pmi: 22.7; ph: 6.4; rin: 6.3; tissue: hippocampus; disease state: control
+#> GSM1304878                                 age: 40; gender: F; race: B; pmi: 16.6; ph: 6.8; rin: 7.9; tissue: hippocampus; disease state: control
+#> GSM1304879                                 age: 41; gender: F; race: W; pmi: 15.4; ph: 6.6; rin: 8.5; tissue: hippocampus; disease state: control
+#> GSM1304880                                 age: 49; gender: M; race: W; pmi: 21.2; ph: 6.5; rin: 7.8; tissue: hippocampus; disease state: control
+#> GSM1304881                                age: 48; gender: M; race: W; pmi: 21.68; ph: 6.6; rin: 7.3; tissue: hippocampus; disease state: control
+#> GSM1304882                                 age: 39; gender: F; race: W; pmi: 24.5; ph: 6.8; rin: 8.2; tissue: hippocampus; disease state: control
+#> GSM1304883                                   age: 48; gender: M; race: W; pmi: 24.5; ph: 6.5; rin: 7; tissue: hippocampus; disease state: control
+#> GSM1304884                                 age: 43; gender: M; race: W; pmi: 13.8; ph: 6.6; rin: 7.6; tissue: hippocampus; disease state: control
+#> GSM1304885                                 age: 68; gender: M; race: W; pmi: 11.8; ph: 6.8; rin: 6.1; tissue: hippocampus; disease state: control
+#> GSM1304886                                 age: 58; gender: F; race: W; pmi: 18.8; ph: 6.6; rin: 7.2; tissue: hippocampus; disease state: control
+#> GSM1304887                                 age: 43; gender: M; race: W; pmi: 22.3; ph: 6.7; rin: 7.9; tissue: hippocampus; disease state: control
+#> GSM1304888               age: 51; gender: M; race: W; pmi: 24.6; ph: 6.5; rin: 7.7; tissue: hippocampus; disease state: major depressive disorder
+#> GSM1304889               age: 53; gender: F; race: W; pmi: 11.9; ph: 6.7; rin: 8.1; tissue: hippocampus; disease state: major depressive disorder
+#> GSM1304890               age: 26; gender: F; race: W; pmi: 13.4; ph: 6.4; rin: 7.5; tissue: hippocampus; disease state: major depressive disorder
+#> GSM1304891               age: 52; gender: F; race: W; pmi: 10.3; ph: 6.5; rin: 6.6; tissue: hippocampus; disease state: major depressive disorder
+#> GSM1304892                 age: 62; gender: M; race: W; pmi: 26; ph: 6.5; rin: 6.8; tissue: hippocampus; disease state: major depressive disorder
+#> GSM1304893               age: 29; gender: M; race: W; pmi: 26.6; ph: 6.9; rin: 7.8; tissue: hippocampus; disease state: major depressive disorder
+#> GSM1304894               age: 49; gender: F; race: W; pmi: 23.4; ph: 6.4; rin: 6.2; tissue: hippocampus; disease state: major depressive disorder
+#> GSM1304895               age: 54; gender: F; race: W; pmi: 17.9; ph: 6.2; rin: 6.1; tissue: hippocampus; disease state: major depressive disorder
+#> GSM1304896               age: 28; gender: F; race: B; pmi: 24.8; ph: 6.6; rin: 8.2; tissue: hippocampus; disease state: major depressive disorder
+#> GSM1304897               age: 42; gender: M; race: W; pmi: 14.3; ph: 6.4; rin: 6.2; tissue: hippocampus; disease state: major depressive disorder
+#> GSM1304898               age: 44; gender: M; race: W; pmi: 19.3; ph: 6.5; rin: 6.3; tissue: hippocampus; disease state: major depressive disorder
+#> GSM1304899                 age: 40; gender: F; race: W; pmi: 22.2; ph: 6.6; rin: 8; tissue: hippocampus; disease state: major depressive disorder
+#> GSM1304900                 age: 47; gender: M; race: W; pmi: 24; ph: 6.6; rin: 5.5; tissue: hippocampus; disease state: major depressive disorder
+#> GSM1304901                 age: 59; gender: M; race: W; pmi: 13; ph: 6.6; rin: 7.2; tissue: hippocampus; disease state: major depressive disorder
+#> GSM1304902               age: 47; gender: F; race: W; pmi: 22.3; ph: 6.6; rin: 6.5; tissue: hippocampus; disease state: major depressive disorder
+#> GSM1304903               age: 34; gender: M; race: W; pmi: 24.4; ph: 6.6; rin: 8.4; tissue: hippocampus; disease state: major depressive disorder
+#> GSM1304904                 age: 51; gender: M; race: W; pmi: 28.3; ph: 7.3; rin: 7; tissue: hippocampus; disease state: major depressive disorder
+#> GSM1304905                          age: 49; gender: M; race: W; pmi: 21.5; ph: 5.97; rin: 6; tissue: hippocampus; disease state: schizo; phrenia
+#> GSM1304906                       age: 47; gender: F; race: W; pmi: 14.37; ph: 6.35; rin: 6.3; tissue: hippocampus; disease state: schizo; phrenia
+#> GSM1304907                        age: 25; gender: F; race: B; pmi: 20.1; ph: 6.73; rin: 5.6; tissue: hippocampus; disease state: schizo; phrenia
+#> GSM1304908                        age: 62; gender: M; race: W; pmi: 22.7; ph: 7.14; rin: 6.3; tissue: hippocampus; disease state: schizo; phrenia
+#> GSM1304909                        age: 44; gender: F; race: W; pmi: 24.5; ph: 6.63; rin: 7.8; tissue: hippocampus; disease state: schizo; phrenia
+#> GSM1304910                        age: 46; gender: F; race: W; pmi: 23.8; ph: 6.61; rin: 6.9; tissue: hippocampus; disease state: schizo; phrenia
+#> GSM1304911                          age: 50; gender: M; race: W; pmi: 11; ph: 6.23; rin: 7.2; tissue: hippocampus; disease state: schizo; phrenia
+#> GSM1304912                        age: 46; gender: M; race: W; pmi: 15.8; ph: 6.19; rin: 6.2; tissue: hippocampus; disease state: schizo; phrenia
+#> GSM1304913                        age: 41; gender: F; race: W; pmi: 20.1; ph: 6.27; rin: 6.7; tissue: hippocampus; disease state: schizo; phrenia
+#> GSM1304914                        age: 47; gender: M; race: W; pmi: 28.9; ph: 6.58; rin: 6.7; tissue: hippocampus; disease state: schizo; phrenia
+#> GSM1304915                        age: 37; gender: M; race: B; pmi: 5.98; ph: 6.07; rin: 6.4; tissue: hippocampus; disease state: schizo; phrenia
+#> GSM1304916                         age: 58; gender: M; race: W; pmi: 7.7; ph: 6.22; rin: 6.7; tissue: hippocampus; disease state: schizo; phrenia
+#> GSM1304917                         age: 44; gender: F; race: B; pmi: 18.7; ph: 6.2; rin: 6.4; tissue: hippocampus; disease state: schizo; phrenia
+#> GSM1304918                        age: 38; gender: M; race: W; pmi: 28.8; ph: 6.56; rin: 6.6; tissue: hippocampus; disease state: schizo; phrenia
+#> GSM1304919                        age: 52; gender: M; race: B; pmi: 27.1; ph: 6.68; rin: 6.3; tissue: hippocampus; disease state: schizo; phrenia
+#> GSM1304920          age: 52; gender: M; race: W; pmi: 23.5; ph: 6.7; rin: 7.2; tissue: Pre-frontal cortex (BA46); disease state: bipolar disorder
+#> GSM1304921          age: 50; gender: F; race: W; pmi: 11.7; ph: 6.4; rin: 8.6; tissue: Pre-frontal cortex (BA46); disease state: bipolar disorder
+#> GSM1304922          age: 28; gender: F; race: W; pmi: 22.3; ph: 6.3; rin: 8.6; tissue: Pre-frontal cortex (BA46); disease state: bipolar disorder
+#> GSM1304923            age: 55; gender: F; race: W; pmi: 17.5; ph: 6.4; rin: 8; tissue: Pre-frontal cortex (BA46); disease state: bipolar disorder
+#> GSM1304924          age: 58; gender: M; race: W; pmi: 27.7; ph: 6.8; rin: 7.5; tissue: Pre-frontal cortex (BA46); disease state: bipolar disorder
+#> GSM1304925          age: 28; gender: M; race: W; pmi: 27.4; ph: 6.2; rin: 7.9; tissue: Pre-frontal cortex (BA46); disease state: bipolar disorder
+#> GSM1304926          age: 49; gender: F; race: W; pmi: 21.5; ph: 6.7; rin: 8.1; tissue: Pre-frontal cortex (BA46); disease state: bipolar disorder
+#> GSM1304927          age: 56; gender: F; race: W; pmi: 24.5; ph: 6.1; rin: 6.9; tissue: Pre-frontal cortex (BA46); disease state: bipolar disorder
+#> GSM1304928          age: 50; gender: M; race: W; pmi: 12.1; ph: 6.7; rin: 7.6; tissue: Pre-frontal cortex (BA46); disease state: bipolar disorder
+#> GSM1304929          age: 40; gender: M; race: W; pmi: 18.5; ph: 6.4; rin: 7.9; tissue: Pre-frontal cortex (BA46); disease state: bipolar disorder
+#> GSM1304930          age: 39; gender: F; race: W; pmi: 22.2; ph: 6.7; rin: 7.8; tissue: Pre-frontal cortex (BA46); disease state: bipolar disorder
+#> GSM1304931          age: 45; gender: M; race: W; pmi: 27.2; ph: 7.1; rin: 7.3; tissue: Pre-frontal cortex (BA46); disease state: bipolar disorder
+#> GSM1304932          age: 42; gender: M; race: W; pmi: 12.5; ph: 6.7; rin: 7.6; tissue: Pre-frontal cortex (BA46); disease state: bipolar disorder
+#> GSM1304933           age: 65; gender: M; race: W; pmi: 8.9; ph: 6.7; rin: 6.9; tissue: Pre-frontal cortex (BA46); disease state: bipolar disorder
+#> GSM1304934          age: 51; gender: F; race: W; pmi: 21.5; ph: 6.7; rin: 7.7; tissue: Pre-frontal cortex (BA46); disease state: bipolar disorder
+#> GSM1304935          age: 39; gender: M; race: W; pmi: 24.2; ph: 6.6; rin: 7.3; tissue: Pre-frontal cortex (BA46); disease state: bipolar disorder
+#> GSM1304936          age: 48; gender: M; race: W; pmi: 18.1; ph: 6.9; rin: 8.2; tissue: Pre-frontal cortex (BA46); disease state: bipolar disorder
+#> GSM1304937                   age: 51; gender: M; race: W; pmi: 24.2; ph: 6.6; rin: 7.9; tissue: Pre-frontal cortex (BA46); disease state: control
+#> GSM1304938                    age: 51; gender: F; race: W; pmi: 7.8; ph: 6.6; rin: 8.6; tissue: Pre-frontal cortex (BA46); disease state: control
+#> GSM1304939                   age: 36; gender: F; race: W; pmi: 14.5; ph: 6.4; rin: 8.6; tissue: Pre-frontal cortex (BA46); disease state: control
+#> GSM1304940                   age: 65; gender: F; race: W; pmi: 18.5; ph: 6.5; rin: 8.3; tissue: Pre-frontal cortex (BA46); disease state: control
+#> GSM1304941                     age: 55; gender: M; race: W; pmi: 28; ph: 6.1; rin: 7.9; tissue: Pre-frontal cortex (BA46); disease state: control
+#> GSM1304942                   age: 22; gender: M; race: W; pmi: 20.1; ph: 6.8; rin: 8.1; tissue: Pre-frontal cortex (BA46); disease state: control
+#> GSM1304943                   age: 52; gender: F; race: W; pmi: 22.6; ph: 7.1; rin: 8.2; tissue: Pre-frontal cortex (BA46); disease state: control
+#> GSM1304944                     age: 58; gender: F; race: W; pmi: 22.7; ph: 6.4; rin: 8; tissue: Pre-frontal cortex (BA46); disease state: control
+#> GSM1304945                   age: 40; gender: F; race: B; pmi: 16.6; ph: 6.8; rin: 8.2; tissue: Pre-frontal cortex (BA46); disease state: control
+#> GSM1304946                   age: 41; gender: F; race: W; pmi: 15.4; ph: 6.6; rin: 8.2; tissue: Pre-frontal cortex (BA46); disease state: control
+#> GSM1304947                   age: 49; gender: M; race: W; pmi: 21.2; ph: 6.5; rin: 7.9; tissue: Pre-frontal cortex (BA46); disease state: control
+#> GSM1304948                  age: 48; gender: M; race: W; pmi: 21.68; ph: 6.6; rin: 7.5; tissue: Pre-frontal cortex (BA46); disease state: control
+#> GSM1304949                   age: 39; gender: F; race: W; pmi: 24.5; ph: 6.8; rin: 7.4; tissue: Pre-frontal cortex (BA46); disease state: control
+#> GSM1304950                   age: 48; gender: M; race: W; pmi: 24.5; ph: 6.5; rin: 6.8; tissue: Pre-frontal cortex (BA46); disease state: control
+#> GSM1304951                   age: 43; gender: M; race: W; pmi: 13.8; ph: 6.6; rin: 7.5; tissue: Pre-frontal cortex (BA46); disease state: control
+#> GSM1304952                   age: 68; gender: M; race: W; pmi: 11.8; ph: 6.8; rin: 6.7; tissue: Pre-frontal cortex (BA46); disease state: control
+#> GSM1304953                   age: 58; gender: F; race: W; pmi: 18.8; ph: 6.6; rin: 8.7; tissue: Pre-frontal cortex (BA46); disease state: control
+#> GSM1304954                     age: 43; gender: M; race: W; pmi: 22.3; ph: 6.7; rin: 8; tissue: Pre-frontal cortex (BA46); disease state: control
+#> GSM1304955                     age: 46; gender: M; race: W; pmi: 22; ph: 6.3; rin: 6.6; tissue: Pre-frontal cortex (BA46); disease state: control
+#> GSM1304956 age: 51; gender: M; race: W; pmi: 24.6; ph: 6.5; rin: 7.8; tissue: Pre-frontal cortex (BA46); disease state: major depressive disorder
+#> GSM1304957 age: 53; gender: F; race: W; pmi: 11.9; ph: 6.7; rin: 8.4; tissue: Pre-frontal cortex (BA46); disease state: major depressive disorder
+#> GSM1304958 age: 26; gender: F; race: W; pmi: 13.4; ph: 6.4; rin: 8.4; tissue: Pre-frontal cortex (BA46); disease state: major depressive disorder
+#> GSM1304959 age: 52; gender: F; race: W; pmi: 10.3; ph: 6.5; rin: 8.1; tissue: Pre-frontal cortex (BA46); disease state: major depressive disorder
+#> GSM1304960   age: 62; gender: M; race: W; pmi: 26; ph: 6.5; rin: 7.8; tissue: Pre-frontal cortex (BA46); disease state: major depressive disorder
+#> GSM1304961 age: 29; gender: M; race: W; pmi: 26.6; ph: 6.9; rin: 8.2; tissue: Pre-frontal cortex (BA46); disease state: major depressive disorder
+#> GSM1304962 age: 49; gender: F; race: W; pmi: 23.4; ph: 6.4; rin: 7.6; tissue: Pre-frontal cortex (BA46); disease state: major depressive disorder
+#> GSM1304963 age: 54; gender: F; race: W; pmi: 17.9; ph: 6.2; rin: 7.5; tissue: Pre-frontal cortex (BA46); disease state: major depressive disorder
+#> GSM1304964 age: 28; gender: F; race: B; pmi: 24.8; ph: 6.6; rin: 7.9; tissue: Pre-frontal cortex (BA46); disease state: major depressive disorder
+#> GSM1304965 age: 42; gender: M; race: W; pmi: 14.3; ph: 6.4; rin: 8.4; tissue: Pre-frontal cortex (BA46); disease state: major depressive disorder
+#> GSM1304966 age: 40; gender: F; race: W; pmi: 22.2; ph: 6.6; rin: 7.7; tissue: Pre-frontal cortex (BA46); disease state: major depressive disorder
+#> GSM1304967   age: 47; gender: M; race: W; pmi: 24; ph: 6.6; rin: 6.8; tissue: Pre-frontal cortex (BA46); disease state: major depressive disorder
+#> GSM1304968   age: 44; gender: M; race: W; pmi: 11; ph: 6.5; rin: 7.2; tissue: Pre-frontal cortex (BA46); disease state: major depressive disorder
+#> GSM1304969   age: 59; gender: M; race: W; pmi: 13; ph: 6.6; rin: 7.7; tissue: Pre-frontal cortex (BA46); disease state: major depressive disorder
+#> GSM1304970 age: 47; gender: F; race: W; pmi: 22.3; ph: 6.6; rin: 6.7; tissue: Pre-frontal cortex (BA46); disease state: major depressive disorder
+#> GSM1304971 age: 34; gender: M; race: W; pmi: 24.4; ph: 6.6; rin: 7.8; tissue: Pre-frontal cortex (BA46); disease state: major depressive disorder
+#> GSM1304972 age: 51; gender: M; race: W; pmi: 28.3; ph: 7.3; rin: 7.7; tissue: Pre-frontal cortex (BA46); disease state: major depressive disorder
+#> GSM1304973            age: 49; gender: M; race: W; pmi: 21.5; ph: 5.97; rin: 7; tissue: Pre-frontal cortex (BA46); disease state: schizo; phrenia
+#> GSM1304974           age: 47; gender: F; race: W; pmi: 14.37; ph: 6.35; rin: 9; tissue: Pre-frontal cortex (BA46); disease state: schizo; phrenia
+#> GSM1304975          age: 25; gender: F; race: B; pmi: 20.1; ph: 6.73; rin: 7.2; tissue: Pre-frontal cortex (BA46); disease state: schizo; phrenia
+#> GSM1304976           age: 41; gender: F; race: W; pmi: 17.1; ph: 6.9; rin: 8.3; tissue: Pre-frontal cortex (BA46); disease state: schizo; phrenia
+#> GSM1304977          age: 62; gender: M; race: W; pmi: 22.7; ph: 7.14; rin: 8.1; tissue: Pre-frontal cortex (BA46); disease state: schizo; phrenia
+#> GSM1304978           age: 47; gender: F; race: B; pmi: 20.1; ph: 7.3; rin: 8.1; tissue: Pre-frontal cortex (BA46); disease state: schizo; phrenia
+#> GSM1304979          age: 44; gender: F; race: W; pmi: 24.5; ph: 6.63; rin: 7.6; tissue: Pre-frontal cortex (BA46); disease state: schizo; phrenia
+#> GSM1304980            age: 46; gender: F; race: W; pmi: 23.8; ph: 6.61; rin: 8; tissue: Pre-frontal cortex (BA46); disease state: schizo; phrenia
+#> GSM1304981            age: 50; gender: M; race: W; pmi: 11; ph: 6.23; rin: 8.4; tissue: Pre-frontal cortex (BA46); disease state: schizo; phrenia
+#> GSM1304982          age: 41; gender: F; race: W; pmi: 20.1; ph: 6.27; rin: 7.4; tissue: Pre-frontal cortex (BA46); disease state: schizo; phrenia
+#> GSM1304983            age: 47; gender: M; race: W; pmi: 28.9; ph: 6.58; rin: 7; tissue: Pre-frontal cortex (BA46); disease state: schizo; phrenia
+#> GSM1304984          age: 37; gender: M; race: B; pmi: 5.98; ph: 6.07; rin: 6.3; tissue: Pre-frontal cortex (BA46); disease state: schizo; phrenia
+#> GSM1304985           age: 58; gender: M; race: W; pmi: 7.7; ph: 6.22; rin: 7.3; tissue: Pre-frontal cortex (BA46); disease state: schizo; phrenia
+#> GSM1304986           age: 44; gender: F; race: B; pmi: 18.7; ph: 6.2; rin: 7.6; tissue: Pre-frontal cortex (BA46); disease state: schizo; phrenia
+#> GSM1304987          age: 52; gender: M; race: B; pmi: 27.1; ph: 6.68; rin: 7.4; tissue: Pre-frontal cortex (BA46); disease state: schizo; phrenia
+#> GSM1304988               age: 50; gender: M; race: W; pmi: 12.1; ph: 6.7; rin: 8.6; tissue: Associative striatum; disease state: bipolar disorder
+#> GSM1304989               age: 40; gender: M; race: W; pmi: 18.5; ph: 6.4; rin: 8.4; tissue: Associative striatum; disease state: bipolar disorder
+#> GSM1304990               age: 39; gender: F; race: W; pmi: 22.2; ph: 6.7; rin: 9.1; tissue: Associative striatum; disease state: bipolar disorder
+#> GSM1304991               age: 45; gender: M; race: W; pmi: 27.2; ph: 7.1; rin: 8.7; tissue: Associative striatum; disease state: bipolar disorder
+#> GSM1304992               age: 42; gender: M; race: W; pmi: 12.5; ph: 6.7; rin: 8.7; tissue: Associative striatum; disease state: bipolar disorder
+#> GSM1304993                age: 65; gender: M; race: W; pmi: 8.9; ph: 6.7; rin: 8.3; tissue: Associative striatum; disease state: bipolar disorder
+#> GSM1304994               age: 51; gender: F; race: W; pmi: 21.5; ph: 6.7; rin: 8.4; tissue: Associative striatum; disease state: bipolar disorder
+#> GSM1304995               age: 39; gender: M; race: W; pmi: 24.2; ph: 6.6; rin: 8.5; tissue: Associative striatum; disease state: bipolar disorder
+#> GSM1304996               age: 48; gender: M; race: W; pmi: 18.1; ph: 6.9; rin: 8.8; tissue: Associative striatum; disease state: bipolar disorder
+#> GSM1304997               age: 52; gender: M; race: W; pmi: 23.5; ph: 6.7; rin: 9.1; tissue: Associative striatum; disease state: bipolar disorder
+#> GSM1304998               age: 50; gender: F; race: W; pmi: 11.7; ph: 6.4; rin: 8.4; tissue: Associative striatum; disease state: bipolar disorder
+#> GSM1304999                 age: 28; gender: F; race: W; pmi: 22.3; ph: 6.3; rin: 9; tissue: Associative striatum; disease state: bipolar disorder
+#> GSM1305000                 age: 55; gender: F; race: W; pmi: 17.5; ph: 6.4; rin: 6; tissue: Associative striatum; disease state: bipolar disorder
+#> GSM1305001               age: 58; gender: M; race: W; pmi: 27.7; ph: 6.8; rin: 6.6; tissue: Associative striatum; disease state: bipolar disorder
+#> GSM1305002               age: 49; gender: F; race: W; pmi: 21.5; ph: 6.7; rin: 8.7; tissue: Associative striatum; disease state: bipolar disorder
+#> GSM1305003               age: 56; gender: F; race: W; pmi: 24.5; ph: 6.1; rin: 7.7; tissue: Associative striatum; disease state: bipolar disorder
+#> GSM1305004               age: 42; gender: F; race: W; pmi: 31.2; ph: 6.5; rin: 6.8; tissue: Associative striatum; disease state: bipolar disorder
+#> GSM1305005                        age: 49; gender: M; race: W; pmi: 21.2; ph: 6.5; rin: 8.4; tissue: Associative striatum; disease state: control
+#> GSM1305006                       age: 48; gender: M; race: W; pmi: 21.68; ph: 6.6; rin: 7.5; tissue: Associative striatum; disease state: control
+#> GSM1305007                        age: 39; gender: F; race: W; pmi: 24.5; ph: 6.8; rin: 7.5; tissue: Associative striatum; disease state: control
+#> GSM1305008                        age: 48; gender: M; race: W; pmi: 24.5; ph: 6.5; rin: 7.6; tissue: Associative striatum; disease state: control
+#> GSM1305009                        age: 43; gender: M; race: W; pmi: 13.8; ph: 6.6; rin: 8.7; tissue: Associative striatum; disease state: control
+#> GSM1305010                        age: 68; gender: M; race: W; pmi: 11.8; ph: 6.8; rin: 8.5; tissue: Associative striatum; disease state: control
+#> GSM1305011                        age: 58; gender: F; race: W; pmi: 18.8; ph: 6.6; rin: 8.6; tissue: Associative striatum; disease state: control
+#> GSM1305012                        age: 43; gender: M; race: W; pmi: 22.3; ph: 6.7; rin: 8.5; tissue: Associative striatum; disease state: control
+#> GSM1305013                            age: 46; gender: M; race: W; pmi: 22; ph: 6.3; rin: 7; tissue: Associative striatum; disease state: control
+#> GSM1305014                        age: 51; gender: M; race: W; pmi: 24.2; ph: 6.6; rin: 8.3; tissue: Associative striatum; disease state: control
+#> GSM1305015                           age: 51; gender: F; race: W; pmi: 7.8; ph: 6.6; rin: 9; tissue: Associative striatum; disease state: control
+#> GSM1305016                        age: 36; gender: F; race: W; pmi: 14.5; ph: 6.4; rin: 9.3; tissue: Associative striatum; disease state: control
+#> GSM1305017                        age: 65; gender: F; race: W; pmi: 18.5; ph: 6.5; rin: 7.4; tissue: Associative striatum; disease state: control
+#> GSM1305018                          age: 55; gender: M; race: W; pmi: 28; ph: 6.1; rin: 7.6; tissue: Associative striatum; disease state: control
+#> GSM1305019                        age: 22; gender: M; race: W; pmi: 20.1; ph: 6.8; rin: 7.4; tissue: Associative striatum; disease state: control
+#> GSM1305020                        age: 52; gender: F; race: W; pmi: 22.6; ph: 7.1; rin: 8.8; tissue: Associative striatum; disease state: control
+#> GSM1305021                          age: 58; gender: F; race: W; pmi: 22.7; ph: 6.4; rin: 9; tissue: Associative striatum; disease state: control
+#> GSM1305022                        age: 40; gender: F; race: B; pmi: 16.6; ph: 6.8; rin: 8.7; tissue: Associative striatum; disease state: control
+#> GSM1305023      age: 42; gender: M; race: W; pmi: 14.3; ph: 6.4; rin: 8.7; tissue: Associative striatum; disease state: major depressive disorder
+#> GSM1305024      age: 44; gender: M; race: W; pmi: 19.3; ph: 6.5; rin: 8.5; tissue: Associative striatum; disease state: major depressive disorder
+#> GSM1305025        age: 47; gender: M; race: W; pmi: 24; ph: 6.6; rin: 7.3; tissue: Associative striatum; disease state: major depressive disorder
+#> GSM1305026        age: 44; gender: M; race: W; pmi: 11; ph: 6.5; rin: 7.7; tissue: Associative striatum; disease state: major depressive disorder
+#> GSM1305027        age: 59; gender: M; race: W; pmi: 13; ph: 6.6; rin: 8.4; tissue: Associative striatum; disease state: major depressive disorder
+#> GSM1305028      age: 47; gender: F; race: W; pmi: 22.3; ph: 6.6; rin: 8.2; tissue: Associative striatum; disease state: major depressive disorder
+#> GSM1305029      age: 34; gender: M; race: W; pmi: 24.4; ph: 6.6; rin: 9.1; tissue: Associative striatum; disease state: major depressive disorder
+#> GSM1305030      age: 51; gender: M; race: W; pmi: 28.3; ph: 7.3; rin: 8.6; tissue: Associative striatum; disease state: major depressive disorder
+#> GSM1305031      age: 51; gender: M; race: W; pmi: 24.6; ph: 6.5; rin: 8.3; tissue: Associative striatum; disease state: major depressive disorder
+#> GSM1305032      age: 53; gender: F; race: W; pmi: 11.9; ph: 6.7; rin: 8.8; tissue: Associative striatum; disease state: major depressive disorder
+#> GSM1305033      age: 26; gender: F; race: W; pmi: 13.4; ph: 6.4; rin: 9.2; tissue: Associative striatum; disease state: major depressive disorder
+#> GSM1305034      age: 52; gender: F; race: W; pmi: 10.3; ph: 6.5; rin: 6.7; tissue: Associative striatum; disease state: major depressive disorder
+#> GSM1305035        age: 62; gender: M; race: W; pmi: 26; ph: 6.5; rin: 7.5; tissue: Associative striatum; disease state: major depressive disorder
+#> GSM1305036      age: 29; gender: M; race: W; pmi: 26.6; ph: 6.9; rin: 9.2; tissue: Associative striatum; disease state: major depressive disorder
+#> GSM1305037      age: 49; gender: F; race: W; pmi: 23.4; ph: 6.4; rin: 6.7; tissue: Associative striatum; disease state: major depressive disorder
+#> GSM1305038        age: 54; gender: F; race: W; pmi: 17.9; ph: 6.2; rin: 9; tissue: Associative striatum; disease state: major depressive disorder
+#> GSM1305039                 age: 50; gender: M; race: W; pmi: 11; ph: 6.23; rin: 8.5; tissue: Associative striatum; disease state: schizo; phrenia
+#> GSM1305040               age: 46; gender: M; race: W; pmi: 15.8; ph: 6.19; rin: 7.8; tissue: Associative striatum; disease state: schizo; phrenia
+#> GSM1305041               age: 41; gender: F; race: W; pmi: 20.1; ph: 6.27; rin: 8.6; tissue: Associative striatum; disease state: schizo; phrenia
+#> GSM1305042               age: 47; gender: M; race: W; pmi: 28.9; ph: 6.58; rin: 8.4; tissue: Associative striatum; disease state: schizo; phrenia
+#> GSM1305043               age: 37; gender: M; race: B; pmi: 5.98; ph: 6.07; rin: 6.9; tissue: Associative striatum; disease state: schizo; phrenia
+#> GSM1305044                age: 58; gender: M; race: W; pmi: 7.7; ph: 6.22; rin: 6.7; tissue: Associative striatum; disease state: schizo; phrenia
+#> GSM1305045                age: 44; gender: F; race: B; pmi: 18.7; ph: 6.2; rin: 6.9; tissue: Associative striatum; disease state: schizo; phrenia
+#> GSM1305046               age: 38; gender: M; race: W; pmi: 28.8; ph: 6.56; rin: 6.8; tissue: Associative striatum; disease state: schizo; phrenia
+#> GSM1305047               age: 52; gender: M; race: B; pmi: 27.1; ph: 6.68; rin: 8.5; tissue: Associative striatum; disease state: schizo; phrenia
+#> GSM1305048               age: 49; gender: M; race: W; pmi: 21.5; ph: 5.97; rin: 8.4; tissue: Associative striatum; disease state: schizo; phrenia
+#> GSM1305049              age: 47; gender: F; race: W; pmi: 14.37; ph: 6.35; rin: 8.9; tissue: Associative striatum; disease state: schizo; phrenia
+#> GSM1305050               age: 25; gender: F; race: B; pmi: 20.1; ph: 6.73; rin: 7.3; tissue: Associative striatum; disease state: schizo; phrenia
+#> GSM1305051                age: 41; gender: F; race: W; pmi: 17.1; ph: 6.9; rin: 7.3; tissue: Associative striatum; disease state: schizo; phrenia
+#> GSM1305052               age: 62; gender: M; race: W; pmi: 22.7; ph: 7.14; rin: 7.8; tissue: Associative striatum; disease state: schizo; phrenia
+#> GSM1305053               age: 32; gender: M; race: W; pmi: 30.8; ph: 6.18; rin: 7.1; tissue: Associative striatum; disease state: schizo; phrenia
+#> GSM1305054                age: 47; gender: F; race: B; pmi: 20.1; ph: 7.3; rin: 8.8; tissue: Associative striatum; disease state: schizo; phrenia
+#> GSM1305055                 age: 50; gender: F; race: B; pmi: 22.9; ph: 6.25; rin: 8; tissue: Associative striatum; disease state: schizo; phrenia
+#> GSM1305056                 age: 44; gender: F; race: W; pmi: 24.5; ph: 6.63; rin: 9; tissue: Associative striatum; disease state: schizo; phrenia
 ```
 
 ### Download supplementary data from GEO database - `geo_suppl`
@@ -642,10 +1141,10 @@ vector containing the path of downloaded files.
 
 ``` r
 gse160724 <- geo_suppl(
-    ids = "GSE160724", tempdir(), 
+    ids = "GSE160724", odir = tempdir(),
     pattern = "counts_anno"
 )
-#> Downloading GSE160724_counts_anno.txt.gz from FTP site:
+#> Downloading 1 GSE suppl file from FTP site
 gse160724_dt <- data.table::fread(gse160724)
 head(gse160724_dt[1:5])
 #>    gene_id  NC_1  NC_2 shSRSF1_1 shSRSF1_2
@@ -700,16 +1199,20 @@ contains the samples informations.
 
 ``` r
 gse180383_smat <- geo(
-    "GSE180383", tempdir(),
+    "GSE180383",
+    odir = tempdir(),
     gse_matrix = TRUE, add_gpl = FALSE,
     pdata_from_soft = FALSE
 )
-#> Downloading GSE180383_series_matrix.txt.gz from FTP site:
+#> Downloading 1 GSE matrix file from FTP site
+#> → Parsing 1 series matrix file of GSE180383
 #> Warning: Cannot parse characteristic column correctly
-#> • Details see `characteristics_ch1` column in `phenoData`
-#> Warning: Please use `set_pdata` or `parse_pdata` function to convert it manually
-#> if necessary!
-#> Cannot map GPL21359 to a Bioconductor annotation package
+#> ℹ Details see "characteristics_ch1" column in phenoData
+#> ℹ Please use `parse_pdata()` or `parse_gsm_list()` function to convert it
+#>   manually if necessary!
+#> ✔ Parsing 1 GSE series matrix successfully!
+#> → Constructing <ExpressionSet>
+#> ✔ Found Bioconductor annotation package for "GPL21359"
 gse180383_smat_cli <- Biobase::pData(gse180383_smat)
 head(gse180383_smat_cli[1:5])
 #>                                  title geo_accession                status
@@ -727,19 +1230,8 @@ head(gse180383_smat_cli[1:5])
 #> GSM5461791     Jul 19 2021      Feb 15 2022
 #> GSM5461792     Jul 19 2021      Feb 15 2022
 gse180383_smat_gsmids <- gse180383_smat_cli[["geo_accession"]]
-gse180383_smat_gsm_suppl <- geo_suppl(gse180383_smat_gsmids, tempdir())
-#> Downloading GSM5461787_trim_RNA_Mono_1_S13_R1_001_countsMatrix.txt.gz from FTP
-#> site:
-#> Downloading GSM5461788_trim_RNA_Mono_2_S14_R1_001_countsMatrix.txt.gz from FTP
-#> site:
-#> Downloading GSM5461789_trim_RNA_Mono_3_S15_R1_001_countsMatrix.txt.gz from FTP
-#> site:
-#> Downloading GSM5461790_trim_RNA_ab_1_S16_R1_001_countsMatrix.txt.gz from FTP
-#> site:
-#> Downloading GSM5461791_trim_RNA_ab_2_S17_R1_001_countsMatrix.txt.gz from FTP
-#> site:
-#> Downloading GSM5461792_trim_RNA_ab_3_S18_R1_001_countsMatrix.txt.gz from FTP
-#> site:
+gse180383_smat_gsm_suppl <- geo_suppl(gse180383_smat_gsmids, odir = tempdir())
+#> Downloading 6 GSM suppl files from FTP site
 ```
 
 Another way, we can also derive sample accession ids from GSE soft
@@ -749,7 +1241,8 @@ exact sample traits information as described in the above by utilizing
 
 ``` r
 gse180383_soft <- geo(
-    "GSE180383", tempdir(),
+    "GSE180383",
+    odir = tempdir(),
     gse_matrix = FALSE
 )
 #> Downloading 1 GSE soft file from FTP site
@@ -795,13 +1288,19 @@ head(gse180383_soft_cli[1:5])
 #> GSM5461791 630 Rue Noetzlin
 #> GSM5461792 630 Rue Noetzlin
 gse180383_soft_gsmids <- names(gsm(gse180383_soft))
-gse180383_soft_gsm_suppl <- geo_suppl(gse180383_soft_gsmids, tempdir())
-#> Downloading 6 GSM suppl files from FTP site
+gse180383_soft_gsm_suppl <- geo_suppl(gse180383_soft_gsmids, odir = tempdir())
+#> Finding 6 {.strong GSM} {.field suppl} file already downloaded:
+#> 'GSM5461787_trim_RNA_Mono_1_S13_R1_001_countsMatrix.txt.gz',
+#> 'GSM5461788_trim_RNA_Mono_2_S14_R1_001_countsMatrix.txt.gz',
+#> 'GSM5461789_trim_RNA_Mono_3_S15_R1_001_countsMatrix.txt.gz',
+#> 'GSM5461790_trim_RNA_ab_1_S16_R1_001_countsMatrix.txt.gz',
+#> 'GSM5461791_trim_RNA_ab_2_S17_R1_001_countsMatrix.txt.gz', and
+#> 'GSM5461792_trim_RNA_ab_3_S18_R1_001_countsMatrix.txt.gz'
 ```
 
 ### Other utilities
 
-`rgeo` also provide some useful function to help better interact with
+`geokit` also provide some useful function to help better interact with
 GEO.
 
 - `geo_show` function: Require a geo entity id and open GEO Accession
@@ -815,41 +1314,35 @@ GEO.
 
 ``` r
 sessionInfo()
-#> R version 4.2.2 (2022-10-31 ucrt)
-#> Platform: x86_64-w64-mingw32/x64 (64-bit)
-#> Running under: Windows 10 x64 (build 22621)
+#> R version 4.4.2 (2024-10-31)
+#> Platform: x86_64-pc-linux-gnu
+#> Running under: Ubuntu 24.04.1 LTS
 #> 
 #> Matrix products: default
+#> BLAS/LAPACK: /usr/lib/x86_64-linux-gnu/libmkl_rt.so;  LAPACK version 3.8.0
 #> 
 #> locale:
-#> [1] LC_COLLATE=Chinese (Simplified)_China.utf8 
-#> [2] LC_CTYPE=Chinese (Simplified)_China.utf8   
-#> [3] LC_MONETARY=Chinese (Simplified)_China.utf8
-#> [4] LC_NUMERIC=C                               
-#> [5] LC_TIME=Chinese (Simplified)_China.utf8    
+#>  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       
+#>  [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   
+#>  [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          
+#> [10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   
+#> 
+#> time zone: Asia/Shanghai
+#> tzcode source: system (glibc)
 #> 
 #> attached base packages:
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] kableExtra_1.3.4 magrittr_2.0.3   rgeo_0.0.1.9000 
+#> [1] geokit_0.0.1.9000
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] pillar_1.8.0        compiler_4.2.2      R.methodsS3_1.8.2  
-#>  [4] R.utils_2.12.0      tools_4.2.2         digest_0.6.29      
-#>  [7] viridisLite_0.4.0   evaluate_0.15       lifecycle_1.0.3    
-#> [10] tibble_3.1.8        pkgconfig_2.0.3     rlang_1.0.6        
-#> [13] cli_3.6.0           DBI_1.1.3           rstudioapi_0.13    
-#> [16] curl_5.0.0          yaml_2.3.5          xfun_0.31          
-#> [19] fastmap_1.1.0       dplyr_1.0.9         stringr_1.4.0      
-#> [22] httr_1.4.3          knitr_1.39          xml2_1.3.3         
-#> [25] generics_0.1.3      vctrs_0.5.1         systemfonts_1.0.4  
-#> [28] webshot_0.5.3       tidyselect_1.1.2    Biobase_2.56.0     
-#> [31] svglite_2.1.0       glue_1.6.2          data.table_1.14.9  
-#> [34] R6_2.5.1            textshaping_0.3.6   fansi_1.0.3        
-#> [37] rmarkdown_2.14      purrr_0.3.4         codetools_0.2-18   
-#> [40] BiocGenerics_0.42.0 scales_1.2.0        htmltools_0.5.3    
-#> [43] ellipsis_0.3.2      assertthat_0.2.1    rvest_1.0.2        
-#> [46] colorspace_2.0-3    ragg_1.2.2.9000     utf8_1.2.2         
-#> [49] stringi_1.7.8       munsell_0.5.0       R.oo_1.25.0
+#>  [1] vctrs_0.6.5        cli_3.6.5          knitr_1.50         rlang_1.1.6       
+#>  [5] xfun_0.52          stringi_1.8.4      generics_0.1.3     textshaping_0.4.0 
+#>  [9] data.table_1.16.99 glue_1.8.0         htmltools_0.5.8.1  ragg_1.3.3        
+#> [13] fansi_1.0.6        rmarkdown_2.29     evaluate_1.0.3     tibble_3.2.1      
+#> [17] fastmap_1.2.0      yaml_2.3.10        lifecycle_1.0.4    stringr_1.5.1     
+#> [21] compiler_4.4.2     dplyr_1.1.4        pkgconfig_2.0.3    systemfonts_1.1.0 
+#> [25] digest_0.6.37      R6_2.6.1           tidyselect_1.2.1   utf8_1.2.5        
+#> [29] pillar_1.9.0       magrittr_2.0.3     withr_3.0.2        tools_4.4.2
 ```
