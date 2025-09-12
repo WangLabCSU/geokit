@@ -92,6 +92,7 @@ optionally mapping platform IDs to Bioconductor annotation packages.</p>
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">geo</span><span class="op">(</span></span>
 <span>  <span class="va">ids</span>,</span>
+<span>  amount <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  gse_matrix <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  pdata_from_soft <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  add_gpl <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -109,6 +110,18 @@ optionally mapping platform IDs to Bioconductor annotation packages.</p>
 <dd><p>Character vector of GEO accession IDs to download and parse.
 All IDs must belong to the same GEO entity type. Examples:</p><ul><li><p>DataSets: <code>c("GDS505", "GDS606")</code></p></li>
 <li><p>Series: <code>c("GSE2", "GSE22")</code></p></li>
+</ul></dd>
+
+
+<dt id="arg-amount">amount<a class="anchor" aria-label="anchor" href="#arg-amount"></a></dt>
+<dd><p>A character string specifying the amount of data to retrieve.
+One of <code>"brief"</code>, <code>"quick"</code>, <code>"data"</code>, or <code>"full"</code>.</p><ul><li><p><code>"brief"</code>: shows only the accession's attributes.</p></li>
+<li><p><code>"quick"</code>: shows the accession's attributes and the first 20 rows of
+its data table.</p></li>
+<li><p><code>"full"</code> (default): shows the accession's attributes and the complete
+data table.</p></li>
+<li><p><code>"data"</code>: omits the accession's attributes, showing only links to other
+accessions and the full data table.</p></li>
 </ul></dd>
 
 
@@ -207,8 +220,7 @@ provided through GDS subsets.</p>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">gse</span> <span class="op">&lt;-</span> <span class="fu">geo</span><span class="op">(</span><span class="st">"GSE10"</span>, gse_matrix <span class="op">=</span> <span class="cn">FALSE</span>, odir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Finding <span style="color: #0000BB;">1</span> {.strong GSE} {.field soft} file already downloaded:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">GSE10_family.soft.gz</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Finding <span style="color: #0000BB;">1</span> <span style="font-weight: bold;">GSE</span> <span style="color: #00BB00;">soft</span> file already downloaded: <span style="color: #0000BB;">GSE10_family.soft.gz</span></span>
 <span class="r-in"><span><span class="va">gpl</span> <span class="op">&lt;-</span> <span class="fu">geo</span><span class="op">(</span><span class="st">"gpl98"</span>, odir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Downloading <span style="color: #0000BB;">1</span> <span style="font-weight: bold;">GPL</span> <span style="color: #00BB00;">full</span> amount file from GEO Accession Site</span>
 <span class="r-in"><span><span class="va">gsm</span> <span class="op">&lt;-</span> <span class="fu">geo</span><span class="op">(</span><span class="st">"GSM1"</span>, odir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
@@ -246,8 +258,7 @@ provided through GDS subsets.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     'browseVignettes()'. To cite Bioconductor, see</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     'citation("Biobase")', and for packages 'citation("pkgname")'.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Downloading <span style="color: #0000BB;">1</span> <span style="font-weight: bold;">GSE</span> <span style="color: #00BB00;">matrix</span> file from FTP site</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Finding <span style="color: #0000BB;">1</span> {.strong GSE} {.field soft} file already downloaded:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">GSE10_family.soft.gz</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Finding <span style="color: #0000BB;">1</span> <span style="font-weight: bold;">GSE</span> <span style="color: #00BB00;">soft</span> file already downloaded: <span style="color: #0000BB;">GSE10_family.soft.gz</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → Parsing series <span style="color: #00BB00;">soft</span> file <span style="color: #0000BB;">GSE10_family.soft.gz</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Parsing <span style="color: #0000BB;">1</span> series <span style="color: #00BB00;">soft</span> file successfully!</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → Parsing <span style="color: #0000BB;">1</span> series <span style="color: #00BB00;">matrix</span> file of <span style="color: #00BB00;">GSE10</span></span>
