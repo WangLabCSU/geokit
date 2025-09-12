@@ -4,7 +4,7 @@
 #' `geo_search()` cannot get all long metadata of GEO identities.
 #'
 #' @inheritParams geo
-#' @return A [data.table][data.table] contains metadata of all ids.
+#' @return A [data.table][data.table::data.table] contains metadata of all ids.
 #' @export
 geo_meta <- function(ids, ftp_over_https = TRUE,
                      handle_opts = list(), odir = getwd()) {

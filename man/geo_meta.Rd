@@ -24,7 +24,7 @@ HTTPS (\verb{https://ftp.ncbi.nlm.nih.gov/geo}); otherwise, uses plain FTP.}
 working directory.}
 }
 \value{
-A \link{data.table} contains metadata of all ids.
+A \link[data.table:data.table]{data.table} contains metadata of all ids.
 }
 \description{
 This is useful to combine with \code{\link[=geo_search]{geo_search()}} and filter results since
