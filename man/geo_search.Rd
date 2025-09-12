@@ -4,37 +4,38 @@
 \alias{geo_search}
 \title{Search GEO database}
 \usage{
-geo_search(query, step = 500L, interval = 1L)
+geo_search(query, step = 500L, interval = NULL)
 }
 \arguments{
-\item{query}{character, the search term. The NCBI uses a search term syntax
-which can be associated with a specific search field with square brackets.
-So, for instance "Homo sapiens[ORGN]" denotes a search for \verb{Homo sapiens}
-in the “Organism” field. Details see
-\url{https://www.ncbi.nlm.nih.gov/geo/info/qqtutorial.html}. The names and
-definitions of these fields can be identified using
-\link[rentrez:entrez_db_searchable]{entrez_db_searchable}.}
+\item{query}{A character string with the search term. The NCBI uses a
+fielded search syntax. For example, \code{"Homo sapiens[ORGN]"} searches
+the "Organism" field for \emph{Homo sapiens}. See the
+\href{https://www.ncbi.nlm.nih.gov/geo/info/qqtutorial.html}{GEO query tutorial}
+for details. Searchable fields can be listed with
+\code{\link[rentrez:entrez_db_searchable]{rentrez::entrez_db_searchable()}}.}
 
-\item{step}{the number of records to fetch from the database each time. You
-may choose a smaller value if failed.}
+\item{step}{Integer. Number of records to fetch per request. Use a smaller
+value if requests fail.}
 
-\item{interval}{The time interval (seconds) between each step.}
+\item{interval}{Numeric. Time interval (in seconds) between successive
+requests. Defaults to \code{0}. Increase this value if requests fail due to
+rate limits.}
 }
 \value{
 A \link[data.table:data.table]{data.table} contains the search results
 }
 \description{
-This function searchs \href{https://www.ncbi.nlm.nih.gov/gds}{GDS} database,
-and return a data.frame for all the search results.
+Search the \href{https://www.ncbi.nlm.nih.gov/gds}{GDS} database and return
+search results as a \link[data.table:data.table]{data.table}.
 }
 \details{
-The NCBI allows users to access more records (10 per second) if they register
-for and use an API key. \link[rentrez:set_entrez_key]{set_entrez_key} function
-allows users to set this key for all calls to rentrez functions during a
-particular R session. You can also set an environment variable \code{ENTREZ_KEY}
-by \link[base:Sys.setenv]{Sys.setenv}.  Once this value is set to your key
-rentrez will use it for all requests to the NCBI. Details see
-\url{https://docs.ropensci.org/rentrez/articles/rentrez_tutorial.html#rate-limiting-and-api-keys}
+The NCBI allows higher request limits (10 per second) when using an API key.
+You can set this key for the current R session with
+\code{\link[rentrez:set_entrez_key]{rentrez::set_entrez_key()}}, or permanently by setting the \code{ENTREZ_KEY}
+environment variable via \link[base:Sys.setenv]{Sys.setenv()}.
+Once set, \code{rentrez} will automatically use this key for all NCBI requests.
+See the \href{https://docs.ropensci.org/rentrez/articles/rentrez_tutorial.html#rate-limiting-and-api-keys}{rentrez tutorial}
+for details.
 }
 \examples{
 geo_search("diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]")

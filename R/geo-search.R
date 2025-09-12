@@ -1,40 +1,48 @@
 #' Search GEO database
 #'
-#' This function searchs [GDS](https://www.ncbi.nlm.nih.gov/gds) database,
-#' and return a data.frame for all the search results.
+#' Search the [GDS](https://www.ncbi.nlm.nih.gov/gds) database and return
+#' search results as a [data.table][data.table::data.table].
 #'
-#' The NCBI allows users to access more records (10 per second) if they register
-#' for and use an API key. [set_entrez_key][rentrez::set_entrez_key] function
-#' allows users to set this key for all calls to rentrez functions during a
-#' particular R session. You can also set an environment variable `ENTREZ_KEY`
-#' by [Sys.setenv][base::Sys.setenv].  Once this value is set to your key
-#' rentrez will use it for all requests to the NCBI. Details see
-#' <https://docs.ropensci.org/rentrez/articles/rentrez_tutorial.html#rate-limiting-and-api-keys>
+#' The NCBI allows higher request limits (10 per second) when using an API key.
+#' You can set this key for the current R session with
+#' [rentrez::set_entrez_key()], or permanently by setting the `ENTREZ_KEY`
+#' environment variable via [Sys.setenv()][base::Sys.setenv].
+#' Once set, `rentrez` will automatically use this key for all NCBI requests.
+#' See the [rentrez tutorial](https://docs.ropensci.org/rentrez/articles/rentrez_tutorial.html#rate-limiting-and-api-keys)
+#' for details.
 #'
-#' @param query character, the search term. The NCBI uses a search term syntax
-#'   which can be associated with a specific search field with square brackets.
-#'   So, for instance "Homo sapiens\[ORGN\]" denotes a search for `Homo sapiens`
-#'   in the “Organism” field. Details see
-#'   <https://www.ncbi.nlm.nih.gov/geo/info/qqtutorial.html>. The names and
-#'   definitions of these fields can be identified using
-#'   [entrez_db_searchable][rentrez::entrez_db_searchable].
-#' @param step the number of records to fetch from the database each time. You
-#' may choose a smaller value if failed.
-#' @param interval The time interval (seconds) between each step.
+#' @param query A character string with the search term. The NCBI uses a
+#'   fielded search syntax. For example, `"Homo sapiens[ORGN]"` searches
+#'   the "Organism" field for *Homo sapiens*. See the
+#'   [GEO query tutorial](https://www.ncbi.nlm.nih.gov/geo/info/qqtutorial.html)
+#'   for details. Searchable fields can be listed with
+#'   [rentrez::entrez_db_searchable()].
+#' @param step Integer. Number of records to fetch per request. Use a smaller
+#'   value if requests fail.
+#' @param interval Numeric. Time interval (in seconds) between successive
+#'   requests. Defaults to `0`. Increase this value if requests fail due to
+#'   rate limits.
 #' @return A [data.table][data.table::data.table] contains the search results
 #' @examples
 #' geo_search("diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]")
 #' @export
-geo_search <- function(query, step = 500L, interval = 1L) {
-    records_num <- rentrez::entrez_search(
-        "gds", query,
-        retmax = 0L
-    )$count
+geo_search <- function(query, step = 500L, interval = NULL) {
+    assert_number_whole(step, min = 1)
+    assert_number_decimal(interval, min = 0, allow_null = TRUE)
+    interval <- interval %||% 0
+    records_num <- rentrez::entrez_search("gds", query, retmax = 0L)$count
     seq_starts <- seq(1L, records_num, step)
     records <- character(length(seq_starts))
     search_res <- rentrez::entrez_search(
         "gds", query,
         use_history = TRUE, retmax = 0L
+    )
+    bar <- cli::cli_progress_bar(
+        name = "NCBI",
+        format = "{cli::pb_bar} {cli::pb_current}/{cli::pb_total} [{cli::pb_rate}] | {cli::pb_eta_str}",
+        format_done = "Get records from NCBI for {.val {cli::pb_total}} quer{?y/ies} in {cli::pb_elapsed}",
+        total = records_num,
+        clear = FALSE
     )
     for (i in seq_along(seq_starts)) {
         records[[i]] <- rentrez::entrez_fetch(
@@ -42,26 +50,30 @@ geo_search <- function(query, step = 500L, interval = 1L) {
             rettype = "summary", retmode = "text",
             retmax = step, retstart = seq_starts[[i]]
         )
-        Sys.sleep(interval)
+        if (i == length(seq_starts)) {
+            n_records <- records_num - seq_starts[[i]] + 1L
+        } else {
+            n_records <- seq_starts[[i + 1L]] - seq_starts[[i]]
+        }
+        cli::cli_progress_update(inc = n_records, id = bar)
+        if (interval > 0) Sys.sleep(interval)
     }
+    cli::cli_alert("Parsing GEO records")
     records <- str_split(
         str_replace_all(paste0(records, collapse = ""), "^\\n|\\n$", ""),
         "\\n\\n"
     )[[1L]]
-    name_value_pairs <- parse_name_value_pairs(preprocess_records(records))
+    out <- parse_name_value_pairs(preprocess_records(records))
     tail_col <- c(
         intersect(
             c("Contains", "Datasets", "Series", "Platforms"),
-            names(name_value_pairs)
+            names(out)
         ),
-        str_subset(names(name_value_pairs), "Accession$")
+        str_subset(names(out), "Accession$")
     )
-    data.table::setDT(name_value_pairs)
-    data.table::setcolorder(
-        name_value_pairs,
-        tail_col,
-        after = ncol(name_value_pairs)
-    )
+    data.table::setDT(out)
+    data.table::setcolorder(out, tail_col, after = ncol(out))
+    out[]
 }
 
 # this function just processed GEO searched results returned by `entrez_fetch`
