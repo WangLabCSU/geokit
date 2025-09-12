@@ -1,7 +1,5 @@
 testthat::test_that("GSE/GSM with characteristic column seperated by no special string warned and parsing column names worked well", {
-    testthat::expect_s4_class(
-        geo("GSE8462", odir = tempdir()), "ExpressionSet"
-    )
+    testthat::expect_s4_class(geo("GSE8462", odir = tempdir()), "ExpressionSet")
     testthat::expect_warning(
         gse <- geo(
             "GSE53987",
@@ -11,10 +9,7 @@ testthat::test_that("GSE/GSM with characteristic column seperated by no special 
         class = "warn_cannot_parse_characteristics"
     )
     pdata <- Biobase::pData(gse)
-    testthat::expect_error(
-        parse_pdata(pdata),
-        regexp = "Please check if `sep` and `split` parameters can parse `columns`."
-    )
+    testthat::expect_snapshot_error(parse_pdata(pdata))
     pdata$characteristics_ch1 <- stringr::str_replace_all(
         pdata$characteristics_ch1,
         "gender|race|pmi|ph|rin|tissue|disease state",

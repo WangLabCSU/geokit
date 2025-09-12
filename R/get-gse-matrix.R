@@ -70,7 +70,7 @@ get_gse_matrix <- function(ids, odir = getwd(), pdata_from_soft = TRUE,
                     )
                 )
             }
-            do.call(Biobase::ExpressionSet, es_element)
+            rlang::inject(Biobase::ExpressionSet(!!!es_element))
         })
         return_object_or_list(es_list)
     })
