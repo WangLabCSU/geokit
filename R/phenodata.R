@@ -175,7 +175,8 @@ parse_gsm_list <- function(gsm_list) {
         ))
     }
     res <- parse_gse_soft_sample_characteristics(gsm_list)
-    set_rownames(res, "geo_accession")
+    out <- set_rownames(res, "geo_accession")
+    out
 }
 
 parse_gse_soft_sample_characteristics <- function(gsm_list) {
