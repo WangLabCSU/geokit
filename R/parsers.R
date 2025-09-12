@@ -54,10 +54,11 @@ parse_gse_matrix <- function(file_text, gse_sample_data = NULL) {
     )
 }
 
-#' @param entity_type One of "sample", "platform" or "all". If all, metadata
-#'   will be extracted, otherwise, metadata will always be `NULL`.
-#' @param only_meta Whether to extracte metadata only, if `TRUE`, entity_type
-#'   must be "all".
+#' @param entity_type Character. One of `"sample"`, `"platform"`, or `"all"`.
+#'   If `"all"`, metadata will be extracted; otherwise, `metadata` is always
+#'   `NULL`.
+#' @param only_meta Logical. Whether to extract metadata only. Only used when
+#'   `entity_type = "all"`.
 #' @noRd
 parse_gse_soft <- function(file_text, entity_type = "all", only_meta = FALSE) {
     if (entity_type == "all") {
@@ -141,9 +142,7 @@ parse_gpl_or_gsm_soft <- function(file_text, only_meta = FALSE) {
         # collapse other column by it.
         if (anyDuplicated(data_table[[1L]])) {
             data_table <- data_table[
-                , lapply(.SD, function(x) {
-                    paste(unique(x), collapse = "; ")
-                }),
+                , lapply(.SD, function(x) paste(unique(x), collapse = "; ")),
                 by = names(data_table)[[1L]]
             ]
         }
@@ -222,11 +221,7 @@ parse_gds_subset <- function(subset_file_text) {
             str_split(subset_sample_id, ","),
             use.names = FALSE
         ),
-        by = c(
-            "subset_dataset_id",
-            "subset_description",
-            "subset_type"
-        )
+        by = c("subset_dataset_id", "subset_description", "subset_type")
     ][, lapply(.SD, paste0, collapse = "; "), by = "V1"]
 }
 
@@ -343,6 +338,7 @@ read_data_table <- function(file_text) {
         check.names = FALSE
     )
 }
+
 read_meta <- function(file_text, meta_type = "table") {
     read_text(
         text = str_subset(file_text, "^!\\w*"),
@@ -358,6 +354,7 @@ read_meta <- function(file_text, meta_type = "table") {
         check.names = FALSE
     )
 }
+
 read_column <- function(file_text) {
     read_text(
         text = str_subset(file_text, "^#\\w[^\\t]*="),

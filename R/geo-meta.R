@@ -16,15 +16,15 @@ geo_meta <- function(ids, ftp_over_https = TRUE,
         odir = odir,
         ftp_over_https = ftp_over_https,
         handle_opts = handle_opts,
-        only_meta = TRUE
+        only_meta = TRUE,
+        post_process = function(id, meta) {
+            meta[lengths(meta) != 1L] <- lapply(
+                meta[lengths(meta) != 1L],
+                paste0,
+                collapse = "; "
+            )
+            data.table::setDT(meta)
+        }
     )
-    meta_list <- lapply(meta_list, function(meta) {
-        meta[lengths(meta) != 1L] <- lapply(
-            meta[lengths(meta) != 1L],
-            paste0,
-            collapse = "; "
-        )
-        data.table::setDT(meta)
-    })
     data.table::rbindlist(meta_list, use.names = TRUE, fill = TRUE)
 }
