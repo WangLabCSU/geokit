@@ -49,12 +49,10 @@ methods::setMethod("show", "GEOData", function(object) {
     wrap_cat("accession", names = object@accession)
 })
 
-methods::setGeneric("meta", function(object) {
-    methods::makeStandardGeneric("meta")
-})
+methods::setGeneric("meta", function(object) standardGeneric("meta"))
 
 methods::setGeneric("meta<-", function(object, value) {
-    methods::makeStandardGeneric("meta<-")
+    standardGeneric("meta<-")
 })
 
 #' @method meta GEOData
@@ -71,16 +69,15 @@ methods::setMethod("meta", "GEOData", function(object) {
 #' @rdname GEO-class
 methods::setMethod("meta<-", "GEOData", function(object, value) {
     object@meta <- value
-    methods::validObject(object)
     object
 })
 
 methods::setGeneric("accession", function(object) {
-    methods::makeStandardGeneric("accession")
+    standardGeneric("accession")
 })
 
 methods::setGeneric("accession<-", function(object, value) {
-    methods::makeStandardGeneric("accession<-")
+    standardGeneric("accession<-")
 })
 
 #' @method accession GEOData
@@ -97,7 +94,6 @@ methods::setMethod("accession", "GEOData", function(object) {
 #' @rdname GEO-class
 methods::setMethod("accession<-", "GEOData", function(object, value) {
     object@accession <- value
-    methods::validObject(object)
     object
 })
 
@@ -152,10 +148,10 @@ methods::setMethod("show", "GEOSoft", function(object) {
 ## Accessors -----
 ### Accessors `columns` ----
 methods::setGeneric("columns", function(object) {
-    methods::makeStandardGeneric("columns")
+    standardGeneric("columns")
 })
 methods::setGeneric("columns<-", function(object, value) {
-    methods::makeStandardGeneric("columns<-")
+    standardGeneric("columns<-")
 })
 
 #' @method columns GEOSoft
@@ -172,17 +168,16 @@ methods::setMethod("columns", "GEOSoft", function(object) {
 #' @rdname GEO-class
 methods::setMethod("columns<-", "GEOSoft", function(object, value) {
     object@columns <- value
-    methods::validObject(object)
     object
 })
 
 ### Accessors `datatable` ----
 methods::setGeneric("datatable", function(object) {
-    methods::makeStandardGeneric("datatable")
+    standardGeneric("datatable")
 })
 
 methods::setGeneric("datatable<-", function(object, value) {
-    methods::makeStandardGeneric("datatable<-")
+    standardGeneric("datatable<-")
 })
 
 #' @method datatable GEOSoft
@@ -199,7 +194,6 @@ methods::setMethod("datatable", "GEOSoft", function(object) {
 #' @rdname GEO-class
 methods::setMethod("datatable<-", "GEOSoft", function(object, value) {
     object@datatable <- value
-    methods::validObject(object)
     object
 })
 
@@ -248,11 +242,11 @@ methods::setMethod("show", "GEOSeries", function(object) {
 ## Accessors -----
 ### Accessors `gsm` ----
 methods::setGeneric("gsm", function(object) {
-    methods::makeStandardGeneric("gsm")
+    standardGeneric("gsm")
 })
 
 methods::setGeneric("gsm<-", function(object, value) {
-    methods::makeStandardGeneric("gsm<-")
+    standardGeneric("gsm<-")
 })
 
 #' @method gsm GEOSeries
@@ -269,17 +263,16 @@ methods::setMethod("gsm", "GEOSeries", function(object) {
 #' @rdname GEO-class
 methods::setMethod("gsm<-", "GEOSeries", function(object, value) {
     object@gsm <- value
-    methods::validObject(object)
     object
 })
 
 ### Accessors `gpl` ----
 methods::setGeneric("gpl", function(object) {
-    methods::makeStandardGeneric("gpl")
+    standardGeneric("gpl")
 })
 
 methods::setGeneric("gpl<-", function(object, value) {
-    methods::makeStandardGeneric("gpl<-")
+    standardGeneric("gpl<-")
 })
 
 #' @method gpl GEOSeries
@@ -296,6 +289,5 @@ methods::setMethod("gpl", "GEOSeries", function(object) {
 #' @rdname GEO-class
 methods::setMethod("gpl<-", "GEOSeries", function(object, value) {
     object@gpl <- value
-    methods::validObject(object)
     object
 })
