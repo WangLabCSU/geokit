@@ -231,8 +231,9 @@ download_inform <- function(urls, file_paths, site, msg_id = "",
     )
     is_existed <- file.exists(file_paths)
     if (any(is_existed)) {
-        cli::cli_inform(sprintf(
-            "Finding {.val {sum(is_existed)}} %s file{?s} already downloaded: {.file {basename(file_paths[is_existed])}}", msg_id # nolint
+        cli::cli_inform(paste(
+            "Finding {.val {sum(is_existed)}} {msg_id} file{?s} already",
+            "downloaded: {.file {basename(file_paths[is_existed])}}"
         ))
         urls <- urls[!is_existed]
         file_paths <- file_paths[!is_existed]
@@ -261,9 +262,7 @@ download_inform <- function(urls, file_paths, site, msg_id = "",
         status <- do.call(curl::multi_download, arg_list)
         is_success <- is_download_success(status, successful_code)
         is_need_deleted <- !is_success & file.exists(file_paths)
-        if (any(is_need_deleted)) {
-            file.remove(file_paths[is_need_deleted])
-        }
+        if (any(is_need_deleted)) file.remove(file_paths[is_need_deleted])
         if (fail) {
             if (!all(is_success)) {
                 n_failed_files <- sum(!is_success) # nolint
