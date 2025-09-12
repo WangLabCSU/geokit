@@ -17,7 +17,9 @@ geo_suppl(
 parsing. All ids must in the same GEO identity (\code{c("GDS505", "GDS606")} are
 all GEO DataSets, \code{c("GSE2", "GSE22")} are all GEO series eg.).}
 
-\item{pattern}{character string containing a \link[base:regex]{regular expression} to be matched in the supplementary file names.}
+\item{pattern}{character string containing a
+\link[base:regex]{regular expression} to be matched in the supplementary file
+names.}
 
 \item{ftp_over_https}{A scalar logical value indicates whether to connect GEO
 FTP site with https traffic. If \code{TRUE}, will download FTP files from

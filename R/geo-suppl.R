@@ -6,8 +6,9 @@
 #' attempted, since the file format is not generally knowable by the computer.
 #'
 #' @inheritParams geo
-#' @param pattern character string containing a [regular
-#' expression][base::regex] to be matched in the supplementary file names.
+#' @param pattern character string containing a
+#' [regular expression][base::regex] to be matched in the supplementary file
+#' names.
 #' @return A list (or a character atomic verctor if only one `id` is provided)
 #' of the full file paths of the resulting downloaded files.
 #' @examples
