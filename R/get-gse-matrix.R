@@ -50,7 +50,7 @@ get_gse_matrix <- function(ids, odir = getwd(), pdata_from_soft = TRUE,
     lapply(es_elements_list, function(es_elements) {
         es_list <- lapply(es_elements, function(es_element) {
             if (is.null(add_gpl) || !add_gpl) {
-                bioc_pkg <- gpl2bioc(es_element$annotation)
+                bioc_pkg <- gpl2bioc_pkg(es_element$annotation)
                 if (!is.na(bioc_pkg)) {
                     es_element$annotation <- bioc_pkg
                 } else if (is.null(add_gpl)) {

@@ -1,10 +1,10 @@
-## code to prepare `gpl2bioc_dt` dataset goes here
+## code to prepare `gpl2bioc` dataset goes here
+if (!dir.exists(odir <- file.path("inst/extdata"))) {
+    dir.create(odir, recursive = TRUE)
+}
 
-old_gpl2bioc <- readRDS("data-raw/gpl2bioc_dt.rds")
-new_gpl2bioc <- structure(
-    "hgu95av2.db",
-    names = c("GPL8300")
-)
+old_gpl2bioc <- readRDS(file.path(odir, "gpl2bioc.rds"))
+new_gpl2bioc <- structure("hgu95av2.db", names = c("GPL8300"))
 new_gpl2bioc <- new_gpl2bioc[
     setdiff(names(new_gpl2bioc), old_gpl2bioc$Platform_geo_accession)
 ]
@@ -53,17 +53,9 @@ if (length(new_gpl2bioc)) {
         after = "Platform_geo_accession"
     )
     gpl2bioc_dt[, Platform_data_row_count]
-
-    saveRDS(
-        gpl2bioc_dt,
-        file = "data-raw/gpl2bioc_dt.rds"
-    )
-    usethis::use_data(
-        gpl2bioc_dt,
-        overwrite = TRUE, internal = TRUE,
-        compress = "gzip", version = 3
-    )
+    saveRDS(gpl2bioc_dt, file.path(odir, "gpl2bioc.rds"))
 }
+
 Sys.setenv(
     http_proxy = "127.0.0.1:10809",
     https_proxy = "127.0.0.1:10809"

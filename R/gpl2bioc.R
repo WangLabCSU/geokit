@@ -1,23 +1,20 @@
 #' @param gpl a character string
-#' @return a character for the name of corresponding Bioconductor annotation
+#' @return A character for the name of corresponding Bioconductor annotation
 #' package or NA if it doesn't exist.
+#' @importFrom data.table %chin%
 #' @noRd
 gpl2bioc <- function(gpl) {
-    if (has_bioc_annotation_pkg(gpl)) {
-        cli::cli_alert_success("Found Bioconductor annotation package for {.val {gpl}}")
-        gpl2bioc_dt[
-            Platform_geo_accession == gpl, bioc_pkg,
-            env = list(gpl = I(gpl))
-        ]
-    } else {
-        cli::cli_alert_info(
-            "Cannot map {.val {gpl}} to a Bioconductor annotation package"
-        )
-        NA_character_
-    }
+    mapping <- read_internal("gpl2bioc.rds")
+    mapping[gpl, env = list(gpl = I(gpl)), on = "Platform_geo_accession"]
 }
 
-#' @importFrom data.table %chin%
-has_bioc_annotation_pkg <- function(gpl) {
-    gpl %chin% gpl2bioc_dt$Platform_geo_accession
+gpl2bioc_pkg <- function(gpl) {
+    bioc_pkg <- gpl2bioc(gpl)$bioc_pkg
+    if (length(bioc_pkg)) {
+        cli::cli_alert_success("Found Bioconductor annotation package for {.val {gpl}}")
+        bioc_pkg
+    } else {
+        cli::cli_alert_info("No Bioconductor annotation package available for platform {.val {gpl}}.")
+        NA_character_
+    }
 }

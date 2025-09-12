@@ -9,6 +9,14 @@ return_object_or_list <- function(x, names = NULL) {
     }
 }
 
+read_internal <- function(file = NULL) {
+    if (is.null(file)) {
+        dir(pkg_extdata())
+    } else {
+        readRDS(pkg_extdata(file, mustWork = TRUE))
+    }
+}
+
 set_rownames <- function(x, var = 1L) {
     if (nrow(x)) {
         data.table::setDF(x, rownames = as.character(x[[var]]))
