@@ -73,7 +73,7 @@ parse_gse_soft <- function(file_text, entity_type = "all", only_meta = FALSE) {
         if (length(meta_table_start)) {
             cli::cli_alert("Parsing Series table in metadata")
             meta_table_end <- str_which(meta_text, "^!series_table_end")
-            meta_table_lines <- integer()
+            meta_table_lines <- vector("list", length(meta_table_start))
             meta_table <- vector("list", length(meta_table_start))
             meta_table_titles <- character(length(meta_table_start))
             for (i in seq_along(meta_table_start)) {
@@ -82,10 +82,10 @@ parse_gse_soft <- function(file_text, entity_type = "all", only_meta = FALSE) {
                 if (is.na(end) || end <= start) break
                 meta_table_titles[i] <- parse_meta(meta_text[start])
                 meta_table[[i]] <- read_text(meta_text[(start + 1):(end - 1L)])
-                meta_table_lines <- c(meta_table_lines, start:end)
+                meta_table_lines[[i]] <- start:end
             }
             names(meta_table) <- meta_table_titles
-            meta_text <- meta_text[-meta_table_lines]
+            meta_text <- meta_text[-unlist(meta_table_lines, FALSE, FALSE)]
         } else {
             meta_table <- NULL
         }
