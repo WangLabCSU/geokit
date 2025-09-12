@@ -8,6 +8,15 @@
 \description{
 Provides a tidy and convenient R interface to the NCBI Gene Expression Omnibus (GEO) database. Functions are included to query, download, and parse GEO metadata and expression data, making it easier to integrate GEO datasets into downstream analyses and workflows.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/Yunuuuu/geokit}
+  \item \url{https://yunuuuu.github.io/geokit/}
+  \item Report bugs at \url{https://github.com/Yunuuuu/geokit/issues}
+}
+
+}
 \author{
 \strong{Maintainer}: Yun Peng \email{yunyunpp96@outlook.com}
 
