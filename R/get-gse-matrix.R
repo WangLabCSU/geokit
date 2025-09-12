@@ -78,10 +78,10 @@ download_and_parse_annotation <- function(annotation, assay, odir,
                                           ftp_over_https, handle_opts) {
     gpl_file_path <- download_gpl_files(
         annotation,
-        odir,
         amount = "data",
+        handle_opts = handle_opts,
         ftp_over_https = ftp_over_https,
-        handle_opts = handle_opts
+        odir = odir
     )
     gpl_data <- parse_gpl_or_gsm_soft(read_lines(gpl_file_path))
     if (nrow(gpl_data$data_table)) {
