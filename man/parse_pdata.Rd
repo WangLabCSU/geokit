@@ -37,9 +37,9 @@ pair.
 \examples{
 gse53987 <- geo(
     "gse53987",
-    odir = tempdir(),
     gse_matrix = TRUE, add_gpl = FALSE,
-    pdata_from_soft = FALSE
+    pdata_from_soft = FALSE,
+    odir = tempdir()
 )
 gse53987_smp_info <- Biobase::pData(gse53987)
 gse53987_smp_info$characteristics_ch1 <- stringr::str_replace_all(

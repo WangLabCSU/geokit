@@ -24,9 +24,9 @@
 #' @examples
 #' gse53987 <- geo(
 #'     "gse53987",
-#'     odir = tempdir(),
 #'     gse_matrix = TRUE, add_gpl = FALSE,
-#'     pdata_from_soft = FALSE
+#'     pdata_from_soft = FALSE,
+#'     odir = tempdir()
 #' )
 #' gse53987_smp_info <- Biobase::pData(gse53987)
 #' gse53987_smp_info$characteristics_ch1 <- stringr::str_replace_all(
@@ -40,17 +40,11 @@
 #' )]
 #' @export
 parse_pdata <- function(data, columns = NULL, sep = ":", split = ";") {
-    if (!inherits(data, "data.frame")) {
-        cli::cli_abort("{.arg data} must be a {.cls data.frame}")
-    }
+    assert_s3_class(data, "data.frame")
+    assert_string(sep)
+    assert_string(split)
     kept_rownames <- rownames(data)
     data <- data.table::as.data.table(data, keep.rownames = FALSE)
-    if (!rlang::is_scalar_character(sep)) {
-        cli::cli_abort("{.arg sep} must be a single string")
-    }
-    if (!rlang::is_scalar_character(split)) {
-        cli::cli_abort("{.arg split} must be a single string")
-    }
     tryCatch(
         parse_gse_matrix_sample_characteristics(
             sample_dt = data,
@@ -75,7 +69,9 @@ parse_pdata <- function(data, columns = NULL, sep = ":", split = ";") {
 # up and transforms the keys to column names and the values to column values.
 # This function will modify `sample_dt` in place, So we needn't assign value.
 # `sample_dt` should be a data.table
-parse_gse_matrix_sample_characteristics <- function(sample_dt, characteristics_cols = NULL, sep = ":", split = ";") {
+parse_gse_matrix_sample_characteristics <- function(sample_dt,
+                                                    characteristics_cols = NULL,
+                                                    sep = ":", split = ";") {
     if (is.null(characteristics_cols)) {
         characteristics_cols <- str_subset(
             colnames(sample_dt), "^characteristics_ch"
@@ -130,7 +126,7 @@ parse_gse_matrix_sample_characteristics <- function(sample_dt, characteristics_c
                 # Add this key-value pair to original data.table
                 sample_dt[
                     ,
-                    (.characteristic_name) := .temp_characteristic_list
+                    (.characteristic_name) := .temp_characteristic_list # nolint
                 ]
                 data.table::setcolorder(
                     sample_dt,
@@ -316,8 +312,12 @@ parse_name_value_pairs <- function(pair_list, sep = ":") {
     # parse text into corresponding atomic vector mode
     lapply(characteristic_dt, function(x) {
         read_text(
-            text = x, sep = "", header = FALSE,
-            strip.white = TRUE, blank.lines.skip = FALSE, fill = TRUE
+            text = x,
+            sep = "",
+            header = FALSE,
+            strip.white = TRUE,
+            blank.lines.skip = FALSE,
+            fill = TRUE
         )[[1L]]
     })
 }
