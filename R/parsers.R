@@ -64,12 +64,32 @@ parse_gse_soft <- function(file_text, entity_type = "all", only_meta = FALSE) {
     if (entity_type == "all") {
         entity_indices <- str_which(file_text, "^\\^(SAMPLE|PLATFORM)")
         if (length(entity_indices)) {
-            soft_meta <- parse_meta(
-                file_text[seq_len(entity_indices[[1L]] - 1L)]
-            )
+            meta_text <- file_text[seq_len(entity_indices[[1L]] - 1L)]
         } else {
-            soft_meta <- parse_meta(file_text)
+            meta_text <- file_text
         }
+        # Parsing series table
+        meta_table_start <- str_which(meta_text, "^!series_table_begin")
+        if (length(meta_table_start)) {
+            cli::cli_alert("Parsing Series table in metadata")
+            meta_table_end <- str_which(meta_text, "^!series_table_end")
+            meta_table_lines <- integer()
+            meta_table <- vector("list", length(meta_table_start))
+            meta_table_titles <- character(length(meta_table_start))
+            for (i in seq_along(meta_table_start)) {
+                start <- meta_table_start[i]
+                end <- meta_table_end[i]
+                if (is.na(end) || end <= start) break
+                meta_table_titles[i] <- parse_meta(meta_text[start])
+                meta_table[[i]] <- read_text(meta_text[(start + 1):(end - 1L)])
+                meta_table_lines <- c(meta_table_lines, start:end)
+            }
+            names(meta_table) <- meta_table_titles
+            meta_text <- meta_text[-meta_table_lines]
+        } else {
+            meta_table <- NULL
+        }
+        soft_meta <- c(parse_meta(meta_text), meta_table)
         if (only_meta) {
             return(soft_meta)
         }
