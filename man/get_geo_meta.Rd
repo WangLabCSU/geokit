@@ -6,18 +6,15 @@
 \usage{
 get_geo_meta(
   ids,
-  dest_dir = getwd(),
   ftp_over_https = TRUE,
-  handle_opts = list(connecttimeout = 60L)
+  handle_opts = list(connecttimeout = 60L),
+  odir = getwd()
 )
 }
 \arguments{
 \item{ids}{A character vector representing the GEO entity for downloading and
 parsing. All ids must in the same GEO identity (\code{c("GDS505", "GDS606")} are
 all GEO DataSets, \code{c("GSE2", "GSE22")} are all GEO series eg.).}
-
-\item{dest_dir}{The destination directory for any downloads. Defaults to
-current working dir.}
 
 \item{ftp_over_https}{A scalar logical value indicates whether to connect GEO
 FTP site with https traffic. If \code{TRUE}, will download FTP files from
@@ -26,6 +23,9 @@ will use \url{ftp://ftp.ncbi.nlm.nih.gov/geo} directly.}
 
 \item{handle_opts}{A list of named options / headers to be set in the
 \link[curl:handle]{handle}.}
+
+\item{odir}{The destination directory for any downloads. Defaults to
+current working dir.}
 }
 \value{
 A \link{data.table} contains metadata of all ids.

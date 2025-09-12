@@ -1,5 +1,5 @@
 testthat::test_that("generic GPL parsing works as expected", {
-    gpl <- get_geo("GPL96", tempdir())
+    gpl <- get_geo("GPL96", odir = tempdir())
 
     testthat::expect_s4_class(gpl, "GEOSoft")
     testthat::expect_s4_class(gpl, "GEOData")
@@ -12,7 +12,7 @@ testthat::test_that("generic GPL parsing works as expected", {
 })
 
 testthat::test_that("quoted GPL works", {
-    gpl <- get_geo("GPL4133", tempdir())
+    gpl <- get_geo("GPL4133", odir = tempdir())
 
     testthat::expect_s4_class(gpl, "GEOSoft")
     testthat::expect_s4_class(gpl, "GEOData")
@@ -21,7 +21,7 @@ testthat::test_that("quoted GPL works", {
 })
 
 testthat::test_that("short GPL works", {
-    gpl <- get_geo("GPL15505", tempdir())
+    gpl <- get_geo("GPL15505", odir = tempdir())
 
     testthat::expect_s4_class(gpl, "GEOSoft")
     testthat::expect_s4_class(gpl, "GEOData")
@@ -29,7 +29,7 @@ testthat::test_that("short GPL works", {
 })
 
 testthat::test_that("GPL with no data table works", {
-    gpl <- get_geo("GPL5082", tempdir())
+    gpl <- get_geo("GPL5082", odir = tempdir())
 
     testthat::expect_s4_class(gpl, "GEOSoft")
     testthat::expect_s4_class(gpl, "GEOData")

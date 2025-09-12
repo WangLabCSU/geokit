@@ -53,8 +53,6 @@
 #' @param ids A character vector representing the GEO entity for downloading and
 #'  parsing. All ids must in the same GEO identity (`c("GDS505", "GDS606")` are
 #'  all GEO DataSets, `c("GSE2", "GSE22")` are all GEO series eg.).
-#' @param dest_dir The destination directory for any downloads. Defaults to
-#'  current working dir.
 #' @param gse_matrix A logical value indicates whether to retrieve Series Matrix
 #'  files when handling a `GSE` GEO entity. When set to `TRUE`, an
 #'  [ExpressionSet][Biobase::ExpressionSet] Object will be returned.
@@ -65,7 +63,7 @@
 #'  soft file by setting pdata_from_soft into `FALSE`. if `FALSE`, `phenoData`
 #'  will be parsed directly from GEO series matrix file, which is what
 #'  `GEOquery` do, in this way, `characteristics_ch*` column sometimes cannot be
-#'  parsed correctly. 
+#'  parsed correctly.
 #' @param add_gpl A logical value indicates whether to add **platform** (namely
 #'  the [featureData][Biobase::featureData] slot in the
 #'  [ExpressionSet][Biobase::ExpressionSet] Object) information when handling a
@@ -81,7 +79,9 @@
 #'  <https://ftp.ncbi.nlm.nih.gov/geo>, which is used by GEOquery, otherwise,
 #'  will use <ftp://ftp.ncbi.nlm.nih.gov/geo> directly.
 #' @param handle_opts A list of named options / headers to be set in the
-#'  [handle][curl::new_handle]. 
+#'  [handle][curl::new_handle].
+#' @param odir The destination directory for any downloads. Defaults to
+#'  current working dir.
 #' @return An object of the appropriate class (GDS, GPL, GSM, or GSE) is
 #'  returned. For `GSE` entity, if `gse_matrix` parameter is `FALSE`, an
 #'  [GEOSeries-class] object is returned and if `gse_matrix` parameter is
@@ -95,26 +95,27 @@
 #' * <https://www.ncbi.nlm.nih.gov/geo/info/soft.html#format>
 #' * [Programmatic access to GEO FTP site](https://ftp.ncbi.nlm.nih.gov/geo/README.txt)
 #' @keywords IO database
-#' @rdname get_geo
 #' @examples
-#' gse_matix <- get_geo("GSE10", tempdir())
-#' gse <- get_geo("GSE10", tempdir(), gse_matrix = FALSE)
-#' gpl <- get_geo("gpl98", tempdir())
-#' gsm <- get_geo("GSM1", tempdir())
-#' gds <- get_geo("GDS10", tempdir())
+#' gse_matix <- get_geo("GSE10", odir = tempdir())
+#' gse <- get_geo("GSE10", odir = tempdir(), gse_matrix = FALSE)
+#' gpl <- get_geo("gpl98", odir = tempdir())
+#' gsm <- get_geo("GSM1", odir = tempdir())
+#' gds <- get_geo("GDS10", odir = tempdir())
 #'
 #' @export
-get_geo <- function(ids, dest_dir = getwd(), gse_matrix = TRUE, pdata_from_soft = TRUE, add_gpl = NULL, ftp_over_https = TRUE, handle_opts = list(connecttimeout = 60L)) {
+get_geo <- function(ids, gse_matrix = TRUE, pdata_from_soft = TRUE,
+                    add_gpl = NULL, ftp_over_https = TRUE,
+                    handle_opts = list(connecttimeout = 60L), odir = getwd()) {
     ids <- toupper(ids)
     check_ids(ids)
-    if (!dir.exists(dest_dir)) {
-        dir.create(dest_dir, recursive = TRUE)
+    if (!dir.exists(odir)) {
+        dir.create(odir, recursive = TRUE)
     }
     geo_type <- substr(ids, 1L, 3L)[1L]
     if (geo_type == "GSE" && gse_matrix) {
         out_list <- get_gse_matrix(
             ids,
-            dest_dir = dest_dir,
+            odir = odir,
             pdata_from_soft = pdata_from_soft,
             add_gpl = add_gpl,
             ftp_over_https = ftp_over_https,
@@ -122,7 +123,7 @@ get_geo <- function(ids, dest_dir = getwd(), gse_matrix = TRUE, pdata_from_soft 
         )
     } else {
         out_list <- get_geo_soft(ids,
-            geo_type = geo_type, dest_dir = dest_dir,
+            geo_type = geo_type, odir = odir,
             ftp_over_https = ftp_over_https,
             handle_opts = handle_opts
         )

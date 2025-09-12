@@ -9,7 +9,7 @@ new_gpl2bioc <- new_gpl2bioc[
     setdiff(names(new_gpl2bioc), old_gpl2bioc$Platform_geo_accession)
 ]
 if (length(new_gpl2bioc)) {
-    gpl_soft <- get_geo(names(new_gpl2bioc), dest_dir = tempdir())
+    gpl_soft <- get_geo(names(new_gpl2bioc), odir = tempdir())
     if (is(gpl_soft, "GEOSoft")) gpl_soft <- list(gpl_soft)
     gpl2bioc_list <- lapply(gpl_soft, function(gpl) {
         res <- meta(gpl)[

@@ -6,21 +6,18 @@
 \usage{
 get_geo(
   ids,
-  dest_dir = getwd(),
   gse_matrix = TRUE,
   pdata_from_soft = TRUE,
   add_gpl = NULL,
   ftp_over_https = TRUE,
-  handle_opts = list(connecttimeout = 60L)
+  handle_opts = list(connecttimeout = 60L),
+  odir = getwd()
 )
 }
 \arguments{
 \item{ids}{A character vector representing the GEO entity for downloading and
 parsing. All ids must in the same GEO identity (\code{c("GDS505", "GDS606")} are
 all GEO DataSets, \code{c("GSE2", "GSE22")} are all GEO series eg.).}
-
-\item{dest_dir}{The destination directory for any downloads. Defaults to
-current working dir.}
 
 \item{gse_matrix}{A logical value indicates whether to retrieve Series Matrix
 files when handling a \code{GSE} GEO entity. When set to \code{TRUE}, an
@@ -53,6 +50,9 @@ will use \url{ftp://ftp.ncbi.nlm.nih.gov/geo} directly.}
 
 \item{handle_opts}{A list of named options / headers to be set in the
 \link[curl:handle]{handle}.}
+
+\item{odir}{The destination directory for any downloads. Defaults to
+current working dir.}
 }
 \value{
 An object of the appropriate class (GDS, GPL, GSM, or GSE) is
@@ -116,11 +116,11 @@ consistent across the dataset. Information reflecting experimental design is
 provided through GDS subsets.
 }
 \examples{
-gse_matix <- get_geo("GSE10", tempdir())
-gse <- get_geo("GSE10", tempdir(), gse_matrix = FALSE)
-gpl <- get_geo("gpl98", tempdir())
-gsm <- get_geo("GSM1", tempdir())
-gds <- get_geo("GDS10", tempdir())
+gse_matix <- get_geo("GSE10", odir = tempdir())
+gse <- get_geo("GSE10", odir = tempdir(), gse_matrix = FALSE)
+gpl <- get_geo("gpl98", odir = tempdir())
+gsm <- get_geo("GSM1", odir = tempdir())
+gds <- get_geo("GDS10", odir = tempdir())
 
 }
 \references{

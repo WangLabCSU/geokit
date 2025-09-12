@@ -6,16 +6,18 @@
 #' @inheritParams get_geo
 #' @return A [data.table][data.table] contains metadata of all ids.
 #' @export
-get_geo_meta <- function(ids, dest_dir = getwd(), ftp_over_https = TRUE, handle_opts = list(connecttimeout = 60L)) {
+get_geo_meta <- function(ids, ftp_over_https = TRUE,
+                         handle_opts = list(connecttimeout = 60L),
+                         odir = getwd()) {
     ids <- toupper(ids)
     check_ids(ids)
-    if (!dir.exists(dest_dir)) {
-        dir.create(dest_dir, recursive = TRUE)
+    if (!dir.exists(odir)) {
+        dir.create(odir, recursive = TRUE)
     }
     meta_list <- download_and_parse_soft(
         ids = ids,
         geo_type = substr(ids, 1L, 3L)[1L],
-        dest_dir = dest_dir,
+        odir = odir,
         ftp_over_https = ftp_over_https,
         handle_opts = handle_opts,
         only_meta = TRUE

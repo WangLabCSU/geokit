@@ -36,7 +36,7 @@ pair.
 }
 \examples{
 gse53987 <- get_geo(
-    "gse53987", tempdir(),
+    "gse53987", odir = tempdir(),
     gse_matrix = TRUE, add_gpl = FALSE,
     pdata_from_soft = FALSE
 )

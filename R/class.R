@@ -12,7 +12,7 @@
 #' @docType class
 #' @keywords classes
 #' @examples
-#'  gse <- get_geo("GSE10", tempdir(), gse_matrix = FALSE)
+#'  gse <- get_geo("GSE10", odir = tempdir(), gse_matrix = FALSE)
 #'  accession(gse)
 #'  gpllist <- gpl(gse)
 #'  meta(gpllist[[1L]])

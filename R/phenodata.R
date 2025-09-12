@@ -23,7 +23,7 @@
 #'
 #' @examples
 #' gse53987 <- get_geo(
-#'     "gse53987", tempdir(),
+#'     "gse53987", odir = tempdir(),
 #'     gse_matrix = TRUE, add_gpl = FALSE,
 #'     pdata_from_soft = FALSE
 #' )
@@ -157,7 +157,7 @@ parse_gse_matrix_sample_characteristics <- function(sample_dt, characteristics_c
 #' @examples
 #' gse201530_soft <- get_geo(
 #'     "GSE201530",
-#'     dest_dir = tempdir(),
+#'     odir = tempdir(),
 #'     gse_matrix = FALSE
 #' )
 #' parse_gsm_list(gsm(gse201530_soft))

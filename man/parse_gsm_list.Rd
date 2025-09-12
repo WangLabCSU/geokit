@@ -22,7 +22,7 @@ values to column values.
 \examples{
 gse201530_soft <- get_geo(
     "GSE201530",
-    dest_dir = tempdir(),
+    odir = tempdir(),
     gse_matrix = FALSE
 )
 parse_gsm_list(gsm(gse201530_soft))

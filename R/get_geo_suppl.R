@@ -11,23 +11,21 @@
 #' expression][base::regex] to be matched in the supplementary file names.
 #' @return A list (or a character atomic verctor if only one `id` is provided)
 #' of the full file paths of the resulting downloaded files.
-#' @keywords IO database
 #' @examples
-#'
-#' a <- get_geo_suppl("GSM1137", tempdir())
-#' a
-#'
+#' get_geo_suppl("GSM1137", odir = tempdir())
 #' @export
-get_geo_suppl <- function(ids, dest_dir = getwd(), pattern = NULL, ftp_over_https = TRUE, handle_opts = list(connecttimeout = 60L)) {
+get_geo_suppl <- function(ids, pattern = NULL, ftp_over_https = TRUE,
+                          handle_opts = list(connecttimeout = 60L),
+                          odir = getwd()) {
     ids <- toupper(ids)
     check_ids(ids)
-    if (!dir.exists(dest_dir)) {
-        dir.create(dest_dir, recursive = TRUE)
+    if (!dir.exists(odir)) {
+        dir.create(odir, recursive = TRUE)
     }
-    file_paths <- download_geo_suppl_or_gse_matrix_files(
+    file_paths <- download_suppl_or_gse_matrix_files(
         ids,
-        dest_dir = dest_dir, file_type = "suppl",
-        pattern = pattern, 
+        odir = odir, file_type = "suppl",
+        pattern = pattern,
         ftp_over_https = ftp_over_https,
         handle_opts = handle_opts
     )

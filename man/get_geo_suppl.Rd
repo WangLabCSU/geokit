@@ -6,19 +6,16 @@
 \usage{
 get_geo_suppl(
   ids,
-  dest_dir = getwd(),
   pattern = NULL,
   ftp_over_https = TRUE,
-  handle_opts = list(connecttimeout = 60L)
+  handle_opts = list(connecttimeout = 60L),
+  odir = getwd()
 )
 }
 \arguments{
 \item{ids}{A character vector representing the GEO entity for downloading and
 parsing. All ids must in the same GEO identity (\code{c("GDS505", "GDS606")} are
 all GEO DataSets, \code{c("GSE2", "GSE22")} are all GEO series eg.).}
-
-\item{dest_dir}{The destination directory for any downloads. Defaults to
-current working dir.}
 
 \item{pattern}{character string containing a \link[base:regex]{regular expression} to be matched in the supplementary file names.}
 
@@ -29,6 +26,9 @@ will use \url{ftp://ftp.ncbi.nlm.nih.gov/geo} directly.}
 
 \item{handle_opts}{A list of named options / headers to be set in the
 \link[curl:handle]{handle}.}
+
+\item{odir}{The destination directory for any downloads. Defaults to
+current working dir.}
 }
 \value{
 A list (or a character atomic verctor if only one \code{id} is provided)
@@ -42,10 +42,5 @@ is attempted, since the file format is not generally knowable by the
 computer.
 }
 \examples{
-
-a <- get_geo_suppl("GSM1137", tempdir())
-a
-
+get_geo_suppl("GSM1137", odir = tempdir())
 }
-\keyword{IO}
-\keyword{database}

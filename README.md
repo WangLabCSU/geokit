@@ -195,7 +195,7 @@ example code to get soft file from `GPL`, `GSM` and `GDS` entity
 respectively.
 
 ``` r
-gpl <- get_geo("gpl98", tempdir())
+gpl <- get_geo("gpl98", odir = tempdir())
 #> Downloading GPL98.txt from GEO Accession Site:
 gpl
 #> An object of GEOSoft
