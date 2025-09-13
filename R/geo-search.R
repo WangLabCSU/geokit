@@ -16,7 +16,7 @@
 #'   the "Organism" field for *Homo sapiens*. See the
 #'   [GEO query tutorial](https://www.ncbi.nlm.nih.gov/geo/info/qqtutorial.html)
 #'   for details. Searchable fields can be listed with
-#'   [rentrez::entrez_db_searchable()].
+#'   [`rentrez::entrez_db_searchable("gds")`][rentrez::entrez_db_searchable()].
 #' @param step Integer. Number of records to fetch per request. Use a smaller
 #'   value if requests fail.
 #' @param interval Numeric. Time interval (in seconds) between successive

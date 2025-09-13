@@ -12,7 +12,7 @@ fielded search syntax. For example, \code{"Homo sapiens[ORGN]"} searches
 the "Organism" field for \emph{Homo sapiens}. See the
 \href{https://www.ncbi.nlm.nih.gov/geo/info/qqtutorial.html}{GEO query tutorial}
 for details. Searchable fields can be listed with
-\code{\link[rentrez:entrez_db_searchable]{rentrez::entrez_db_searchable()}}.}
+\code{\link[rentrez:entrez_db_searchable]{rentrez::entrez_db_searchable("gds")}}.}
 
 \item{step}{Integer. Number of records to fetch per request. Use a smaller
 value if requests fail.}
