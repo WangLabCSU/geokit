@@ -20,65 +20,57 @@
 #' @noRd
 build_geo_acc_url <- function(ids, scope = "self", amount = "data",
                               format = "text") {
+    # GEO use "text" to refer to "soft" format
+    # GEO use "xml" to refer to "miniml" format
     sprintf(
         "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=%s&targ=%s&view=%s&form=%s",
         tolower(ids), scope, amount, format
-        # match.arg(
-        #     tolower(scope),
-        #     c("self", "gsm", "gpl", "gse", "all")
-        # ),
-        # match.arg(
-        #     tolower(amount),
-        #     c("brief", "quick", "data", "full")
-        # ),
-        # GEO use "text" to refer to "soft" format
-        # GEO use "xml" to refer to "miniml" format
-        # match.arg(
-        #     tolower(format),
-        #     c("text", "html", "xml")
-        # )
     )
 }
 
 #' Construct a FTP URL to retrieve data from GEO FTP Site
 #'
-#' @param file_type A character string in one of "soft", "soft_full", "annot",
+#' @param formats A character string in one of "soft", "soft_full", "annot",
 #' "miniml" or "suppl".
 #' @noRd
-build_geo_ftp_url <- function(ids, file_type = "soft", ftp_over_https = FALSE) {
-    geo_type <- substr(ids, 1L, 3L)[1L]
-    # file_type <- match.arg(
-    #     tolower(file_type),
-    #     c("soft", "soft_full", "annot", "miniml", "suppl", "matrix")
-    # )
+build_geo_ftp_url <- function(ids, formats = "soft", ftp_over_https = TRUE) {
+    geo_types <- substr(ids, 1L, 3L)
+    call <- rlang::current_call()
+    fnames <- .mapply(function(format, geo_type) {
+        file_suffix <- parse_file_suffix(format, geo_types)
+        if (is.null(file_suffix)) {
+            cli::cli_abort(
+                "{.field {geo_type}} never own {.val {format}} file.",
+                call = call
+            )
+        }
+        if (nzchar(file_suffix)) {
+            paste0(ids, file_suffix)
+        } else {
+            file_suffix
+        }
+    }, list(format = formats, geo_type = geo_types), NULL)
     super_ids <- str_replace(ids, "\\d{1,3}$", "nnn")
-    if (ftp_over_https) {
-        geo_ftp_site <- geo_ftp_over_https
+
+    # Use https to connect GEO FTP site
+    # When connecting GEO FTP site directly, it often failed to derive data.
+    if (isTRUE(ftp_over_https)) {
+        main_site <- "https://ftp.ncbi.nlm.nih.gov/geo"
     } else {
-        geo_ftp_site <- geo_ftp
+        main_site <- "ftp://ftp.ncbi.nlm.nih.gov/geo"
     }
-    # file.path will omit the ending / in windows, so we just use paste
-    paste(
-        geo_ftp_site,
-        parse_geo_type(geo_type),
-        super_ids, ids, file_type,
-        parse_file_name(ids, file_type, geo_type),
-        sep = "/"
-    )
-}
 
-# Use https to connect GEO FTP site
-# When connecting GEO FTP site directly, it often failed to derive data.
-geo_ftp <- "ftp://ftp.ncbi.nlm.nih.gov/geo"
-geo_ftp_over_https <- "https://ftp.ncbi.nlm.nih.gov/geo"
-
-parse_geo_type <- function(x) {
-    switch(x,
-        GSE = "series",
-        GPL = "platforms",
-        GSM = "samples",
-        GDS = "datasets"
+    # file.path will omit the ending "/" in windows, so we just use paste
+    subdir <- .subset(
+        c(
+            GSE = "series",
+            GPL = "platforms",
+            GSM = "samples",
+            GDS = "datasets"
+        ),
+        geo_types
     )
+    paste(main_site, subdir, super_ids, ids, formats, fnames, sep = "/")
 }
 
 #' @section GEO file type reference table:
@@ -91,64 +83,28 @@ parse_geo_type <- function(x) {
 #' |     Annotation (annot)     |  x  |  x  |  o  |  x  |
 #' | Supplementaryfiles (suppl) |  x  |  o  |  o  |  o  |
 #' @noRd
-parse_file_name <- function(ids, file_type, geo_type) {
+parse_file_suffix <- function(format, geo_type) {
     # file.path will add / for "" in the end
-    file_suffix <- switch(geo_type,
-        GDS = switch(file_type,
+    switch(geo_type,
+        GDS = switch(format,
             soft = ".soft.gz",
-            soft_full = "_full.soft.gz"
+            soft_full = "_full.soft.gz",
+            NULL
         ),
-        GSE = switch(file_type,
+        GSE = switch(format,
             soft = "_family.soft.gz",
             miniml = "_family.xml.tgz",
             matrix = "",
-            suppl = ""
+            suppl = "",
+            NULL
         ),
-        GPL = switch(file_type,
+        GPL = switch(format,
             annot = ".annot.gz",
             miniml = "_family.xml.tgz",
             soft = "_family.soft.gz",
-            suppl = ""
+            suppl = "",
+            NULL
         ),
-        GSM = if (file_type == "suppl") "" else NULL
+        GSM = if (format == "suppl") "" else NULL
     )
-    if (is.null(file_suffix)) {
-        cli::cli_abort(
-            "{.field {parse_geo_type(geo_type)}} never own {.val {file_type}} file."
-        )
-    }
-    if (nzchar(file_suffix)) {
-        paste0(ids, file_suffix)
-    } else {
-        file_suffix
-    }
 }
-
-# parse_file_switch_helper <- list(
-#     GDS = c(soft = ".soft.gz", soft_full = "_full.soft.gz"),
-#     GSE = c(
-#         soft = "_family.soft.gz", miniml = "_family.xml.tgz",
-#         matrix = "_series_matrx.txt.gz", suppl = ""
-#     ),
-#     GPL = c(
-#         annot = ".annot.gz",
-#         miniml = "_family.xml.tgz",
-#         soft = "_family.soft.gz",
-#         suppl = ""
-#     ),
-#     GSM = c(suppl = "")
-# )
-# parse_file <- function(ids, file_type, geo_type) {
-#     file_suffix <- parse_file_switch_helper[[geo_type]][[file_type]]
-#     if (is.na(file_suffix)) {
-#         rlang::abort(
-#             "{parse_geo_type(geo_type)} never own {file_type} file"
-#         )
-#     }
-#     if (nchar(file_suffix)) {
-#         file_ids <- paste0(ids, file_suffix)
-#     } else {
-#         file_ids <- file_suffix
-#     }
-#     paste0(file_type, "/", file_ids)
-# }

@@ -1,10 +1,10 @@
 get_gse_matrix <- function(ids, odir = getwd(), pdata_from_soft = TRUE,
-                           add_gpl = NULL, ftp_over_https = FALSE,
+                           add_gpl = NULL, ftp_over_https = TRUE,
                            handle_opts = list()) {
     file_paths_list <- download_suppl_or_gse_matrix_files(
         ids = ids,
         odir = odir,
-        file_type = "matrix",
+        formats = "matrix",
         ftp_over_https = ftp_over_https,
         handle_opts = handle_opts
     )

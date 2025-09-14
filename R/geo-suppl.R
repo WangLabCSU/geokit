@@ -20,7 +20,7 @@ geo_suppl <- function(ids, pattern = NULL, ftp_over_https = TRUE,
     odir <- dir_create(odir, recursive = TRUE)
     file_paths <- download_suppl_or_gse_matrix_files(
         ids,
-        odir = odir, file_type = "suppl",
+        odir = odir, formats = "suppl",
         pattern = pattern,
         ftp_over_https = ftp_over_https,
         handle_opts = handle_opts
