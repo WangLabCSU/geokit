@@ -70,14 +70,21 @@ All IDs must belong to the same GEO entity type. Examples:</p><ul><li><p>DataSet
 
 <dt id="arg-amount">amount<a class="anchor" aria-label="anchor" href="#arg-amount"></a></dt>
 <dd><p>A character string specifying the amount of data to retrieve.
-One of <code>"brief"</code>, <code>"quick"</code>, <code>"data"</code>, or <code>"full"</code>.</p><ul><li><p><code>"brief"</code>: shows only the accession's attributes.</p></li>
+One of <code>"brief"</code>, <code>"quick"</code>, <code>"data"</code>, <code>"full"</code>, <code>"soft"</code>, or
+<code>"soft_full"</code>:</p><ul><li><p><code>"brief"</code>: shows only the accession's attributes.</p></li>
 <li><p><code>"quick"</code>: shows the accession's attributes and the first 20 rows of
 its data table.</p></li>
-<li><p><code>"full"</code> (default): shows the accession's attributes and the complete
-data table.</p></li>
+<li><p><code>"full"</code>: shows the accession's attributes and the complete data table.
+This is the default when <code>ids</code> are not <code>DataSets</code> or <code>Series</code>.</p></li>
 <li><p><code>"data"</code>: omits the accession's attributes, showing only links to other
 accessions and the full data table.</p></li>
-</ul></dd>
+<li><p><code>"soft"</code>: SOFT (Simple Omnibus in Text Format) from GEO FTP site. When
+<code>ids</code> is <code>DataSets</code> or <code>Series</code>, this is the default.</p></li>
+<li><p><code>"soft_full"</code>: full SOFT (Simple Omnibus in Text Format) files from GEO
+FTP site by DataSet (GDS) containging additionally contains up-to-date
+gene annotation for the DataSet Platform.</p></li>
+</ul><p>For <code>DataSet</code>, <code>"data"</code> and <code>"full"</code> will be mapped to <code>"soft"</code> and
+<code>"soft_full"</code> respectively.</p></dd>
 
 
 <dt id="arg-ftp-over-https">ftp_over_https<a class="anchor" aria-label="anchor" href="#arg-ftp-over-https"></a></dt>
