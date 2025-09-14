@@ -155,7 +155,7 @@ download_with_ftp <- function(ids, odir, formats = "soft",
                               file_label = NULL) {
     file_label <- file_label %||% sprintf("{.field %s}", formats)
     urls <- build_geo_ftp_url(
-        ids = ids, formats = formats,
+        ids = ids, formats = formats, 
         ftp_over_https = ftp_over_https
     )
     download_inform(urls,
