@@ -158,13 +158,23 @@ check_ids <- function(ids, arg = caller_arg(ids), call = caller_env()) {
 }
 
 #' @importFrom rlang arg_match0
-check_amount <- function(amount, arg = caller_arg(amount),
+check_amount <- function(amount, geo_type, arg = caller_arg(amount),
                          call = caller_env()) {
     if (is.null(amount)) {
-        "full"
+        switch(geo_type,
+            GDS = ,
+            GSE = "soft",
+            "full"
+        )
     } else {
         arg_match0(
-            amount, c("brief", "quick", "data", "full"),
+            amount,
+            switch(geo_type,
+                GDS = c("soft", "soft_full", "data", "full"),
+                GPL = ,
+                GSE = c("soft", "brief", "quick", "data", "full"),
+                c("brief", "quick", "data", "full")
+            ),
             arg_nm = arg, error_call = call
         )
     }
@@ -191,4 +201,24 @@ wrap_cat <- function(label, names, indent = 0L, exdent = 2L) {
         paste(label, ext, sep = " "),
         indent = indent, exdent = exdent
     ), sep = "\n")
+}
+
+RUST_CALL <- .Call
+
+#' @keywords internal
+rust_method <- function(class, method, ...) {
+    rust_call(sprintf("%s__%s", class, method), ...)
+}
+
+#' @keywords internal
+rust_call <- function(.NAME, ..., call = caller_env()) {
+    # call the function
+    out <- RUST_CALL(sprintf("wrap__%s", .NAME), ...)
+
+    # propagate error from rust --------------------
+    if (!inherits(out, "extendr_result")) return(out) # styler: off
+    if (!is.null(err <- .subset2(out, "err"))) {
+        rlang::abort(err, call = call)
+    }
+    .subset2(out, "ok")
 }
