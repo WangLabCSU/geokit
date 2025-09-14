@@ -21,16 +21,25 @@ All IDs must belong to the same GEO entity type. Examples:
 }}
 
 \item{amount}{A character string specifying the amount of data to retrieve.
-One of \code{"brief"}, \code{"quick"}, \code{"data"}, or \code{"full"}.
+One of \code{"brief"}, \code{"quick"}, \code{"data"}, \code{"full"}, \code{"soft"}, or
+\code{"soft_full"}:
 \itemize{
 \item \code{"brief"}: shows only the accession's attributes.
 \item \code{"quick"}: shows the accession's attributes and the first 20 rows of
 its data table.
-\item \code{"full"} (default): shows the accession's attributes and the complete
-data table.
+\item \code{"full"}: shows the accession's attributes and the complete data table.
+This is the default when \code{ids} are not \code{DataSets} or \code{Series}.
 \item \code{"data"}: omits the accession's attributes, showing only links to other
 accessions and the full data table.
-}}
+\item \code{"soft"}: SOFT (Simple Omnibus in Text Format) from GEO FTP site. When
+\code{ids} is \code{DataSets} or \code{Series}, this is the default.
+\item \code{"soft_full"}: full SOFT (Simple Omnibus in Text Format) files from GEO
+FTP site by DataSet (GDS) containging additionally contains up-to-date
+gene annotation for the DataSet Platform.
+}
+
+For \code{DataSet}, \code{"data"} and \code{"full"} will be mapped to \code{"soft"} and
+\code{"soft_full"} respectively.}
 
 \item{ftp_over_https}{Logical scalar. If \code{TRUE}, connects to GEO FTP via
 HTTPS (\verb{https://ftp.ncbi.nlm.nih.gov/geo}); otherwise, uses plain FTP.}

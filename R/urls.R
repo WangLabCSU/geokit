@@ -70,7 +70,11 @@ build_geo_ftp_url <- function(ids, formats = "soft", ftp_over_https = TRUE) {
         ),
         geo_types
     )
-    paste(main_site, subdir, super_ids, ids, formats, fnames, sep = "/")
+    paste(
+        main_site, subdir, super_ids, ids,
+        ifelse(formats == "soft_full", "soft", formats), fnames,
+        sep = "/"
+    )
 }
 
 #' @section GEO file type reference table:

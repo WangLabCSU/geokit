@@ -10,10 +10,11 @@ geo_meta <- function(ids, amount = NULL, ftp_over_https = TRUE,
                      handle_opts = list(), odir = getwd()) {
     ids <- check_ids(ids)
     odir <- dir_create(odir, recursive = TRUE)
-    amount <- check_amount(amount)
+    geo_type <- substr(ids[1L], 1L, 3L)
+    amount <- check_amount(amount, geo_type)
     meta_list <- download_and_parse_soft(
         ids = ids,
-        geo_type = substr(ids, 1L, 3L)[1L],
+        geo_type = geo_type,
         amount = amount,
         handle_opts = handle_opts,
         only_meta = TRUE,

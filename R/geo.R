@@ -25,14 +25,25 @@
 #'   - DataSets: `c("GDS505", "GDS606")`
 #'   - Series: `c("GSE2", "GSE22")`
 #' @param amount A character string specifying the amount of data to retrieve.
-#'   One of `"brief"`, `"quick"`, `"data"`, or `"full"`.
+#'   One of `"brief"`, `"quick"`, `"data"`, `"full"`, `"soft"`, or
+#'   `"soft_full"`:
+#'
 #'   - `"brief"`: shows only the accession's attributes.
 #'   - `"quick"`: shows the accession's attributes and the first 20 rows of
 #'     its data table.
-#'   - `"full"` (default): shows the accession's attributes and the complete
-#'     data table.
+#'   - `"full"`: shows the accession's attributes and the complete data table.
+#'     This is the default when `ids` are not `DataSets` or `Series`.
 #'   - `"data"`: omits the accession's attributes, showing only links to other
 #'     accessions and the full data table.
+#'   - `"soft"`: SOFT (Simple Omnibus in Text Format) from GEO FTP site. When
+#'     `ids` is `DataSets` or `Series`, this is the default.
+#'   - `"soft_full"`: full SOFT (Simple Omnibus in Text Format) files from GEO
+#'     FTP site by DataSet (GDS) containging additionally contains up-to-date
+#'     gene annotation for the DataSet Platform.
+#'
+#' For `DataSet`, `"data"` and `"full"` will be mapped to `"soft"` and
+#' `"soft_full"` respectively.
+#'
 #' @param gse_matrix Logical, whether to retrieve Series Matrix files for
 #'   `GSE` entities. If `TRUE`, an [`ExpressionSet`][Biobase::ExpressionSet] is
 #'   returned.
@@ -121,7 +132,7 @@ geo <- function(ids, amount = NULL, gse_matrix = TRUE, pdata_from_soft = TRUE,
                 handle_opts = list(), odir = getwd()) {
     ids <- check_ids(ids)
     odir <- dir_create(odir, recursive = TRUE)
-    geo_type <- substr(ids, 1L, 3L)[1L]
+    geo_type <- substr(ids[1L], 1L, 3L)
     if (geo_type == "GSE" && gse_matrix) {
         check_bioc_installed("Biobase", "to build ExpressionSet")
         out_list <- get_gse_matrix(
@@ -133,7 +144,7 @@ geo <- function(ids, amount = NULL, gse_matrix = TRUE, pdata_from_soft = TRUE,
             handle_opts = handle_opts
         )
     } else {
-        amount <- check_amount(amount)
+        amount <- check_amount(amount, geo_type)
         out_list <- get_geo_soft(
             ids,
             geo_type = geo_type,

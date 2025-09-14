@@ -50,14 +50,16 @@ download_and_parse_soft <- function(ids, geo_type, amount, handle_opts,
             ftp_over_https = ftp_over_https,
             odir = odir
         ),
-        GSE = download_gse_soft_files(
+        GSE = download_gse_files(
             ids,
             amount = amount,
             handle_opts = handle_opts,
             ftp_over_https = ftp_over_https,
             odir = odir
         ),
-        GDS = download_gds_files(ids,
+        GDS = download_gds_files(
+            ids,
+            amount = amount,
             handle_opts = handle_opts,
             ftp_over_https = ftp_over_https,
             odir = odir
