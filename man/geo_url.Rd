@@ -13,12 +13,12 @@ geo_url(
 )
 }
 \arguments{
-\item{accession}{A character string giving a GEO accession ID. Examples:
+\item{accession}{A character string of GEO accession ID. Examples:
 \itemize{
-\item DataSets: \code{"GDS505"}, \code{"GDS606"}
-\item Series: \code{"GSE2"}, \code{"GSE22"}
-\item Samples: \code{"GSM1234"}
-\item Platforms: \code{"GPL96"}
+\item DataSets (GDS): \code{"GDS505"}, \code{"GDS606"}, \code{"GDS1234"}, \code{"GDS9999"}, etc.
+\item Series (GSE): \code{"GSE2"}, \code{"GSE22"}, \code{"GSE100"}, \code{"GSE2000"}, etc.
+\item Platforms (GPL): \code{"GPL96"}, \code{"GPL570"}, \code{"GPL10558"}, etc.
+\item Samples (GSM): \code{"GSM12345"}, \code{"GSM67890"}, \code{"GSM112233"}, etc.
 }}
 
 \item{famount}{A character string specifying file/amount type requested. GEO

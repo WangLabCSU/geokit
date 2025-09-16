@@ -4,11 +4,11 @@
 #' Platform). This function inspects the accession prefix and returns its
 #' corresponding GEO type, optionally in an abbreviated form.
 #'
-#' @param accession A character string giving a GEO accession ID. Examples:
-#'   - DataSets: `"GDS505"`, `"GDS606"`
-#'   - Series: `"GSE2"`, `"GSE22"`
-#'   - Samples: `"GSM1234"`
-#'   - Platforms: `"GPL96"`
+#' @param accession A character string of GEO accession ID. Examples:
+#'   - DataSets (GDS): `"GDS505"`, `"GDS606"`, `"GDS1234"`, `"GDS9999"`, etc.
+#'   - Series (GSE): `"GSE2"`, `"GSE22"`, `"GSE100"`, `"GSE2000"`, etc.
+#'   - Platforms (GPL): `"GPL96"`, `"GPL570"`, `"GPL10558"`, etc.
+#'   - Samples (GSM): `"GSM12345"`, `"GSM67890"`, `"GSM112233"`, etc.
 #' @param abbre A logical scalar indicating whether to abbreviate the GEO type
 #'   in the return value. If `FALSE` (default), the full type name is returned;
 #'   if `TRUE`, a short abbreviation is used.
