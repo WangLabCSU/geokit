@@ -11,7 +11,7 @@ License: MIT + file LICENSE
 URL: https://github.com/Yunuuuu/geokit, https://yunuuuu.github.io/geokit/
 BugReports: https://github.com/Yunuuuu/geokit/issues
 Depends:
-    R (>= 3.5.0)
+    R (>= 4.2)
 Imports:
     data.table (>= 1.14.9),
     rlang (>= 0.4.11),
@@ -34,3 +34,5 @@ Config/testthat/edition: 3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
+Config/rextendr/version: 0.4.2.9000
+SystemRequirements: Cargo (Rust's package manager), rustc

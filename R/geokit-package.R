@@ -11,6 +11,7 @@
 #' @importFrom data.table .SD
 #' @importFrom data.table :=
 #' @importFrom data.table data.table
+#' @useDynLib geokit, .registration = TRUE
 ## usethis namespace: end
 NULL
 
