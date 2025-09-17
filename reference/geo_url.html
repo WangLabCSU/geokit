@@ -71,7 +71,7 @@ generates the correct URL.</p>
 
 
 <dl><dt id="arg-accession">accession<a class="anchor" aria-label="anchor" href="#arg-accession"></a></dt>
-<dd><p>A character string of GEO accession ID. Examples:</p><ul><li><p>DataSets (GDS): <code>"GDS505"</code>, <code>"GDS606"</code>, <code>"GDS1234"</code>, <code>"GDS9999"</code>, etc.</p></li>
+<dd><p>A character of GEO accession IDs. Examples:</p><ul><li><p>DataSets (GDS): <code>"GDS505"</code>, <code>"GDS606"</code>, <code>"GDS1234"</code>, <code>"GDS9999"</code>, etc.</p></li>
 <li><p>Series (GSE): <code>"GSE2"</code>, <code>"GSE22"</code>, <code>"GSE100"</code>, <code>"GSE2000"</code>, etc.</p></li>
 <li><p>Platforms (GPL): <code>"GPL96"</code>, <code>"GPL570"</code>, <code>"GPL10558"</code>, etc.</p></li>
 <li><p>Samples (GSM): <code>"GSM12345"</code>, <code>"GSM67890"</code>, <code>"GSM112233"</code>, etc.</p></li>
@@ -79,7 +79,7 @@ generates the correct URL.</p>
 
 
 <dt id="arg-famount">famount<a class="anchor" aria-label="anchor" href="#arg-famount"></a></dt>
-<dd><p>A character string specifying file/amount type requested. GEO
+<dd><p>A character specifying file/amount type requested. GEO
 data can be accessed through two sites:</p><ul><li><p>Direct FTP/HTTPS file retrieval from GEO FTP server (file type):</p><ul><li><p><code>"soft"</code>: SOFT (Simple Omnibus in Text Format) from GEO FTP site. When
 <code>accession</code> is <code>DataSets</code> or <code>Series</code>, this is the default.</p></li>
 <li><p><code>"soft_full"</code>: full SOFT (Simple Omnibus in Text Format) files from
@@ -93,7 +93,8 @@ metadata. MINiML is essentially an XML rendering of SOFT format.</p></li>
 <li><p><code>"suppl"</code>: supplementary files.</p></li>
 </ul><p>The following table summarizes the compatibility between GEO accession
 types and <code>famount</code> options:</p><table class="table table"><tr><td>famount</td><td>GDS</td><td>GSE</td><td>GPL</td><td>GSM</td></tr><tr><td>SOFT (soft)</td><td>o</td><td>o</td><td>o</td><td>x</td></tr><tr><td>SOFTFULL (soft_full)</td><td>o</td><td>x</td><td>x</td><td>x</td></tr><tr><td>MINiML (miniml)</td><td>x</td><td>o</td><td>o</td><td>x</td></tr><tr><td>Matrix (matrix)</td><td>x</td><td>o</td><td>x</td><td>x</td></tr><tr><td>Annotation (annot)</td><td>x</td><td>x</td><td>o</td><td>x</td></tr><tr><td>Supplementaryfiles (suppl)</td><td>x</td><td>o</td><td>o</td><td>o</td></tr></table></li>
-<li><p>Accession-based queries to the NCBI GEO database (amount of data):</p><ul><li><p><code>"none"</code>: Only for DataSets; this is the sole valid option.</p></li>
+<li><p>Accession-based queries to the NCBI GEO database (amount of data):</p><ul><li><p><code>"none"</code>: Applicable only to DataSets; for DataSets, this is also the
+sole valid option.</p></li>
 <li><p><code>"brief"</code>: accession attributes only.</p></li>
 <li><p><code>"quick"</code>: accession attributes + first <strong>20</strong> rows of the data table.</p></li>
 <li><p><code>"data"</code>: omits the accession's attributes, showing only links to
@@ -104,8 +105,9 @@ other accessions and the full data table.</p></li>
 
 
 <dt id="arg-scope">scope<a class="anchor" aria-label="anchor" href="#arg-scope"></a></dt>
-<dd><p>A character string specifying which GEO accessions to include
-(Only applicable to NCBI GEO database access).</p><ul><li><p><code>"none"</code>: Only for DataSets; this is the sole valid option.</p></li>
+<dd><p>A character specifying which GEO accessions to include
+(Only applicable to NCBI GEO database access).</p><ul><li><p><code>"none"</code>: Applicable only to DataSets; for DataSets, this is also the
+sole valid option</p></li>
 <li><p><code>"self"</code>: the queried accession only.</p></li>
 <li><p><code>"gsm"</code>, <code>"gpl"</code>, <code>"gse"</code>: related samples, platforms, or series.</p></li>
 <li><p><code>"all"</code>: all accessions related to the query (family view).</p></li>
@@ -113,10 +115,11 @@ other accessions and the full data table.</p></li>
 
 
 <dt id="arg-format">format<a class="anchor" aria-label="anchor" href="#arg-format"></a></dt>
-<dd><p>A character string specifying the output format (Only
-applicable to NCBI GEO database access):</p><ul><li><p><code>"none"</code>: Only for DataSets; this is the sole valid option (no
-downloadable entry available).</p></li>
-<li><p><code>"text"</code>: machine-readable SOFT format (Simple Omnibus Format in Text).</p></li>
+<dd><p>A character specifying the output format (Only
+applicable to NCBI GEO database access):</p><ul><li><p><code>"none"</code>: Applicable only to DataSets; for DataSets, this is also the
+sole valid option (no downloadable entry available).</p></li>
+<li><p><code>txt</code>/<code>"text"</code>: machine-readable SOFT format (Simple Omnibus Format in
+Text).</p></li>
 <li><p><code>"xml"</code>: XML format.</p></li>
 <li><p><code>"html"</code>: human-readable format with hyperlinks (no downloadable entry
 available).</p></li>
