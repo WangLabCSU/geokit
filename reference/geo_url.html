@@ -60,8 +60,8 @@ generates the correct URL.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">geo_url</span><span class="op">(</span></span>
 <span>  <span class="va">accession</span>,</span>
 <span>  famount <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  scope <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  format <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  scope <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  over_https <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -92,7 +92,7 @@ metadata. MINiML is essentially an XML rendering of SOFT format.</p></li>
 <li><p><code>"annot"</code>: annotation files for Platforms.</p></li>
 <li><p><code>"suppl"</code>: supplementary files.</p></li>
 </ul><p>The following table summarizes the compatibility between GEO accession
-types and <code>famount</code> options:</p><table class="table table"><tr><td>famount</td><td>GDS</td><td>GSE</td><td>GPL</td><td>GSM</td></tr><tr><td>SOFT (soft)</td><td>o</td><td>o</td><td>o</td><td>x</td></tr><tr><td>SOFTFULL (soft_full)</td><td>o</td><td>x</td><td>x</td><td>x</td></tr><tr><td>MINiML (miniml)</td><td>x</td><td>o</td><td>o</td><td>x</td></tr><tr><td>Matrix (matrix)</td><td>x</td><td>o</td><td>x</td><td>x</td></tr><tr><td>Annotation (annot)</td><td>x</td><td>x</td><td>o</td><td>x</td></tr><tr><td>Supplementaryfiles (suppl)</td><td>x</td><td>o</td><td>o</td><td>o</td></tr></table></li>
+types and file type options:</p><table class="table table"><tr><td>famount</td><td>GDS</td><td>GSE</td><td>GPL</td><td>GSM</td></tr><tr><td>SOFT (soft)</td><td>o</td><td>o</td><td>o</td><td>x</td></tr><tr><td>SOFTFULL (soft_full)</td><td>o</td><td>x</td><td>x</td><td>x</td></tr><tr><td>MINiML (miniml)</td><td>x</td><td>o</td><td>o</td><td>x</td></tr><tr><td>Matrix (matrix)</td><td>x</td><td>o</td><td>x</td><td>x</td></tr><tr><td>Annotation (annot)</td><td>x</td><td>x</td><td>o</td><td>x</td></tr><tr><td>Supplementaryfiles (suppl)</td><td>x</td><td>o</td><td>o</td><td>o</td></tr></table></li>
 <li><p>Accession-based queries to the NCBI GEO database (amount of data):</p><ul><li><p><code>"none"</code>: Applicable only to DataSets; for DataSets, this is also the
 sole valid option.</p></li>
 <li><p><code>"brief"</code>: accession attributes only.</p></li>
@@ -101,16 +101,6 @@ sole valid option.</p></li>
 other accessions and the full data table.</p></li>
 <li><p><code>"full"</code>: accession attributes + complete data table.</p></li>
 </ul></li>
-</ul></dd>
-
-
-<dt id="arg-scope">scope<a class="anchor" aria-label="anchor" href="#arg-scope"></a></dt>
-<dd><p>A character specifying which GEO accessions to include
-(Only applicable to NCBI GEO database access).</p><ul><li><p><code>"none"</code>: Applicable only to DataSets; for DataSets, this is also the
-sole valid option</p></li>
-<li><p><code>"self"</code>: the queried accession only.</p></li>
-<li><p><code>"gsm"</code>, <code>"gpl"</code>, <code>"gse"</code>: related samples, platforms, or series.</p></li>
-<li><p><code>"all"</code>: all accessions related to the query (family view).</p></li>
 </ul></dd>
 
 
@@ -126,6 +116,16 @@ available).</p></li>
 </ul></dd>
 
 
+<dt id="arg-scope">scope<a class="anchor" aria-label="anchor" href="#arg-scope"></a></dt>
+<dd><p>A character specifying which GEO accessions to include
+(Only applicable to NCBI GEO database access).</p><ul><li><p><code>"none"</code>: Applicable only to DataSets; for DataSets, this is also the
+sole valid option</p></li>
+<li><p><code>"self"</code>: the queried accession only.</p></li>
+<li><p><code>"gsm"</code>, <code>"gpl"</code>, <code>"gse"</code>: related samples, platforms, or series.</p></li>
+<li><p><code>"all"</code>: all accessions related to the query (family view).</p></li>
+</ul></dd>
+
+
 <dt id="arg-over-https">over_https<a class="anchor" aria-label="anchor" href="#arg-over-https"></a></dt>
 <dd><p>Logical scalar. If <code>TRUE</code>, connects to GEO FTP server via
 HTTPS (<a href="https://ftp.ncbi.nlm.nih.gov/geo" class="external-link">https://ftp.ncbi.nlm.nih.gov/geo</a>); otherwise uses plain FTP
@@ -135,7 +135,7 @@ access.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A character string of GEO URL.</p>
+    <p>A character of GEO URL.</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
