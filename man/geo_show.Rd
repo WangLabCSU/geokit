@@ -40,7 +40,7 @@ metadata. MINiML is essentially an XML rendering of SOFT format.
 }
 
 The following table summarizes the compatibility between GEO accession
-types and \code{famount} options:\tabular{ccccc}{
+types and file type options:\tabular{ccccc}{
    famount \tab GDS \tab GSE \tab GPL \tab GSM \cr
    SOFT (soft) \tab o \tab o \tab o \tab x \cr
    SOFTFULL (soft_full) \tab o \tab x \tab x \tab x \cr

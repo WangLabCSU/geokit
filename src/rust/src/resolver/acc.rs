@@ -17,8 +17,8 @@ use super::GEOEntry;
 pub(super) enum GEOAmount {
     Brief,
     Quick,
-    Data,
     #[default]
+    Data,
     Full,
 }
 

@@ -60,8 +60,8 @@ impl GEOResolver {
     pub(crate) fn new(
         accession: &str,
         famount: Option<&str>, // file/amount type requested ("soft", "brief", etc.)
-        scope: Option<&str>,   // optional scope (only used for ACC famount)
         format: Option<&str>,  // optional format (only used for ACC famount)
+        scope: Option<&str>,   // optional scope (only used for ACC famount)
         over_https: Option<bool>, // optional FTP protocol flag (only used for FTP famount)
     ) -> Result<Self> {
         let id = GEOIdentifier::try_from(accession)

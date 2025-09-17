@@ -6,8 +6,8 @@ use crate::resolver;
 pub(super) fn resolvers_from_robj(
     accession: &Robj,
     famount: &Robj,
-    scope: &Robj,
     format: &Robj,
+    scope: &Robj,
     over_https: &Robj,
 ) -> Result<Vec<resolver::GEOResolver>, String> {
     let accession = accession
@@ -18,11 +18,11 @@ pub(super) fn resolvers_from_robj(
     let famount = robj_to_option_vec_str(&famount, accession.len())
         .with_context(|| format!("Invalid 'famount'"))
         .map_err(|e| format!("{:?}", e))?;
-    let scope = robj_to_option_vec_str(&scope, accession.len())
-        .with_context(|| format!("Invalid 'scope'"))
-        .map_err(|e| format!("{:?}", e))?;
     let format = robj_to_option_vec_str(&format, accession.len())
         .with_context(|| format!("Invalid 'format'"))
+        .map_err(|e| format!("{:?}", e))?;
+    let scope = robj_to_option_vec_str(&scope, accession.len())
+        .with_context(|| format!("Invalid 'scope'"))
         .map_err(|e| format!("{:?}", e))?;
     let over_https = robj_to_option_vec_bool(&over_https, accession.len())
         .with_context(|| format!("Invalid 'over_https'"))
@@ -32,10 +32,10 @@ pub(super) fn resolvers_from_robj(
         .enumerate()
         .map(|(i, acc)| {
             let famount = famount.as_ref().map(|v| v[i]);
-            let scope = scope.as_ref().map(|v| v[i]);
             let format = format.as_ref().map(|v| v[i]);
+            let scope = scope.as_ref().map(|v| v[i]);
             let over_https = over_https.as_ref().map(|v| v[i]);
-            resolver::GEOResolver::new(acc, famount, scope, format, over_https)
+            resolver::GEOResolver::new(acc, famount, format, scope, over_https)
                 .map_err(|e| format!("{:?}", e))
         })
         .collect()

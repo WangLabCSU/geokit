@@ -36,11 +36,11 @@ fn geo_gtype(accession: Robj, abbre: bool) -> Result<Vec<String>, String> {
 fn geo_url(
     accession: Robj,
     famount: Robj,
-    scope: Robj,
     format: Robj,
+    scope: Robj,
     over_https: Robj,
 ) -> Result<Vec<String>, String> {
-    resolvers_from_robj(&accession, &famount, &scope, &format, &over_https).map(|resolvers| {
+    resolvers_from_robj(&accession, &famount, &format, &scope, &over_https).map(|resolvers| {
         resolvers
             .into_iter()
             .map(|resovler| resovler.url())

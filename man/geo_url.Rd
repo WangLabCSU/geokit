@@ -7,8 +7,8 @@
 geo_url(
   accession,
   famount = NULL,
-  scope = NULL,
   format = NULL,
+  scope = NULL,
   over_https = NULL
 )
 }
@@ -40,7 +40,7 @@ metadata. MINiML is essentially an XML rendering of SOFT format.
 }
 
 The following table summarizes the compatibility between GEO accession
-types and \code{famount} options:\tabular{ccccc}{
+types and file type options:\tabular{ccccc}{
    famount \tab GDS \tab GSE \tab GPL \tab GSM \cr
    SOFT (soft) \tab o \tab o \tab o \tab x \cr
    SOFTFULL (soft_full) \tab o \tab x \tab x \tab x \cr
@@ -62,16 +62,6 @@ other accessions and the full data table.
 }
 }}
 
-\item{scope}{A character specifying which GEO accessions to include
-(Only applicable to NCBI GEO database access).
-\itemize{
-\item \code{"none"}: Applicable only to DataSets; for DataSets, this is also the
-sole valid option
-\item \code{"self"}: the queried accession only.
-\item \code{"gsm"}, \code{"gpl"}, \code{"gse"}: related samples, platforms, or series.
-\item \code{"all"}: all accessions related to the query (family view).
-}}
-
 \item{format}{A character specifying the output format (Only
 applicable to NCBI GEO database access):
 \itemize{
@@ -84,13 +74,23 @@ Text).
 available).
 }}
 
+\item{scope}{A character specifying which GEO accessions to include
+(Only applicable to NCBI GEO database access).
+\itemize{
+\item \code{"none"}: Applicable only to DataSets; for DataSets, this is also the
+sole valid option
+\item \code{"self"}: the queried accession only.
+\item \code{"gsm"}, \code{"gpl"}, \code{"gse"}: related samples, platforms, or series.
+\item \code{"all"}: all accessions related to the query (family view).
+}}
+
 \item{over_https}{Logical scalar. If \code{TRUE}, connects to GEO FTP server via
 HTTPS (\url{https://ftp.ncbi.nlm.nih.gov/geo}); otherwise uses plain FTP
 (\url{ftp://ftp.ncbi.nlm.nih.gov/geo}). Only applicable to GEO FTP server
 access.}
 }
 \value{
-A character string of GEO URL.
+A character of GEO URL.
 }
 \description{
 Construct and resolve URLs for GEO (Gene Expression Omnibus) resources. This

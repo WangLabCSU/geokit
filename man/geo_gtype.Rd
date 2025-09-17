@@ -20,7 +20,7 @@ in the return value. If \code{FALSE} (default), the full type name is returned;
 if \code{TRUE}, a short abbreviation is used.}
 }
 \value{
-A character string of GEO accession type.
+A character of GEO accession type.
 }
 \description{
 Determine the type of a GEO accession ID (e.g. DataSet, Series, Sample,

@@ -12,7 +12,7 @@
 #' @param abbre A logical scalar indicating whether to abbreviate the GEO type
 #'   in the return value. If `FALSE` (default), the full type name is returned;
 #'   if `TRUE`, a short abbreviation is used.
-#' @return A character string of GEO accession type.
+#' @return A character of GEO accession type.
 #' @export
 geo_gtype <- function(accession, abbre = FALSE) {
     assert_bool(abbre)
@@ -46,7 +46,7 @@ geo_gtype <- function(accession, abbre = FALSE) {
 #'      * `"suppl"`: supplementary files.
 #'
 #'      The following table summarizes the compatibility between GEO accession
-#'      types and `famount` options:
+#'      types and file type options:
 #'
 #'        |           famount          | GDS | GSE | GPL | GSM |
 #'        | :------------------------: | :-: | :-: | :-: | :-: |
@@ -66,14 +66,6 @@ geo_gtype <- function(accession, abbre = FALSE) {
 #'        other accessions and the full data table.
 #'      * `"full"`: accession attributes + complete data table.
 #'
-#' @param scope A character specifying which GEO accessions to include
-#' (Only applicable to NCBI GEO database access).
-#'   - `"none"`: Applicable only to DataSets; for DataSets, this is also the
-#'     sole valid option
-#'   - `"self"`: the queried accession only.
-#'   - `"gsm"`, `"gpl"`, `"gse"`: related samples, platforms, or series.
-#'   - `"all"`: all accessions related to the query (family view).
-#'
 #' @param format A character specifying the output format (Only
 #' applicable to NCBI GEO database access):
 #'   - `"none"`: Applicable only to DataSets; for DataSets, this is also the
@@ -84,13 +76,21 @@ geo_gtype <- function(accession, abbre = FALSE) {
 #'   - `"html"`: human-readable format with hyperlinks (no downloadable entry
 #'     available).
 #'
+#' @param scope A character specifying which GEO accessions to include
+#' (Only applicable to NCBI GEO database access).
+#'   - `"none"`: Applicable only to DataSets; for DataSets, this is also the
+#'     sole valid option
+#'   - `"self"`: the queried accession only.
+#'   - `"gsm"`, `"gpl"`, `"gse"`: related samples, platforms, or series.
+#'   - `"all"`: all accessions related to the query (family view).
+#'
 #' @param over_https Logical scalar. If `TRUE`, connects to GEO FTP server via
 #'   HTTPS (<https://ftp.ncbi.nlm.nih.gov/geo>); otherwise uses plain FTP
 #'   (<ftp://ftp.ncbi.nlm.nih.gov/geo>). Only applicable to GEO FTP server
 #'   access.
-#' @return A character string of GEO URL.
+#' @return A character of GEO URL.
 #' @export
-geo_url <- function(accession, famount = NULL, scope = NULL, format = NULL,
+geo_url <- function(accession, famount = NULL, format = NULL, scope = NULL,
                     over_https = NULL) {
     rust_call("geo_url", accession, famount, scope, format, over_https)
 }
