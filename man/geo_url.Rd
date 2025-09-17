@@ -31,8 +31,8 @@ data can be accessed through two sites:
 \item \code{"soft_full"}: full SOFT (Simple Omnibus in Text Format) files from
 GEO FTP site by DataSet (GDS) containging additionally contains
 up-to-date gene annotation for the DataSet Platform.
-\item \code{"minimal"}: MINiML (MIAME Notation in Markup Language, pronounced
-minimal) is an XML format that incorporates experimental data and
+\item \code{"miniml"}: MINiML (MIAME Notation in Markup Language, pronounced
+miniml) is an XML format that incorporates experimental data and
 metadata. MINiML is essentially an XML rendering of SOFT format.
 \item \code{"matrix"}: Series matrix file.
 \item \code{"annot"}: annotation files for Platforms.

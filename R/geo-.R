@@ -38,8 +38,8 @@ geo_gtype <- function(accession, abbre = FALSE) {
 #'      * `"soft_full"`: full SOFT (Simple Omnibus in Text Format) files from
 #'         GEO FTP site by DataSet (GDS) containging additionally contains
 #'         up-to-date gene annotation for the DataSet Platform.
-#'      * `"minimal"`: MINiML (MIAME Notation in Markup Language, pronounced
-#'        minimal) is an XML format that incorporates experimental data and
+#'      * `"miniml"`: MINiML (MIAME Notation in Markup Language, pronounced
+#'        miniml) is an XML format that incorporates experimental data and
 #'        metadata. MINiML is essentially an XML rendering of SOFT format.
 #'      * `"matrix"`: Series matrix file.
 #'      * `"annot"`: annotation files for Platforms.
