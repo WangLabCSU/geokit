@@ -13,7 +13,7 @@ geo_url(
 )
 }
 \arguments{
-\item{accession}{A character string of GEO accession ID. Examples:
+\item{accession}{A character of GEO accession IDs. Examples:
 \itemize{
 \item DataSets (GDS): \code{"GDS505"}, \code{"GDS606"}, \code{"GDS1234"}, \code{"GDS9999"}, etc.
 \item Series (GSE): \code{"GSE2"}, \code{"GSE22"}, \code{"GSE100"}, \code{"GSE2000"}, etc.
@@ -21,7 +21,7 @@ geo_url(
 \item Samples (GSM): \code{"GSM12345"}, \code{"GSM67890"}, \code{"GSM112233"}, etc.
 }}
 
-\item{famount}{A character string specifying file/amount type requested. GEO
+\item{famount}{A character specifying file/amount type requested. GEO
 data can be accessed through two sites:
 \itemize{
 \item Direct FTP/HTTPS file retrieval from GEO FTP server (file type):
@@ -52,7 +52,8 @@ types and \code{famount} options:\tabular{ccccc}{
 
 \item Accession-based queries to the NCBI GEO database (amount of data):
 \itemize{
-\item \code{"none"}: Only for DataSets; this is the sole valid option.
+\item \code{"none"}: Applicable only to DataSets; for DataSets, this is also the
+sole valid option.
 \item \code{"brief"}: accession attributes only.
 \item \code{"quick"}: accession attributes + first \strong{20} rows of the data table.
 \item \code{"data"}: omits the accession's attributes, showing only links to
@@ -61,21 +62,23 @@ other accessions and the full data table.
 }
 }}
 
-\item{scope}{A character string specifying which GEO accessions to include
+\item{scope}{A character specifying which GEO accessions to include
 (Only applicable to NCBI GEO database access).
 \itemize{
-\item \code{"none"}: Only for DataSets; this is the sole valid option.
+\item \code{"none"}: Applicable only to DataSets; for DataSets, this is also the
+sole valid option
 \item \code{"self"}: the queried accession only.
 \item \code{"gsm"}, \code{"gpl"}, \code{"gse"}: related samples, platforms, or series.
 \item \code{"all"}: all accessions related to the query (family view).
 }}
 
-\item{format}{A character string specifying the output format (Only
+\item{format}{A character specifying the output format (Only
 applicable to NCBI GEO database access):
 \itemize{
-\item \code{"none"}: Only for DataSets; this is the sole valid option (no
-downloadable entry available).
-\item \code{"text"}: machine-readable SOFT format (Simple Omnibus Format in Text).
+\item \code{"none"}: Applicable only to DataSets; for DataSets, this is also the
+sole valid option (no downloadable entry available).
+\item \code{txt}/\code{"text"}: machine-readable SOFT format (Simple Omnibus Format in
+Text).
 \item \code{"xml"}: XML format.
 \item \code{"html"}: human-readable format with hyperlinks (no downloadable entry
 available).

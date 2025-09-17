@@ -4,7 +4,7 @@
 #' Platform). This function inspects the accession prefix and returns its
 #' corresponding GEO type, optionally in an abbreviated form.
 #'
-#' @param accession A character string of GEO accession ID. Examples:
+#' @param accession A character of GEO accession IDs. Examples:
 #'   - DataSets (GDS): `"GDS505"`, `"GDS606"`, `"GDS1234"`, `"GDS9999"`, etc.
 #'   - Series (GSE): `"GSE2"`, `"GSE22"`, `"GSE100"`, `"GSE2000"`, etc.
 #'   - Platforms (GPL): `"GPL96"`, `"GPL570"`, `"GPL10558"`, etc.
@@ -15,7 +15,6 @@
 #' @return A character string of GEO accession type.
 #' @export
 geo_gtype <- function(accession, abbre = FALSE) {
-    assert_string(accession)
     assert_bool(abbre)
     rust_call("geo_gtype", accession, abbre)
 }
@@ -29,7 +28,7 @@ geo_gtype <- function(accession, abbre = FALSE) {
 #' generates the correct URL.
 #'
 #' @inheritParams geo_gtype
-#' @param famount A character string specifying file/amount type requested. GEO
+#' @param famount A character specifying file/amount type requested. GEO
 #' data can be accessed through two sites:
 #'
 #'   - Direct FTP/HTTPS file retrieval from GEO FTP server (file type):
@@ -59,25 +58,28 @@ geo_gtype <- function(accession, abbre = FALSE) {
 #'        | Supplementaryfiles (suppl) |  x  |  o  |  o  |  o  |
 #'
 #'   - Accession-based queries to the NCBI GEO database (amount of data):
-#'      * `"none"`: Only for DataSets; this is the sole valid option.
+#'      * `"none"`: Applicable only to DataSets; for DataSets, this is also the
+#'         sole valid option.
 #'      * `"brief"`: accession attributes only.
 #'      * `"quick"`: accession attributes + first **20** rows of the data table.
 #'      * `"data"`: omits the accession's attributes, showing only links to
 #'        other accessions and the full data table.
 #'      * `"full"`: accession attributes + complete data table.
 #'
-#' @param scope A character string specifying which GEO accessions to include
+#' @param scope A character specifying which GEO accessions to include
 #' (Only applicable to NCBI GEO database access).
-#'   - `"none"`: Only for DataSets; this is the sole valid option.
+#'   - `"none"`: Applicable only to DataSets; for DataSets, this is also the
+#'     sole valid option
 #'   - `"self"`: the queried accession only.
 #'   - `"gsm"`, `"gpl"`, `"gse"`: related samples, platforms, or series.
 #'   - `"all"`: all accessions related to the query (family view).
 #'
-#' @param format A character string specifying the output format (Only
+#' @param format A character specifying the output format (Only
 #' applicable to NCBI GEO database access):
-#'   - `"none"`: Only for DataSets; this is the sole valid option (no
-#'     downloadable entry available).
-#'   - `"text"`: machine-readable SOFT format (Simple Omnibus Format in Text).
+#'   - `"none"`: Applicable only to DataSets; for DataSets, this is also the
+#'     sole valid option (no downloadable entry available).
+#'   - `txt`/`"text"`: machine-readable SOFT format (Simple Omnibus Format in
+#'     Text).
 #'   - `"xml"`: XML format.
 #'   - `"html"`: human-readable format with hyperlinks (no downloadable entry
 #'     available).
@@ -90,11 +92,6 @@ geo_gtype <- function(accession, abbre = FALSE) {
 #' @export
 geo_url <- function(accession, famount = NULL, scope = NULL, format = NULL,
                     over_https = NULL) {
-    assert_string(accession)
-    assert_string(famount, allow_null = TRUE)
-    assert_string(scope, allow_null = TRUE)
-    assert_string(format, allow_null = TRUE)
-    assert_bool(over_https)
     rust_call("geo_url", accession, famount, scope, format, over_https)
 }
 
@@ -109,8 +106,12 @@ geo_url <- function(accession, famount = NULL, scope = NULL, format = NULL,
 #' @export
 geo_show <- function(accession, famount = NULL, scope = NULL,
                      over_https = NULL, browser = getOption("browser")) {
+    assert_string(accession)
+    assert_string(famount, allow_null = TRUE)
+    assert_string(scope, allow_null = TRUE)
+    assert_bool(over_https, allow_null = TRUE)
     utils::browseURL(
-        rust_call("geo_landing_url", accession, famount, scope, over_https),
+        rust_call("geo_landing_page", accession, famount, scope, over_https),
         browser = browser
     )
 }

@@ -4,7 +4,7 @@ use super::identifier::GEOType;
 
 #[derive(Debug, Error)]
 pub(crate) enum GEOParseError {
-    #[error("Expected one starting with GDS, GPL, GSM, or GSE.")]
+    #[error("Expected one starting with 'GDS', 'GPL', 'GSM', or 'GSE', and followed by digits.")]
     InvalidAccession,
 
     #[error("Expected one of 'brief', 'quick', 'data', or 'full'.")]
@@ -13,22 +13,22 @@ pub(crate) enum GEOParseError {
     #[error("Expected one of 'self', 'gsm', 'gpl', 'gse', or 'all'.")]
     InvalidScope,
 
-    #[error("'scope' must be omitted (use `none` instead) for {gtype}")]
+    #[error("Expected None (use 'none' instead) for {gtype}")]
     AccScopeOmitted { gtype: GEOType },
 
-    #[error("a valid 'scope' value is required for {gtype}")]
+    #[error("Expected one of 'self', 'gsm', 'gpl', 'gse', or 'all' for {gtype}")]
     AccScopeRequired { gtype: GEOType },
 
-    #[error("'amount' must be omitted (use `none` instead) for {gtype}")]
+    #[error("Expected None (use 'none' instead) for {gtype}")]
     AccAmountOmitted { gtype: GEOType },
 
-    #[error("a valid 'amount' value is required for {gtype}")]
+    #[error("Expected one of 'brief', 'quick', 'data', or 'full' for {gtype}")]
     AccAmountRequired { gtype: GEOType },
 
-    #[error("'format' must be omitted (use `none` instead) for {gtype}")]
+    #[error("Expected None (use 'none' instead) for for {gtype}")]
     AccFormatOmitted { gtype: GEOType },
 
-    #[error("a valid 'format' value is required for {gtype}")]
+    #[error("Expected one of 'txt', 'text', 'xml', or 'html' for {gtype}")]
     AccFormatRequired { gtype: GEOType },
 
     #[error("Expected one of 'txt', 'text', 'xml', or 'html'.")]

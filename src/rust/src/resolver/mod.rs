@@ -65,7 +65,7 @@ impl GEOResolver {
         over_https: Option<bool>, // optional FTP protocol flag (only used for FTP famount)
     ) -> Result<Self> {
         let id = GEOIdentifier::try_from(accession)
-            .with_context(|| format!("Invalid accession: {}", accession))?;
+            .with_context(|| format!("Invalid 'accession': {}", accession))?;
         // Determine the `famount`, providing defaults based on GEO type
         match famount {
             // Default case: if `famount` is `None`, resolve using ACC endpoint
@@ -86,11 +86,11 @@ impl GEOResolver {
                         _ => Some(
                             amount
                                 .try_into()
-                                .with_context(|| format!("Invalid famount: {}", amount))?,
+                                .with_context(|| format!("Invalid 'famount': {}", amount))?,
                         ),
                     };
                     acc.set_amount(value)
-                        .with_context(|| format!("Invalid famount: {}", amount))?;
+                        .with_context(|| format!("Invalid 'famount': {}", amount))?;
                 };
 
                 // Parse optional scope (default handled by resolver if None)
@@ -100,11 +100,11 @@ impl GEOResolver {
                         _ => Some(
                             scope
                                 .try_into()
-                                .with_context(|| format!("Invalid scope: {}", scope))?,
+                                .with_context(|| format!("Invalid 'scope': {}", scope))?,
                         ),
                     };
                     acc.set_scope(value)
-                        .with_context(|| format!("Invalid scope: {}", scope))?;
+                        .with_context(|| format!("Invalid 'scope': {}", scope))?;
                 }
 
                 // Parse optional format (default handled by resolver if None)
@@ -114,11 +114,11 @@ impl GEOResolver {
                         _ => Some(
                             format
                                 .try_into()
-                                .with_context(|| format!("Invalid format: {}", format))?,
+                                .with_context(|| format!("Invalid 'format': {}", format))?,
                         ),
                     };
                     acc.set_format(value)
-                        .with_context(|| format!("Invalid format: {}", format))?;
+                        .with_context(|| format!("Invalid 'format': {}", format))?;
                 }
 
                 // over_https has no effect for ACC
@@ -148,9 +148,9 @@ impl GEOResolver {
                 // Parse `famount` into an FTP file enum
                 let file = famount
                     .try_into()
-                    .with_context(|| format!("Invalid famount: {}", famount))?;
+                    .with_context(|| format!("Invalid 'famount': {}", famount))?;
                 ftp.set_file(file)
-                    .with_context(|| format!("Invalid famount: {}", famount))?;
+                    .with_context(|| format!("Invalid 'famount': {}", famount))?;
 
                 // Apply HTTPS preference (default true if not set)
                 if let Some(over_https) = over_https {
@@ -159,10 +159,13 @@ impl GEOResolver {
 
                 // Warn about ignored parameters
                 if let Some(_) = scope {
-                    eprintln!("Warning: 'scope' will be ignored for {} famount", famount)
+                    eprintln!("Warning: 'scope' will be ignored for {} 'famount'", famount)
                 }
                 if let Some(_) = format {
-                    eprintln!("Warning: 'format' will be ignored for {} famount", famount)
+                    eprintln!(
+                        "Warning: 'format' will be ignored for {} 'famount'",
+                        famount
+                    )
                 }
                 return Ok(GEOResolver(GEOResolverInner::FTP(ftp)));
             }
@@ -172,7 +175,9 @@ impl GEOResolver {
             _ => {
                 return Err(GEOParseError::InvalidFamount).with_context(|| {
                     // Safe unwrap (famount is Some in this branch)
-                    format!("Invalid famount: {}", unsafe { famount.unwrap_unchecked() })
+                    format!("Invalid 'famount': {}", unsafe {
+                        famount.unwrap_unchecked()
+                    })
                 });
             }
         }

@@ -7,7 +7,7 @@
 geo_gtype(accession, abbre = FALSE)
 }
 \arguments{
-\item{accession}{A character string of GEO accession ID. Examples:
+\item{accession}{A character of GEO accession IDs. Examples:
 \itemize{
 \item DataSets (GDS): \code{"GDS505"}, \code{"GDS606"}, \code{"GDS1234"}, \code{"GDS9999"}, etc.
 \item Series (GSE): \code{"GSE2"}, \code{"GSE22"}, \code{"GSE100"}, \code{"GSE2000"}, etc.

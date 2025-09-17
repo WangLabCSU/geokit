@@ -58,6 +58,8 @@ impl FromStr for GEOIdentifier {
     type Err = GEOParseError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let accession = s.to_uppercase();
+
+        // Determine GEO type from the 3-letter prefix.
         let gtype = if accession.starts_with("GDS") {
             GEOType::Datasets
         } else if accession.starts_with("GPL") {
@@ -69,6 +71,16 @@ impl FromStr for GEOIdentifier {
         } else {
             return Err(GEOParseError::InvalidAccession);
         };
+
+        // SAFETY: `accession` must be >= 4 characters if it passed the prefix check above.
+        // We slice from index 3 (after prefix) to get the numeric part, which must consist of digits only.
+        if !unsafe { accession.get_unchecked(3 ..) }
+            .chars()
+            .all(|c| c.is_ascii_digit())
+        {
+            return Err(GEOParseError::InvalidAccession);
+        }
+
         Ok(Self { accession, gtype })
     }
 }
