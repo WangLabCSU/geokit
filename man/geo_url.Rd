@@ -52,9 +52,9 @@ types and \code{famount} options:\tabular{ccccc}{
 
 \item Accession-based queries to the NCBI GEO database (amount of data):
 \itemize{
-\item \code{"none"}: not used, for DataSets only.
+\item \code{"none"}: Only for DataSets; this is the sole valid option.
 \item \code{"brief"}: accession attributes only.
-\item \code{"quick"}: accession attributes + first 20 rows of the data table.
+\item \code{"quick"}: accession attributes + first \strong{20} rows of the data table.
 \item \code{"data"}: omits the accession's attributes, showing only links to
 other accessions and the full data table.
 \item \code{"full"}: accession attributes + complete data table.
@@ -64,7 +64,7 @@ other accessions and the full data table.
 \item{scope}{A character string specifying which GEO accessions to include
 (Only applicable to NCBI GEO database access).
 \itemize{
-\item \code{"none"}: not used, for DataSets only.
+\item \code{"none"}: Only for DataSets; this is the sole valid option.
 \item \code{"self"}: the queried accession only.
 \item \code{"gsm"}, \code{"gpl"}, \code{"gse"}: related samples, platforms, or series.
 \item \code{"all"}: all accessions related to the query (family view).
@@ -73,10 +73,12 @@ other accessions and the full data table.
 \item{format}{A character string specifying the output format (Only
 applicable to NCBI GEO database access):
 \itemize{
-\item \code{"none"}: not used, for DataSets only.
+\item \code{"none"}: Only for DataSets; this is the sole valid option (no
+downloadable entry available).
 \item \code{"text"}: machine-readable SOFT format (Simple Omnibus Format in Text).
 \item \code{"xml"}: XML format.
-\item \code{"html"}: human-readable format with hyperlinks.
+\item \code{"html"}: human-readable format with hyperlinks (no downloadable entry
+available).
 }}
 
 \item{over_https}{Logical scalar. If \code{TRUE}, connects to GEO FTP server via

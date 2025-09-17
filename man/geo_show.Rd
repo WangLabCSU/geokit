@@ -2,13 +2,12 @@
 % Please edit documentation in R/geo-.R
 \name{geo_show}
 \alias{geo_show}
-\title{Open a GEO URL in a browser}
+\title{Open the GEO landing page in a browser}
 \usage{
 geo_show(
   accession,
   famount = NULL,
   scope = NULL,
-  format = NULL,
   over_https = NULL,
   browser = getOption("browser")
 )
@@ -53,9 +52,9 @@ types and \code{famount} options:\tabular{ccccc}{
 
 \item Accession-based queries to the NCBI GEO database (amount of data):
 \itemize{
-\item \code{"none"}: not used, for DataSets only.
+\item \code{"none"}: Only for DataSets; this is the sole valid option.
 \item \code{"brief"}: accession attributes only.
-\item \code{"quick"}: accession attributes + first 20 rows of the data table.
+\item \code{"quick"}: accession attributes + first \strong{20} rows of the data table.
 \item \code{"data"}: omits the accession's attributes, showing only links to
 other accessions and the full data table.
 \item \code{"full"}: accession attributes + complete data table.
@@ -65,19 +64,10 @@ other accessions and the full data table.
 \item{scope}{A character string specifying which GEO accessions to include
 (Only applicable to NCBI GEO database access).
 \itemize{
-\item \code{"none"}: not used, for DataSets only.
+\item \code{"none"}: Only for DataSets; this is the sole valid option.
 \item \code{"self"}: the queried accession only.
 \item \code{"gsm"}, \code{"gpl"}, \code{"gse"}: related samples, platforms, or series.
 \item \code{"all"}: all accessions related to the query (family view).
-}}
-
-\item{format}{A character string specifying the output format (Only
-applicable to NCBI GEO database access):
-\itemize{
-\item \code{"none"}: not used, for DataSets only.
-\item \code{"text"}: machine-readable SOFT format (Simple Omnibus Format in Text).
-\item \code{"xml"}: XML format.
-\item \code{"html"}: human-readable format with hyperlinks.
 }}
 
 \item{over_https}{Logical scalar. If \code{TRUE}, connects to GEO FTP server via
@@ -95,8 +85,8 @@ access.}
   }
 }
 \description{
-Construct a GEO query URL using \code{\link[=geo_url]{geo_url()}} and open it directly in the
-system's default web browser (or a user-specified browser).
+Construct a GEO landing page and open it directly in the system's default web
+browser (or a user-specified browser).
 }
 \details{
 See \code{\link[utils:browseURL]{utils::browseURL()}}

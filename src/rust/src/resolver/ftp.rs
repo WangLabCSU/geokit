@@ -131,7 +131,6 @@ impl GEOFTPResolver {
                 .with_context(|| "Failed to create regex")
                 .unwrap()
         });
-        let id = self.id.accession.to_ascii_lowercase();
         format!(
             "{}/{}/{}/{}/{}/{}",
             // Construct the FTP/HTTPS download URL for the current GEO identifier and file type.
@@ -140,10 +139,11 @@ impl GEOFTPResolver {
             } else {
                 "ftp://ftp.ncbi.nlm.nih.gov/geo"
             },
+            // GEO FTP server uses lowercase
             self.id.gtype.to_string().to_ascii_lowercase(),
             // Replace the last 1–3 digits in the ID with "nnn" for the directory path.
-            regex.replace(&id, "nnn"),
-            id,
+            regex.replace(&self.id.accession, "nnn"),
+            self.id.accession,
             // `Soft` and `SoftFull` share the same directory ("soft").
             match &self.file {
                 GEOFTPFormat::SOFT | GEOFTPFormat::SOFTFull => "soft",

@@ -11,7 +11,7 @@ License: MIT + file LICENSE
 URL: https://github.com/Yunuuuu/geokit, https://yunuuuu.github.io/geokit/
 BugReports: https://github.com/Yunuuuu/geokit/issues
 Depends:
-    R (>= 4.2)
+    R (>= 3.5)
 Imports:
     data.table (>= 1.14.9),
     rlang (>= 0.4.11),

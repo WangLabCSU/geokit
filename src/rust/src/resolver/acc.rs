@@ -273,12 +273,15 @@ impl GEOAccResolver {
 
     pub(super) fn entry(&self) -> Option<GEOEntry> {
         match (&self.scope, &self.amount, &self.format) {
-            (Some(_), Some(a), Some(f)) => Some(GEOEntry::File(format!(
-                "{}_{}.{}",
-                self.id.accession,
-                a,
-                f.ext()
-            ))),
+            (Some(_), Some(a), Some(f)) => match f {
+                GEOAccFormat::Html => None,
+                _ => Some(GEOEntry::File(format!(
+                    "{}_{}.{}",
+                    self.id.accession,
+                    a,
+                    f.ext()
+                ))),
+            },
             (None, None, None) => None,
             _ => unreachable!(),
         }

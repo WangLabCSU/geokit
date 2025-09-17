@@ -59,26 +59,28 @@ geo_gtype <- function(accession, abbre = FALSE) {
 #'        | Supplementaryfiles (suppl) |  x  |  o  |  o  |  o  |
 #'
 #'   - Accession-based queries to the NCBI GEO database (amount of data):
-#'      * `"none"`: not used, for DataSets only.
+#'      * `"none"`: Only for DataSets; this is the sole valid option.
 #'      * `"brief"`: accession attributes only.
-#'      * `"quick"`: accession attributes + first 20 rows of the data table.
+#'      * `"quick"`: accession attributes + first **20** rows of the data table.
 #'      * `"data"`: omits the accession's attributes, showing only links to
 #'        other accessions and the full data table.
 #'      * `"full"`: accession attributes + complete data table.
 #'
 #' @param scope A character string specifying which GEO accessions to include
 #' (Only applicable to NCBI GEO database access).
-#'   - `"none"`: not used, for DataSets only.
+#'   - `"none"`: Only for DataSets; this is the sole valid option.
 #'   - `"self"`: the queried accession only.
 #'   - `"gsm"`, `"gpl"`, `"gse"`: related samples, platforms, or series.
 #'   - `"all"`: all accessions related to the query (family view).
 #'
 #' @param format A character string specifying the output format (Only
 #' applicable to NCBI GEO database access):
-#'   - `"none"`: not used, for DataSets only.
+#'   - `"none"`: Only for DataSets; this is the sole valid option (no
+#'     downloadable entry available).
 #'   - `"text"`: machine-readable SOFT format (Simple Omnibus Format in Text).
 #'   - `"xml"`: XML format.
-#'   - `"html"`: human-readable format with hyperlinks.
+#'   - `"html"`: human-readable format with hyperlinks (no downloadable entry
+#'     available).
 #'
 #' @param over_https Logical scalar. If `TRUE`, connects to GEO FTP server via
 #'   HTTPS (<https://ftp.ncbi.nlm.nih.gov/geo>); otherwise uses plain FTP
@@ -96,19 +98,19 @@ geo_url <- function(accession, famount = NULL, scope = NULL, format = NULL,
     rust_call("geo_url", accession, famount, scope, format, over_https)
 }
 
-#' Open a GEO URL in a browser
+#' Open the GEO landing page in a browser
 #'
-#' Construct a GEO query URL using [`geo_url()`] and open it directly in the
-#' system's default web browser (or a user-specified browser).
+#' Construct a GEO landing page and open it directly in the system's default web
+#' browser (or a user-specified browser).
 #'
 #' @inheritParams geo_url
 #' @inheritParams utils::browseURL
 #' @details See [utils::browseURL()]
 #' @export
-geo_show <- function(accession, famount = NULL, scope = NULL, format = NULL,
+geo_show <- function(accession, famount = NULL, scope = NULL,
                      over_https = NULL, browser = getOption("browser")) {
     utils::browseURL(
-        geo_url(accession, famount, scope, format, over_https),
+        rust_call("geo_landing_url", accession, famount, scope, over_https),
         browser = browser
     )
 }

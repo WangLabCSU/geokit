@@ -13,7 +13,7 @@ pub(crate) enum GEOType {
 }
 
 impl GEOType {
-    pub(crate) fn prefix(&self) -> &'static str {
+    pub(crate) fn abbre(&self) -> &'static str {
         match self {
             GEOType::Datasets => "GDS",
             GEOType::Series => "GSE",
