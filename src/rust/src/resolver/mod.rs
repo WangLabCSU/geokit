@@ -1,7 +1,9 @@
 use anyhow::{Context, Result};
 
-mod acc;
+// Accession Display Bar
+mod adb;
 mod error;
+// FTP site
 mod ftp;
 mod identifier;
 
@@ -17,12 +19,12 @@ pub(crate) use identifier::GEOType;
 ///
 /// Currently, two resolver backends are supported:
 /// - [`FTP`](GEOResolver::FTP): For direct FTP/HTTPS file retrieval from GEO FTP servers.
-/// - [`Acc`](GEOResolver::Acc): For accession-based queries into the NCBI GEO database.
+/// - [`ADB`](GEOResolver::ADB): For file retrieval from Accession Display Bar of GEO database.
 pub(crate) struct GEOResolver(GEOResolverInner);
 
 enum GEOResolverInner {
-    /// Resolver for accession-based requests (ACC).
-    Acc(acc::GEOAccResolver),
+    /// Resolver for Accession Display Bar (ADB).
+    ADB(adb::GEOAccResolver),
 
     /// Resolver for FTP/HTTPS-based requests.
     FTP(ftp::GEOFTPResolver),
@@ -48,20 +50,20 @@ impl GEOResolver {
     /// - `id`: GEO identifier (GSE, GSM, etc.)
     /// - `famount`: Optional "file/amount type":
     ///     - FTP types: "soft", "soft_full", "miniml", "matrix", "annot", "suppl"
-    ///     - ACC types: "none", "brief", "quick", "data", "full"
-    /// - `scope`: ACC-only option (e.g., "self", "all").
-    /// - `format`: ACC-only option (e.g., "text", "xml").
+    ///     - ADB types: "none", "brief", "quick", "data", "full"
+    /// - `scope`: ADB-only option (e.g., "self", "all").
+    /// - `format`: ADB-only option (e.g., "text", "xml").
     /// - `over_https`: FTP-only option (default: true).
     ///
     /// # Returns
-    /// - `Ok(GEOResolver::Acc(..))` if an ACC `famount` is selected or defaulted.
+    /// - `Ok(GEOResolver::ADB(..))` if an ADB `famount` is selected or defaulted.
     /// - `Ok(GEOResolver::FTP(..))` if an FTP `famount` is selected.
     /// - `Err(String)` if `famount` or other arguments are invalid or incompatible.
     pub(crate) fn new(
         accession: &str,
         famount: Option<&str>, // file/amount type requested ("soft", "brief", etc.)
-        format: Option<&str>,  // optional format (only used for ACC famount)
-        scope: Option<&str>,   // optional scope (only used for ACC famount)
+        format: Option<&str>,  // optional format (only used for ADB famount)
+        scope: Option<&str>,   // optional scope (only used for ADB famount)
         over_https: Option<bool>, // optional FTP protocol flag (only used for FTP famount)
     ) -> Result<Self> {
         let id = GEOIdentifier::try_from(accession)
@@ -76,7 +78,7 @@ impl GEOResolver {
             // - `over_https` is always ignored.
             None | Some("none") | Some("brief") | Some("quick") | Some("data") | Some("full") => {
                 // Build the ACC resolver
-                let mut acc = acc::GEOAccResolver::new(id);
+                let mut acc = adb::GEOAccResolver::new(id);
 
                 // Parse famount into ACC amount enum (if provided)
                 if let Some(amount) = famount {
@@ -130,7 +132,7 @@ impl GEOResolver {
                             .map_or_else(|| "none".to_string(), |a| a.to_string())
                     )
                 }
-                return Ok(GEOResolver(GEOResolverInner::Acc(acc)));
+                return Ok(GEOResolver(GEOResolverInner::ADB(acc)));
             }
 
             // ---------- FTP endpoint ----------
@@ -188,7 +190,7 @@ impl GEOResolver {
     #[allow(dead_code)]
     pub(crate) fn accession(&self) -> &str {
         match &self.0 {
-            GEOResolverInner::Acc(resolver) => &resolver.id.accession,
+            GEOResolverInner::ADB(resolver) => &resolver.id.accession,
             GEOResolverInner::FTP(resolver) => &resolver.id.accession,
         }
     }
@@ -198,7 +200,7 @@ impl GEOResolver {
     #[allow(dead_code)]
     pub(crate) fn gtype(&self) -> &GEOType {
         match &self.0 {
-            GEOResolverInner::Acc(resolver) => &resolver.id.gtype,
+            GEOResolverInner::ADB(resolver) => &resolver.id.gtype,
             GEOResolverInner::FTP(resolver) => &resolver.id.gtype,
         }
     }
@@ -206,25 +208,25 @@ impl GEOResolver {
     /// Construct the full URL for this GEO resource.
     ///
     /// The returned string is the complete download or access URL,
-    /// built according to the resolver type (`Acc` or `FTP`) and
+    /// built according to the resolver type (`ADB` or `FTP`) and
     /// associated options.
     pub(crate) fn url(&self) -> String {
         match &self.0 {
-            GEOResolverInner::Acc(resolver) => resolver.url(),
+            GEOResolverInner::ADB(resolver) => resolver.url(),
             GEOResolverInner::FTP(resolver) => resolver.url(),
         }
     }
 
     /// Return the entry type (file or directory) for this GEO resource.
     ///
-    /// - For `Acc` resolvers, the entry depends on the requested format/scope.
+    /// - For `ADB` resolvers, the entry depends on the requested format/scope.
     /// - For `FTP` resolvers, the entry is always known (`File` or `Dir`).
     ///
     /// Returns [`Some(GEOEntry)`] if the resolver produces a file or directory,
     /// or [`None`] if the resolver does not correspond to any concrete entry.
     pub(crate) fn entry(&self) -> Option<GEOEntry> {
         match &self.0 {
-            GEOResolverInner::Acc(resolver) => resolver.entry(),
+            GEOResolverInner::ADB(resolver) => resolver.entry(),
             GEOResolverInner::FTP(resolver) => Some(resolver.entry()),
         }
     }

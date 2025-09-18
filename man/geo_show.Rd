@@ -50,7 +50,8 @@ types and file type options:\tabular{ccccc}{
    Supplementaryfiles (suppl) \tab x \tab o \tab o \tab o \cr
 }
 
-\item Accession-based queries to the NCBI GEO database (amount of data):
+\item For file retrieval from Accession Display Bar of GEO database (amount of
+data):
 \itemize{
 \item \code{"none"}: Applicable only to DataSets; for DataSets, this is also the
 sole valid option.

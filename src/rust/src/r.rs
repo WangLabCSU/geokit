@@ -1,3 +1,4 @@
+use std::path::Path;
 use std::result::Result;
 
 use anyhow::{anyhow, Context};
@@ -64,7 +65,7 @@ fn geo_landing_page(
                     let url = resovler.url();
                     match entry {
                         GEOEntry::Dir => Ok(url),
-                        GEOEntry::File(_) => std::path::Path::new(&url)
+                        GEOEntry::File(_) => Path::new(&url)
                             .parent()
                             .ok_or_else(|| format!("Failed to locate the landing page of {}", url))
                             .map(|o| format!("{}", o.to_string_lossy())),

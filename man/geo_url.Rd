@@ -50,7 +50,8 @@ types and file type options:\tabular{ccccc}{
    Supplementaryfiles (suppl) \tab x \tab o \tab o \tab o \cr
 }
 
-\item Accession-based queries to the NCBI GEO database (amount of data):
+\item For file retrieval from Accession Display Bar of GEO database (amount of
+data):
 \itemize{
 \item \code{"none"}: Applicable only to DataSets; for DataSets, this is also the
 sole valid option.
@@ -95,7 +96,7 @@ A character of GEO URL.
 \description{
 Construct and resolve URLs for GEO (Gene Expression Omnibus) resources. This
 function provides a unified interface for accessing GEO data either via
-NCBI’s accession-based query system or directly from GEO FTP/HTTPS servers.
+Accession Display Bar of GEO database or directly from GEO FTP/HTTPS servers.
 Depending on the accession type or requested \code{famount}, it automatically
 generates the correct URL.
 }

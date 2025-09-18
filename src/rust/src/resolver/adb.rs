@@ -108,45 +108,47 @@ impl TryFrom<&str> for GEOScope {
     }
 }
 
+// Accession Display Bar
+// https://www.ncbi.nlm.nih.gov/geo/info/download.html
 // @param format A character string in one of "text", "xml" or "html".
 // Allows you to display the GEO accession in human readable, linked "HTML"
 // form, or in machine readable, "text" format, which is the same with "soft"
 // format. SOFT stands for "simple omnibus format in text".
 #[derive(Default)]
-pub(super) enum GEOAccFormat {
+pub(super) enum GEOADBFormat {
     #[default]
     Text,
     Xml,
     Html,
 }
 
-impl GEOAccFormat {
+impl GEOADBFormat {
     fn ext(&self) -> &'static str {
         match self {
-            GEOAccFormat::Text => "txt",
-            GEOAccFormat::Xml => "xml",
-            GEOAccFormat::Html => "html",
+            GEOADBFormat::Text => "soft",
+            GEOADBFormat::Xml => "xml",
+            GEOADBFormat::Html => "html",
         }
     }
 }
 
-impl fmt::Display for GEOAccFormat {
+impl fmt::Display for GEOADBFormat {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", match self {
-            GEOAccFormat::Text => "text",
-            GEOAccFormat::Xml => "xml",
-            GEOAccFormat::Html => "html",
+            GEOADBFormat::Text => "text",
+            GEOADBFormat::Xml => "xml",
+            GEOADBFormat::Html => "html",
         })
     }
 }
 
-impl FromStr for GEOAccFormat {
+impl FromStr for GEOADBFormat {
     type Err = GEOParseError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let format = match s {
-            "txt" | "text" => GEOAccFormat::Text,
-            "xml" => GEOAccFormat::Xml,
-            "html" => GEOAccFormat::Html,
+            "txt" | "text" => GEOADBFormat::Text,
+            "xml" => GEOADBFormat::Xml,
+            "html" => GEOADBFormat::Html,
             _ => {
                 return Err(GEOParseError::InvalidAccFormat);
             }
@@ -155,7 +157,7 @@ impl FromStr for GEOAccFormat {
     }
 }
 
-impl TryFrom<&str> for GEOAccFormat {
+impl TryFrom<&str> for GEOADBFormat {
     type Error = GEOParseError;
     fn try_from(value: &str) -> Result<Self, Self::Error> {
         Self::from_str(value)
@@ -166,7 +168,7 @@ pub(super) struct GEOAccResolver {
     pub(super) id: GEOIdentifier,
     scope: Option<GEOScope>,
     pub(super) amount: Option<GEOAmount>,
-    format: Option<GEOAccFormat>,
+    format: Option<GEOADBFormat>,
 }
 
 impl GEOAccResolver {
@@ -182,7 +184,7 @@ impl GEOAccResolver {
                 id,
                 scope: Some(GEOScope::default()),
                 amount: Some(GEOAmount::default()),
-                format: Some(GEOAccFormat::default()),
+                format: Some(GEOADBFormat::default()),
             },
         }
     }
@@ -229,7 +231,7 @@ impl GEOAccResolver {
         Ok(())
     }
 
-    pub(super) fn set_format(&mut self, format: Option<GEOAccFormat>) -> Result<(), GEOParseError> {
+    pub(super) fn set_format(&mut self, format: Option<GEOADBFormat>) -> Result<(), GEOParseError> {
         match self.id.gtype {
             GEOType::Datasets => {
                 if format.is_some() {
@@ -255,16 +257,13 @@ impl GEOAccResolver {
             (Some(s), Some(a), Some(f)) => {
                 format!(
                     "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc={}&targ={}&view={}&form={}",
-                    self.id.accession.to_ascii_lowercase(),
-                    s,
-                    a,
-                    f
+                    self.id.accession, s, a, f
                 )
             }
             (None, None, None) => {
                 format!(
                     "https://www.ncbi.nlm.nih.gov/sites/GDSbrowser?acc={}",
-                    self.id.accession.to_ascii_lowercase()
+                    self.id.accession
                 )
             }
             _ => unreachable!(),
@@ -274,7 +273,7 @@ impl GEOAccResolver {
     pub(super) fn entry(&self) -> Option<GEOEntry> {
         match (&self.scope, &self.amount, &self.format) {
             (Some(_), Some(a), Some(f)) => match f {
-                GEOAccFormat::Html => None,
+                GEOADBFormat::Html => None,
                 _ => Some(GEOEntry::File(format!(
                     "{}_{}.{}",
                     self.id.accession,

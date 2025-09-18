@@ -51,7 +51,7 @@ impl FromStr for GEOFTPFormat {
 
 impl TryFrom<&str> for GEOFTPFormat {
     type Error = GEOParseError;
-    fn try_from(value: &str) -> std::result::Result<Self, Self::Error> {
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
         Self::from_str(value)
     }
 }
@@ -86,10 +86,7 @@ impl GEOFTPResolver {
     // |      Matrix (matrix)       |  x  |  o  |  x  |  x  |
     // |     Annotation (annot)     |  x  |  x  |  o  |  x  |
     // | Supplementaryfiles (suppl) |  x  |  o  |  o  |  o  |
-    pub(super) fn set_file(
-        &mut self,
-        file: GEOFTPFormat,
-    ) -> std::result::Result<(), GEOParseError> {
+    pub(super) fn set_file(&mut self, file: GEOFTPFormat) -> Result<(), GEOParseError> {
         match (&self.id.gtype, &file) {
             (GEOType::Datasets, GEOFTPFormat::SOFT | GEOFTPFormat::SOFTFull)
             | (

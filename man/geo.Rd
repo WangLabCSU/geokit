@@ -86,7 +86,7 @@ downloads and parses GEO files, returning objects corresponding to different
 GEO entity types.
 
 \code{geo()} allows programmatic access to
-\href{http://www.ncbi.nlm.nih.gov/geo}{NCBI GEO} data. GEO stores high-throughput
+\href{https://www.ncbi.nlm.nih.gov/geo}{NCBI GEO} data. GEO stores high-throughput
 experimental data, including microarrays, SAGE, and mass spectrometry
 proteomics. Entities handled by \code{geo()} include:
 \itemize{

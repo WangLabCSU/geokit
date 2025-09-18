@@ -57,7 +57,7 @@ pub(super) struct GEOIdentifier {
 impl FromStr for GEOIdentifier {
     type Err = GEOParseError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let accession = s.to_uppercase();
+        let accession = s.to_ascii_uppercase();
 
         // Determine GEO type from the 3-letter prefix.
         let gtype = if accession.starts_with("GDS") {

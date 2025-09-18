@@ -6,7 +6,7 @@
 #' GEO entity types.
 #'
 #' `geo()` allows programmatic access to
-#' [NCBI GEO](http://www.ncbi.nlm.nih.gov/geo) data. GEO stores high-throughput
+#' [NCBI GEO](https://www.ncbi.nlm.nih.gov/geo) data. GEO stores high-throughput
 #' experimental data, including microarrays, SAGE, and mass spectrometry
 #' proteomics. Entities handled by `geo()` include:
 #'
