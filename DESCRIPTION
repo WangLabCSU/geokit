@@ -8,8 +8,8 @@ Description: Provides a tidy and convenient R interface to the NCBI Gene
     download, and parse GEO metadata and expression data, making it easier to
     integrate GEO datasets into downstream analyses and workflows.
 License: MIT + file LICENSE
-URL: https://github.com/Yunuuuu/geokit, https://yunuuuu.github.io/geokit/
-BugReports: https://github.com/Yunuuuu/geokit/issues
+URL: https://github.com/WangLabCSU/geokit, https://WangLabCSU.github.io/geokit/
+BugReports: https://github.com/WangLabCSU/geokit/issues
 Depends:
     R (>= 3.5)
 Imports:

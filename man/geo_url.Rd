@@ -64,7 +64,7 @@ other accessions and the full data table.
 }}
 
 \item{format}{A character specifying the output format (Only
-applicable to NCBI GEO database access):
+applicable to Accession Display Bar access):
 \itemize{
 \item \code{"none"}: Applicable only to DataSets; for DataSets, this is also the
 sole valid option (no downloadable entry available).
@@ -76,7 +76,7 @@ available).
 }}
 
 \item{scope}{A character specifying which GEO accessions to include
-(Only applicable to NCBI GEO database access).
+(Only applicable to Accession Display Bar access).
 \itemize{
 \item \code{"none"}: Applicable only to DataSets; for DataSets, this is also the
 sole valid option

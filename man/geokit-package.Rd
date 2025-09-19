@@ -11,9 +11,9 @@ Provides a tidy and convenient R interface to the NCBI Gene Expression Omnibus (
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/Yunuuuu/geokit}
-  \item \url{https://yunuuuu.github.io/geokit/}
-  \item Report bugs at \url{https://github.com/Yunuuuu/geokit/issues}
+  \item \url{https://github.com/WangLabCSU/geokit}
+  \item \url{https://WangLabCSU.github.io/geokit/}
+  \item Report bugs at \url{https://github.com/WangLabCSU/geokit/issues}
 }
 
 }
