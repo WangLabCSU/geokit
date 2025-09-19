@@ -165,9 +165,9 @@ impl TryFrom<&str> for GEOADBFormat {
 }
 
 pub(super) struct GEOAccResolver {
-    pub(super) id: GEOIdentifier,
+    id: GEOIdentifier,
     scope: Option<GEOScope>,
-    pub(super) amount: Option<GEOAmount>,
+    amount: Option<GEOAmount>,
     format: Option<GEOADBFormat>,
 }
 
@@ -250,6 +250,14 @@ impl GEOAccResolver {
         }
         self.format = format;
         Ok(())
+    }
+
+    pub(super) fn accession(&self) -> &str {
+        self.id.accession.as_str()
+    }
+
+    pub(super) fn gtype(&self) -> &GEOType {
+        &self.id.gtype
     }
 
     pub(super) fn url(&self) -> String {

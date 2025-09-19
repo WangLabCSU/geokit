@@ -3,20 +3,26 @@ name = 'geokit'
 publish = false
 version = '0.1.0'
 edition = '2021'
-rust-version = '1.65'
+rust-version = '1.70.0'
 
 [lib]
 crate-type = [ 'staticlib' ]
 name = 'geokit'
 
 [dependencies]
-extendr-api = { version = "0.8.0", features = [ "result_list" ] }
+extendr-api = { version = "*", default-features = false, features = ['result_list'] }
 thiserror = '*'
 anyhow = '*'
 regex = '*'
-reqwest = { version = '*', features = ['stream'] }
+
+# remove openssl dependency due to error when loading R package: undefined symbol: EVP_bf_ecb
+# enable the system proxy feature and socks5 proxy support: https://docs.rs/reqwest/latest/reqwest/#proxies
+reqwest = { version = '*', default-features = false, features = ['system-proxy', 'socks', 'stream', 'http2', 'rustls-tls'] }
+
+# use tokio stream to download files
 tokio = "*"
 tokio-stream = "*"
+
 
 [profile.release]
 lto = true

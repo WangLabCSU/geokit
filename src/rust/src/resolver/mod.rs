@@ -49,8 +49,8 @@ impl GEOResolver {
     /// # Parameters
     /// - `id`: GEO identifier (GSE, GSM, etc.)
     /// - `famount`: Optional "file/amount type":
-    ///     - FTP types: "soft", "soft_full", "miniml", "matrix", "annot", "suppl"
-    ///     - ADB types: "none", "brief", "quick", "data", "full"
+    ///     - **FTP**: "soft", "soft_full", "miniml", "matrix", "annot", "suppl"
+    ///     - **ADB** (Accession Display Bar): "none", "brief", "quick", "data", "full"
     /// - `scope`: ADB-only option (e.g., "self", "all").
     /// - `format`: ADB-only option (e.g., "text", "xml").
     /// - `over_https`: FTP-only option (default: true).
@@ -73,7 +73,7 @@ impl GEOResolver {
             // Default case: if `famount` is `None`, resolve using ACC endpoint
             // ---------- ACC endpoint ----------
             // famount: "none" | "brief" | "quick" | "data" | "full"
-            // - Explicit "none": resolve with ACC, but set amount = `None`
+            // - Explicit "none": resolve with ACC, but set amount = None
             // - `scope` and `format` are optional (resolver applies defaults if missing).
             // - `over_https` is always ignored.
             None | Some("none") | Some("brief") | Some("quick") | Some("data") | Some("full") => {
@@ -126,10 +126,11 @@ impl GEOResolver {
                 // over_https has no effect for ACC
                 if let Some(_) = over_https {
                     eprintln!(
-                        "Warning: 'over_https' will be ignored for {} famount",
-                        acc.amount
-                            .as_ref()
-                            .map_or_else(|| "none".to_string(), |a| a.to_string())
+                        "Warning: 'over_https' will be ignored {}",
+                        famount.map_or_else(
+                            || "(no 'famount' specified)".to_string(),
+                            |a| format!("for {} 'famount'", a)
+                        )
                     )
                 }
                 return Ok(GEOResolver(GEOResolverInner::ADB(acc)));
@@ -190,8 +191,8 @@ impl GEOResolver {
     #[allow(dead_code)]
     pub(crate) fn accession(&self) -> &str {
         match &self.0 {
-            GEOResolverInner::ADB(resolver) => &resolver.id.accession,
-            GEOResolverInner::FTP(resolver) => &resolver.id.accession,
+            GEOResolverInner::ADB(resolver) => resolver.accession(),
+            GEOResolverInner::FTP(resolver) => resolver.accession(),
         }
     }
 
@@ -200,8 +201,8 @@ impl GEOResolver {
     #[allow(dead_code)]
     pub(crate) fn gtype(&self) -> &GEOType {
         match &self.0 {
-            GEOResolverInner::ADB(resolver) => &resolver.id.gtype,
-            GEOResolverInner::FTP(resolver) => &resolver.id.gtype,
+            GEOResolverInner::ADB(resolver) => resolver.gtype(),
+            GEOResolverInner::FTP(resolver) => resolver.gtype(),
         }
     }
 

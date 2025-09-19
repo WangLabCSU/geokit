@@ -1,5 +1,6 @@
 use extendr_api::prelude::*;
 
+mod downloader;
 mod r;
 mod resolver;
 

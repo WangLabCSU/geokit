@@ -121,6 +121,14 @@ impl GEOFTPResolver {
         self.over_https = over_https
     }
 
+    pub(super) fn accession(&self) -> &str {
+        self.id.accession.as_str()
+    }
+
+    pub(super) fn gtype(&self) -> &GEOType {
+        &self.id.gtype
+    }
+
     pub(super) fn url(&self) -> String {
         static RE: OnceLock<Regex> = OnceLock::new();
         let regex = RE.get_or_init(|| {
