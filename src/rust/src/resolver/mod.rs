@@ -24,7 +24,7 @@ pub(crate) struct GEOResolver(GEOResolverInner);
 
 enum GEOResolverInner {
     /// Resolver for Accession Display Bar (ADB).
-    ADB(adb::GEOAccResolver),
+    ADB(adb::GEOADBResolver),
 
     /// Resolver for FTP/HTTPS-based requests.
     FTP(ftp::GEOFTPResolver),
@@ -37,10 +37,10 @@ enum GEOResolverInner {
 /// - [`Dir`](GEOEntry::Dir): A directory endpoint.
 pub(crate) enum GEOEntry {
     /// A file entry (holds the filename).
-    File(String),
+    File { url: String, fname: String },
 
     /// A directory entry.
-    Dir,
+    Dir { url: String },
 }
 
 impl GEOResolver {
@@ -48,52 +48,57 @@ impl GEOResolver {
     ///
     /// # Parameters
     /// - `id`: GEO identifier (GSE, GSM, etc.)
-    /// - `famount`: Optional "file/amount type":
-    ///     - **FTP**: "soft", "soft_full", "miniml", "matrix", "annot", "suppl"
-    ///     - **ADB** (Accession Display Bar): "none", "brief", "quick", "data", "full"
-    /// - `scope`: ADB-only option (e.g., "self", "all").
-    /// - `format`: ADB-only option (e.g., "text", "xml").
+    /// - `format`: Optional "file/amount type":
+    ///     - **FTP**: "soft", "soft_full", "miniml", "matrix", "annot", or "suppl"
+    ///     - **ADB** (Accession Display Bar): "text", "xml", "html"
+    /// - `amount`: "none", "brief", "quick", "data", "full" (ADB-only option).
+    /// - `scope`: "none", "self", "gsm", "gpl", "gse", or "all" (ADB-only option).
     /// - `over_https`: FTP-only option (default: true).
     ///
     /// # Returns
-    /// - `Ok(GEOResolver::ADB(..))` if an ADB `famount` is selected or defaulted.
-    /// - `Ok(GEOResolver::FTP(..))` if an FTP `famount` is selected.
-    /// - `Err(String)` if `famount` or other arguments are invalid or incompatible.
+    /// - `Ok(GEOResolver::ADB(..))` if an ADB `format` is selected or defaulted.
+    /// - `Ok(GEOResolver::FTP(..))` if an FTP `format` is selected.
+    /// - `Err(String)` if `format` or other arguments are invalid or incompatible.
     pub(crate) fn new(
         accession: &str,
-        famount: Option<&str>, // file/amount type requested ("soft", "brief", etc.)
-        format: Option<&str>,  // optional format (only used for ADB famount)
-        scope: Option<&str>,   // optional scope (only used for ADB famount)
+        format: &str,             // file/amount type requested ("soft", "brief", etc.)
+        amount: Option<&str>,     // optional format (only used for ADB famount)
+        scope: Option<&str>,      // optional scope (only used for ADB famount)
         over_https: Option<bool>, // optional FTP protocol flag (only used for FTP famount)
     ) -> Result<Self> {
         let id = GEOIdentifier::try_from(accession)
             .with_context(|| format!("Invalid 'accession': {}", accession))?;
-        // Determine the `famount`, providing defaults based on GEO type
-        match famount {
-            // Default case: if `famount` is `None`, resolve using ACC endpoint
+        // Determine the `format`, providing defaults based on GEO type
+        match format {
             // ---------- ACC endpoint ----------
-            // famount: "none" | "brief" | "quick" | "data" | "full"
-            // - Explicit "none": resolve with ACC, but set amount = None
-            // - `scope` and `format` are optional (resolver applies defaults if missing).
+            // - `format`: "text" | "xml" | "html"
+            // - `amount` and `scope` are optional (resolver applies defaults if missing).
             // - `over_https` is always ignored.
-            None | Some("none") | Some("brief") | Some("quick") | Some("data") | Some("full") => {
+            "text" | "xml" | "html" => {
                 // Build the ACC resolver
-                let mut acc = adb::GEOAccResolver::new(id);
+                let mut solver = adb::GEOADBResolver::new(id);
 
                 // Parse famount into ACC amount enum (if provided)
-                if let Some(amount) = famount {
-                    // Parse `famount` into an ACC amount enum
+                // Parse `famount` into an ACC amount enum
+                let adb_format = format
+                    .try_into()
+                    .with_context(|| format!("Invalid 'format': {}", format))?;
+                solver.set_format(adb_format)
+                    .with_context(|| format!("Invalid 'format': {}", format))?;
+
+                // Parse optional format (default handled by resolver if None)
+                if let Some(amount) = amount {
                     let value = match amount {
                         "none" => None,
                         _ => Some(
                             amount
                                 .try_into()
-                                .with_context(|| format!("Invalid 'famount': {}", amount))?,
+                                .with_context(|| format!("Invalid 'amount': {}", amount))?,
                         ),
                     };
-                    acc.set_amount(value)
-                        .with_context(|| format!("Invalid 'famount': {}", amount))?;
-                };
+                    solver.set_amount(value)
+                        .with_context(|| format!("Invalid 'amount': {}", amount))?;
+                }
 
                 // Parse optional scope (default handled by resolver if None)
                 if let Some(scope) = scope {
@@ -105,82 +110,56 @@ impl GEOResolver {
                                 .with_context(|| format!("Invalid 'scope': {}", scope))?,
                         ),
                     };
-                    acc.set_scope(value)
+                    solver.set_scope(value)
                         .with_context(|| format!("Invalid 'scope': {}", scope))?;
                 }
 
-                // Parse optional format (default handled by resolver if None)
-                if let Some(format) = format {
-                    let value = match format {
-                        "none" => None,
-                        _ => Some(
-                            format
-                                .try_into()
-                                .with_context(|| format!("Invalid 'format': {}", format))?,
-                        ),
-                    };
-                    acc.set_format(value)
-                        .with_context(|| format!("Invalid 'format': {}", format))?;
-                }
-
-                // over_https has no effect for ACC
+                // over_https has no effect for ADB
                 if let Some(_) = over_https {
                     eprintln!(
-                        "Warning: 'over_https' will be ignored {}",
-                        famount.map_or_else(
-                            || "(no 'famount' specified)".to_string(),
-                            |a| format!("for {} 'famount'", a)
-                        )
+                        "Warning: 'over_https' will be ignored for {} 'format'",
+                        format
                     )
                 }
-                return Ok(GEOResolver(GEOResolverInner::ADB(acc)));
+                return Ok(GEOResolver(GEOResolverInner::ADB(solver)));
             }
 
             // ---------- FTP endpoint ----------
-            // famounts: "soft" | "soft_full" | "miniml" | "matrix" | "annot" | "suppl"
+            // format: "soft" | "soft_full" | "miniml" | "matrix" | "annot" | "suppl"
             // - Resolved through FTP resolver.
             // - Uses only file type + optional over_https flag (defaults to true).
             // - scope and format are always ignored.
-            Some("soft") | Some("soft_full") | Some("miniml") | Some("matrix") | Some("annot")
-            | Some("suppl") => {
-                let mut ftp = ftp::GEOFTPResolver::new(id);
+            "soft" | "soft_full" | "miniml" | "matrix" | "annot" | "suppl" => {
+                let mut solver = ftp::GEOFTPResolver::new(id);
 
-                // safe unwrap (famount is Some here)
-                let famount = unsafe { famount.unwrap_unchecked() };
-
-                // Parse `famount` into an FTP file enum
-                let file = famount
+                // Parse `format` into an FTP file enum
+                let ftp_format = format
                     .try_into()
-                    .with_context(|| format!("Invalid 'famount': {}", famount))?;
-                ftp.set_file(file)
-                    .with_context(|| format!("Invalid 'famount': {}", famount))?;
+                    .with_context(|| format!("Invalid 'format': {}", format))?;
+                solver.set_format(ftp_format)
+                    .with_context(|| format!("Invalid 'format': {}", format))?;
 
                 // Apply HTTPS preference (default true if not set)
                 if let Some(over_https) = over_https {
-                    ftp.over_https(over_https);
+                    solver.over_https(over_https);
                 }
 
                 // Warn about ignored parameters
+                if let Some(_) = amount {
+                    eprintln!("Warning: 'amount' will be ignored for {} 'format'", format)
+                }
                 if let Some(_) = scope {
-                    eprintln!("Warning: 'scope' will be ignored for {} 'famount'", famount)
+                    eprintln!("Warning: 'scope' will be ignored for {} 'format'", format)
                 }
-                if let Some(_) = format {
-                    eprintln!(
-                        "Warning: 'format' will be ignored for {} 'famount'",
-                        famount
-                    )
-                }
-                return Ok(GEOResolver(GEOResolverInner::FTP(ftp)));
+                return Ok(GEOResolver(GEOResolverInner::FTP(solver)));
             }
 
             // ---------- Invalid famount ----------
             // If famount is not in ACC or FTP categories, return error.
             _ => {
-                return Err(GEOParseError::InvalidFamount).with_context(|| {
+                return Err(GEOParseError::InvalidFormat).with_context(|| {
                     // Safe unwrap (famount is Some in this branch)
-                    format!("Invalid 'famount': {}", unsafe {
-                        famount.unwrap_unchecked()
-                    })
+                    format!("Invalid 'format': {}", format)
                 });
             }
         }
@@ -203,6 +182,17 @@ impl GEOResolver {
         match &self.0 {
             GEOResolverInner::ADB(resolver) => resolver.gtype(),
             GEOResolverInner::FTP(resolver) => resolver.gtype(),
+        }
+    }
+
+    /// Construct the full URL for GEO landing page.
+    ///
+    /// The returned URL points directly to the GEO record and is suitable
+    /// for opening in a web browser.
+    pub(crate) fn landing_page(&self) -> String {
+        match &self.0 {
+            GEOResolverInner::ADB(resolver) => resolver.landing_page(),
+            GEOResolverInner::FTP(resolver) => resolver.landing_page(),
         }
     }
 

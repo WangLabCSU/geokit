@@ -1,10 +1,9 @@
-use std::path::Path;
 use std::result::Result;
 
 use anyhow::{anyhow, Context};
 use extendr_api::prelude::*;
 
-use super::resolver::{self, GEOEntry};
+use super::resolver::{self, GEOEntry, GEOParseError};
 
 mod helper;
 
@@ -36,12 +35,12 @@ fn geo_gtype(accession: Robj, abbre: bool) -> Result<Vec<String>, String> {
 #[extendr]
 fn geo_url(
     accession: Robj,
-    famount: Robj,
     format: Robj,
+    amount: Robj,
     scope: Robj,
     over_https: Robj,
 ) -> Result<Vec<String>, String> {
-    resolvers_from_robj(&accession, &famount, &format, &scope, &over_https).map(|resolvers| {
+    resolvers_from_robj(&accession, &format, &amount, &scope, &over_https).map(|resolvers| {
         resolvers
             .into_iter()
             .map(|resovler| resovler.url())
@@ -56,23 +55,30 @@ fn geo_landing_page(
     scope: Option<&str>,
     over_https: Option<bool>,
 ) -> Result<String, String> {
-    resolver::GEOResolver::new(accession, famount, scope, Some("html"), over_https).map_or_else(
+    let resolver = match famount {
+        None | Some("none") | Some("brief") | Some("quick") | Some("data") | Some("full") => {
+            resolver::GEOResolver::new(accession, "html", famount, scope, over_https)
+        }
+        Some("soft") | Some("soft_full") | Some("miniml") | Some("matrix") | Some("annot")
+        | Some("suppl") => {
+            let format = unsafe { famount.unwrap_unchecked() };
+            resolver::GEOResolver::new(accession, format, None, None, over_https)
+        }
+        // ---------- Invalid famount ----------
+        // If famount is not in ACC or FTP categories, return error.
+        _ => {
+            return Err(GEOParseError::InvalidFamount)
+                .with_context(|| {
+                    // Safe unwrap ('famount' is Some in this branch)
+                    let famount = unsafe { famount.unwrap_unchecked() };
+                    format!("Invalid 'famount': {}", famount)
+                })
+                .map_err(|e| format!("{:?}", e));
+        }
+    };
+    resolver.map_or_else(
         |e| Err(format!("{:?}", e)),
-        |resovler| {
-            resovler.entry().map_or_else(
-                || Ok(resovler.url()),
-                |entry| {
-                    let url = resovler.url();
-                    match entry {
-                        GEOEntry::Dir => Ok(url),
-                        GEOEntry::File(_) => Path::new(&url)
-                            .parent()
-                            .ok_or_else(|| format!("Failed to locate the landing page of {}", url))
-                            .map(|o| format!("{}", o.to_string_lossy())),
-                    }
-                },
-            )
-        },
+        |resovler| Ok(resovler.landing_page()),
     )
 }
 

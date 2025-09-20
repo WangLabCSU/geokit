@@ -6,8 +6,8 @@
 \usage{
 geo_url(
   accession,
-  famount = NULL,
   format = NULL,
+  amount = NULL,
   scope = NULL,
   over_https = NULL
 )
@@ -21,8 +21,8 @@ geo_url(
 \item Samples (GSM): \code{"GSM12345"}, \code{"GSM67890"}, \code{"GSM112233"}, etc.
 }}
 
-\item{famount}{A character specifying file/amount type requested. GEO
-data can be accessed through two sites:
+\item{format}{A character specifying file format type requested. GEO data can
+be accessed through two sites:
 \itemize{
 \item Direct FTP/HTTPS file retrieval from GEO FTP server (file type):
 \itemize{
@@ -50,8 +50,18 @@ types and file type options:\tabular{ccccc}{
    Supplementaryfiles (suppl) \tab x \tab o \tab o \tab o \cr
 }
 
-\item For file retrieval from Accession Display Bar of GEO database (amount of
-data):
+\item For file retrieval from Accession Display Bar of GEO database:
+\itemize{
+\item \code{"text"}: machine-readable SOFT format (Simple Omnibus Format in
+Text).
+\item \code{"xml"}: XML format.
+\item \code{"html"}: human-readable format with hyperlinks (no downloadable entry
+available).
+}
+}}
+
+\item{amount}{A character specifying the amount of data (Only applicable to
+Accession Display Bar access):
 \itemize{
 \item \code{"none"}: Applicable only to DataSets; for DataSets, this is also the
 sole valid option.
@@ -60,19 +70,6 @@ sole valid option.
 \item \code{"data"}: omits the accession's attributes, showing only links to
 other accessions and the full data table.
 \item \code{"full"}: accession attributes + complete data table.
-}
-}}
-
-\item{format}{A character specifying the output format (Only
-applicable to Accession Display Bar access):
-\itemize{
-\item \code{"none"}: Applicable only to DataSets; for DataSets, this is also the
-sole valid option (no downloadable entry available).
-\item \code{txt}/\code{"text"}: machine-readable SOFT format (Simple Omnibus Format in
-Text).
-\item \code{"xml"}: XML format.
-\item \code{"html"}: human-readable format with hyperlinks (no downloadable entry
-available).
 }}
 
 \item{scope}{A character specifying which GEO accessions to include

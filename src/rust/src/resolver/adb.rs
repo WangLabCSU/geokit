@@ -114,9 +114,7 @@ impl TryFrom<&str> for GEOScope {
 // Allows you to display the GEO accession in human readable, linked "HTML"
 // form, or in machine readable, "text" format, which is the same with "soft"
 // format. SOFT stands for "simple omnibus format in text".
-#[derive(Default)]
 pub(super) enum GEOADBFormat {
-    #[default]
     Text,
     Xml,
     Html,
@@ -146,7 +144,7 @@ impl FromStr for GEOADBFormat {
     type Err = GEOParseError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let format = match s {
-            "txt" | "text" => GEOADBFormat::Text,
+            "text" => GEOADBFormat::Text,
             "xml" => GEOADBFormat::Xml,
             "html" => GEOADBFormat::Html,
             _ => {
@@ -164,29 +162,42 @@ impl TryFrom<&str> for GEOADBFormat {
     }
 }
 
-pub(super) struct GEOAccResolver {
+pub(super) struct GEOADBResolver {
     id: GEOIdentifier,
     scope: Option<GEOScope>,
     amount: Option<GEOAmount>,
-    format: Option<GEOADBFormat>,
+    format: GEOADBFormat,
 }
 
-impl GEOAccResolver {
+impl GEOADBResolver {
     pub(super) fn new(id: GEOIdentifier) -> Self {
         match id.gtype {
             GEOType::Datasets => Self {
                 id,
                 scope: None,
                 amount: None,
-                format: None,
+                format: GEOADBFormat::Html,
             },
             _ => Self {
                 id,
                 scope: Some(GEOScope::default()),
                 amount: Some(GEOAmount::default()),
-                format: Some(GEOADBFormat::default()),
+                format: GEOADBFormat::Html,
             },
         }
+    }
+
+    pub(super) fn set_format(&mut self, format: GEOADBFormat) -> Result<(), GEOParseError> {
+        if let (GEOType::Datasets, GEOADBFormat::Text | GEOADBFormat::Xml) =
+            (&self.id.gtype, &format)
+        {
+            return Err(GEOParseError::UnavailableFormat {
+                gtype: self.id.gtype.clone(),
+                ftype: format.to_string(),
+            });
+        }
+        self.format = format;
+        Ok(())
     }
 
     pub(super) fn set_scope(&mut self, scope: Option<GEOScope>) -> Result<(), GEOParseError> {
@@ -231,27 +242,6 @@ impl GEOAccResolver {
         Ok(())
     }
 
-    pub(super) fn set_format(&mut self, format: Option<GEOADBFormat>) -> Result<(), GEOParseError> {
-        match self.id.gtype {
-            GEOType::Datasets => {
-                if format.is_some() {
-                    return Err(GEOParseError::AccFormatOmitted {
-                        gtype: self.id.gtype.clone(),
-                    });
-                }
-            }
-            _ => {
-                if format.is_none() {
-                    return Err(GEOParseError::AccFormatRequired {
-                        gtype: self.id.gtype.clone(),
-                    });
-                }
-            }
-        }
-        self.format = format;
-        Ok(())
-    }
-
     pub(super) fn accession(&self) -> &str {
         self.id.accession.as_str()
     }
@@ -260,37 +250,44 @@ impl GEOAccResolver {
         &self.id.gtype
     }
 
+    pub(super) fn landing_page(&self) -> String {
+        match (&self.scope, &self.amount, &self.format) {
+            (Some(s), Some(a), _) => acc_url(self.id.accession.as_str(), s, a, &GEOADBFormat::Html),
+            (None, None, GEOADBFormat::Html) => gds_url(self.id.accession.as_str()),
+            _ => unreachable!(),
+        }
+    }
+
     pub(super) fn url(&self) -> String {
         match (&self.scope, &self.amount, &self.format) {
-            (Some(s), Some(a), Some(f)) => {
-                format!(
-                    "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc={}&targ={}&view={}&form={}",
-                    self.id.accession, s, a, f
-                )
-            }
-            (None, None, None) => {
-                format!(
-                    "https://www.ncbi.nlm.nih.gov/sites/GDSbrowser?acc={}",
-                    self.id.accession
-                )
-            }
+            (Some(s), Some(a), f) => acc_url(self.id.accession.as_str(), s, a, f),
+            (None, None, GEOADBFormat::Html) => gds_url(self.id.accession.as_str()),
             _ => unreachable!(),
         }
     }
 
     pub(super) fn entry(&self) -> Option<GEOEntry> {
         match (&self.scope, &self.amount, &self.format) {
-            (Some(_), Some(a), Some(f)) => match f {
-                GEOADBFormat::Html => None,
-                _ => Some(GEOEntry::File(format!(
-                    "{}_{}.{}",
-                    self.id.accession,
-                    a,
-                    f.ext()
-                ))),
-            },
-            (None, None, None) => None,
+            (Some(s), Some(a), f) => Some(GEOEntry::File {
+                url: acc_url(self.id.accession.as_str(), s, a, f),
+                fname: format!("{}_{}.{}", self.id.accession, a, f.ext()),
+            }),
+            (None, None, GEOADBFormat::Html) => None,
             _ => unreachable!(),
         }
     }
+}
+
+fn acc_url(accession: &str, scope: &GEOScope, amount: &GEOAmount, format: &GEOADBFormat) -> String {
+    format!(
+        "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc={}&targ={}&view={}&form={}",
+        accession, scope, amount, format
+    )
+}
+
+fn gds_url(accession: &str) -> String {
+    format!(
+        "https://www.ncbi.nlm.nih.gov/sites/GDSbrowser?acc={}",
+        accession
+    )
 }

@@ -25,13 +25,7 @@ pub(crate) enum GEOParseError {
     #[error("Expected one of 'brief', 'quick', 'data', or 'full' for {gtype}")]
     AccAmountRequired { gtype: GEOType },
 
-    #[error("Expected 'none' for {gtype}")]
-    AccFormatOmitted { gtype: GEOType },
-
-    #[error("Expected one of 'txt'/'text', 'xml', or 'html' for {gtype}")]
-    AccFormatRequired { gtype: GEOType },
-
-    #[error("Expected one of 'txt'/'text', 'xml', or 'html'.")]
+    #[error("Expected one of 'text', 'xml', or 'html'.")]
     InvalidAccFormat,
 
     #[error("Expected one of 'soft', 'soft_full', 'miniml', 'matrix', 'annot', or 'suppl'.")]
@@ -39,7 +33,10 @@ pub(crate) enum GEOParseError {
 
     #[error("{gtype} never own {ftype} file.")]
     // Use `String` instead, because `GEOFile` is private.
-    UnavailableFTPFormat { gtype: GEOType, ftype: String },
+    UnavailableFormat { gtype: GEOType, ftype: String },
+
+    #[error("Expected one of 'soft', 'soft_full', 'miniml', 'matrix', 'annot', 'suppl', 'text', 'xml', or 'html'.")]
+    InvalidFormat,
 
     #[error("Expected one of 'none', 'brief', 'quick', 'data', 'full', 'soft', 'soft_full', 'miniml', 'matrix', 'annot', or 'suppl'.")]
     InvalidFamount,

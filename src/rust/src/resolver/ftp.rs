@@ -86,7 +86,7 @@ impl GEOFTPResolver {
     // |      Matrix (matrix)       |  x  |  o  |  x  |  x  |
     // |     Annotation (annot)     |  x  |  x  |  o  |  x  |
     // | Supplementaryfiles (suppl) |  x  |  o  |  o  |  o  |
-    pub(super) fn set_file(&mut self, file: GEOFTPFormat) -> Result<(), GEOParseError> {
+    pub(super) fn set_format(&mut self, file: GEOFTPFormat) -> Result<(), GEOParseError> {
         match (&self.id.gtype, &file) {
             (GEOType::Datasets, GEOFTPFormat::SOFT | GEOFTPFormat::SOFTFull)
             | (
@@ -107,7 +107,7 @@ impl GEOFTPResolver {
                 self.file = file;
             }
             _ => {
-                return Err(GEOParseError::UnavailableFTPFormat {
+                return Err(GEOParseError::UnavailableFormat {
                     gtype: self.id.gtype.clone(),
                     // `GEOFTPFormat` is not public field
                     ftype: file.to_string(),
@@ -129,7 +129,7 @@ impl GEOFTPResolver {
         &self.id.gtype
     }
 
-    pub(super) fn url(&self) -> String {
+    pub(super) fn landing_page(&self) -> String {
         static RE: OnceLock<Regex> = OnceLock::new();
         let regex = RE.get_or_init(|| {
             Regex::new(r"\d{1,3}$")
@@ -137,7 +137,7 @@ impl GEOFTPResolver {
                 .unwrap()
         });
         format!(
-            "{}/{}/{}/{}/{}/{}",
+            "{}/{}/{}/{}/{}",
             // Construct the FTP/HTTPS download URL for the current GEO identifier and file type.
             if self.over_https {
                 "https://ftp.ncbi.nlm.nih.gov/geo"
@@ -149,23 +149,19 @@ impl GEOFTPResolver {
             // Replace the last 1–3 digits in the ID with "nnn" for the directory path.
             regex.replace(&self.id.accession, "nnn"),
             self.id.accession,
-            // `Soft` and `SoftFull` share the same directory ("soft").
+            // `SOFT` and `SOFTFull` share the same directory ("soft").
             match &self.file {
                 GEOFTPFormat::SOFT | GEOFTPFormat::SOFTFull => "soft",
                 GEOFTPFormat::Miniml => "miniml",
                 GEOFTPFormat::Matrix => "matrix",
                 GEOFTPFormat::Annot => "annot",
                 GEOFTPFormat::Suppl => "suppl",
-            },
-            match self.entry() {
-                GEOEntry::Dir => "",
-                GEOEntry::File(ref fname) => fname,
             }
         )
     }
 
-    pub(super) fn entry(&self) -> GEOEntry {
-        let fname = match (&self.id.gtype, &self.file) {
+    fn fname(&self) -> Option<String> {
+        let fname = match (self.gtype(), &self.file) {
             (GEOType::Datasets, GEOFTPFormat::SOFT) => {
                 format!("{}{}", self.id.accession, ".soft.gz")
             }
@@ -191,10 +187,31 @@ impl GEOFTPResolver {
             // Certain types (e.g., Series Matrix, Supplementary files) are directories, not single files.
             // build the filename
             (_, GEOFTPFormat::Matrix | GEOFTPFormat::Suppl) => {
-                return GEOEntry::Dir;
+                return None;
             }
             _ => unreachable!(),
         };
-        GEOEntry::File(fname)
+        Some(fname)
+    }
+
+    pub(super) fn url(&self) -> String {
+        match self.entry() {
+            GEOEntry::Dir { url } => url,
+            GEOEntry::File { url, fname: _ } => url,
+        }
+    }
+
+    pub(super) fn entry(&self) -> GEOEntry {
+        let fname = self.fname();
+        if let Some(fname) = fname {
+            GEOEntry::File {
+                url: format!("{}/{}", self.landing_page(), fname),
+                fname: fname,
+            }
+        } else {
+            GEOEntry::Dir {
+                url: self.landing_page(),
+            }
+        }
     }
 }

@@ -1,2 +1,124 @@
-#!/usr/bin/env sh
-"${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" tools/config.R
+# Even when `cargo` is on `PATH`, `rustc` might not in some cases. This adds
+# ~/.cargo/bin to PATH to address such cases. Note that is not always available
+# (e.g. or on Ubuntu with Rust installed via APT).
+if [ -d "${HOME}/.cargo/bin" ]; then
+  export PATH="${PATH}:${HOME}/.cargo/bin"
+fi
+
+CARGO_VERSION="$(cargo --version)"
+
+if [ $? -ne 0 ]; then
+  echo "-------------- ERROR: CONFIGURATION FAILED --------------------"
+  echo ""
+  echo "The cargo command is not available. To install Rust, please refer"
+  echo "to the official instruction:"
+  echo ""
+  echo "https://www.rust-lang.org/tools/install"
+  echo ""
+  echo "---------------------------------------------------------------"
+
+  exit 1
+fi
+
+# There's a little chance that rustc is not available on PATH while cargo is.
+# So, just ignore the error case.
+RUSTC_VERSION="$(rustc --version || true)"
+
+# Report the version of Rustc to comply with the CRAN policy
+echo "using Rust package manager: '${CARGO_VERSION}'"
+echo "using Rust compiler: '${RUSTC_VERSION}'"
+
+# All configure.args passed from R CMD INSTALL
+CONFIG_ARGS="$@"
+
+
+# Initialize flags
+HAS_FEATURES=0
+HAS_PROFILE=0
+HAS_TARGET=0
+TARGET=""
+INPUT_PROFILE=""
+
+prev_arg=""
+
+for arg in $CONFIG_ARGS; do
+  case "$arg" in
+    -F*)
+      HAS_FEATURES=1
+      prev_arg=""
+      ;;
+    --features*)
+      HAS_FEATURES=1
+      prev_arg=""
+      ;;
+    --profile=*)
+      HAS_PROFILE=1
+      INPUT_PROFILE="${arg#--profile=}"
+      prev_arg=""
+      ;;
+    --profile*)
+      HAS_PROFILE=1
+      prev_arg="--profile"
+      continue
+      ;;
+    --target=*)
+      HAS_TARGET=1
+      TARGET="${arg#--target=}"
+      prev_arg=""
+      ;;
+    --target)
+      HAS_TARGET=1
+      prev_arg="--target"  # mark that next arg is the value
+      continue
+      ;;
+    --*)
+      prev_arg="" # reset
+      ;;
+    *)
+      # if previous argument was --target or --profile, current arg is its value
+      if [ "$prev_arg" = "--target" ]; then
+        TARGET="$arg"
+      elif [ "$prev_arg" = "--profile" ]; then
+        INPUT_PROFILE="$arg"
+      fi
+      prev_arg="" # reset
+      ;;
+  esac
+done
+
+# Handle profile override
+if [ -z "$INPUT_PROFILE" ]; then
+  if [ -z "$PROFILE" ]; then
+    if [ "${DEBUG}" = "true" ]; then
+      PROFILE=dev
+    else
+      PROFILE=release
+    fi
+  fi
+  # Add profile to CONFIG_ARGS for cargo
+  if [ "$HAS_PROFILE" -eq 0 ]; then
+    # insert --profile to the arguments
+    CONFIG_ARGS="$CONFIG_ARGS --profile $PROFILE"
+  fi
+else
+  PROFILE="${INPUT_PROFILE}"
+fi
+
+# Handle features override
+if [ "$HAS_FEATURES" -eq 0 ]; then
+  if [ -n "$FEATURES" ]; then
+    CONFIG_ARGS="$CONFIG_ARGS --features $FEATURES"
+  fi
+fi
+
+# Clean target directory when not in debug mode
+if [ "${DEBUG}" != "true" ]; then
+  CLEAN_TARGET='$(TARGET_DIR)'
+fi
+
+sed \
+  -e "s/@TARGET@/x86_64-pc-windows-gnu/" \
+  -e "s/@PROFILE@/${PROFILE}/" \
+  -e "s/@CLEAN_TARGET@/${CLEAN_TARGET}/" \
+  -e "s/@CONFIGURE_ARGS@/${CONFIG_ARGS}/" \
+  src/Makevars.win.in > src/Makevars

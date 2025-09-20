@@ -21,47 +21,14 @@ geo_show(
 \item Samples (GSM): \code{"GSM12345"}, \code{"GSM67890"}, \code{"GSM112233"}, etc.
 }}
 
-\item{famount}{A character specifying file/amount type requested. GEO
-data can be accessed through two sites:
+\item{famount}{A character string specifying either:
 \itemize{
-\item Direct FTP/HTTPS file retrieval from GEO FTP server (file type):
-\itemize{
-\item \code{"soft"}: SOFT (Simple Omnibus in Text Format) from GEO FTP site. When
-\code{accession} is \code{DataSets} or \code{Series}, this is the default.
-\item \code{"soft_full"}: full SOFT (Simple Omnibus in Text Format) files from
-GEO FTP site by DataSet (GDS) containging additionally contains
-up-to-date gene annotation for the DataSet Platform.
-\item \code{"miniml"}: MINiML (MIAME Notation in Markup Language, pronounced
-miniml) is an XML format that incorporates experimental data and
-metadata. MINiML is essentially an XML rendering of SOFT format.
-\item \code{"matrix"}: Series matrix file.
-\item \code{"annot"}: annotation files for Platforms.
-\item \code{"suppl"}: supplementary files.
+\item the file format on the GEO FTP server, or
+\item the amount of data in the GEO Accession Display Bar.
 }
 
-The following table summarizes the compatibility between GEO accession
-types and file type options:\tabular{ccccc}{
-   famount \tab GDS \tab GSE \tab GPL \tab GSM \cr
-   SOFT (soft) \tab o \tab o \tab o \tab x \cr
-   SOFTFULL (soft_full) \tab o \tab x \tab x \tab x \cr
-   MINiML (miniml) \tab x \tab o \tab o \tab x \cr
-   Matrix (matrix) \tab x \tab o \tab x \tab x \cr
-   Annotation (annot) \tab x \tab x \tab o \tab x \cr
-   Supplementaryfiles (suppl) \tab x \tab o \tab o \tab o \cr
-}
-
-\item For file retrieval from Accession Display Bar of GEO database (amount of
-data):
-\itemize{
-\item \code{"none"}: Applicable only to DataSets; for DataSets, this is also the
-sole valid option.
-\item \code{"brief"}: accession attributes only.
-\item \code{"quick"}: accession attributes + first \strong{20} rows of the data table.
-\item \code{"data"}: omits the accession's attributes, showing only links to
-other accessions and the full data table.
-\item \code{"full"}: accession attributes + complete data table.
-}
-}}
+See \code{\link[=geo_url]{geo_url()}} for details.
+For GEO Accession Display Bar entries, the fo}
 
 \item{scope}{A character specifying which GEO accessions to include
 (Only applicable to Accession Display Bar access).

@@ -28,8 +28,8 @@ geo_gtype <- function(accession, abbre = FALSE) {
 #' generates the correct URL.
 #'
 #' @inheritParams geo_gtype
-#' @param famount A character specifying file/amount type requested. GEO
-#' data can be accessed through two sites:
+#' @param format A character specifying file format type requested. GEO data can
+#' be accessed through two sites:
 #'
 #'   - Direct FTP/HTTPS file retrieval from GEO FTP server (file type):
 #'
@@ -57,25 +57,22 @@ geo_gtype <- function(accession, abbre = FALSE) {
 #'        |     Annotation (annot)     |  x  |  x  |  o  |  x  |
 #'        | Supplementaryfiles (suppl) |  x  |  o  |  o  |  o  |
 #'
-#'   - For file retrieval from Accession Display Bar of GEO database (amount of
-#'     data):
-#'      * `"none"`: Applicable only to DataSets; for DataSets, this is also the
-#'         sole valid option.
-#'      * `"brief"`: accession attributes only.
-#'      * `"quick"`: accession attributes + first **20** rows of the data table.
-#'      * `"data"`: omits the accession's attributes, showing only links to
-#'        other accessions and the full data table.
-#'      * `"full"`: accession attributes + complete data table.
+#'   - For file retrieval from Accession Display Bar of GEO database:
+#'      - `"text"`: machine-readable SOFT format (Simple Omnibus Format in
+#'        Text).
+#'      - `"xml"`: XML format.
+#'      - `"html"`: human-readable format with hyperlinks (no downloadable entry
+#'        available).
 #'
-#' @param format A character specifying the output format (Only
-#' applicable to Accession Display Bar access):
+#' @param amount A character specifying the amount of data (Only applicable to
+#'     Accession Display Bar access):
 #'   - `"none"`: Applicable only to DataSets; for DataSets, this is also the
-#'     sole valid option (no downloadable entry available).
-#'   - `txt`/`"text"`: machine-readable SOFT format (Simple Omnibus Format in
-#'     Text).
-#'   - `"xml"`: XML format.
-#'   - `"html"`: human-readable format with hyperlinks (no downloadable entry
-#'     available).
+#'      sole valid option.
+#'   - `"brief"`: accession attributes only.
+#'   - `"quick"`: accession attributes + first **20** rows of the data table.
+#'   - `"data"`: omits the accession's attributes, showing only links to
+#'     other accessions and the full data table.
+#'   - `"full"`: accession attributes + complete data table.
 #'
 #' @param scope A character specifying which GEO accessions to include
 #' (Only applicable to Accession Display Bar access).
@@ -91,15 +88,22 @@ geo_gtype <- function(accession, abbre = FALSE) {
 #'   access.
 #' @return A character of GEO URL.
 #' @export
-geo_url <- function(accession, famount = NULL, format = NULL, scope = NULL,
+geo_url <- function(accession, format = NULL, amount = NULL, scope = NULL,
                     over_https = NULL) {
-    rust_call("geo_url", accession, famount, scope, format, over_https)
+    rust_call("geo_url", accession, format, amount, scope, over_https)
 }
 
 #' Open the GEO landing page in a browser
 #'
 #' Construct a GEO landing page and open it directly in the system's default web
 #' browser (or a user-specified browser).
+#'
+#' @param famount A character string specifying either:
+#'   - the file format on the GEO FTP server, or
+#'   - the amount of data in the GEO Accession Display Bar.
+#'
+#'   See [`geo_url()`] for details.
+#'   For GEO Accession Display Bar entries, the fo
 #'
 #' @inheritParams geo_url
 #' @inheritParams utils::browseURL
