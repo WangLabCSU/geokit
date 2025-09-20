@@ -86,6 +86,16 @@ for arg in $CONFIG_ARGS; do
   esac
 done
 
+# Handle target override
+if [ -z "$TARGET" ]; then
+  TARGET="x86_64-pc-windows-gnu"
+  # Add target to CONFIG_ARGS for cargo
+  if [ "$HAS_TARGET" -eq 0 ]; then
+    # insert --target to the arguments
+    CONFIG_ARGS="$CONFIG_ARGS --target $TARGET"
+  fi
+fi
+
 # Handle profile override
 if [ -z "$INPUT_PROFILE" ]; then
   if [ -z "$PROFILE" ]; then
@@ -117,7 +127,7 @@ if [ "${DEBUG}" != "true" ]; then
 fi
 
 sed \
-  -e "s/@TARGET@/x86_64-pc-windows-gnu/" \
+  -e "s/@TARGET@/${TARGET}/" \
   -e "s/@PROFILE@/${PROFILE}/" \
   -e "s/@CLEAN_TARGET@/${CLEAN_TARGET}/" \
   -e "s/@CONFIGURE_ARGS@/${CONFIG_ARGS}/" \
