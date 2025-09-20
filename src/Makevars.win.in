@@ -1,7 +1,7 @@
 TARGET = @TARGET@
 PROFILE = @PROFILE@
 
-TARGET_DIR = $(CURDIR)/rust/target
+TARGET_DIR = rust/target
 LIBDIR = $(TARGET_DIR)/$(TARGET)/$(subst dev,debug,$(PROFILE))
 STATLIB = $(LIBDIR)/libgeokit.a
 PKG_LIBS = -L$(LIBDIR) -lgeokit -lws2_32 -ladvapi32 -luserenv -lbcrypt -lntdll
@@ -28,7 +28,7 @@ $(STATLIB):
 	# Build the project using Cargo with additional flags
 	export CARGO_HOME=$(CARGOTMP) && \
 	export LIBRARY_PATH="$(LIBRARY_PATH);$(CURDIR)/$(TARGET_DIR)/libgcc_mock" && \
-	RUSTFLAGS="$(RUSTFLAGS) --print=native-static-libs" cargo build -manifest-path=$(CURDIR)/rust/Cargo.toml --target-dir=$(TARGET_DIR) @CONFIGURE_ARGS@
+	RUSTFLAGS="$(RUSTFLAGS) --print=native-static-libs" cargo build --manifest-path=rust/Cargo.toml --target-dir=$(TARGET_DIR) @CONFIGURE_ARGS@
 
 	# Always clean up CARGOTMP
 	rm -Rf $(CARGOTMP);
