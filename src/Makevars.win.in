@@ -16,8 +16,10 @@ CARGOTMP = $(CURDIR)/.cargo
 VENDOR_DIR = vendor
 
 $(STATLIB):
-	mkdir -p $(TARGET_DIR)/libgcc_mock
-	touch $(TARGET_DIR)/libgcc_mock/libgcc_eh.a
+	# When the GNU toolchain is used (i.e. on CRAN), -lgcc_eh is specified for
+	# building proc-macro2, but Rtools doesn't contain libgcc_eh. This isn't used
+	# in actual, but we need this tweak to please the compiler.
+	mkdir -p $(LIBDIR)/libgcc_mock && touch $(LIBDIR)/libgcc_mock/libgcc_eh.a
 
 	if [ -f ./rust/vendor.tar.xz ]; then \
 		tar xf rust/vendor.tar.xz && \
@@ -27,8 +29,9 @@ $(STATLIB):
 
 	# Build the project using Cargo with additional flags
 	export CARGO_HOME=$(CARGOTMP) && \
-	export LIBRARY_PATH="$(LIBRARY_PATH);$(CURDIR)/$(TARGET_DIR)/libgcc_mock" && \
-	RUSTFLAGS="$(RUSTFLAGS) --print=native-static-libs" cargo build --manifest-path=rust/Cargo.toml --target-dir=$(TARGET_DIR) @CONFIGURE_ARGS@
+		export LIBRARY_PATH="$(LIBRARY_PATH);$(LIBDIR)/libgcc_mock" && \
+		export RUSTFLAGS="$(RUSTFLAGS) --print=native-static-libs" && \
+		cargo build --manifest-path=rust/Cargo.toml --target-dir=$(TARGET_DIR) @CONFIGURE_ARGS@
 
 	# Always clean up CARGOTMP
 	rm -Rf $(CARGOTMP);

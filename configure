@@ -119,19 +119,12 @@ if [ "$HAS_FEATURES" -eq 0 ]; then
   fi
 fi
 
-# Special environment overrides for Emscripten
-if [ "$(uname)" = "Emscripten" ]; then
-    # Force panic behavior to abort in both dev and release profiles
-    PANIC_EXPORTS="CARGO_PROFILE_DEV_PANIC=\"abort\" CARGO_PROFILE_RELEASE_PANIC=\"abort\" "
-fi
-
 # Clean target directory when not in debug mode
 if [ "${DEBUG}" != "true" ]; then
   CLEAN_TARGET='$(TARGET_DIR)'
 fi
 
 sed \
-  -e "s/@PANIC_EXPORTS@/${PANIC_EXPORTS}/" \
   -e "s/@TARGET@/${TARGET}/" \
   -e "s/@PROFILE@/${PROFILE}/" \
   -e "s/@CLEAN_TARGET@/${CLEAN_TARGET}/" \

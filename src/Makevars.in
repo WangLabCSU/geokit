@@ -15,6 +15,8 @@ $(SHLIB): $(STATLIB)
 CARGOTMP = $(CURDIR)/.cargo
 VENDOR_DIR = vendor
 
+CARGO_BUILD_ARGS = --manifest-path=rust/Cargo.toml --lib --target-dir $(TARGET_DIR) @CONFIGURE_ARGS@
+
 # RUSTFLAGS appends --print=native-static-libs to ensure that 
 # the correct linkers are used. Use this for debugging if need. 
 #
@@ -29,10 +31,19 @@ $(STATLIB):
 		mkdir -p $(CARGOTMP) && \
 		cp rust/vendor-config.toml $(CARGOTMP)/config.toml; \
 	fi
-
+	
+	# Emscripten build requires special overrides
 	export CARGO_HOME=$(CARGOTMP) && \
-	export PATH="$(PATH):$(HOME)/.cargo/bin" && \
-	@PANIC_EXPORTS@RUSTFLAGS="$(RUSTFLAGS) --print=native-static-libs" cargo build --manifest-path=rust/Cargo.toml --lib --target-dir $(TARGET_DIR) @CONFIGURE_ARGS@
+		export PATH="$(PATH):$(HOME)/.cargo/bin" && \
+		export RUSTFLAGS="$(RUSTFLAGS) --print=native-static-libs" && \
+		if [ "$(TARGET)" != "wasm32-unknown-emscripten" ]; then \
+		  cargo build $(CARGO_BUILD_ARGS); \
+		else \
+		  export CARGO_PROFILE_DEV_PANIC="abort" && \
+		  export CARGO_PROFILE_RELEASE_PANIC="abort" && \
+		  export RUSTFLAGS="$(RUSTFLAGS) -Zdefault-visibility=hidden" && \
+		  cargo build -Zbuild-std=panic_abort,std $(CARGO_BUILD_ARGS); \
+		fi
 
 	# Always clean up CARGOTMP
 	rm -Rf $(CARGOTMP);
