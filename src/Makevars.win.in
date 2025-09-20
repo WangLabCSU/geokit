@@ -1,7 +1,7 @@
 TARGET = @TARGET@
 PROFILE = @PROFILE@
 
-TARGET_DIR = ./rust/target
+TARGET_DIR = $(CURDIR)/rust/target
 LIBDIR = $(TARGET_DIR)/$(TARGET)/$(subst dev,debug,$(PROFILE))
 STATLIB = $(LIBDIR)/libgeokit.a
 PKG_LIBS = -L$(LIBDIR) -lgeokit -lws2_32 -ladvapi32 -luserenv -lbcrypt -lntdll
