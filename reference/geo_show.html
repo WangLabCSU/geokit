@@ -70,30 +70,10 @@ browser (or a user-specified browser).</p>
 
 
 <dt id="arg-famount">famount<a class="anchor" aria-label="anchor" href="#arg-famount"></a></dt>
-<dd><p>A character specifying file/amount type requested. GEO
-data can be accessed through two sites:</p><ul><li><p>Direct FTP/HTTPS file retrieval from GEO FTP server (file type):</p><ul><li><p><code>"soft"</code>: SOFT (Simple Omnibus in Text Format) from GEO FTP site. When
-<code>accession</code> is <code>DataSets</code> or <code>Series</code>, this is the default.</p></li>
-<li><p><code>"soft_full"</code>: full SOFT (Simple Omnibus in Text Format) files from
-GEO FTP site by DataSet (GDS) containging additionally contains
-up-to-date gene annotation for the DataSet Platform.</p></li>
-<li><p><code>"miniml"</code>: MINiML (MIAME Notation in Markup Language, pronounced
-miniml) is an XML format that incorporates experimental data and
-metadata. MINiML is essentially an XML rendering of SOFT format.</p></li>
-<li><p><code>"matrix"</code>: Series matrix file.</p></li>
-<li><p><code>"annot"</code>: annotation files for Platforms.</p></li>
-<li><p><code>"suppl"</code>: supplementary files.</p></li>
-</ul><p>The following table summarizes the compatibility between GEO accession
-types and file type options:</p><table class="table table"><tr><td>famount</td><td>GDS</td><td>GSE</td><td>GPL</td><td>GSM</td></tr><tr><td>SOFT (soft)</td><td>o</td><td>o</td><td>o</td><td>x</td></tr><tr><td>SOFTFULL (soft_full)</td><td>o</td><td>x</td><td>x</td><td>x</td></tr><tr><td>MINiML (miniml)</td><td>x</td><td>o</td><td>o</td><td>x</td></tr><tr><td>Matrix (matrix)</td><td>x</td><td>o</td><td>x</td><td>x</td></tr><tr><td>Annotation (annot)</td><td>x</td><td>x</td><td>o</td><td>x</td></tr><tr><td>Supplementaryfiles (suppl)</td><td>x</td><td>o</td><td>o</td><td>o</td></tr></table></li>
-<li><p>For file retrieval from Accession Display Bar of GEO database (amount of
-data):</p><ul><li><p><code>"none"</code>: Applicable only to DataSets; for DataSets, this is also the
-sole valid option.</p></li>
-<li><p><code>"brief"</code>: accession attributes only.</p></li>
-<li><p><code>"quick"</code>: accession attributes + first <strong>20</strong> rows of the data table.</p></li>
-<li><p><code>"data"</code>: omits the accession's attributes, showing only links to
-other accessions and the full data table.</p></li>
-<li><p><code>"full"</code>: accession attributes + complete data table.</p></li>
-</ul></li>
-</ul></dd>
+<dd><p>A character string specifying either:</p><ul><li><p>the file format on the GEO FTP server, or</p></li>
+<li><p>the amount of data in the GEO Accession Display Bar.</p></li>
+</ul><p>See <code><a href="geo_url.html">geo_url()</a></code> for details.
+For GEO Accession Display Bar entries, the fo</p></dd>
 
 
 <dt id="arg-scope">scope<a class="anchor" aria-label="anchor" href="#arg-scope"></a></dt>
