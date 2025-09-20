@@ -108,6 +108,10 @@ geo_url <- function(accession, format = NULL, amount = NULL, scope = NULL,
 #' @inheritParams geo_url
 #' @inheritParams utils::browseURL
 #' @details See [utils::browseURL()]
+#' @examples
+#' if (interactive()) {
+#'     geo_show("gpl96")
+#' }
 #' @export
 geo_show <- function(accession, famount = NULL, scope = NULL,
                      over_https = NULL, browser = getOption("browser")) {
@@ -115,6 +119,7 @@ geo_show <- function(accession, famount = NULL, scope = NULL,
     assert_string(famount, allow_null = TRUE)
     assert_string(scope, allow_null = TRUE)
     assert_bool(over_https, allow_null = TRUE)
+    famount <- famount %||% "quick"
     utils::browseURL(
         rust_call("geo_landing_page", accession, famount, scope, over_https),
         browser = browser

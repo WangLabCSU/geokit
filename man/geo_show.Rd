@@ -61,3 +61,8 @@ browser (or a user-specified browser).
 \details{
 See \code{\link[utils:browseURL]{utils::browseURL()}}
 }
+\examples{
+if (interactive()) {
+    geo_show("gpl96")
+}
+}
