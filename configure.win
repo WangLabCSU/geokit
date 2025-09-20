@@ -98,6 +98,8 @@ fi
 
 # Handle profile override
 if [ -z "$INPUT_PROFILE" ]; then
+  PROFILE_VAR="${R_PACKAGE_NAME}_PROFILE"
+  eval "PROFILE=\${$PROFILE_VAR}"
   if [ -z "$PROFILE" ]; then
     if [ "${DEBUG}" = "true" ]; then
       PROFILE=dev
@@ -116,6 +118,9 @@ fi
 
 # Handle features override
 if [ "$HAS_FEATURES" -eq 0 ]; then
+  FEATURES_VAR="${R_PACKAGE_NAME}_FEATURES"
+  eval "FEATURES=\${$FEATURES_VAR}"
+  # Add features to CONFIG_ARGS for cargo
   if [ -n "$FEATURES" ]; then
     CONFIG_ARGS="$CONFIG_ARGS --features $FEATURES"
   fi

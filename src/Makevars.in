@@ -3,8 +3,8 @@ PROFILE = @PROFILE@
 
 TARGET_DIR = rust/target
 LIBDIR = $(TARGET_DIR)/$(TARGET)/$(subst dev,debug,$(PROFILE))
-STATLIB = $(LIBDIR)/libgeokit.a
-PKG_LIBS = -L$(LIBDIR) -lgeokit
+STATLIB = $(LIBDIR)/lib$(R_PACKAGE_NAME).a
+PKG_LIBS = -L$(LIBDIR) -l$(R_PACKAGE_NAME)
 
 all: $(SHLIB) rust_clean
 

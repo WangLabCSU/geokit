@@ -32,6 +32,9 @@ echo "using Rust compiler: '${RUSTC_VERSION}'"
 # All configure.args passed from R CMD INSTALL
 CONFIG_ARGS="$@"
 
+# Uppercase package name for env vars
+R_PACKAGE_NAME_UPPER=$(printf '%s' "$R_PACKAGE_NAME" | tr '[:lower:]' '[:upper:]')
+
 # Initialize flags
 HAS_FEATURES=0
 HAS_PROFILE=0
@@ -97,6 +100,8 @@ fi
 
 # Handle profile override
 if [ -z "$INPUT_PROFILE" ]; then
+  PROFILE_VAR="${R_PACKAGE_NAME_UPPER}_PROFILE"
+  eval "PROFILE=\${$PROFILE_VAR}"
   if [ -z "$PROFILE" ]; then
     if [ "${DEBUG}" = "true" ]; then
       PROFILE=dev
@@ -104,6 +109,7 @@ if [ -z "$INPUT_PROFILE" ]; then
       PROFILE=release
     fi
   fi
+  # Add profile to CONFIG_ARGS for cargo
   if [ "$HAS_PROFILE" -eq 0 ]; then
     # insert --profile to the arguments
     CONFIG_ARGS="$CONFIG_ARGS --profile $PROFILE"
@@ -114,6 +120,9 @@ fi
 
 # Handle features override
 if [ "$HAS_FEATURES" -eq 0 ]; then
+  FEATURES_VAR="${R_PACKAGE_NAME_UPPER}_FEATURES"
+  eval "FEATURES=\${$FEATURES_VAR}"
+  # Add features to CONFIG_ARGS for cargo
   if [ -n "$FEATURES" ]; then
     CONFIG_ARGS="$CONFIG_ARGS --features $FEATURES"
   fi
