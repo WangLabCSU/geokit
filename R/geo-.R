@@ -102,8 +102,8 @@ geo_url <- function(accession, format = NULL, amount = NULL, scope = NULL,
 #'   - the file format on the GEO FTP server, or
 #'   - the amount of data in the GEO Accession Display Bar.
 #'
-#'   See [`geo_url()`] for details.
-#'   For GEO Accession Display Bar entries, the fo
+#'   See [`geo_url()`] for details. For entries from the GEO Accession Display
+#'   Bar, the format will always be `"html"`.
 #'
 #' @inheritParams geo_url
 #' @inheritParams utils::browseURL

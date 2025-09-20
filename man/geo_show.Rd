@@ -27,8 +27,8 @@ geo_show(
 \item the amount of data in the GEO Accession Display Bar.
 }
 
-See \code{\link[=geo_url]{geo_url()}} for details.
-For GEO Accession Display Bar entries, the fo}
+See \code{\link[=geo_url]{geo_url()}} for details. For entries from the GEO Accession Display
+Bar, the format will always be \code{"html"}.}
 
 \item{scope}{A character specifying which GEO accessions to include
 (Only applicable to Accession Display Bar access).
