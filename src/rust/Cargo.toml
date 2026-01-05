@@ -23,7 +23,6 @@ reqwest = { version = '*', default-features = false, features = ['system-proxy',
 tokio = "*"
 tokio-stream = "*"
 
-
 [profile.release]
 lto = true
 codegen-units = 1

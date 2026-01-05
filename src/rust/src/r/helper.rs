@@ -1,47 +1,10 @@
-use anyhow::{anyhow, Context, Result};
+use anyhow::{anyhow, Result};
 use extendr_api::prelude::*;
 
-use crate::resolver;
-
-pub(super) fn resolvers_from_robj(
-    accession: &Robj,
-    format: &Robj,
-    amount: &Robj,
-    scope: &Robj,
-    over_https: &Robj,
-) -> Result<Vec<resolver::GEOResolver>, String> {
-    let accession = accession
-        .as_str_vector()
-        .ok_or_else(|| anyhow!("Expected a character vector"))
-        .with_context(|| format!("Invalid 'accession'"))
-        .map_err(|e| format!("{:?}", e))?;
-    let format = robj_to_vec_str(&format, accession.len())
-        .with_context(|| format!("Invalid 'format'"))
-        .map_err(|e| format!("{:?}", e))?;
-    let amount = robj_to_option_vec_str(&amount, accession.len())
-        .with_context(|| format!("Invalid 'amount'"))
-        .map_err(|e| format!("{:?}", e))?;
-    let scope = robj_to_option_vec_str(&scope, accession.len())
-        .with_context(|| format!("Invalid 'scope'"))
-        .map_err(|e| format!("{:?}", e))?;
-    let over_https = robj_to_option_vec_bool(&over_https, accession.len())
-        .with_context(|| format!("Invalid 'over_https'"))
-        .map_err(|e| format!("{:?}", e))?;
-    accession
-        .into_iter()
-        .enumerate()
-        .map(|(i, acc)| {
-            let format = format[i];
-            let amount = amount.as_ref().map(|v| v[i]);
-            let scope = scope.as_ref().map(|v| v[i]);
-            let over_https = over_https.as_ref().map(|v| v[i]);
-            resolver::GEOResolver::new(acc, format, amount, scope, over_https)
-                .map_err(|e| format!("{:?}", e))
-        })
-        .collect()
-}
-
-fn robj_to_vec_str<'a>(value: &'a Robj, len: usize) -> Result<Vec<&'a str>> {
+/// Convert an R object to a string vector of length `len`.
+/// - If the R object has length 1, its value is recycled.
+/// - Otherwise, its length must match `len`.
+pub(in crate::r) fn robj_to_vec_str<'a>(value: &'a Robj, len: usize) -> Result<Vec<&'a str>> {
     let value = value
         .as_str_vector()
         .ok_or_else(|| anyhow!("Expected a character vector"))?;
@@ -57,14 +20,22 @@ fn robj_to_vec_str<'a>(value: &'a Robj, len: usize) -> Result<Vec<&'a str>> {
     }
 }
 
-fn robj_to_option_vec_str<'a>(value: &'a Robj, len: usize) -> Result<Option<Vec<&'a str>>> {
+/// Convert an R object to an optional string vector (with recycling).
+/// Returns `None` if the R object is NULL.
+pub(in crate::r) fn robj_to_option_vec_str<'a>(
+    value: &'a Robj,
+    len: usize,
+) -> Result<Option<Vec<&'a str>>> {
     if value.is_null() {
         return Ok(None);
     }
     robj_to_vec_str(value, len).map(|o| Some(o))
 }
 
-fn robj_to_option_vec_bool(value: &Robj, len: usize) -> Result<Option<Vec<bool>>> {
+/// Convert an R object to an optional boolean vector (with recycling).
+/// Returns `None` if the R object is NULL.
+/// Fails if the R object contains `NA`.
+pub(in crate::r) fn robj_to_option_vec_bool(value: &Robj, len: usize) -> Result<Option<Vec<bool>>> {
     if value.is_null() {
         return Ok(None);
     }

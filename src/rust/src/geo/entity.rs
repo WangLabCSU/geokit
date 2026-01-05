@@ -5,7 +5,7 @@ use std::str::FromStr;
 use super::error::GEOParseError;
 
 #[derive(Debug, Clone)]
-pub(crate) enum GEOType {
+pub enum GEOType {
     Datasets,
     Platforms,
     Samples,
@@ -13,7 +13,7 @@ pub(crate) enum GEOType {
 }
 
 impl GEOType {
-    pub(crate) fn abbre(&self) -> &'static str {
+    pub fn abbre(&self) -> &'static str {
         match self {
             GEOType::Datasets => "GDS",
             GEOType::Series => "GSE",
@@ -25,36 +25,42 @@ impl GEOType {
 
 impl fmt::Display for GEOType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", match self {
-            GEOType::Datasets => "Datasets",
-            GEOType::Series => "Series",
-            GEOType::Platforms => "Platforms",
-            GEOType::Samples => "Samples",
-        })
+        write!(
+            f,
+            "{}",
+            match self {
+                GEOType::Datasets => "Datasets",
+                GEOType::Series => "Series",
+                GEOType::Platforms => "Platforms",
+                GEOType::Samples => "Samples",
+            }
+        )
     }
 }
 
-impl FromStr for GEOType {
-    type Err = GEOParseError;
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        GEOIdentifier::from_str(s).map(|o| o.gtype)
+#[derive(Debug, Clone)]
+pub struct GEOEntity {
+    accession: String,
+    gtype: GEOType,
+}
+
+impl GEOEntity {
+    pub fn accession(&self) -> &str {
+        self.accession.as_str()
+    }
+
+    pub fn gtype(&self) -> &GEOType {
+        &self.gtype
     }
 }
 
-impl TryFrom<&str> for GEOType {
-    type Error = GEOParseError;
-    fn try_from(value: &str) -> std::result::Result<Self, Self::Error> {
-        Self::from_str(value.as_ref())
+impl fmt::Display for GEOEntity {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.accession)
     }
 }
 
-// only used internal
-pub(super) struct GEOIdentifier {
-    pub(super) accession: String,
-    pub(super) gtype: GEOType,
-}
-
-impl FromStr for GEOIdentifier {
+impl FromStr for GEOEntity {
     type Err = GEOParseError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let accession = s.to_ascii_uppercase();
@@ -72,11 +78,11 @@ impl FromStr for GEOIdentifier {
             return Err(GEOParseError::InvalidAccession);
         };
 
-        // SAFETY: `accession` must be >= 4 characters if it passed the prefix check above.
-        // We slice from index 3 (after prefix) to get the numeric part, which must consist of digits only.
-        if !unsafe { accession.get_unchecked(3 ..) }
-            .chars()
-            .all(|c| c.is_ascii_digit())
+        // SAFETY: `accession` must be >= 3 characters if it passed the prefix check above.
+        if accession.len() == 3
+            || !unsafe { accession.get_unchecked(3..) }
+                .chars()
+                .all(|c| c.is_ascii_digit())
         {
             return Err(GEOParseError::InvalidAccession);
         }
@@ -85,9 +91,9 @@ impl FromStr for GEOIdentifier {
     }
 }
 
-impl TryFrom<&str> for GEOIdentifier {
+impl TryFrom<&str> for GEOEntity {
     type Error = GEOParseError;
-    fn try_from(value: &str) -> std::result::Result<Self, Self::Error> {
-        Self::from_str(value.as_ref())
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
+        Self::from_str(value)
     }
 }

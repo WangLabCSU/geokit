@@ -45,24 +45,28 @@ geo_gtype <- function(accession, abbre = FALSE) {
 #'      * `"annot"`: annotation files for Platforms.
 #'      * `"suppl"`: supplementary files.
 #'
-#'      The following table summarizes the compatibility between GEO accession
-#'      types and file type options:
-#'
-#'        |           famount          | GDS | GSE | GPL | GSM |
-#'        | :------------------------: | :-: | :-: | :-: | :-: |
-#'        |        SOFT (soft)         |  o  |  o  |  o  |  x  |
-#'        |    SOFTFULL (soft_full)    |  o  |  x  |  x  |  x  |
-#'        |      MINiML (miniml)       |  x  |  o  |  o  |  x  |
-#'        |      Matrix (matrix)       |  x  |  o  |  x  |  x  |
-#'        |     Annotation (annot)     |  x  |  x  |  o  |  x  |
-#'        | Supplementaryfiles (suppl) |  x  |  o  |  o  |  o  |
-#'
 #'   - For file retrieval from Accession Display Bar of GEO database:
 #'      - `"text"`: machine-readable SOFT format (Simple Omnibus Format in
 #'        Text).
 #'      - `"xml"`: XML format.
 #'      - `"html"`: human-readable format with hyperlinks (no downloadable entry
 #'        available).
+#'
+#'
+#'      The following table summarizes the compatibility between GEO accession
+#'      types and file format options:
+#'
+#'      |           format           | GDS | GSE | GPL | GSM |
+#'      | :------------------------: | :-: | :-: | :-: | :-: |
+#'      |        SOFT (soft)         |  o  |  o  |  o  |  x  |
+#'      |    SOFTFULL (soft_full)    |  o  |  x  |  x  |  x  |
+#'      |      MINiML (miniml)       |  x  |  o  |  o  |  x  |
+#'      |      Matrix (matrix)       |  x  |  o  |  x  |  x  |
+#'      |     Annotation (annot)     |  x  |  x  |  o  |  x  |
+#'      | Supplementaryfiles (suppl) |  x  |  o  |  o  |  o  |
+#'      |            Html            |  o  |  o  |  o  |  o  |
+#'      |        Text (soft)         |  x  |  o  |  o  |  o  |
+#'      |            Xml             |  x  |  o  |  o  |  o  |
 #'
 #' @param amount A character specifying the amount of data (Only applicable to
 #'     Accession Display Bar access):
@@ -87,6 +91,11 @@ geo_gtype <- function(accession, abbre = FALSE) {
 #'   (<ftp://ftp.ncbi.nlm.nih.gov/geo>). Only applicable to GEO FTP server
 #'   access.
 #' @return A character of GEO URL.
+#' @references
+#' * <https://www.ncbi.nlm.nih.gov/geo/info/download.html>
+#' * <https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi>
+#' * <https://www.ncbi.nlm.nih.gov/geo/info/soft.html#format>
+#' * [Programmatic access to GEO FTP site](https://ftp.ncbi.nlm.nih.gov/geo/README.txt)
 #' @export
 geo_url <- function(accession, format = NULL, amount = NULL, scope = NULL,
                     over_https = NULL) {
@@ -107,6 +116,7 @@ geo_url <- function(accession, format = NULL, amount = NULL, scope = NULL,
 #'
 #' @inheritParams geo_url
 #' @inheritParams utils::browseURL
+#' @inherit geo_url references
 #' @details See [utils::browseURL()]
 #' @examples
 #' if (interactive()) {
@@ -119,7 +129,6 @@ geo_show <- function(accession, famount = NULL, scope = NULL,
     assert_string(famount, allow_null = TRUE)
     assert_string(scope, allow_null = TRUE)
     assert_bool(over_https, allow_null = TRUE)
-    famount <- famount %||% "quick"
     utils::browseURL(
         rust_call("geo_landing_page", accession, famount, scope, over_https),
         browser = browser

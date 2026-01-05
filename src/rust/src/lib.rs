@@ -1,8 +1,7 @@
 use extendr_api::prelude::*;
 
-// mod downloader;
+mod geo;
 mod r;
-mod resolver;
 
 // Macro to generate exports.
 // This ensures exported functions are registered with R.

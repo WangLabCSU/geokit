@@ -66,3 +66,11 @@ if (interactive()) {
     geo_show("gpl96")
 }
 }
+\references{
+\itemize{
+\item \url{https://www.ncbi.nlm.nih.gov/geo/info/download.html}
+\item \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi}
+\item \url{https://www.ncbi.nlm.nih.gov/geo/info/soft.html#format}
+\item \href{https://ftp.ncbi.nlm.nih.gov/geo/README.txt}{Programmatic access to GEO FTP site}
+}
+}

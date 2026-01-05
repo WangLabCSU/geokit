@@ -38,18 +38,6 @@ metadata. MINiML is essentially an XML rendering of SOFT format.
 \item \code{"annot"}: annotation files for Platforms.
 \item \code{"suppl"}: supplementary files.
 }
-
-The following table summarizes the compatibility between GEO accession
-types and file type options:\tabular{ccccc}{
-   famount \tab GDS \tab GSE \tab GPL \tab GSM \cr
-   SOFT (soft) \tab o \tab o \tab o \tab x \cr
-   SOFTFULL (soft_full) \tab o \tab x \tab x \tab x \cr
-   MINiML (miniml) \tab x \tab o \tab o \tab x \cr
-   Matrix (matrix) \tab x \tab o \tab x \tab x \cr
-   Annotation (annot) \tab x \tab x \tab o \tab x \cr
-   Supplementaryfiles (suppl) \tab x \tab o \tab o \tab o \cr
-}
-
 \item For file retrieval from Accession Display Bar of GEO database:
 \itemize{
 \item \code{"text"}: machine-readable SOFT format (Simple Omnibus Format in
@@ -58,6 +46,21 @@ Text).
 \item \code{"html"}: human-readable format with hyperlinks (no downloadable entry
 available).
 }
+
+The following table summarizes the compatibility between GEO accession
+types and file format options:\tabular{ccccc}{
+   format \tab GDS \tab GSE \tab GPL \tab GSM \cr
+   SOFT (soft) \tab o \tab o \tab o \tab x \cr
+   SOFTFULL (soft_full) \tab o \tab x \tab x \tab x \cr
+   MINiML (miniml) \tab x \tab o \tab o \tab x \cr
+   Matrix (matrix) \tab x \tab o \tab x \tab x \cr
+   Annotation (annot) \tab x \tab x \tab o \tab x \cr
+   Supplementaryfiles (suppl) \tab x \tab o \tab o \tab o \cr
+   Html \tab o \tab o \tab o \tab o \cr
+   Text (soft) \tab x \tab o \tab o \tab o \cr
+   Xml \tab x \tab o \tab o \tab o \cr
+}
+
 }}
 
 \item{amount}{A character specifying the amount of data (Only applicable to
@@ -96,4 +99,12 @@ function provides a unified interface for accessing GEO data either via
 Accession Display Bar of GEO database or directly from GEO FTP/HTTPS servers.
 Depending on the accession type or requested \code{famount}, it automatically
 generates the correct URL.
+}
+\references{
+\itemize{
+\item \url{https://www.ncbi.nlm.nih.gov/geo/info/download.html}
+\item \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi}
+\item \url{https://www.ncbi.nlm.nih.gov/geo/info/soft.html#format}
+\item \href{https://ftp.ncbi.nlm.nih.gov/geo/README.txt}{Programmatic access to GEO FTP site}
+}
 }
