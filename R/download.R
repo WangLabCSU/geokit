@@ -154,10 +154,7 @@ download_with_ftp <- function(ids, odir, formats = "soft",
                               ftp_over_https = TRUE,
                               file_label = NULL) {
     file_label <- file_label %||% sprintf("{.field %s}", formats)
-    urls <- build_geo_ftp_url(
-        ids = ids, formats = formats,
-        ftp_over_https = ftp_over_https
-    )
+    urls <- geo_url(accession = ids, format = formats)
     download_inform(
         urls,
         file.path(odir, basename(urls)),
@@ -174,8 +171,9 @@ download_with_acc <- function(ids, odir, scope = "self", amount = "full",
                               handle_opts = list(), fail = TRUE,
                               file_label = NULL) {
     file_label <- file_label %||% sprintf("{.field %s} amount", amount)
-    urls <- build_geo_acc_url(
-        ids = ids, scope = scope, amount = amount, format = format
+    urls <- geo_url(
+        accession = ids, format = format,
+        scope = scope, amount = amount
     )
     file_ext <- switch(format,
         text = "txt",
@@ -198,8 +196,8 @@ download_with_acc <- function(ids, odir, scope = "self", amount = "full",
 
 list_geo_file_url <- function(id, formats, handle_opts = list(),
                               ftp_over_https) {
-    url <- build_geo_ftp_url(
-        ids = id, formats = formats,
+    url <- geo_url(
+        accession = id, format = formats,
         ftp_over_https = ftp_over_https
     )
 

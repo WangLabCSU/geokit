@@ -86,8 +86,8 @@ geo_gtype <- function(accession, abbre = FALSE) {
 #'   - `"gsm"`, `"gpl"`, `"gse"`: related samples, platforms, or series.
 #'   - `"all"`: all accessions related to the query (family view).
 #'
-#' @param over_https Logical scalar. If `TRUE`, connects to GEO FTP server via
-#'   HTTPS (<https://ftp.ncbi.nlm.nih.gov/geo>); otherwise uses plain FTP
+#' @param ftp_over_https Logical scalar. If `TRUE`, connects to GEO FTP server
+#'   via HTTPS (<https://ftp.ncbi.nlm.nih.gov/geo>); otherwise uses plain FTP
 #'   (<ftp://ftp.ncbi.nlm.nih.gov/geo>). Only applicable to GEO FTP server
 #'   access.
 #' @return A character of GEO URL.
@@ -98,8 +98,8 @@ geo_gtype <- function(accession, abbre = FALSE) {
 #' * [Programmatic access to GEO FTP site](https://ftp.ncbi.nlm.nih.gov/geo/README.txt)
 #' @export
 geo_url <- function(accession, format = NULL, amount = NULL, scope = NULL,
-                    over_https = NULL) {
-    rust_call("geo_url", accession, format, amount, scope, over_https)
+                    ftp_over_https = NULL) {
+    rust_call("geo_url", accession, format, amount, scope, ftp_over_https)
 }
 
 #' Open the GEO landing page in a browser
@@ -124,13 +124,16 @@ geo_url <- function(accession, format = NULL, amount = NULL, scope = NULL,
 #' }
 #' @export
 geo_show <- function(accession, famount = NULL, scope = NULL,
-                     over_https = NULL, browser = getOption("browser")) {
+                     ftp_over_https = NULL, browser = getOption("browser")) {
     assert_string(accession)
     assert_string(famount, allow_null = TRUE)
     assert_string(scope, allow_null = TRUE)
-    assert_bool(over_https, allow_null = TRUE)
+    assert_bool(ftp_over_https, allow_null = TRUE)
     utils::browseURL(
-        rust_call("geo_landing_page", accession, famount, scope, over_https),
+        rust_call(
+            "geo_landing_page", accession,
+            famount, scope, ftp_over_https
+        ),
         browser = browser
     )
 }

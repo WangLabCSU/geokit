@@ -9,7 +9,7 @@ geo_url(
   format = NULL,
   amount = NULL,
   scope = NULL,
-  over_https = NULL
+  ftp_over_https = NULL
 )
 }
 \arguments{
@@ -85,8 +85,8 @@ sole valid option
 \item \code{"all"}: all accessions related to the query (family view).
 }}
 
-\item{over_https}{Logical scalar. If \code{TRUE}, connects to GEO FTP server via
-HTTPS (\url{https://ftp.ncbi.nlm.nih.gov/geo}); otherwise uses plain FTP
+\item{ftp_over_https}{Logical scalar. If \code{TRUE}, connects to GEO FTP server
+via HTTPS (\url{https://ftp.ncbi.nlm.nih.gov/geo}); otherwise uses plain FTP
 (\url{ftp://ftp.ncbi.nlm.nih.gov/geo}). Only applicable to GEO FTP server
 access.}
 }
