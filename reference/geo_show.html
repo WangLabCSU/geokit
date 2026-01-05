@@ -52,7 +52,7 @@ browser (or a user-specified browser).</p>
 <span>  <span class="va">accession</span>,</span>
 <span>  famount <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  scope <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  over_https <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  ftp_over_https <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  browser <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"browser"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -86,9 +86,9 @@ sole valid option</p></li>
 </ul></dd>
 
 
-<dt id="arg-over-https">over_https<a class="anchor" aria-label="anchor" href="#arg-over-https"></a></dt>
-<dd><p>Logical scalar. If <code>TRUE</code>, connects to GEO FTP server via
-HTTPS (<a href="https://ftp.ncbi.nlm.nih.gov/geo" class="external-link">https://ftp.ncbi.nlm.nih.gov/geo</a>); otherwise uses plain FTP
+<dt id="arg-ftp-over-https">ftp_over_https<a class="anchor" aria-label="anchor" href="#arg-ftp-over-https"></a></dt>
+<dd><p>Logical scalar. If <code>TRUE</code>, connects to GEO FTP server
+via HTTPS (<a href="https://ftp.ncbi.nlm.nih.gov/geo" class="external-link">https://ftp.ncbi.nlm.nih.gov/geo</a>); otherwise uses plain FTP
 (<a href="ftp://ftp.ncbi.nlm.nih.gov/geo">ftp://ftp.ncbi.nlm.nih.gov/geo</a>). Only applicable to GEO FTP server
 access.</p></dd>
 

@@ -10,7 +10,7 @@ geo_show(
   accession,
   famount = NULL,
   scope = NULL,
-  over_https = NULL,
+  ftp_over_https = NULL,
   browser = getOption("browser")
 )
 ```
@@ -57,7 +57,7 @@ geo_show(
 
   - `"all"`: all accessions related to the query (family view).
 
-- over_https:
+- ftp_over_https:
 
   Logical scalar. If `TRUE`, connects to GEO FTP server via HTTPS
   (<https://ftp.ncbi.nlm.nih.gov/geo>); otherwise uses plain FTP
