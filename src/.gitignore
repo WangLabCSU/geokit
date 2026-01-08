@@ -1,5 +1,10 @@
 *.o
 *.so
 *.dll
-target
 .cargo
+target
+Makevars
+Makevars.win
+rust/vendor
+rust/vendor-config.toml
+rust/vendor.tar.xz

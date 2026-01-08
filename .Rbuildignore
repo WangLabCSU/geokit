@@ -6,10 +6,7 @@
 ^_pkgdown\.yml$
 ^\.github$
 ^\.vscode$
-^\.radian_history$
 ^\.gitignore$
-^Scratch\.RConsole$
-^\.Rhistory$
 ^data-raw$
 ^README_cache$
 ^README\.html$
@@ -20,3 +17,6 @@
 ^src/rust/target$
 ^src/Makevars$
 ^src/Makevars\.win$
+^Scratch\.RConsole$
+^\.radian_history$
+^\.Rhistory$

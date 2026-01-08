@@ -6,6 +6,9 @@ LIBDIR = $(TARGET_DIR)/$(TARGET)/$(subst dev,debug,$(PROFILE))
 STATLIB = $(LIBDIR)/lib$(R_PACKAGE_NAME).a
 PKG_LIBS = -L$(LIBDIR) -l$(R_PACKAGE_NAME) -lws2_32 -ladvapi32 -luserenv -lbcrypt -lntdll
 
+# Add flags if necessary
+RUSTFLAGS = 
+
 all: $(SHLIB) rust_clean
 
 .PHONY: $(STATLIB)
@@ -15,13 +18,15 @@ $(SHLIB): $(STATLIB)
 CARGOTMP = $(CURDIR)/.cargo
 VENDOR_DIR = vendor
 
+CARGO_BUILD_ARGS = --manifest-path rust/Cargo.toml --lib --target-dir $(TARGET_DIR) @CONFIGURE_ARGS@
+
 $(STATLIB):
 	# When the GNU toolchain is used (i.e. on CRAN), -lgcc_eh is specified for
 	# building proc-macro2, but Rtools doesn't contain libgcc_eh. This isn't used
 	# in actual, but we need this tweak to please the compiler.
 	mkdir -p $(LIBDIR)/libgcc_mock && touch $(LIBDIR)/libgcc_mock/libgcc_eh.a
 
-	if [ -f ./rust/vendor.tar.xz ]; then \
+	if [ -f rust/vendor.tar.xz ]; then \
 		tar xf rust/vendor.tar.xz && \
 		mkdir -p $(CARGOTMP) && \
 		cp rust/vendor-config.toml $(CARGOTMP)/config.toml; \
@@ -31,7 +36,7 @@ $(STATLIB):
 	export CARGO_HOME=$(CARGOTMP) && \
 		export LIBRARY_PATH="$(LIBRARY_PATH);$(LIBDIR)/libgcc_mock" && \
 		export RUSTFLAGS="$(RUSTFLAGS) --print=native-static-libs" && \
-		cargo build --manifest-path=rust/Cargo.toml --target-dir=$(TARGET_DIR) @CONFIGURE_ARGS@
+		cargo build $(CARGO_BUILD_ARGS)
 
 	# Always clean up CARGOTMP
 	rm -Rf $(CARGOTMP);
