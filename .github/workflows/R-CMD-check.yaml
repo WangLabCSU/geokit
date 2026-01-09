@@ -47,6 +47,25 @@ jobs:
           extra-packages: any::rcmdcheck
           needs: check
 
+      - id: rust-target
+        name: Set Rust target
+        run: |
+          if [ "${{ runner.os }}" == "Windows" ]; then
+            echo "TARGET=x86_64-pc-windows-gnu" >>$GITHUB_OUTPUT
+          else
+            echo "TARGET=$(rustc -vV | grep host | cut -d' ' -f2)" >>$GITHUB_OUTPUT
+          fi
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: "src/rust -> target"
+          shared-key: ${{ steps.rust-target.outputs.TARGET }}
+
+      - name: vendor library
+        run: |
+          cargo vendor --locked --manifest-path src/rust/Cargo.toml > src/rust/vendor-config.toml
+          tar --xz --no-xattrs -cf src/rust/vendor.tar.xz vendor
+
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
