@@ -64,7 +64,7 @@ jobs:
       - name: vendor library
         run: |
           cargo +nightly -Z unstable-options -C src/rust vendor --locked > src/rust/vendor-config.toml
-          tar --xz --no-xattrs -cf src/rust/vendor.tar.xz src/rust/vendor
+          tar --xz --no-xattrs -cf src/rust/vendor.tar.xz -C src/rust vendor
 
       - uses: r-lib/actions/check-r-package@v2
         with:
