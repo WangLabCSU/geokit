@@ -15,15 +15,15 @@ thiserror = '*'
 anyhow = '*'
 regex = '*'
 memchr = '*'
-csv-core = '*'
+flate2 = '*'
 
 # remove openssl dependency due to error when loading R package: undefined symbol: EVP_bf_ecb
 # enable the system proxy feature and socks5 proxy support: https://docs.rs/reqwest/latest/reqwest/#proxies
-reqwest = { version = '*', default-features = false, features = ['system-proxy', 'socks', 'stream', 'http2', 'rustls-tls'] }
+# reqwest = { version = '*', default-features = false, features = ['system-proxy', 'socks', 'stream', 'http2', 'rustls-tls'] }
 
 # use tokio stream to download files
-tokio = "*"
-tokio-stream = "*"
+# tokio = "*"
+# tokio-stream = "*"
 
 [profile.release]
 lto = true

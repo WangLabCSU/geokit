@@ -7,9 +7,6 @@ pub enum RGEOParseError {
     #[error("{0}")]
     GEOError(#[from] GEOParseError),
 
-    #[error("'format' must be provided")]
-    RequireFormat,
-
     #[error("Expected one of 'none', 'brief', 'quick', 'data', or 'full'.")]
     InvalidAmount,
 
@@ -19,6 +16,9 @@ pub enum RGEOParseError {
     #[error("Expected one of 'soft', 'soft_full', 'miniml', 'matrix', 'annot', 'suppl', 'text', 'xml', or 'html'.")]
     InvalidFormat,
 
-    #[error("Expected one of 'brief', 'quick', 'data', 'full', 'soft', 'soft_full', 'miniml', 'matrix', 'annot', or 'suppl'.")]
-    InvalidFamount,
+    #[error("(Landing page) Expected one of 'brief', 'quick', 'data', 'full', 'soft', 'soft_full', 'miniml', 'matrix', 'annot', or 'suppl'.")]
+    InvalidFamountLanding,
+
+    #[error("(SOFT) Expected one of 'brief', 'quick', 'data', 'full', 'soft', or 'soft_full'.")]
+    InvalidFamountSoft,
 }

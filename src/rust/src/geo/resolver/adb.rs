@@ -11,12 +11,118 @@ pub struct GEOADBResolver {
     amount: Option<GEOAmount>,
 }
 
-#[derive(Default)]
+impl GEOADBResolver {
+    #[inline]
+    pub fn new(entity: GEOEntity) -> Self {
+        Self::builder().entity(entity).build().unwrap()
+    }
+
+    #[inline]
+    pub fn builder() -> GEOADBResolverBuilder {
+        GEOADBResolverBuilder::new()
+    }
+
+    /// Returns the GEO accession string (e.g., "GSE12345" or "GSM67890")
+    /// associated with this resolver.
+    #[inline]
+    pub fn accession(&self) -> &str {
+        self.entity.accession()
+    }
+
+    /// Returns the [`GEOType`] (such as `Datasets`, `Series`, or `Samples`)
+    /// associated with this resolver.
+    #[inline]
+    pub fn gtype(&self) -> &GEOType {
+        self.entity.gtype()
+    }
+
+    #[inline]
+    pub fn format(&self) -> &GEOADBFormat {
+        &self.format
+    }
+
+    #[inline]
+    pub fn scope(&self) -> Option<&GEOScope> {
+        self.scope.as_ref()
+    }
+
+    #[inline]
+    pub fn amount(&self) -> Option<&GEOAmount> {
+        self.amount.as_ref()
+    }
+
+    #[inline]
+    pub fn landing_page(&self) -> String {
+        self.url_with_format(&GEOADBFormat::Html)
+    }
+
+    #[inline]
+    pub fn url(&self) -> String {
+        self.url_with_format(&self.format)
+    }
+
+    #[inline]
+    fn url_with_format(&self, format: &GEOADBFormat) -> String {
+        match self.gtype() {
+            GEOType::Datasets => format!(
+                "https://www.ncbi.nlm.nih.gov/sites/GDSbrowser?acc={}",
+                self.accession()
+            ),
+            // SAFETY: At this point, `self.gtype()` is guaranteed to be a value other than `Datasets`.
+            // The usage of `unsafe` here is safe because we have ensured that the scope and amount are not `None`.
+            _ => unsafe {
+                format!(
+                    "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc={}&targ={}&view={}&form={}",
+                    self.accession(),
+                    self.scope.as_ref().unwrap_unchecked(),
+                    self.amount.as_ref().unwrap_unchecked(),
+                    format
+                )
+            },
+        }
+    }
+
+    #[inline]
+    pub fn fname(&self) -> String {
+        let mut fname = String::new();
+        fname.push_str(self.accession());
+        if let Some(amount) = self.amount() {
+            fname.push('_');
+            fname.push_str(amount.as_str());
+        }
+        if let Some(scope) = self.scope() {
+            fname.push('_');
+            fname.push_str(scope.as_str());
+        }
+        match self.format() {
+            GEOADBFormat::Html => fname.push_str(".html"),
+            GEOADBFormat::Text => fname.push_str(".txt"),
+            GEOADBFormat::Xml => fname.push_str(".xml"),
+        }
+        fname
+    }
+}
+
 pub struct GEOADBResolverBuilder {
     entity: Option<GEOEntity>,
     format: Option<GEOADBFormat>,
     scope: Option<GEOScope>,
     amount: Option<GEOAmount>,
+    default_scope: GEOScope,
+    default_amount: GEOAmount,
+}
+
+impl Default for GEOADBResolverBuilder {
+    fn default() -> Self {
+        Self {
+            entity: None,
+            format: None,
+            scope: None,
+            amount: None,
+            default_scope: GEOScope::Itself,
+            default_amount: GEOAmount::Data,
+        }
+    }
 }
 
 // Rust insists that all fields in a struct must be filled in when a new
@@ -49,8 +155,18 @@ impl GEOADBResolverBuilder {
         self
     }
 
+    pub fn default_scope(&mut self, scope: GEOScope) -> &mut Self {
+        self.default_scope = scope;
+        self
+    }
+
     pub fn amount(&mut self, amount: GEOAmount) -> &mut Self {
         self.amount = Some(amount);
+        self
+    }
+
+    pub fn default_amount(&mut self, amount: GEOAmount) -> &mut Self {
+        self.default_amount = amount;
         self
     }
 
@@ -89,7 +205,7 @@ impl GEOADBResolverBuilder {
                 });
             }
             (GEOType::Datasets, None) => None,
-            (_, None) => Some(GEOAmount::Quick),
+            (_, None) => Some(self.default_amount.clone()),
             _ => self.amount.clone(),
         };
 
@@ -101,7 +217,7 @@ impl GEOADBResolverBuilder {
                 });
             }
             (GEOType::Datasets, None) => None,
-            (_, None) => Some(GEOScope::Itself),
+            (_, None) => Some(self.default_scope.clone()),
             _ => self.scope.clone(),
         };
 
@@ -111,64 +227,6 @@ impl GEOADBResolverBuilder {
             scope,
             amount,
         })
-    }
-}
-
-impl GEOADBResolver {
-    pub fn new(entity: GEOEntity) -> Self {
-        Self::builder()
-            .entity(entity)
-            .format(GEOADBFormat::Html)
-            .scope(GEOScope::Itself)
-            .amount(GEOAmount::Brief)
-            .build()
-            .unwrap()
-    }
-
-    pub fn builder() -> GEOADBResolverBuilder {
-        GEOADBResolverBuilder::new()
-    }
-
-    /// Returns the GEO accession string (e.g., "GSE12345" or "GSM67890")
-    /// associated with this resolver.
-    #[inline]
-    pub fn accession(&self) -> &str {
-        self.entity.accession()
-    }
-
-    /// Returns the [`GEOType`] (such as `Datasets`, `Series`, or `Samples`)
-    /// associated with this resolver.
-    #[inline]
-    pub fn gtype(&self) -> &GEOType {
-        self.entity.gtype()
-    }
-
-    pub fn landing_page(&self) -> String {
-        self.url_with_format(&GEOADBFormat::Html)
-    }
-
-    pub fn url(&self) -> String {
-        self.url_with_format(&self.format)
-    }
-
-    fn url_with_format(&self, format: &GEOADBFormat) -> String {
-        match self.gtype() {
-            GEOType::Datasets => format!(
-                "https://www.ncbi.nlm.nih.gov/sites/GDSbrowser?acc={}",
-                self.accession()
-            ),
-            // SAFETY: At this point, `self.gtype()` is guaranteed to be a value other than `Datasets`.
-            // The usage of `unsafe` here is safe because we have ensured that the scope and amount are not `None`.
-            _ => unsafe {
-                format!(
-                    "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc={}&targ={}&view={}&form={}",
-                    self.accession(),
-                    self.scope.as_ref().unwrap_unchecked(),
-                    self.amount.as_ref().unwrap_unchecked(),
-                    format
-                )
-            },
-        }
     }
 }
 
@@ -185,17 +243,19 @@ pub enum GEOADBFormat {
     Html,
 }
 
+impl GEOADBFormat {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            GEOADBFormat::Text => "text",
+            GEOADBFormat::Xml => "xml",
+            GEOADBFormat::Html => "html",
+        }
+    }
+}
+
 impl fmt::Display for GEOADBFormat {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "{}",
-            match self {
-                GEOADBFormat::Text => "text",
-                GEOADBFormat::Xml => "xml",
-                GEOADBFormat::Html => "html",
-            }
-        )
+        write!(f, "{}", self.as_str())
     }
 }
 
@@ -214,18 +274,20 @@ pub enum GEOAmount {
     Full,
 }
 
+impl GEOAmount {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            GEOAmount::Brief => "brief",
+            GEOAmount::Quick => "quick",
+            GEOAmount::Data => "data",
+            GEOAmount::Full => "full",
+        }
+    }
+}
+
 impl fmt::Display for GEOAmount {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "{}",
-            match self {
-                GEOAmount::Brief => "brief",
-                GEOAmount::Quick => "quick",
-                GEOAmount::Data => "data",
-                GEOAmount::Full => "full",
-            }
-        )
+        write!(f, "{}", self.as_str())
     }
 }
 
@@ -244,18 +306,20 @@ pub enum GEOScope {
     All,
 }
 
+impl GEOScope {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            GEOScope::Itself => "self",
+            GEOScope::GSM => "gsm",
+            GEOScope::GPL => "gpl",
+            GEOScope::GSE => "gse",
+            GEOScope::All => "all",
+        }
+    }
+}
+
 impl fmt::Display for GEOScope {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "{}",
-            match self {
-                GEOScope::Itself => "self",
-                GEOScope::GSM => "gsm",
-                GEOScope::GPL => "gpl",
-                GEOScope::GSE => "gse",
-                GEOScope::All => "all",
-            }
-        )
+        write!(f, "{}", self.as_str())
     }
 }

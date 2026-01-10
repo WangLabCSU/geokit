@@ -27,9 +27,9 @@ log_trans <- function(data, pseudo = 1, ...) {
 #' @rdname log_trans
 log_trans.matrix <- function(data, pseudo = 1, ...) {
     if (is_log_trans(data)) {
-        cli::cli_inform("log2 transformation wasn't needed")
+        cli::cli_inform("The data is already log-transformed. No transformation applied.")
     } else {
-        cli::cli_inform("Doing log2 transformation")
+        cli::cli_inform("Applying log2 transformation with a pseudo count of {.val {pseudo}} to the data.")
         data <- log2(data + pseudo)
     }
     data

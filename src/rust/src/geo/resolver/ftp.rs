@@ -13,6 +13,112 @@ pub struct GEOFTPResolver {
     over_https: bool,
 }
 
+impl GEOFTPResolver {
+    #[inline]
+    pub fn new(entity: GEOEntity) -> Self {
+        Self::builder().entity(entity).build().unwrap()
+    }
+
+    #[inline]
+    pub fn builder() -> GEOFTPResolverBuilder {
+        GEOFTPResolverBuilder::new()
+    }
+
+    /// Returns the GEO accession string (e.g., "GSE12345" or "GSM67890")
+    /// associated with this resolver.
+    #[inline]
+    pub fn accession(&self) -> &str {
+        self.entity.accession()
+    }
+
+    /// Returns the [`GEOType`] (such as `Datasets`, `Series`, or `Samples`)
+    /// associated with this resolver.
+    #[inline]
+    pub fn gtype(&self) -> &GEOType {
+        self.entity.gtype()
+    }
+
+    #[inline]
+    pub fn format(&self) -> &GEOFTPFormat {
+        &self.format
+    }
+
+    #[inline]
+    pub fn landing_page(&self) -> String {
+        static RE: OnceLock<Regex> = OnceLock::new();
+        let regex = RE.get_or_init(|| {
+            Regex::new(r"\d{1,3}$")
+                .map_err(|e| format!("Failed to create the regex: {}", e))
+                .unwrap()
+        });
+        format!(
+            "{}/{}/{}/{}/{}",
+            // Construct the FTP/HTTPS download URL for the current GEO identifier and file type.
+            if self.over_https {
+                "https://ftp.ncbi.nlm.nih.gov/geo"
+            } else {
+                "ftp://ftp.ncbi.nlm.nih.gov/geo"
+            },
+            // GEO FTP server uses lowercase
+            self.gtype().as_str().to_ascii_lowercase(),
+            // Replace the last 1–3 digits in the ID with "nnn" for the directory path.
+            regex.replace(self.accession(), "nnn"),
+            self.accession(),
+            // `SOFT` and `SOFTFull` share the same directory ("soft").
+            match &self.format {
+                GEOFTPFormat::SOFT | GEOFTPFormat::SOFTFull => "soft",
+                GEOFTPFormat::Miniml => "miniml",
+                GEOFTPFormat::Matrix => "matrix",
+                GEOFTPFormat::Annot => "annot",
+                GEOFTPFormat::Suppl => "suppl",
+            }
+        )
+    }
+
+    #[inline]
+    pub fn url(&self) -> String {
+        self.fname().map_or_else(
+            || self.landing_page(),
+            |fname| format!("{}/{}", self.landing_page(), fname),
+        )
+    }
+
+    #[inline]
+    pub fn fname(&self) -> Option<String> {
+        let fname = match (self.gtype(), self.format()) {
+            // build the filename
+            (GEOType::Datasets, GEOFTPFormat::SOFT) => {
+                format!("{}{}", self.accession(), ".soft.gz")
+            }
+            (GEOType::Datasets, GEOFTPFormat::SOFTFull) => {
+                format!("{}{}", self.accession(), "_full.soft.gz")
+            }
+            (GEOType::Series, GEOFTPFormat::SOFT) => {
+                format!("{}{}", self.accession(), "_family.soft.gz")
+            }
+            (GEOType::Series, GEOFTPFormat::Miniml) => {
+                format!("{}{}", self.accession(), "_family.xml.tgz")
+            }
+            (GEOType::Platforms, GEOFTPFormat::Annot) => {
+                format!("{}{}", self.accession(), ".annot.gz")
+            }
+            (GEOType::Platforms, GEOFTPFormat::Miniml) => {
+                format!("{}{}", self.accession(), "_family.xml.tgz")
+            }
+            (GEOType::Platforms, GEOFTPFormat::SOFT) => {
+                format!("{}{}", self.accession(), "_family.soft.gz")
+            }
+
+            // Certain types (e.g., Series Matrix, Supplementary files) are directories, not single files.
+            (_, GEOFTPFormat::Matrix | GEOFTPFormat::Suppl) => {
+                return None;
+            }
+            _ => unreachable!(),
+        };
+        Some(fname)
+    }
+}
+
 #[derive(Default)]
 pub struct GEOFTPResolverBuilder {
     entity: Option<GEOEntity>,
@@ -110,102 +216,6 @@ impl GEOFTPResolverBuilder {
     }
 }
 
-impl GEOFTPResolver {
-    pub fn new(entity: GEOEntity) -> Self {
-        Self::builder().entity(entity).build().unwrap()
-    }
-
-    pub fn builder() -> GEOFTPResolverBuilder {
-        GEOFTPResolverBuilder::new()
-    }
-
-    /// Returns the GEO accession string (e.g., "GSE12345" or "GSM67890")
-    /// associated with this resolver.
-    #[inline]
-    pub fn accession(&self) -> &str {
-        self.entity.accession()
-    }
-
-    /// Returns the [`GEOType`] (such as `Datasets`, `Series`, or `Samples`)
-    /// associated with this resolver.
-    #[inline]
-    pub fn gtype(&self) -> &GEOType {
-        self.entity.gtype()
-    }
-
-    pub fn landing_page(&self) -> String {
-        static RE: OnceLock<Regex> = OnceLock::new();
-        let regex = RE.get_or_init(|| {
-            Regex::new(r"\d{1,3}$")
-                .map_err(|e| format!("Failed to create the regex: {}", e))
-                .unwrap()
-        });
-        format!(
-            "{}/{}/{}/{}/{}",
-            // Construct the FTP/HTTPS download URL for the current GEO identifier and file type.
-            if self.over_https {
-                "https://ftp.ncbi.nlm.nih.gov/geo"
-            } else {
-                "ftp://ftp.ncbi.nlm.nih.gov/geo"
-            },
-            // GEO FTP server uses lowercase
-            self.gtype().to_string().to_ascii_lowercase(),
-            // Replace the last 1–3 digits in the ID with "nnn" for the directory path.
-            regex.replace(self.accession(), "nnn"),
-            self.accession(),
-            // `SOFT` and `SOFTFull` share the same directory ("soft").
-            match &self.format {
-                GEOFTPFormat::SOFT | GEOFTPFormat::SOFTFull => "soft",
-                GEOFTPFormat::Miniml => "miniml",
-                GEOFTPFormat::Matrix => "matrix",
-                GEOFTPFormat::Annot => "annot",
-                GEOFTPFormat::Suppl => "suppl",
-            }
-        )
-    }
-
-    pub fn url(&self) -> String {
-        self.fname().map_or_else(
-            || self.landing_page(),
-            |fname| format!("{}/{}", self.landing_page(), fname),
-        )
-    }
-
-    fn fname(&self) -> Option<String> {
-        let fname = match (self.gtype(), &self.format) {
-            // build the filename
-            (GEOType::Datasets, GEOFTPFormat::SOFT) => {
-                format!("{}{}", self.accession(), ".soft.gz")
-            }
-            (GEOType::Datasets, GEOFTPFormat::SOFTFull) => {
-                format!("{}{}", self.accession(), "_full.soft.gz")
-            }
-            (GEOType::Series, GEOFTPFormat::SOFT) => {
-                format!("{}{}", self.accession(), "_family.soft.gz")
-            }
-            (GEOType::Series, GEOFTPFormat::Miniml) => {
-                format!("{}{}", self.accession(), "_family.xml.tgz")
-            }
-            (GEOType::Platforms, GEOFTPFormat::Annot) => {
-                format!("{}{}", self.accession(), ".annot.gz")
-            }
-            (GEOType::Platforms, GEOFTPFormat::Miniml) => {
-                format!("{}{}", self.accession(), "_family.xml.tgz")
-            }
-            (GEOType::Platforms, GEOFTPFormat::SOFT) => {
-                format!("{}{}", self.accession(), "_family.soft.gz")
-            }
-
-            // Certain types (e.g., Series Matrix, Supplementary files) are directories, not single files.
-            (_, GEOFTPFormat::Matrix | GEOFTPFormat::Suppl) => {
-                return None;
-            }
-            _ => unreachable!(),
-        };
-        Some(fname)
-    }
-}
-
 #[derive(Debug, Clone)]
 pub enum GEOFTPFormat {
     SOFT,
@@ -216,19 +226,21 @@ pub enum GEOFTPFormat {
     Suppl,
 }
 
+impl GEOFTPFormat {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            GEOFTPFormat::SOFT => "soft",
+            GEOFTPFormat::SOFTFull => "soft_full",
+            GEOFTPFormat::Miniml => "miniml",
+            GEOFTPFormat::Matrix => "matrix",
+            GEOFTPFormat::Annot => "annot",
+            GEOFTPFormat::Suppl => "suppl",
+        }
+    }
+}
+
 impl fmt::Display for GEOFTPFormat {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "{}",
-            match self {
-                GEOFTPFormat::SOFT => "soft",
-                GEOFTPFormat::SOFTFull => "soft_full",
-                GEOFTPFormat::Miniml => "miniml",
-                GEOFTPFormat::Matrix => "matrix",
-                GEOFTPFormat::Annot => "annot",
-                GEOFTPFormat::Suppl => "suppl",
-            }
-        )
+        write!(f, "{}", self.as_str())
     }
 }

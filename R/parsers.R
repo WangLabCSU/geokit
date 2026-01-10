@@ -1,385 +1,236 @@
-#' For all parsers used in `geo.R`, return a list
-#' @noRd
-parse_gse_matrix <- function(file_text, gse_sample_data = NULL) {
-    # extract series matrix data
-    matrix_data <- read_data_table(file_text)
-    matrix_data <- as.matrix(matrix_data, names(matrix_data)[[1L]])
-    meta_data <- parse_gse_matrix_meta(file_text)
-
-    # fetch phenoData
-    if (is.null(gse_sample_data)) {
-        gse_sample_data <- meta_data$Sample
-        parse_gse_matrix_sample_characteristics(gse_sample_data)
-    } else {
-        gse_sample_data <- parse_gse_soft_sample_characteristics(
-            gse_sample_data[colnames(matrix_data)]
-        )
-    }
-    gse_sample_data <- gse_sample_data[colnames(matrix_data),
-        on = "geo_accession"
-    ]
-    set_rownames(gse_sample_data, "geo_accession")
-    pheno_data <- Biobase::AnnotatedDataFrame(data = gse_sample_data)
-
-    # fetch experiment data
-    experiment_data <- Biobase::MIAME(
-        name = meta_data$Series$contact_name %||% "",
-        title = meta_data$Series$title,
-        contact = meta_data$Series$contact_email %||% "",
-        pubMedIds = meta_data$Series$pubmed_id %||% "",
-        abstract = meta_data$Series$summary %||% "",
-        url = if (!is.null(meta_data$Series$web_link)) {
-            meta_data$Series$web_link
-        } else if (!is.null(meta_data$Series$geo_accession)) {
-            sprintf(
-                "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=%s",
-                meta_data$Series$geo_accession
-            )
+parse_soft_rust <- function(path, reuse_buffer = TRUE) {
+    entity_list <- rust_call("geo_parse_soft", path, reuse_buffer)
+    # Only one entity: For Samples
+    if (length(entity_list) == 1L) {
+        parse_soft_datatable(.subset2(entity_list, 1L))
+    } else { # Multiple entities: For DataSets and Series
+        # The first entity is DATABASE
+        rcd_type <- .subset2(.subset2(entity_list, 2L), "rcd_type")
+        if (rcd_type == "DATASET") { # For DataSets
+            parse_gds_soft_rust(entity_list)
+        } else if (rcd_type == "SERIES") { # For Series
+            parse_gse_soft_rust(entity_list)
+        } else if (rcd_type == "PLATFORM") { # For Platforms
+            parse_gpl_soft_rust(entity_list)
         } else {
-            "https://www.ncbi.nlm.nih.gov/geo/"
-        },
-        other = meta_data$Series
-    )
-    # fetch GPL accession
-    gpl_id <- meta_data$Sample[[str_which(
-        colnames(meta_data$Sample), "platform_id",
-        ignore.case = TRUE
-    )]][[1L]]
-
-    list(
-        assayData = matrix_data,
-        phenoData = pheno_data,
-        experimentData = experiment_data,
-        annotation = gpl_id
-    )
-}
-
-#' @param entity_type Character. One of `"sample"`, `"platform"`, or `"all"`.
-#'   If `"all"`, metadata will be extracted; otherwise, `metadata` is always
-#'   `NULL`.
-#' @param only_meta Logical. Whether to extract metadata only. Only used when
-#'   `entity_type = "all"`.
-#' @noRd
-parse_gse_soft <- function(file_text, entity_type = "all", only_meta = FALSE) {
-    if (entity_type == "all") {
-        entity_indices <- str_which(file_text, "^\\^(SAMPLE|PLATFORM)")
-        if (length(entity_indices)) {
-            meta_text <- file_text[seq_len(entity_indices[[1L]] - 1L)]
-        } else {
-            meta_text <- file_text
-        }
-        # Parsing series table
-        meta_table_start <- str_which(meta_text, "^!series_table_begin")
-        if (length(meta_table_start)) {
-            cli::cli_alert("Parsing Series table in metadata")
-            meta_table_end <- str_which(meta_text, "^!series_table_end")
-            meta_table_lines <- vector("list", length(meta_table_start))
-            meta_table <- vector("list", length(meta_table_start))
-            meta_table_titles <- character(length(meta_table_start))
-            for (i in seq_along(meta_table_start)) {
-                start <- meta_table_start[i]
-                end <- meta_table_end[i]
-                if (is.na(end) || end <= start) break
-                meta_table_titles[i] <- parse_meta(meta_text[start])
-                meta_table[[i]] <- read_text(meta_text[(start + 1):(end - 1L)])
-                meta_table_lines[[i]] <- start:end
-            }
-            names(meta_table) <- meta_table_titles
-            meta_text <- meta_text[-unlist(meta_table_lines, FALSE, FALSE)]
-        } else {
-            meta_table <- NULL
-        }
-        soft_meta <- c(parse_meta(meta_text), meta_table)
-        if (only_meta) {
-            return(soft_meta)
-        }
-    } else {
-        soft_meta <- NULL
-        entity_marker <- paste0(
-            "^\\^", switch(entity_type,
-                sample = "SAMPLE",
-                platform = "PLATFORM"
-            )
-        )
-        entity_indices <- str_which(file_text, entity_marker)
-    }
-    soft_data_list <- vector(mode = "list", length = length(entity_indices))
-    # For every entity data, the data is seperated by "=" into name-value pairs
-    # Don't use `data.table::tstrsplit`, as it will split string into three or
-    # more element.
-    entity <- data.table::transpose(
-        str_split_fixed(file_text[entity_indices], "\\s*=\\s*")
-    )
-    names(soft_data_list) <- entity[[2L]]
-    seq_line_temp <- c(entity_indices, length(file_text))
-    cli::cli_progress_bar(
-        format = "{cli::pb_spin} Parsing series {.field soft} entity {.field {accession}} | {cli::pb_current}/{cli::pb_total}", # nolint
-        format_done = "Parsing {.val {cli::pb_total}} entit{?y/ies} in {cli::pb_elapsed}",
-        total = length(entity_indices),
-        clear = FALSE
-    )
-    for (i in seq_along(entity_indices)) {
-        accession <- entity[[2L]][[i]]
-        entity_data <- parse_gpl_or_gsm_soft(file_text[
-            seq_line_temp[[i]]:(seq_line_temp[[i + 1L]] - 1L)
-        ])
-        soft_data_list[[i]] <- methods::new(
-            "GEOSoft",
-            meta = entity_data$meta,
-            columns = column_to_rownames(entity_data$columns),
-            datatable = set_rownames(entity_data$data_table),
-            accession = accession
-        )
-        cli::cli_progress_update()
-    }
-    soft_data_list <- split(
-        soft_data_list,
-        factor(entity[[1L]], levels = c("^SAMPLE", "^PLATFORM")),
-        drop = FALSE
-    )
-    list(
-        meta = soft_meta,
-        gsm = soft_data_list[["^SAMPLE"]],
-        gpl = soft_data_list[["^PLATFORM"]]
-    )
-}
-
-# For GPL and GSM entity, they share the same file structure
-parse_gpl_or_gsm_soft <- function(file_text, only_meta = FALSE) {
-    # parse meta data
-    meta_data <- parse_meta(file_text)
-    if (only_meta) {
-        return(meta_data)
-    }
-
-    # parse data table data - which is the feature data
-    data_table <- read_data_table(file_text)
-    if (nrow(data_table)) {
-        data.table::setnames(data_table, make.unique)
-        # GEO uses 'TAG' instead of 'ID' for SAGE GSE/GPL entries,
-        # but it is always the first column;
-        # some dataset may contain duplicated feature names,
-        # collapse other column by it.
-        if (anyDuplicated(data_table[[1L]])) {
-            data_table <- data_table[
-                , lapply(.SD, function(x) paste(unique(x), collapse = "; ")),
-                by = names(data_table)[[1L]]
-            ]
+            cli::cli_abort(c(
+                "Undefined behavior: {.field rcd_type} is not one of 'DATASET', 'SERIES' or 'PLATFORM'.",
+                i = "Please report this issue."
+            ))
         }
     }
-
-    # parse column data
-    column_data <- parse_columns(file_text, colnames(data_table))
-    list(
-        data_table = data_table,
-        meta = meta_data,
-        columns = column_data
-    )
 }
 
-#' @importFrom data.table merge.data.table
-parse_gds_soft <- function(file_text, only_meta = FALSE) {
-    subset_lines <- str_which(file_text, "^!subset")
-    # parse meta data
-    meta_data <- parse_meta(file_text[-subset_lines])
-    if (only_meta) {
-        return(meta_data)
-    }
-
-    # parse data_table data
-    data_table <- read_data_table(file_text[-subset_lines])
-
-    # parse column data
-    column_data <- parse_columns(file_text[-subset_lines], colnames(data_table))
-
-    subset_data <- parse_gds_subset(file_text[subset_lines])
-    # Merge subset data into column data
-    column_data <- merge(column_data, subset_data,
-        by = "V1",
-        all.x = TRUE, sort = FALSE
-    )
-    column_data <- column_data[colnames(data_table), on = "V1"]
-    # column_data <- as.data.frame(column_data[, !1L], column_data$V1)
-    list(
-        data_table = data_table,
-        meta = meta_data,
-        columns = column_data
-    )
-}
-
-#' @importFrom data.table %chin%
-parse_gse_matrix_meta <- function(file_text) {
-    meta_groups <- c("Series", "Sample")
-    names(meta_groups) <- meta_groups
-    meta_data <- lapply(meta_groups, function(group) {
-        meta_text <- str_subset(file_text, paste0("^!", group, "_"))
-        meta_data <- parse_meta(meta_text)
-        rlang::set_names(
-            meta_data,
-            function(x) str_replace(x, paste0("^", group, "_"), "")
-        )
-    })
-    data.table::setDT(meta_data$Sample)
-    for (x in c("sample_id", "pubmed_id", "platform_id")) {
-        if (x %chin% names(meta_data$Series)) {
-            meta_data$Series[[x]] <- str_split(meta_data$Series[[x]], ";?+ ")[[1L]]
-        }
-    }
-    meta_data
-}
-
-parse_gds_subset <- function(subset_file_text) {
-    subset_data <- read_meta(subset_file_text, "equality")
-    subset_data <- parse_line_sep_by_equality(subset_data)
-    data.table::setDT(subset_data)
-    # For GDS subset data, there'll be four column, the subset_sample_id
-    # correspond to `colnames(data_table)` but these ids are collapsed and some
-    # are duplicated, so we should unnest it and then collapse other columns
-    # group by `subset_sample_id`
-    subset_data[
-        , unlist(
-            str_split(subset_sample_id, ","),
-            use.names = FALSE
-        ),
-        by = c("subset_dataset_id", "subset_description", "subset_type")
-    ][, lapply(.SD, paste0, collapse = "; "), by = "V1"]
-}
-
-#' There are four different types of line that are recognized in SOFT. The
-#' presence of any one of three characters in the first character position in
-#' the line indicates three of the line types, and the absence of any of these
-#' indicates the fourth line type. The four line-type characters and
-#' descriptions of what they indicate are:
-#' | Symbol | Description |             Line type              |
-#' | :----: | :---------: | :--------------------------------: |
-#' |   ^    | caret lines |       entity indicator line        |
-#' |   !    | bang lines  |       entity attribute line        |
-#' |   #    | hash lines  | data table header description line |
-#' |  n/a   | data lines  |           data table row           |
-#' @noRd
-
-# Column should start by "#" and contain "=" string to split this character into
-# names and values; For line seperated by "=", every row represents a item. But
-# every item in `columns` data should only own a value of length one, so we
-# collapse it.
-#' @return a data.table
-#' @noRd
-parse_columns <- function(file_text, target_rownames) {
-    column_data <- read_column(file_text)
-    column_data <- parse_line_sep_by_equality(column_data)
-    labelDescription <- vapply(column_data[target_rownames], function(x) {
-        if (is.null(x)) {
-            NA_character_
-        } else if (length(x) > 1L) {
-            paste0(x, collapse = "; ")
-        } else {
-            x
-        }
+parse_gpl_soft_rust <- function(list) {
+    rcd_types <- vapply(list, function(record) {
+        .subset2(record, "rcd_type")
     }, character(1L), USE.NAMES = FALSE)
-    # Sometimes column_data may contain character vectors with length greater
-    # than 1L and the last value of which is a blank string ""; after above
-    # transformation, a tail "; " will be inserted in this element, So we just
-    # remove the tail "; " string.
-    labelDescription <- str_replace(labelDescription, ";\\s*$", "")
-    labelDescription <- data.table::fifelse(
-        labelDescription == "",
-        NA_character_, labelDescription,
-        na = NA_character_
+    gsm <- lapply(
+        .subset(list, rcd_types == "SAMPLE"),
+        parse_soft_datatable
     )
-    data.table::data.table(
-        V1 = target_rownames,
-        labelDescription = labelDescription
+    gse <- lapply(
+        .subset(list, rcd_types == "SERIES"),
+        parse_soft_datatable
     )
-}
-
-# Meta data is split into two types differentiated by string "="
-# For lines containg "=" character, This is the same with `column` data
-# For lines without "=" character, the first column should be the names of these
-# meta data
-#' @return a list
-#' @noRd
-parse_meta <- function(file_text) {
-    line_with_equality <- str_detect(file_text, "^[^\\t]*=")
-    # For lines seperated by "="
-    meta_sep_by_equality <- read_meta(file_text[line_with_equality], "equality")
-    meta_sep_by_equality <- parse_line_sep_by_equality(meta_sep_by_equality)
-
-    # For lines seperated by "\t"
-    meta_sep_by_table <- read_meta(file_text[!line_with_equality])
-    meta_sep_by_table <- parse_line_sep_by_table(
-        meta_sep_by_table
+    metadata <- merge_metadata(
+        .subset(list, !rcd_types %in% c("SAMPLE", "SERIES"))
     )
-    meta_data <- c(meta_sep_by_equality, meta_sep_by_table)
-    meta_data <- meta_data[
-        !(duplicated(meta_data) & duplicated(names(meta_data)))
-    ]
-    meta_data %||% list()
-}
 
-# Line Starting with "!" or "#"
-# For line seperated by "=", every row represents a item.
-# Don't use `data.table::tstrsplit`, as it will split string into three or
-# more pieces
-parse_line_sep_by_equality <- function(dt) {
-    if (!nrow(dt)) {
-        return(NULL)
+    # the same dataset will be distributed into multiple entities
+    # But they should contain only one column, header and datatable data.
+    platforms <- .subset(list, vapply(list, function(data) {
+        .subset2(data, "rcd_type") == "PLATFORM"
+    }, logical(1L), USE.NAMES = FALSE))
+    if (length(platforms) != 1L) {
+        cli::cli_abort("{.field Platforms} should contain only one single platform")
     }
-    name_value_pairs <- data.table::transpose(
-        str_split_fixed(dt[[1L]], "\\s*=\\s*")
+    platform <- .subset2(platforms, 1L)
+    platform$metadata <- metadata
+
+    # build the object
+    platform <- parse_soft_datatable(platform, "GEOPlatform")
+    gsm(platform) <- gsm
+    gse(platform) <- gse
+    platform
+}
+
+parse_gse_soft_rust <- function(list) {
+    rcd_types <- vapply(list, function(record) {
+        .subset2(record, "rcd_type")
+    }, character(1L), USE.NAMES = FALSE)
+
+    series_list <- .subset(list, rcd_types == "SERIES")
+    if (length(series_list) != 1L) {
+        cli::cli_abort("{.field Series} should contain only one single series")
+    }
+    ensure_only_metadata(series_list)
+    series <- .subset2(series_list, 1L)
+
+    gsm <- lapply(
+        .subset(list, rcd_types == "SAMPLE"),
+        parse_soft_datatable
     )
-    split(
-        name_value_pairs[[2L]],
-        factor(str_replace(name_value_pairs[[1L]], "^[#!]\\s*+", ""))
+    gpl <- lapply(
+        .subset(list, rcd_types == "PLATFORM"),
+        parse_soft_datatable
+    )
+    metadata <- merge_metadata(
+        .subset(list, !rcd_types %in% c("SAMPLE", "PLATFORM"))
+    )
+
+    rcd_name <- .subset2(series, "rcd_name")
+    methods::new(
+        "GEOSeries",
+        rcd_type = .subset2(series, "rcd_type"),
+        rcd_name = rcd_name,
+        metadata = metadata,
+        gsm = gsm,
+        gpl = gpl,
+        accession = rcd_name
     )
 }
 
-# Line starting with "!"
-# For line seperated by "\t", the element of every row stand for a item
-# So for duplicated rows IDs (the first column), we should collapse it.
-parse_line_sep_by_table <- function(dt) {
-    if (!nrow(dt) || ncol(dt) == 1L) {
-        return(NULL)
+parse_gds_soft_rust <- function(list) {
+    ensure_only_metadata(list, "DATASET")
+    # the same dataset will be distributed into multiple entities
+    # But they should contain only one column, header and datatable data.
+    datasets <- .subset(list, vapply(list, function(data) {
+        .subset2(data, "rcd_type") == "DATASET"
+    }, logical(1L), USE.NAMES = FALSE))
+    datasets_groups <- vapply(datasets, function(subset) {
+        .subset2(subset, "rcd_name")
+    }, character(1L), USE.NAMES = FALSE)
+    datasets_groups <- factor(datasets_groups, unique(datasets_groups))
+    if (!is_all_same(datasets_groups)) {
+        cli::cli_abort("{.field Datasets} should contain only one single dataset")
     }
-    dt[, V1 := factor(str_replace(V1, "^!\\s*+", ""))]
-    meta_list <- split(
-        dt[, lapply(.SD, paste0, collapse = ""), by = "V1"],
-        by = "V1", drop = TRUE,
-        keep.by = FALSE
+    dataset <- .subset2(datasets, 1L)
+    for (other in .subset(datasets, -1L)) {
+        if (length(.subset2(dataset, "columns")) &&
+            length(.subset2(other, "columns"))) {
+            cli::cli_abort("Datasets should contain only one columns data.")
+        }
+        dataset$columns <- c(
+            .subset2(dataset, "columns"),
+            .subset2(other, "columns")
+        )
+        if (length(.subset2(dataset, "header")) &&
+            length(.subset2(other, "header"))) {
+            cli::cli_abort("Datasets should contain only one one header.")
+        }
+        dataset$header <- c(
+            .subset2(dataset, "header"),
+            .subset2(other, "header")
+        )
+        if (length(.subset2(dataset, "datatable")) &&
+            length(.subset2(other, "datatable"))) {
+            cli::cli_abort("Datasets should contain only one data table.")
+        }
+        if (length(.subset2(other, "datatable"))) {
+            dataset$datatable <- .subset2(other, "datatable")
+        }
+    }
+    dataset$metadata <- merge_metadata(list)
+
+    # build the object
+    parse_soft_datatable(dataset)
+}
+
+ensure_only_metadata <- function(list, filter = NULL) {
+    for (record in list) {
+        if (!is.null(filter) && .subset2(record, "rcd_type") == filter) {
+            next
+        }
+        if (length(.subset2(record, "datatable")) ||
+            length(.subset2(record, "columns"))) {
+            msg <- sprintf(
+                "Undefined behavior: {.field %s} should not contain {.field columns} or {.field datatable}.",
+                .subset2(record, "rcd_type")
+            )
+            if (!is.null(filter)) {
+                msg <- paste(msg, sprintf("Only {.field %s} can have these fields.", filter))
+            }
+            msg <- c(msg, i = "Please report this issue.")
+            cli::cli_abort(msg)
+        }
+    }
+}
+
+merge_metadata <- function(list) {
+    # merge metadata
+    metadata <- lapply(list, function(record) .subset2(record, "metadata"))
+    metadata_groups <- vapply(
+        list,
+        function(record) .subset2(record, "rcd_type"),
+        character(1L),
+        USE.NAMES = FALSE
     )
-    lapply(meta_list, function(x) {
-        unlist(x, recursive = FALSE, use.names = FALSE)
+    metadata_groups <- factor(metadata_groups, unique(metadata_groups))
+    lapply(split(seq_along(metadata), metadata_groups), function(groups_index) {
+        metadata_group <- .subset(metadata, groups_index)
+        metadata_group <- .subset(metadata_group, lengths(metadata_group) > 0L)
+        if (length(metadata_group) == 1L) {
+            .subset2(metadata_group, 1L)
+        } else {
+            # for multiple metadatas, we add names to it
+            names(metadata_group) <- vapply(
+                seq_along(groups_index), function(i) {
+                    record <- .subset2(list, .subset(groups_index, i))
+                    .subset2(record, "rcd_name") %||%
+                        paste(
+                            .subset2(record, "rcd_type"),
+                            i,
+                            sep = "_"
+                        )
+                },
+                character(1L),
+                USE.NAMES = FALSE
+            )
+            metadata_group
+        }
     })
 }
 
-read_data_table <- function(file_text) {
-    read_text(
-        text = str_subset(file_text, "^[\\^!#]", invert = TRUE),
-        sep = "\t", header = TRUE, blank.lines.skip = TRUE,
-        check.names = FALSE
+parse_soft_datatable <- function(list, class = NULL) {
+    rcd_name <- .subset2(list, "rcd_name")
+    rcd_type <- .subset2(list, "rcd_type")
+    metadata <- .subset2(list, "metadata")
+
+    # Special concerns for Series matrix
+    if (!is.null(metadata$Series_geo_accession)) {
+        rcd_type <- rcd_type %||% "Series_Matrix"
+        rcd_name <- rcd_name %||% metadata$Series_geo_accession
+    }
+    columns <- .subset2(list, "columns")
+    datatable <- .subset2(list, "datatable")
+    if (length(header <- .subset2(list, "header"))) {
+        if (length(datatable) == 0L) {
+            datatable <- vector("list", length(header))
+        }
+        names(datatable) <- header
+    }
+    methods::new(
+        class %||% "GEODatatable",
+        rcd_type = rcd_type,
+        rcd_name = rcd_name,
+        metadata = metadata,
+        columns = quickdf(list(labelDescription = columns), names(columns)),
+        datatable = quickdf(datatable),
+        accession = rcd_name
     )
 }
 
-read_meta <- function(file_text, meta_type = "table") {
-    read_text(
-        text = str_subset(file_text, "^!\\w*"),
-        sep = switch(meta_type,
-            table = "\t",
-            equality = ""
-        ),
-        colClasses = switch(meta_type,
-            table = NULL,
-            equality = "character"
-        ),
-        header = FALSE, blank.lines.skip = TRUE,
-        check.names = FALSE
-    )
-}
-
-read_column <- function(file_text) {
-    read_text(
-        text = str_subset(file_text, "^#\\w[^\\t]*="),
-        sep = "", header = FALSE, blank.lines.skip = TRUE,
-        colClasses = "character",
-        check.names = FALSE
-    )
+quickdf <- function(l, rownames = NULL) {
+    class(l) <- "data.frame"
+    if (is.null(rownames)) {
+        if (length(l) > 0L) {
+            attr(l, "row.names") <- .set_row_names(length(.subset2(l, 1L)))
+        } else {
+            attr(l, "row.names") <- .set_row_names(0L)
+        }
+    } else {
+        attr(l, "row.names") <- rownames
+    }
+    l
 }

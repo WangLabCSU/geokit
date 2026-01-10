@@ -12,6 +12,7 @@
 #' @param abbre A logical scalar indicating whether to abbreviate the GEO type
 #'   in the return value. If `FALSE` (default), the full type name is returned;
 #'   if `TRUE`, a short abbreviation is used.
+#'
 #' @return A character of GEO accession type.
 #' @export
 geo_gtype <- function(accession, abbre = FALSE) {
@@ -96,6 +97,11 @@ geo_gtype <- function(accession, abbre = FALSE) {
 #' * <https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi>
 #' * <https://www.ncbi.nlm.nih.gov/geo/info/soft.html#format>
 #' * [Programmatic access to GEO FTP site](https://ftp.ncbi.nlm.nih.gov/geo/README.txt)
+#' @examples
+#' geo_url("GSE10")
+#' geo_url("gpl98")
+#' geo_url("GSM1")
+#' geo_url("GDS10")
 #' @export
 geo_url <- function(accession, format = NULL, amount = NULL, scope = NULL,
                     ftp_over_https = NULL) {
@@ -111,8 +117,7 @@ geo_url <- function(accession, format = NULL, amount = NULL, scope = NULL,
 #'   - the file format on the GEO FTP server, or
 #'   - the amount of data in the GEO Accession Display Bar.
 #'
-#'   See [`geo_url()`] for details. For entries from the GEO Accession Display
-#'   Bar, the format will always be `"html"`.
+#'   See [`geo_url()`] for details.
 #'
 #' @inheritParams geo_url
 #' @inheritParams utils::browseURL

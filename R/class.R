@@ -1,9 +1,9 @@
 #' Virtual class for holding GEO series, samples, platforms, and datasets.
 #'
-#' `GEOData` class, which contains two slots `meta` and `accession`, is the
-#' basic class (super class) of `GEOSeries` class and `GEOSoft` class.
+#' `GEOSoft` class, which contains two slots `meta` and `accession`, is the
+#' basic class (super class) of `GEOSeries` class and `GEOData` class.
 #' `GEOSeries` class contains extra two slots `gsm` and `gpl` special for `GSE`
-#' entity soft file and `GEOSoft` contains extra two slots `columns` and
+#' entity soft file and `GEOData` contains extra two slots `columns` and
 #' `datatable` special for GEO samples, platforms, and datasets.
 #'
 #' @param object A [GEO-class] Class Object.
@@ -15,7 +15,7 @@
 #' gse <- geo("GSE10", odir = tempdir(), gse_matrix = FALSE)
 #' accession(gse)
 #' gpllist <- gpl(gse)
-#' meta(gpllist[[1L]])
+#' metadata(gpllist[[1L]])
 #' accession(gpllist[[1L]])
 #' columns(gpllist[[1L]])
 #' datatable(gpllist[[1L]])
@@ -28,96 +28,162 @@ NULL
 #' series, samples, platforms, and datasets.
 #' @rdname GEO-class
 methods::setClass(
-    "GEOData",
+    "GEOSoft",
     slots = list(
-        meta = "list",
+        metadata = "list",
+        rcd_type = "character",
+        rcd_name = "character",
         accession = "character"
     ),
     prototype = list(
-        meta = list(),
+        metadata = list(),
+        rcd_type = NA_character_,
+        rcd_name = NA_character_,
         accession = NA_character_
     )
 )
 
 #' @importFrom methods show
-#' @method show GEOData
+#' @method show GEOSoft
 #' @export
 #' @rdname GEO-class
-methods::setMethod("show", "GEOData", function(object) {
-    cat(paste0("An object of ", methods::is(object)[[1L]]), sep = "\n")
-    wrap_cat("meta", names = names(object@meta))
-    wrap_cat("accession", names = object@accession)
+methods::setMethod("show", "GEOSoft", function(object) {
+    cat("<", methods::is(object)[[1L]], "> ", "\n", sep = "")
+    wrap_cat("metadata", names = names(object@metadata))
 })
 
-methods::setGeneric("meta", function(object) standardGeneric("meta"))
-
-methods::setGeneric("meta<-", function(object, value) {
-    standardGeneric("meta<-")
-})
-
-#' @method meta GEOData
-#' @aliases meta
 #' @export
 #' @rdname GEO-class
-methods::setMethod("meta", "GEOData", function(object) {
-    object@meta
-})
+methods::setGeneric("metadata", function(object) standardGeneric("metadata"))
 
-#' @method meta<- GEOData
-#' @aliases meta<-
 #' @export
 #' @rdname GEO-class
-methods::setMethod("meta<-", "GEOData", function(object, value) {
-    object@meta <- value
+methods::setGeneric("metadata<-", function(object, value) {
+    standardGeneric("metadata<-")
+})
+
+#' @method metadata GEOSoft
+#' @aliases metadata
+#' @export
+#' @rdname GEO-class
+methods::setMethod("metadata", "GEOSoft", function(object) {
+    object@metadata
+})
+
+#' @method metadata<- GEOSoft
+#' @aliases metadata<-
+#' @export
+#' @rdname GEO-class
+methods::setMethod("metadata<-", "GEOSoft", function(object, value) {
+    object@metadata <- value
     object
 })
 
+#' @export
+#' @rdname GEO-class
 methods::setGeneric("accession", function(object) {
     standardGeneric("accession")
 })
 
+#' @export
+#' @rdname GEO-class
 methods::setGeneric("accession<-", function(object, value) {
     standardGeneric("accession<-")
 })
 
-#' @method accession GEOData
+#' @method accession GEOSoft
 #' @aliases accession
 #' @export
 #' @rdname GEO-class
-methods::setMethod("accession", "GEOData", function(object) {
+methods::setMethod("accession", "GEOSoft", function(object) {
     object@accession
 })
 
-#' @method accession<- GEOData
+#' @method accession<- GEOSoft
 #' @aliases accession<-
 #' @export
 #' @rdname GEO-class
-methods::setMethod("accession<-", "GEOData", function(object, value) {
+methods::setMethod("accession<-", "GEOSoft", function(object, value) {
     object@accession <- value
     object
 })
 
-# Class `GEOSoft` ----
+#' @export
+#' @rdname GEO-class
+methods::setGeneric("rcd_type", function(object) standardGeneric("rcd_type"))
+
+#' @export
+#' @rdname GEO-class
+methods::setGeneric("rcd_type<-", function(object, value) {
+    standardGeneric("rcd_type<-")
+})
+
+#' @method rcd_type GEOSoft
+#' @aliases rcd_type
+#' @export
+#' @rdname GEO-class
+methods::setMethod("rcd_type", "GEOSoft", function(object) {
+    object@rcd_type
+})
+
+#' @method rcd_type<- GEOSoft
+#' @aliases rcd_type<-
+#' @export
+#' @rdname GEO-class
+methods::setMethod("rcd_type<-", "GEOSoft", function(object, value) {
+    object@rcd_type <- value
+    object
+})
+
+#' @export
+#' @rdname GEO-class
+methods::setGeneric("rcd_name", function(object) standardGeneric("rcd_name"))
+
+#' @export
+#' @rdname GEO-class
+methods::setGeneric("rcd_name<-", function(object, value) {
+    standardGeneric("rcd_name<-")
+})
+
+#' @method rcd_name GEOSoft
+#' @aliases rcd_name
+#' @export
+#' @rdname GEO-class
+methods::setMethod("rcd_name", "GEOSoft", function(object) {
+    object@rcd_name
+})
+
+#' @method rcd_name<- GEOSoft
+#' @aliases rcd_name<-
+#' @export
+#' @rdname GEO-class
+methods::setMethod("rcd_name<-", "GEOSoft", function(object, value) {
+    object@rcd_name <- value
+    object
+})
+
+# Class `GEODatatable` ----
 #' @slot columns: A `data.frame` gives the `datatable` header descriptions. The
 #' rownmaes of this `data.frame` should be the same with the column names of
 #' slot `datatable`.
 #' @slot datatable: A `data.frame` shows the data information.
 #' @rdname GEO-class
 methods::setClass(
-    "GEOSoft",
+    "GEODatatable",
     slots = list(
         datatable = "data.frame",
         columns = "data.frame"
     ),
     prototype = list(
         datatable = data.frame(),
-        columns = data.frame()
+        columns = data.frame(),
+        accession = NA_character_
     ),
-    contains = "GEOData"
+    contains = "GEOSoft"
 )
 
 ## Validator ----
-methods::setValidity("GEOSoft", function(object) {
+methods::setValidity("GEODatatable", function(object) {
     if (!all(rownames(object@columns) == colnames(object@datatable))) {
         "the rownames of slot @columns should be the same with the colnames of slot @datatable."
     } else {
@@ -125,11 +191,11 @@ methods::setValidity("GEOSoft", function(object) {
     }
 })
 
-#' @method show GEOSoft
+#' @method show GEODatatable
 #' @export
 #' @rdname GEO-class
-methods::setMethod("show", "GEOSoft", function(object) {
-    cat(paste0("An object of ", methods::is(object)[[1L]]), sep = "\n")
+methods::setMethod("show", "GEODatatable", function(object) {
+    cat("<", methods::is(object)[[1L]], "> ", "\n", sep = "")
     datatable_dim <- dim(object@datatable)
     cat(
         strwrap(paste0("datatable: a ", datatable_dim[[1L]], " * ", datatable_dim[[2L]], " data.frame"), exdent = 2L),
@@ -141,66 +207,178 @@ methods::setMethod("show", "GEOSoft", function(object) {
         sep = "\n"
     )
     wrap_cat("columnsData", names = names(object@columns), 2L, 4L)
-    wrap_cat("meta", names = names(object@meta))
+    wrap_cat("metadata", names = names(object@metadata))
     wrap_cat("accession", names = object@accession)
 })
 
 ## Accessors -----
 ### Accessors `columns` ----
+#' @export
+#' @rdname GEO-class
 methods::setGeneric("columns", function(object) {
     standardGeneric("columns")
 })
+
+#' @export
+#' @rdname GEO-class
 methods::setGeneric("columns<-", function(object, value) {
     standardGeneric("columns<-")
 })
 
-#' @method columns GEOSoft
+#' @method columns GEODatatable
 #' @aliases columns
 #' @export
 #' @rdname GEO-class
-methods::setMethod("columns", "GEOSoft", function(object) {
+methods::setMethod("columns", "GEODatatable", function(object) {
     object@columns
 })
 
-#' @method columns<- GEOSoft
+#' @method columns<- GEODatatable
 #' @aliases columns<-
 #' @export
 #' @rdname GEO-class
-methods::setMethod("columns<-", "GEOSoft", function(object, value) {
+methods::setMethod("columns<-", "GEODatatable", function(object, value) {
     object@columns <- value
     object
 })
 
 ### Accessors `datatable` ----
+#' @export
+#' @rdname GEO-class
 methods::setGeneric("datatable", function(object) {
     standardGeneric("datatable")
 })
 
+#' @export
+#' @rdname GEO-class
 methods::setGeneric("datatable<-", function(object, value) {
     standardGeneric("datatable<-")
 })
 
-#' @method datatable GEOSoft
+#' @method datatable GEODatatable
 #' @aliases datatable
 #' @export
 #' @rdname GEO-class
-methods::setMethod("datatable", "GEOSoft", function(object) {
+methods::setMethod("datatable", "GEODatatable", function(object) {
     object@datatable
 })
 
-#' @method datatable<- GEOSoft
+#' @method datatable<- GEODatatable
 #' @aliases datatable<-
 #' @export
 #' @rdname GEO-class
-methods::setMethod("datatable<-", "GEOSoft", function(object, value) {
+methods::setMethod("datatable<-", "GEODatatable", function(object, value) {
     object@datatable <- value
     object
 })
 
-# Class `GEOSeries` ----
-#' @slot gsm: a list of `GEOSoft` object containg the samples information
+# Class `GEOPlatform` --------------------------------------------
+#' @slot gsm: a list of `GEODatatable` object containg the samples information
+#' of current GEO platform.
+#' @slot gse: a list of `GEODatatable` object containg the series information
+#' of current GEO platform.
+#' @rdname GEO-class
+methods::setClass(
+    "GEOPlatform",
+    slots = list(gsm = "list", gse = "list"),
+    prototype = list(
+        gsm = list(),
+        gse = list()
+    ),
+    contains = "GEODatatable"
+)
+
+## Validator ----
+methods::setValidity("GEOPlatform", function(object) {
+    if (!all(vapply(object@gsm, function(x) {
+        methods::is(x, "GEODatatable")
+    }, logical(1L), USE.NAMES = FALSE))) {
+        "the element of slot @gsm list should only contain Class `GEODatatable` object."
+    } else if (!all(vapply(object@gse, function(x) {
+        methods::is(x, "GEODatatable")
+    }, logical(1L), USE.NAMES = FALSE))) {
+        "the element of slot @gpl list should only contain Class `GEODatatable` object."
+    } else {
+        TRUE
+    }
+})
+
+#' @method show GEOPlatform
+#' @export
+#' @rdname GEO-class
+methods::setMethod("show", "GEOPlatform", function(object) {
+    cat("<", methods::is(object)[[1L]], "> ", "\n", sep = "")
+    wrap_cat("gse", names = vapply(object@gse, rcd_name, character(1L)))
+    wrap_cat("gsm", names = vapply(object@gsm, rcd_name, character(1L)))
+    wrap_cat("metadata", names = names(object@metadata))
+    wrap_cat("accession", names = object@accession)
+})
+
+## Accessors -----
+### Accessors `gsm` ----
+#' @export
+#' @rdname GEO-class
+methods::setGeneric("gsm", function(object) {
+    standardGeneric("gsm")
+})
+
+#' @export
+#' @rdname GEO-class
+methods::setGeneric("gsm<-", function(object, value) {
+    standardGeneric("gsm<-")
+})
+
+#' @method gsm GEOPlatform
+#' @aliases gsm
+#' @export
+#' @rdname GEO-class
+methods::setMethod("gsm", "GEOPlatform", function(object) {
+    object@gsm
+})
+
+#' @method gsm<- GEOPlatform
+#' @aliases gsm<-
+#' @export
+#' @rdname GEO-class
+methods::setMethod("gsm<-", "GEOPlatform", function(object, value) {
+    object@gsm <- value
+    object
+})
+
+### Accessors `gse` ----
+#' @export
+#' @rdname GEO-class
+methods::setGeneric("gse", function(object) {
+    standardGeneric("gse")
+})
+
+#' @export
+#' @rdname GEO-class
+methods::setGeneric("gse<-", function(object, value) {
+    standardGeneric("gse<-")
+})
+
+#' @method gse GEOPlatform
+#' @aliases gse
+#' @export
+#' @rdname GEO-class
+methods::setMethod("gse", "GEOPlatform", function(object) {
+    object@gse
+})
+
+#' @method gse<- GEOPlatform
+#' @aliases gse<-
+#' @export
+#' @rdname GEO-class
+methods::setMethod("gse<-", "GEOPlatform", function(object, value) {
+    object@gse <- value
+    object
+})
+
+# Class `GEOSeries` --------------------------------------------
+#' @slot gsm: a list of `GEODatatable` object containg the samples information
 #' of current GEO series.
-#' @slot gpl: a list of `GEOSoft` object containg the platforms information
+#' @slot gpl: a list of `GEODatatable` object containg the platforms information
 #' of current GEO series.
 #' @rdname GEO-class
 methods::setClass(
@@ -210,19 +388,19 @@ methods::setClass(
         gsm = list(),
         gpl = list()
     ),
-    contains = "GEOData"
+    contains = "GEOSoft"
 )
 
 ## Validator ----
 methods::setValidity("GEOSeries", function(object) {
     if (!all(vapply(object@gsm, function(x) {
-        methods::is(x, "GEOSoft")
-    }, logical(1L)))) {
-        "the element of slot @gsm list should only contain Class `GEOSoft` object."
+        methods::is(x, "GEODatatable")
+    }, logical(1L), USE.NAMES = FALSE))) {
+        "the element of slot @gsm list should only contain Class `GEODatatable` object."
     } else if (!all(vapply(object@gpl, function(x) {
-        methods::is(x, "GEOSoft")
-    }, logical(1L)))) {
-        "the element of slot @gpl list should only contain Class `GEOSoft` object."
+        methods::is(x, "GEODatatable")
+    }, logical(1L), USE.NAMES = FALSE))) {
+        "the element of slot @gpl list should only contain Class `GEODatatable` object."
     } else {
         TRUE
     }
@@ -232,23 +410,15 @@ methods::setValidity("GEOSeries", function(object) {
 #' @export
 #' @rdname GEO-class
 methods::setMethod("show", "GEOSeries", function(object) {
-    cat(paste0("An object of ", methods::is(object)[[1L]]), sep = "\n")
-    wrap_cat("gsm", names = names(object@gsm))
-    wrap_cat("gpl", names = names(object@gpl))
-    wrap_cat("meta", names = names(object@meta))
+    cat("<", methods::is(object)[[1L]], "> ", "\n", sep = "")
+    wrap_cat("gsm", names = vapply(object@gsm, rcd_name, character(1L)))
+    wrap_cat("gpl", names = vapply(object@gpl, rcd_name, character(1L)))
+    wrap_cat("metadata", names = names(object@metadata))
     wrap_cat("accession", names = object@accession)
 })
 
 ## Accessors -----
 ### Accessors `gsm` ----
-methods::setGeneric("gsm", function(object) {
-    standardGeneric("gsm")
-})
-
-methods::setGeneric("gsm<-", function(object, value) {
-    standardGeneric("gsm<-")
-})
-
 #' @method gsm GEOSeries
 #' @aliases gsm
 #' @export
@@ -267,10 +437,14 @@ methods::setMethod("gsm<-", "GEOSeries", function(object, value) {
 })
 
 ### Accessors `gpl` ----
+#' @export
+#' @rdname GEO-class
 methods::setGeneric("gpl", function(object) {
     standardGeneric("gpl")
 })
 
+#' @export
+#' @rdname GEO-class
 methods::setGeneric("gpl<-", function(object, value) {
     standardGeneric("gpl<-")
 })

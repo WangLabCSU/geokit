@@ -3,63 +3,133 @@
 \docType{class}
 \name{GEO-class}
 \alias{GEO-class}
-\alias{GEOData-class}
-\alias{show,GEOData-method}
-\alias{meta,GEOData-method}
-\alias{meta}
-\alias{meta<-,GEOData-method}
-\alias{meta<-}
-\alias{accession,GEOData-method}
-\alias{accession}
-\alias{accession<-,GEOData-method}
-\alias{accession<-}
 \alias{GEOSoft-class}
 \alias{show,GEOSoft-method}
-\alias{columns,GEOSoft-method}
+\alias{metadata}
+\alias{metadata<-}
+\alias{metadata,GEOSoft-method}
+\alias{metadata<-,GEOSoft-method}
+\alias{accession}
+\alias{accession<-}
+\alias{accession,GEOSoft-method}
+\alias{accession<-,GEOSoft-method}
+\alias{rcd_type}
+\alias{rcd_type<-}
+\alias{rcd_type,GEOSoft-method}
+\alias{rcd_type<-,GEOSoft-method}
+\alias{rcd_name}
+\alias{rcd_name<-}
+\alias{rcd_name,GEOSoft-method}
+\alias{rcd_name<-,GEOSoft-method}
+\alias{GEODatatable-class}
+\alias{show,GEODatatable-method}
 \alias{columns}
-\alias{columns<-,GEOSoft-method}
 \alias{columns<-}
-\alias{datatable,GEOSoft-method}
+\alias{columns,GEODatatable-method}
+\alias{columns<-,GEODatatable-method}
 \alias{datatable}
-\alias{datatable<-,GEOSoft-method}
 \alias{datatable<-}
+\alias{datatable,GEODatatable-method}
+\alias{datatable<-,GEODatatable-method}
+\alias{GEOPlatform-class}
+\alias{show,GEOPlatform-method}
+\alias{gsm}
+\alias{gsm<-}
+\alias{gsm,GEOPlatform-method}
+\alias{gsm<-,GEOPlatform-method}
+\alias{gse}
+\alias{gse<-}
+\alias{gse,GEOPlatform-method}
+\alias{gse<-,GEOPlatform-method}
 \alias{GEOSeries-class}
 \alias{show,GEOSeries-method}
 \alias{gsm,GEOSeries-method}
-\alias{gsm}
 \alias{gsm<-,GEOSeries-method}
-\alias{gsm<-}
-\alias{gpl,GEOSeries-method}
 \alias{gpl}
-\alias{gpl<-,GEOSeries-method}
 \alias{gpl<-}
+\alias{gpl,GEOSeries-method}
+\alias{gpl<-,GEOSeries-method}
 \title{Virtual class for holding GEO series, samples, platforms, and datasets.}
 \usage{
-\S4method{show}{GEOData}(object)
-
-\S4method{meta}{GEOData}(object)
-
-\S4method{meta}{GEOData}(object) <- value
-
-\S4method{accession}{GEOData}(object)
-
-\S4method{accession}{GEOData}(object) <- value
-
 \S4method{show}{GEOSoft}(object)
 
-\S4method{columns}{GEOSoft}(object)
+metadata(object)
 
-\S4method{columns}{GEOSoft}(object) <- value
+metadata(object) <- value
 
-\S4method{datatable}{GEOSoft}(object)
+\S4method{metadata}{GEOSoft}(object)
 
-\S4method{datatable}{GEOSoft}(object) <- value
+\S4method{metadata}{GEOSoft}(object) <- value
+
+accession(object)
+
+accession(object) <- value
+
+\S4method{accession}{GEOSoft}(object)
+
+\S4method{accession}{GEOSoft}(object) <- value
+
+rcd_type(object)
+
+rcd_type(object) <- value
+
+\S4method{rcd_type}{GEOSoft}(object)
+
+\S4method{rcd_type}{GEOSoft}(object) <- value
+
+rcd_name(object)
+
+rcd_name(object) <- value
+
+\S4method{rcd_name}{GEOSoft}(object)
+
+\S4method{rcd_name}{GEOSoft}(object) <- value
+
+\S4method{show}{GEODatatable}(object)
+
+columns(object)
+
+columns(object) <- value
+
+\S4method{columns}{GEODatatable}(object)
+
+\S4method{columns}{GEODatatable}(object) <- value
+
+datatable(object)
+
+datatable(object) <- value
+
+\S4method{datatable}{GEODatatable}(object)
+
+\S4method{datatable}{GEODatatable}(object) <- value
+
+\S4method{show}{GEOPlatform}(object)
+
+gsm(object)
+
+gsm(object) <- value
+
+\S4method{gsm}{GEOPlatform}(object)
+
+\S4method{gsm}{GEOPlatform}(object) <- value
+
+gse(object)
+
+gse(object) <- value
+
+\S4method{gse}{GEOPlatform}(object)
+
+\S4method{gse}{GEOPlatform}(object) <- value
 
 \S4method{show}{GEOSeries}(object)
 
 \S4method{gsm}{GEOSeries}(object)
 
 \S4method{gsm}{GEOSeries}(object) <- value
+
+gpl(object)
+
+gpl(object) <- value
 
 \S4method{gpl}{GEOSeries}(object)
 
@@ -71,10 +141,10 @@
 \item{value}{A R object with the same class of corresponding slots.}
 }
 \description{
-\code{GEOData} class, which contains two slots \code{meta} and \code{accession}, is the
-basic class (super class) of \code{GEOSeries} class and \code{GEOSoft} class.
+\code{GEOSoft} class, which contains two slots \code{meta} and \code{accession}, is the
+basic class (super class) of \code{GEOSeries} class and \code{GEOData} class.
 \code{GEOSeries} class contains extra two slots \code{gsm} and \code{gpl} special for \code{GSE}
-entity soft file and \code{GEOSoft} contains extra two slots \code{columns} and
+entity soft file and \code{GEOData} contains extra two slots \code{columns} and
 \code{datatable} special for GEO samples, platforms, and datasets.
 }
 \section{Slots}{
@@ -91,10 +161,16 @@ slot \code{datatable}.}
 
 \item{\code{datatable:}}{A \code{data.frame} shows the data information.}
 
-\item{\code{gsm:}}{a list of \code{GEOSoft} object containg the samples information
+\item{\code{gsm:}}{a list of \code{GEODatatable} object containg the samples information
+of current GEO platform.}
+
+\item{\code{gse:}}{a list of \code{GEODatatable} object containg the series information
+of current GEO platform.}
+
+\item{\code{gsm:}}{a list of \code{GEODatatable} object containg the samples information
 of current GEO series.}
 
-\item{\code{gpl:}}{a list of \code{GEOSoft} object containg the platforms information
+\item{\code{gpl:}}{a list of \code{GEODatatable} object containg the platforms information
 of current GEO series.}
 }}
 
@@ -102,7 +178,7 @@ of current GEO series.}
 gse <- geo("GSE10", odir = tempdir(), gse_matrix = FALSE)
 accession(gse)
 gpllist <- gpl(gse)
-meta(gpllist[[1L]])
+metadata(gpllist[[1L]])
 accession(gpllist[[1L]])
 columns(gpllist[[1L]])
 datatable(gpllist[[1L]])

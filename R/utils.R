@@ -1,5 +1,7 @@
 `%||%` <- function(x, y) if (is.null(x)) y else x
 
+is_all_same <- function(x) rust_call("is_all_same", x)
+
 return_object_or_list <- function(x, names = NULL) {
     if (length(x) == 1L) {
         x[[1L]]
@@ -134,27 +136,15 @@ read_text <- function(text, ...) {
     )
 }
 
-na_string <- c("NA", "null", "NULL", "Null")
-
-#' @importFrom data.table %chin%
 #' @importFrom rlang caller_arg caller_env
-check_ids <- function(ids, arg = caller_arg(ids), call = caller_env()) {
-    ids <- toupper(ids)
-    geotypes <- substr(ids, 1L, 3L)
-    is_geo_types <- geotypes %chin% c("GSE", "GPL", "GSM", "GDS")
-    if (any(!is_geo_types)) {
+assert_accession <- function(accession, arg = caller_arg(accession),
+                             call = caller_env()) {
+    if (!is_all_same(geo_gtype(accession))) {
         cli::cli_abort(
-            "Invalid values provided in {.arg {arg}}: {.val {unique(geotypes[!is_geo_types])}}",
+            "All {.arg {arg}} values must have the same GEO type.",
             call = call
         )
     }
-    if (any(geotypes != geotypes[1L])) {
-        cli::cli_abort(
-            "All {.arg {arg}} must be the same GEO types",
-            call = call
-        )
-    }
-    ids
 }
 
 #' @importFrom rlang arg_match0

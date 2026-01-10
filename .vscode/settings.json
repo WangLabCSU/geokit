@@ -6,8 +6,6 @@
     "Makevars.in": "makefile",
     "Makevars.win": "makefile",
     "configure": "shellscript",
-    "configure.win": "shellscript",
-    "cleanup": "shellscript",
-    "cleanup.win": "shellscript"
+    "configure.win": "shellscript"
   }
 }

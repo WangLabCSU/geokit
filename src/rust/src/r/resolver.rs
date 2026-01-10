@@ -1,10 +1,11 @@
-use std::str::FromStr;
+use std::{fmt::Display, str::FromStr};
 
-use anyhow::{anyhow, Context};
+use anyhow::{anyhow, Context, Result};
 use extendr_api::Robj;
 
 use super::error::RGEOParseError;
 use super::helper::*;
+
 use crate::geo::{
     GEOADBFormat, GEOADBResolver, GEOADBResolverBuilder, GEOAmount, GEOEntity, GEOFTPFormat,
     GEOFTPResolver, GEOFTPResolverBuilder, GEOScope, GEOType,
@@ -27,20 +28,13 @@ pub(crate) enum GEOResolver {
     FTP(GEOFTPResolver),
 }
 
-#[derive(Default)]
-pub(crate) struct GEOResolverBuilder {
-    entity: Option<GEOEntity>,
-    format: Option<GEOFormat>,
-    scope: Option<GEOScope>,
-    amount: Option<GEOAmount>,
-    over_https: Option<bool>,
-}
-
 impl GEOResolver {
+    #[allow(dead_code)]
     pub(crate) fn new(entity: GEOEntity) -> Self {
         Self::ADB(GEOADBResolver::new(entity))
     }
 
+    #[allow(dead_code)]
     pub(crate) fn builder() -> GEOResolverBuilder {
         GEOResolverBuilder::default()
     }
@@ -48,6 +42,7 @@ impl GEOResolver {
     /// Returns the GEO accession string (e.g., "GSE12345" or "GSM67890")
     /// associated with this resolver.
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn accession(&self) -> &str {
         match self {
             Self::ADB(resolver) => resolver.accession(),
@@ -58,6 +53,7 @@ impl GEOResolver {
     /// Returns the [`GEOType`] (such as `Datasets`, `Series`, or `Samples`)
     /// associated with this resolver.
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn gtype(&self) -> &GEOType {
         match self {
             Self::ADB(resolver) => resolver.gtype(),
@@ -87,16 +83,36 @@ impl GEOResolver {
             Self::FTP(resolver) => resolver.url(),
         }
     }
+
+    pub(crate) fn fname(&self) -> Option<String> {
+        match self {
+            Self::ADB(resolver) => Some(resolver.fname()),
+            Self::FTP(resolver) => resolver.fname(),
+        }
+    }
+}
+
+#[derive(Default)]
+pub(crate) struct GEOResolverBuilder {
+    entity: Option<GEOEntity>,
+    format: Option<GEOFormat>,
+    scope: Option<GEOScope>,
+    amount: Option<GEOAmount>,
+    over_https: Option<bool>,
+    default_scope: Option<GEOScope>,
+    default_amount: Option<GEOAmount>,
 }
 
 impl GEOResolverBuilder {
     pub(crate) fn new() -> Self {
         Self::default()
     }
+
     pub(crate) fn entity(&mut self, entity: GEOEntity) -> &mut Self {
         self.entity = Some(entity);
         self
     }
+
     pub(crate) fn format(&mut self, format: GEOFormat) -> &mut Self {
         self.format = Some(format);
         self
@@ -107,8 +123,18 @@ impl GEOResolverBuilder {
         self
     }
 
+    pub(crate) fn default_scope(&mut self, scope: GEOScope) -> &mut Self {
+        self.default_scope = Some(scope);
+        self
+    }
+
     pub(crate) fn amount(&mut self, amount: GEOAmount) -> &mut Self {
         self.amount = Some(amount);
+        self
+    }
+
+    pub(crate) fn default_amount(&mut self, amount: GEOAmount) -> &mut Self {
+        self.default_amount = Some(amount);
         self
     }
 
@@ -117,11 +143,12 @@ impl GEOResolverBuilder {
         self
     }
 
-    pub(crate) fn build(&mut self) -> Result<GEOResolver, RGEOParseError> {
+    pub(crate) fn build(&mut self) -> std::result::Result<GEOResolver, RGEOParseError> {
+        // since all entity have the `GEOADBFormat::Html` format, we use it as the default
         let format = self
             .format
             .as_ref()
-            .map_or_else(|| Err(RGEOParseError::RequireFormat), |v| Ok(v.clone()))?;
+            .map_or_else(|| GEOFormat::default(), |v| v.clone());
         match format {
             GEOFormat::ADB(format) => {
                 let mut builder = GEOADBResolverBuilder::new();
@@ -132,8 +159,14 @@ impl GEOResolverBuilder {
                 if let Some(amount) = &self.amount {
                     builder.amount(amount.clone());
                 }
+                if let Some(amount) = &self.default_amount {
+                    builder.default_amount(amount.clone());
+                }
                 if let Some(scope) = &self.scope {
                     builder.scope(scope.clone());
+                }
+                if let Some(scope) = &self.default_scope {
+                    builder.default_scope(scope.clone());
                 }
                 builder
                     .build()
@@ -162,189 +195,223 @@ impl GEOResolverBuilder {
 /// Each parameter is an R object (character/logical vector) that may be
 /// scalar-recycled or NULL (optional). Lengths must match `accession`
 /// unless recycling is possible.
-pub(crate) fn resolvers_from_format(
+pub(crate) fn resolvers_from_format_url(
     accession: &Robj,
     format: &Robj,
     amount: &Robj,
     scope: &Robj,
     ftp_over_https: &Robj,
-) -> Result<Vec<GEOResolver>, String> {
+) -> Result<Vec<GEOResolver>> {
     let accession = accession
         .as_str_vector()
         .ok_or_else(|| anyhow!("Expected a character vector"))
-        .with_context(|| format!("Invalid 'accession'"))
-        .map_err(|e| format!("{:?}", e))?;
+        .with_context(|| format!("Invalid 'accession'"))?;
 
     // Optional arguments: may be NULL -> None, or character/logical vectors, recycled if necessary
     let format = robj_to_option_vec_str(format, accession.len())
-        .with_context(|| format!("Invalid 'format'"))
-        .map_err(|e| format!("{:?}", e))?;
+        .with_context(|| format!("Invalid 'format'"))?;
     let amount = robj_to_option_vec_str(amount, accession.len())
-        .with_context(|| format!("Invalid 'amount'"))
-        .map_err(|e| format!("{:?}", e))?;
+        .with_context(|| format!("Invalid 'amount'"))?;
     let scope = robj_to_option_vec_str(scope, accession.len())
-        .with_context(|| format!("Invalid 'scope'"))
-        .map_err(|e| format!("{:?}", e))?;
+        .with_context(|| format!("Invalid 'scope'"))?;
     let ftp_over_https = robj_to_option_vec_bool(&ftp_over_https, accession.len())
-        .with_context(|| format!("Invalid 'ftp_over_https'"))
-        .map_err(|e| format!("{:?}", e))?;
-
-    // Construct a resolver per accession
-    accession
-        .into_iter()
-        .enumerate()
-        .map(|(i, acc)| {
-            // Parse accession string into a GEOIdentifier
-            let entity = GEOEntity::try_from(acc)
-                .with_context(|| format!("Invalid 'accession': {}", acc))
-                .map_err(|e| format!("{:?}", e))?;
-            let mut builder = GEOResolverBuilder::new();
-            builder.entity(entity);
-
-            // SAFETY: lengths were validated/recycled earlier
-            let format = format.as_ref().map(|v| unsafe { *v.get_unchecked(i) });
-            let amount = amount.as_ref().map(|v| unsafe { *v.get_unchecked(i) });
-            let scope = scope.as_ref().map(|v| unsafe { *v.get_unchecked(i) });
-            let ftp_over_https = ftp_over_https
-                .as_ref()
-                .map(|v| unsafe { *v.get_unchecked(i) });
-
-            // Conditionally set optional parameters
-            if let Some(format) = format {
-                let format: GEOFormat = format
-                    .try_into()
-                    .with_context(|| format!("Invalid 'format': {}", format))
-                    .map_err(|e| format!("{:?}", e))?;
-                builder.format(format);
-            }
-
-            if let Some(amount) = amount {
-                let amount: RGEOAmount = amount
-                    .try_into()
-                    .with_context(|| format!("Invalid 'amount': {}", amount))
-                    .map_err(|e| format!("{:?}", e))?;
-                if let RGEOAmount::Amount(a) = amount {
-                    builder.amount(a);
-                }
-            }
-
-            if let Some(scope) = scope {
-                let rscope: RGEOScope = scope
-                    .try_into()
-                    .with_context(|| format!("Invalid 'scope': {}", scope))
-                    .map_err(|e| format!("{:?}", e))?;
-                if let RGEOScope::Scope(s) = rscope {
-                    builder.scope(s);
-                }
-            }
-
-            if let Some(over_https) = ftp_over_https {
-                builder.over_https(over_https);
-            }
-            builder
-                .build()
-                .map_err(|e| format!("Failed to create GEOResolver: {}", e))
-        })
-        .collect()
+        .with_context(|| format!("Invalid 'ftp_over_https'"))?;
+    resolvers_from_str(
+        &accession,
+        format.as_ref().map(|f| f.as_slice()),
+        amount.as_ref().map(|a| a.as_slice()),
+        scope.as_ref().map(|s| s.as_slice()),
+        ftp_over_https.as_ref().map(|f| f.as_slice()),
+        |_| None,
+        GEOAmount::Data,
+        GEOScope::Itself,
+    )
 }
 
-pub(crate) fn resolvers_from_famount(
+pub(crate) fn resolvers_from_famount_landing(
     accession: &Robj,
     famount: &Robj,
     scope: &Robj,
     ftp_over_https: &Robj,
-    adb_format: &GEOADBFormat,
-) -> Result<Vec<GEOResolver>, String> {
+) -> Result<Vec<GEOResolver>> {
     let accession = accession
         .as_str_vector()
         .ok_or_else(|| anyhow!("Expected a character vector"))
-        .with_context(|| format!("Invalid 'accession'"))
-        .map_err(|e| format!("{:?}", e))?;
+        .with_context(|| format!("Invalid 'accession'"))?;
 
     // Optional arguments: may be NULL -> None, or character/logical vectors, recycled if necessary
     let famount = robj_to_option_vec_str(famount, accession.len())
-        .with_context(|| format!("Invalid 'famount'"))
-        .map_err(|e| format!("{:?}", e))?;
+        .with_context(|| format!("Invalid 'famount'"))?;
+    let mut format = Vec::with_capacity(accession.len());
+    let mut amount = Vec::with_capacity(accession.len());
+    if let Some(famount_vec) = famount {
+        for s in famount_vec.into_iter() {
+            match s {
+                "none" | "brief" | "quick" | "data" | "full" => {
+                    format.push("html");
+                    amount.push(s);
+                }
+                "soft" | "soft_full" | "miniml" | "matrix" | "annot" | "suppl" => {
+                    format.push(s);
+                    amount.push("none");
+                }
+                _ => {
+                    return Err(RGEOParseError::InvalidFamountLanding)
+                        .with_context(|| format!("Invalid 'famount': {}", s))
+                }
+            }
+        }
+    } else {
+        format.resize(format.capacity(), "html");
+        amount.resize(amount.capacity(), "none");
+    }
     let scope = robj_to_option_vec_str(scope, accession.len())
-        .with_context(|| format!("Invalid 'scope'"))
-        .map_err(|e| format!("{:?}", e))?;
+        .with_context(|| format!("Invalid 'scope'"))?;
     let ftp_over_https = robj_to_option_vec_bool(&ftp_over_https, accession.len())
-        .with_context(|| format!("Invalid 'ftp_over_https'"))
-        .map_err(|e| format!("{:?}", e))?;
+        .with_context(|| format!("Invalid 'ftp_over_https'"))?;
+    resolvers_from_str(
+        &accession,
+        Some(format.as_slice()),
+        Some(amount.as_slice()),
+        scope.as_ref().map(|s| s.as_slice()),
+        ftp_over_https.as_ref().map(|f| f.as_slice()),
+        |_| None,
+        GEOAmount::Brief,
+        GEOScope::Itself,
+    )
+}
 
-    // Construct a resolver per accession
-    accession
-        .into_iter()
-        .enumerate()
-        .map(|(i, acc)| {
-            // Parse accession string into a GEOIdentifier
-            let entity = GEOEntity::try_from(acc)
-                .with_context(|| format!("Invalid 'accession': {}", acc))
-                .map_err(|e| format!("{:?}", e))?;
-            let mut builder = GEOResolverBuilder::new();
-            builder.entity(entity);
+pub(crate) fn resolvers_from_famount_soft(
+    accession: &Robj,
+    famount: &Robj,
+    scope: &Robj,
+    ftp_over_https: &Robj,
+) -> Result<Vec<GEOResolver>> {
+    let accession = accession
+        .as_str_vector()
+        .ok_or_else(|| anyhow!("Expected a character vector"))
+        .with_context(|| format!("Invalid 'accession'"))?;
 
-            // SAFETY: lengths were validated/recycled earlier
-            let famount = famount.as_ref().map(|v| unsafe { *v.get_unchecked(i) });
-            let format;
-            let ramount;
-            match famount {
-                Some(s) => {
-                    match s {
-                        "none" | "brief" | "quick" | "data" | "full" => {
-                            format = GEOFormat::ADB(adb_format.clone());
-                            // SAFETY: `famount` is guaranteed to be one of the expected values for RGEOAmount
-                            ramount = Some(unsafe { RGEOAmount::try_from(s).unwrap_unchecked() });
-                        }
-                        "soft" | "soft_full" | "miniml" | "matrix" | "annot" | "suppl" => {
-                            // SAFETY: `famount` is guaranteed to be one of the expected values for GEOFormat
-                            format = unsafe { GEOFormat::try_from(s).unwrap_unchecked() };
-                            ramount = None;
-                        }
-                        _ => {
-                            return Err(RGEOParseError::InvalidFamount)
-                                .with_context(|| format!("Invalid 'format': {}", s))
-                                .map_err(|e| format!("{:?}", e))
-                        }
-                    }
+    // Optional arguments: may be NULL -> None, or character/logical vectors, recycled if necessary
+    let famount = robj_to_option_vec_str(famount, accession.len())
+        .with_context(|| format!("Invalid 'famount'"))?;
+    let mut amount = Vec::with_capacity(accession.len());
+    let format = if let Some(famount_vec) = famount {
+        let mut format_inner = Vec::with_capacity(accession.len());
+        for s in famount_vec.into_iter() {
+            match s {
+                "none" | "brief" | "quick" | "data" | "full" => {
+                    format_inner.push("text");
+                    amount.push(s);
                 }
-                None => {
-                    format = GEOFormat::ADB(adb_format.clone());
-                    ramount = None;
+                "soft" | "soft_full" => {
+                    format_inner.push(s);
+                    amount.push("none");
+                }
+                _ => {
+                    return Err(RGEOParseError::InvalidFamountSoft)
+                        .with_context(|| format!("Invalid 'famount': {}", s))
                 }
             }
+        }
+        Some(format_inner)
+    } else {
+        amount.resize(amount.capacity(), "none");
+        None
+    };
+    let scope = robj_to_option_vec_str(scope, accession.len())
+        .with_context(|| format!("Invalid 'scope'"))?;
+    let ftp_over_https = robj_to_option_vec_bool(&ftp_over_https, accession.len())
+        .with_context(|| format!("Invalid 'ftp_over_https'"))?;
 
-            // SAFETY: lengths were validated/recycled earlier
-            let scope = scope.as_ref().map(|v| unsafe { *v.get_unchecked(i) });
-            let ftp_over_https = ftp_over_https
-                .as_ref()
-                .map(|v| unsafe { *v.get_unchecked(i) });
+    resolvers_from_str(
+        &accession,
+        format.as_ref().map(|vec| vec.as_slice()),
+        Some(amount.as_slice()),
+        scope.as_ref().map(|s| s.as_slice()),
+        ftp_over_https.as_ref().map(|f| f.as_slice()),
+        |gtype| {
+            let format = match gtype {
+                GEOType::Datasets | GEOType::Platforms | GEOType::Series => {
+                    GEOFormat::FTP(GEOFTPFormat::SOFT)
+                }
+                GEOType::Samples => GEOFormat::ADB(GEOADBFormat::Text),
+            };
+            Some(format)
+        },
+        GEOAmount::Data,
+        GEOScope::Itself,
+    )
+}
+
+fn resolvers_from_str<F: Fn(&GEOType) -> Option<GEOFormat>>(
+    accession: &[&str],
+    format: Option<&[&str]>,
+    amount: Option<&[&str]>,
+    scope: Option<&[&str]>,
+    ftp_over_https: Option<&[bool]>,
+    default_format: F,
+    default_amount: GEOAmount, // Only affect ADBResolver
+    default_scope: GEOScope,   // Only affect ADBResolver
+) -> Result<Vec<GEOResolver>> {
+    let mut resolvers = Vec::with_capacity(accession.len());
+    let mut builder = GEOResolverBuilder::new();
+    for (i, acc) in accession.into_iter().enumerate() {
+        // Parse accession string into a GEOIdentifier
+        let entity =
+            GEOEntity::try_from(*acc).with_context(|| format!("Invalid 'accession': {}", acc))?;
+
+        // SAFETY: lengths were validated/recycled earlier
+        let format = format.map(|v| unsafe { *v.get_unchecked(i) });
+        let format: Option<GEOFormat> = format.map_or_else(
+            || Ok(default_format(entity.gtype())),
+            |f| -> Result<Option<GEOFormat>> {
+                f.try_into()
+                    .with_context(|| format!("Invalid 'format': {}", f))
+                    .map(|ok| Some(ok))
+            },
+        )?;
+
+        // SAFETY: lengths were validated/recycled earlier
+        let amount = amount.map(|v| unsafe { *v.get_unchecked(i) });
+        let scope = scope.map(|v| unsafe { *v.get_unchecked(i) });
+        let over_https = ftp_over_https.map(|v| unsafe { *v.get_unchecked(i) });
+
+        builder.entity(entity);
+        if let Some(format) = format {
             builder.format(format);
+        }
 
-            // Conditionally set optional parameters
-            if let Some(amount) = ramount {
-                if let RGEOAmount::Amount(a) = amount {
-                    builder.amount(a);
-                }
+        if let Some(amount) = amount {
+            let amount: RGEOAmount = amount
+                .try_into()
+                .with_context(|| format!("Invalid 'amount': {}", amount))?;
+            if let RGEOAmount::Amount(a) = amount {
+                builder.amount(a);
             }
-            if let Some(scope) = scope {
-                let rscope: RGEOScope = scope
-                    .try_into()
-                    .with_context(|| format!("Invalid 'scope': {}", scope))
-                    .map_err(|e| format!("{:?}", e))?;
-                if let RGEOScope::Scope(s) = rscope {
-                    builder.scope(s);
-                }
-            }
+        }
 
-            if let Some(over_https) = ftp_over_https {
-                builder.over_https(over_https);
+        if let Some(scope) = scope {
+            let rscope: RGEOScope = scope
+                .try_into()
+                .with_context(|| format!("Invalid 'scope': {}", scope))?;
+            if let RGEOScope::Scope(s) = rscope {
+                builder.scope(s);
             }
-            builder
-                .build()
-                .map_err(|e| format!("Failed to create GEOResolver: {}", e))
-        })
-        .collect()
+        }
+
+        if let Some(over_https) = over_https {
+            builder.over_https(over_https);
+        }
+
+        let resolver = builder
+            .default_scope(default_scope.clone())
+            .default_amount(default_amount.clone())
+            .build()?;
+        resolvers.push(resolver);
+    }
+    // Construct a resolver per accession
+    Ok(resolvers)
 }
 
 // Accession Display Bar
@@ -360,6 +427,21 @@ pub(crate) enum GEOFormat {
 
     // GEO FTP server
     FTP(GEOFTPFormat),
+}
+
+impl Default for GEOFormat {
+    fn default() -> Self {
+        Self::ADB(GEOADBFormat::Html)
+    }
+}
+
+impl Display for GEOFormat {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::ADB(format) => format.fmt(f),
+            Self::FTP(format) => format.fmt(f),
+        }
+    }
 }
 
 impl From<GEOADBFormat> for GEOFormat {

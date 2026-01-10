@@ -5,7 +5,7 @@
 \title{Get Supplemental Files from GEO}
 \usage{
 geo_suppl(
-  ids,
+  accession,
   pattern = NULL,
   ftp_over_https = TRUE,
   handle_opts = list(),
@@ -13,25 +13,22 @@ geo_suppl(
 )
 }
 \arguments{
-\item{ids}{Character vector of GEO accession IDs to download and parse.
-All IDs must belong to the same GEO entity type. Examples:
+\item{accession}{A character of GEO accession IDs. Examples:
 \itemize{
-\item DataSets: \code{c("GDS505", "GDS606")}
-\item Series: \code{c("GSE2", "GSE22")}
+\item DataSets (GDS): \code{"GDS505"}, \code{"GDS606"}, \code{"GDS1234"}, \code{"GDS9999"}, etc.
+\item Series (GSE): \code{"GSE2"}, \code{"GSE22"}, \code{"GSE100"}, \code{"GSE2000"}, etc.
+\item Platforms (GPL): \code{"GPL96"}, \code{"GPL570"}, \code{"GPL10558"}, etc.
+\item Samples (GSM): \code{"GSM12345"}, \code{"GSM67890"}, \code{"GSM112233"}, etc.
 }}
 
 \item{pattern}{character string containing a
 \link[base:regex]{regular expression} to be matched in the supplementary file
 names.}
 
-\item{ftp_over_https}{Logical scalar. If \code{TRUE}, connects to GEO FTP via
-HTTPS (\verb{https://ftp.ncbi.nlm.nih.gov/geo}); otherwise, uses plain FTP.}
-
-\item{handle_opts}{A list of named options / headers to be set in the
-\code{\link[curl:multi_download]{multi_download}}.}
-
-\item{odir}{Destination directory for downloads. Defaults to the current
-working directory.}
+\item{ftp_over_https}{Logical scalar. If \code{TRUE}, connects to GEO FTP server
+via HTTPS (\url{https://ftp.ncbi.nlm.nih.gov/geo}); otherwise uses plain FTP
+(\url{ftp://ftp.ncbi.nlm.nih.gov/geo}). Only applicable to GEO FTP server
+access.}
 }
 \value{
 A list (or a character atomic verctor if only one \code{id} is provided)

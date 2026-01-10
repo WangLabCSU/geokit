@@ -100,6 +100,12 @@ Accession Display Bar of GEO database or directly from GEO FTP/HTTPS servers.
 Depending on the accession type or requested \code{famount}, it automatically
 generates the correct URL.
 }
+\examples{
+geo_url("GSE10")
+geo_url("gpl98")
+geo_url("GSM1")
+geo_url("GDS10")
+}
 \references{
 \itemize{
 \item \url{https://www.ncbi.nlm.nih.gov/geo/info/download.html}

@@ -8,7 +8,7 @@
 #' @export
 geo_meta <- function(ids, amount = NULL, ftp_over_https = TRUE,
                      handle_opts = list(), odir = getwd()) {
-    ids <- check_ids(ids)
+    ids <- assert_accession(ids)
     odir <- dir_create(odir, recursive = TRUE)
     geo_type <- substr(ids[1L], 1L, 3L)
     amount <- check_amount(amount, geo_type)

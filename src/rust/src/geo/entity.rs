@@ -13,6 +13,14 @@ pub enum GEOType {
 }
 
 impl GEOType {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            GEOType::Datasets => "Datasets",
+            GEOType::Series => "Series",
+            GEOType::Platforms => "Platforms",
+            GEOType::Samples => "Samples",
+        }
+    }
     pub fn abbre(&self) -> &'static str {
         match self {
             GEOType::Datasets => "GDS",
@@ -25,16 +33,7 @@ impl GEOType {
 
 impl fmt::Display for GEOType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "{}",
-            match self {
-                GEOType::Datasets => "Datasets",
-                GEOType::Series => "Series",
-                GEOType::Platforms => "Platforms",
-                GEOType::Samples => "Samples",
-            }
-        )
+        write!(f, "{}", self.as_str())
     }
 }
 
@@ -63,7 +62,7 @@ impl fmt::Display for GEOEntity {
 impl FromStr for GEOEntity {
     type Err = GEOParseError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let accession = s.to_ascii_uppercase();
+        let accession = s.trim().to_ascii_uppercase();
 
         // Determine GEO type from the 3-letter prefix.
         let gtype = if accession.starts_with("GDS") {
