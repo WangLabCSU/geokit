@@ -72,8 +72,8 @@ parse_sample_data.list <- function(x, ..., fields = NULL, sep = ":") {
         }, logical(1L), USE.NAMES = FALSE)
         fields <- colnames(metadata)[cols[column_with_sep]]
     }
-    data.table::setDF(metadata)
     if (length(fields) == 0L) {
+        data.table::setDF(metadata)
         out <- set_rownames(metadata, "geo_accession")
         return(out)
     }
@@ -88,6 +88,7 @@ parse_sample_data.list <- function(x, ..., fields = NULL, sep = ":") {
             before = characteristic_col
         )
     }
+    data.table::setDF(metadata)
     set_rownames(metadata, "geo_accession")
 }
 
