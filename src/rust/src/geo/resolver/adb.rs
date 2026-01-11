@@ -108,8 +108,6 @@ pub struct GEOADBResolverBuilder {
     format: Option<GEOADBFormat>,
     scope: Option<GEOScope>,
     amount: Option<GEOAmount>,
-    default_scope: GEOScope,
-    default_amount: GEOAmount,
 }
 
 impl Default for GEOADBResolverBuilder {
@@ -119,8 +117,6 @@ impl Default for GEOADBResolverBuilder {
             format: None,
             scope: None,
             amount: None,
-            default_scope: GEOScope::Itself,
-            default_amount: GEOAmount::Data,
         }
     }
 }
@@ -155,18 +151,8 @@ impl GEOADBResolverBuilder {
         self
     }
 
-    pub fn default_scope(&mut self, scope: GEOScope) -> &mut Self {
-        self.default_scope = scope;
-        self
-    }
-
     pub fn amount(&mut self, amount: GEOAmount) -> &mut Self {
         self.amount = Some(amount);
-        self
-    }
-
-    pub fn default_amount(&mut self, amount: GEOAmount) -> &mut Self {
-        self.default_amount = amount;
         self
     }
 
@@ -185,7 +171,7 @@ impl GEOADBResolverBuilder {
             .format
             .as_ref()
             .map(|f| f.clone())
-            .unwrap_or_else(|| GEOADBFormat::Html);
+            .unwrap_or_else(|| GEOADBFormat::default());
 
         // check format is valid
         if let (GEOType::Datasets, GEOADBFormat::Text | GEOADBFormat::Xml) =
@@ -205,7 +191,7 @@ impl GEOADBResolverBuilder {
                 });
             }
             (GEOType::Datasets, None) => None,
-            (_, None) => Some(self.default_amount.clone()),
+            (_, None) => Some(GEOAmount::default()),
             _ => self.amount.clone(),
         };
 
@@ -217,7 +203,7 @@ impl GEOADBResolverBuilder {
                 });
             }
             (GEOType::Datasets, None) => None,
-            (_, None) => Some(self.default_scope.clone()),
+            (_, None) => Some(GEOScope::default()),
             _ => self.scope.clone(),
         };
 
@@ -236,10 +222,11 @@ impl GEOADBResolverBuilder {
 // Allows you to display the GEO accession in human readable, linked "HTML"
 // form, or in machine readable, "text" format, which is the same with "soft"
 // format. SOFT stands for "simple omnibus format in text".
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub enum GEOADBFormat {
     Text,
     Xml,
+    #[default]
     Html,
 }
 
@@ -266,10 +253,11 @@ impl fmt::Display for GEOADBFormat {
 // displays the accessions's attributes and the full data table. "Data" omits
 // the accession's attributes, showing only the links to other accessions as
 // well as the full data table
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub enum GEOAmount {
     Brief,
     Quick,
+    #[default]
     Data,
     Full,
 }
@@ -297,8 +285,9 @@ impl fmt::Display for GEOAmount {
 // box itself ("Self"), or any ("Platform", "Samples", or "Series") or all
 // ("Family") of the accessions related to the accession number typed into the
 // text box.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub enum GEOScope {
+    #[default]
     Itself,
     GSM,
     GPL,

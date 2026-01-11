@@ -1,30 +1,29 @@
 #' Get the metadata of multiple GEO identities
 #'
-#' This is useful to combine with [geo_search()] and filter results since
+#' This is useful to combine with [`geo_search()`] and filter results since
 #' `geo_search()` cannot get all long metadata of GEO identities.
 #'
-#' @inheritParams geo
-#' @return A [data.table][data.table::data.table] contains metadata of all ids.
+#' @inheritParams geo_soft
+#' @return A data frame contains metadata of all ids.
 #' @export
-geo_meta <- function(ids, amount = NULL, ftp_over_https = TRUE,
+geo_meta <- function(accession, famount = NULL, scope = NULL,
+                     ftp_over_https = NULL,
                      handle_opts = list(), odir = getwd()) {
-    ids <- assert_accession(ids)
     odir <- dir_create(odir, recursive = TRUE)
-    geo_type <- substr(ids[1L], 1L, 3L)
-    amount <- check_amount(amount, geo_type)
-    meta_list <- download_and_parse_soft(
-        ids = ids,
-        geo_type = geo_type,
-        amount = amount,
-        handle_opts = handle_opts,
-        only_meta = TRUE,
+    olist <- geo_soft_impl(
+        accession,
+        famount = famount, scope = scope,
         ftp_over_https = ftp_over_https,
-        odir = odir,
-        post_process = function(id, meta) {
-            collapsed <- lengths(meta) != 1L
-            meta[collapsed] <- lapply(meta[collapsed], paste0, collapse = "; ")
-            data.table::setDT(meta)
-        }
+        handle_opts = handle_opts,
+        odir = odir
     )
-    data.table::rbindlist(meta_list, use.names = TRUE, fill = TRUE)
+    olist <- lapply(olist, function(soft) {
+        meta <- metadata(soft)
+        collapsed <- lengths(meta) != 1L
+        meta[collapsed] <- lapply(meta[collapsed], paste0, collapse = "; ")
+        data.table::setDT(meta)
+    })
+    out <- data.table::rbindlist(olist, use.names = TRUE, fill = TRUE)
+    data.table::setDF(out)
+    out
 }

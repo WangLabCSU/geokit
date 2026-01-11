@@ -175,7 +175,7 @@ of current GEO series.}
 }}
 
 \examples{
-gse <- geo("GSE10", odir = tempdir(), gse_matrix = FALSE)
+gse <- geo_soft("GSE10", odir = tempdir())
 accession(gse)
 gpllist <- gpl(gse)
 metadata(gpllist[[1L]])

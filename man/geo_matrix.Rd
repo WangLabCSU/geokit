@@ -23,17 +23,15 @@ geo_matrix(
 }}
 
 \item{pdata_from_soft}{Logical, whether to derive \code{phenoData} from the GSE
-series SOFT file when creating an
-\code{\link[Biobase:class.ExpressionSet]{ExpressionSet}}.  Defaults to \code{TRUE}. If \code{FALSE},
-\code{phenoData} is parsed from the series matrix file; note that some
-\verb{characteristics_ch*} columns may not parse correctly.}
+series SOFT file. Defaults to \code{TRUE}. If \code{FALSE}, \code{phenoData} is parsed
+from the series matrix file; note that some \verb{characteristics_ch*} columns
+may not be parsed correctly.}
 
 \item{add_gpl}{Logical or \code{NULL}. Whether to include platform information
-(the \code{\link[Biobase:featureData]{featureData}} slot) when handling \code{GSE}
-entities with \code{gse_matrix = TRUE}. If \code{NULL} (default), the function
-attempts to map the GPL accession to a Bioconductor annotation package. If
-successful, the \code{\link[Biobase:class.eSet]{annotation}} slot is updated and \code{add_gpl}
-is set to \code{FALSE}; otherwise, \code{add_gpl} is set to \code{TRUE}.}
+(the \code{\link[Biobase:featureData]{featureData}} slot). If \code{NULL} (default), the
+function attempts to map the GPL accession to a Bioconductor annotation
+package. If successful, the \code{\link[Biobase:class.eSet]{annotation}} slot is updated
+and \code{add_gpl} is set to \code{FALSE}; otherwise, \code{add_gpl} is set to \code{TRUE}.}
 
 \item{ftp_over_https}{Logical scalar. If \code{TRUE}, connects to GEO FTP server
 via HTTPS (\url{https://ftp.ncbi.nlm.nih.gov/geo}); otherwise uses plain FTP

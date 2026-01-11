@@ -14,8 +14,3 @@
 #' @useDynLib geokit, .registration = TRUE
 ## usethis namespace: end
 NULL
-
-
-ignore_unused_imports <- function() {
-    R.utils::decompressFile
-}

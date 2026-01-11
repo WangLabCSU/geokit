@@ -5,15 +5,54 @@
 \title{Get the metadata of multiple GEO identities}
 \usage{
 geo_meta(
-  ids,
-  amount = NULL,
-  ftp_over_https = TRUE,
+  accession,
+  famount = NULL,
+  scope = NULL,
+  ftp_over_https = NULL,
   handle_opts = list(),
   odir = getwd()
 )
 }
+\arguments{
+\item{accession}{A character of GEO accession IDs. Examples:
+\itemize{
+\item DataSets (GDS): \code{"GDS505"}, \code{"GDS606"}, \code{"GDS1234"}, \code{"GDS9999"}, etc.
+\item Series (GSE): \code{"GSE2"}, \code{"GSE22"}, \code{"GSE100"}, \code{"GSE2000"}, etc.
+\item Platforms (GPL): \code{"GPL96"}, \code{"GPL570"}, \code{"GPL10558"}, etc.
+\item Samples (GSM): \code{"GSM12345"}, \code{"GSM67890"}, \code{"GSM112233"}, etc.
+}}
+
+\item{famount}{A character string specifying either:
+\itemize{
+\item the file format on the GEO FTP server, or
+\item the amount of data in the GEO Accession Display Bar.
+}
+
+See \code{\link[=geo_url]{geo_url()}} for details.}
+
+\item{scope}{A character specifying which GEO accessions to include
+(Only applicable to Accession Display Bar access).
+\itemize{
+\item \code{"none"}: Applicable only to DataSets; for DataSets, this is also the
+sole valid option
+\item \code{"self"}: the queried accession only.
+\item \code{"gsm"}, \code{"gpl"}, \code{"gse"}: related samples, platforms, or series.
+\item \code{"all"}: all accessions related to the query (family view).
+}}
+
+\item{ftp_over_https}{Logical scalar. If \code{TRUE}, connects to GEO FTP server
+via HTTPS (\url{https://ftp.ncbi.nlm.nih.gov/geo}); otherwise uses plain FTP
+(\url{ftp://ftp.ncbi.nlm.nih.gov/geo}). Only applicable to GEO FTP server
+access.}
+
+\item{handle_opts}{A list of named options / headers to be set in the
+\code{\link[curl:multi_download]{multi_download}}.}
+
+\item{odir}{Destination directory for downloads. Defaults to the current
+working directory.}
+}
 \value{
-A \link[data.table:data.table]{data.table} contains metadata of all ids.
+A data frame contains metadata of all ids.
 }
 \description{
 This is useful to combine with \code{\link[=geo_search]{geo_search()}} and filter results since

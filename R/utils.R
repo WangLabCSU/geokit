@@ -2,9 +2,33 @@
 
 is_all_same <- function(x) rust_call("is_all_same", x)
 
+parse_soft_rust <- function(path, format = "standard",
+                            reuse_buffer = FALSE, pprof_file = NULL) {
+    rust_call("geo_parse_soft", path, format, reuse_buffer, "parse_soft.svg")
+}
+
+# parse key-value pairs separeted by ":". For a list of key-value pairs
+# characters (like: `list(c("a:1", "b:2"), c("a:3", "b:4"))`), this function
+# simply cleans those up and transforms the list into a data frame, the names of
+# returned value is the unique keys in the pairs, the element of the returned
+# list is the values in the paris.
+# See: `parse_key_value_elements(list(c("a:1", "b:2"), c("a:3", "b:4")))`
+parse_key_value_elements <- function(elements, sep = ":", arg = caller_arg(sep),
+                                     call = caller_env()) {
+    separator <- charToRaw(sep)
+    if (length(separator) != 1L) {
+        cli::cli_abort("{.arg {arg}} must be a single byte string", call = call)
+    }
+    out <- rust_call(
+        "parse_key_value_elements",
+        elements, as.integer(separator)
+    )
+    quickdf(out)
+}
+
 return_object_or_list <- function(x, names = NULL) {
     if (length(x) == 1L) {
-        x[[1L]]
+        .subset2(x, 1L)
     } else {
         if (!is.null(names)) names(x) <- names
         x
@@ -41,17 +65,6 @@ dir_create <- function(path, ...) {
     invisible(path)
 }
 
-read_lines <- function(file, ...) {
-    data.table::fread(
-        file = file,
-        sep = "",
-        header = FALSE,
-        colClasses = "character",
-        showProgress = FALSE,
-        ...
-    )[[1L]]
-}
-
 check_bioc_installed <- function(pkg, reason = NULL, ...) {
     rlang::check_installed(
         pkg,
@@ -86,56 +99,6 @@ check_bioc_installed <- function(pkg, reason = NULL, ...) {
     )
 }
 
-# comment code to benchmark writeLines
-# gen_random <- function(characters, num_lines, min, max) {
-#     line_lengths <- sample.int(max - min, num_lines, replace = TRUE) + min
-#     vapply(line_lengths, function(len) {
-#         paste(sample(characters, len, replace = TRUE), collapse = "")
-#     }, character(1))
-# }
-# set.seed(42)
-# generate 1000 random lines between 100-1000 characters long
-# data <- gen_random(letters, 500, min = 100, max = 1000)
-# bench::mark(
-#     brio::write_lines(data, tempfile()),
-#     data.table::fwrite(list(data), tempfile(),
-#         quote = FALSE,
-#         col.names = FALSE
-#     ),
-#     base::writeLines(data, tempfile()),
-#     check = FALSE
-# )
-#    min   median itr/se…¹ mem_a…² gc/se…³ n_itr  n_gc total…⁴
-# 1 1.97ms   2.71ms     353.      0B    0      177     0   502ms
-# 2 1.22ms   1.36ms     703.      0B    2.02   348     1   495ms
-# 3 3.75ms   4.24ms     224.      0B    0      113     0   504ms
-#' @param text A character vector
-#' @noRd
-read_text <- function(text, ...) {
-    if (!length(text)) {
-        return(data.table::data.table())
-    }
-    file <- tempfile()
-    data.table::fwrite(
-        list(text),
-        file = file,
-        quote = FALSE,
-        na = "NA",
-        col.names = FALSE,
-        logical01 = FALSE,
-        showProgress = FALSE,
-        compress = "none",
-        verbose = FALSE
-    )
-    # brio::write_lines(text, file)
-    on.exit(file.remove(file))
-    data.table::fread(
-        file = file, ...,
-        na.strings = na_string,
-        showProgress = FALSE
-    )
-}
-
 #' @importFrom rlang caller_arg caller_env
 assert_accession <- function(accession, arg = caller_arg(accession),
                              call = caller_env()) {
@@ -143,29 +106,6 @@ assert_accession <- function(accession, arg = caller_arg(accession),
         cli::cli_abort(
             "All {.arg {arg}} values must have the same GEO type.",
             call = call
-        )
-    }
-}
-
-#' @importFrom rlang arg_match0
-check_amount <- function(amount, geo_type, arg = caller_arg(amount),
-                         call = caller_env()) {
-    if (is.null(amount)) {
-        switch(geo_type,
-            GDS = ,
-            GSE = "soft",
-            "full"
-        )
-    } else {
-        arg_match0(
-            amount,
-            switch(geo_type,
-                GDS = c("soft", "soft_full", "data", "full"),
-                GPL = ,
-                GSE = c("soft", "brief", "quick", "data", "full"),
-                c("brief", "quick", "data", "full")
-            ),
-            arg_nm = arg, error_call = call
         )
     }
 }

@@ -65,9 +65,9 @@ geo_gtype <- function(accession, abbre = FALSE) {
 #'      |      Matrix (matrix)       |  x  |  o  |  x  |  x  |
 #'      |     Annotation (annot)     |  x  |  x  |  o  |  x  |
 #'      | Supplementaryfiles (suppl) |  x  |  o  |  o  |  o  |
-#'      |            Html            |  o  |  o  |  o  |  o  |
-#'      |        Text (soft)         |  x  |  o  |  o  |  o  |
-#'      |            Xml             |  x  |  o  |  o  |  o  |
+#'      |         Html (html)        |  o  |  o  |  o  |  o  |
+#'      |         Text (text)        |  x  |  o  |  o  |  o  |
+#'      |          Xml (xml)         |  x  |  o  |  o  |  o  |
 #'
 #' @param amount A character specifying the amount of data (Only applicable to
 #'     Accession Display Bar access):

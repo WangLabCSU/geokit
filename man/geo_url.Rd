@@ -56,9 +56,9 @@ types and file format options:\tabular{ccccc}{
    Matrix (matrix) \tab x \tab o \tab x \tab x \cr
    Annotation (annot) \tab x \tab x \tab o \tab x \cr
    Supplementaryfiles (suppl) \tab x \tab o \tab o \tab o \cr
-   Html \tab o \tab o \tab o \tab o \cr
-   Text (soft) \tab x \tab o \tab o \tab o \cr
-   Xml \tab x \tab o \tab o \tab o \cr
+   Html (html) \tab o \tab o \tab o \tab o \cr
+   Text (text) \tab x \tab o \tab o \tab o \cr
+   Xml (xml) \tab x \tab o \tab o \tab o \cr
 }
 
 }}

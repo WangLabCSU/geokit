@@ -22,7 +22,7 @@ requests. Defaults to \code{0}. Increase this value if requests fail due to
 rate limits.}
 }
 \value{
-A \link[data.table:data.table]{data.table} contains the search results
+A data frame contains the search results
 }
 \description{
 Search the \href{https://www.ncbi.nlm.nih.gov/gds}{GDS} database and return

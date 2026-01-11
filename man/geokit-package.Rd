@@ -6,7 +6,7 @@
 \alias{geokit-package}
 \title{geokit: Tools for Accessing and Working with the Gene Expression Omnibus (GEO)}
 \description{
-Provides a tidy and convenient R interface to the NCBI Gene Expression Omnibus (GEO) database. Functions are included to query, download, and parse GEO metadata and expression data, making it easier to integrate GEO datasets into downstream analyses and workflows.
+Provides a tidy and fast R interface to the NCBI Gene Expression Omnibus (GEO) database. Functions are included to query, download, and parse GEO metadata and expression data, making it easier to integrate GEO datasets into downstream analyses and workflows.
 }
 \seealso{
 Useful links:

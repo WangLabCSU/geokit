@@ -12,7 +12,7 @@
 #' @docType class
 #' @keywords classes
 #' @examples
-#' gse <- geo("GSE10", odir = tempdir(), gse_matrix = FALSE)
+#' gse <- geo_soft("GSE10", odir = tempdir())
 #' accession(gse)
 #' gpllist <- gpl(gse)
 #' metadata(gpllist[[1L]])
@@ -206,7 +206,7 @@ methods::setMethod("show", "GEODatatable", function(object) {
         strwrap(paste0("columns: a ", columns_dim[[1L]], " * ", columns_dim[[2L]], " data.frame"), exdent = 2L),
         sep = "\n"
     )
-    wrap_cat("columnsData", names = names(object@columns), 2L, 4L)
+    wrap_cat("columns", names = names(object@columns), 2L, 4L)
     wrap_cat("metadata", names = names(object@metadata))
     wrap_cat("accession", names = object@accession)
 })
@@ -310,6 +310,17 @@ methods::setMethod("show", "GEOPlatform", function(object) {
     cat("<", methods::is(object)[[1L]], "> ", "\n", sep = "")
     wrap_cat("gse", names = vapply(object@gse, rcd_name, character(1L)))
     wrap_cat("gsm", names = vapply(object@gsm, rcd_name, character(1L)))
+    datatable_dim <- dim(object@datatable)
+    cat(
+        strwrap(paste0("datatable: a ", datatable_dim[[1L]], " * ", datatable_dim[[2L]], " data.frame"), exdent = 2L),
+        sep = "\n"
+    )
+    columns_dim <- dim(object@columns)
+    cat(
+        strwrap(paste0("columns: a ", columns_dim[[1L]], " * ", columns_dim[[2L]], " data.frame"), exdent = 2L),
+        sep = "\n"
+    )
+    wrap_cat("columns", names = names(object@columns), 2L, 4L)
     wrap_cat("metadata", names = names(object@metadata))
     wrap_cat("accession", names = object@accession)
 })

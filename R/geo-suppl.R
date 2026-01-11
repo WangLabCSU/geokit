@@ -17,7 +17,7 @@
 geo_suppl <- function(accession, pattern = NULL, ftp_over_https = TRUE,
                       handle_opts = list(), odir = getwd()) {
     odir <- dir_create(odir, recursive = TRUE)
-    file_paths <- download_suppl_or_gse_matrix_files(
+    file_paths <- download_url_directory(
         accession,
         odir = odir, formats = "suppl",
         pattern = pattern,

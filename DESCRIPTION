@@ -3,7 +3,7 @@ Title: Tools for Accessing and Working with the Gene Expression Omnibus (GEO)
 Version: 0.0.1.9000
 Authors@R: 
     person("Yun", "Peng", , "yunyunpp96@outlook.com", role = c("aut", "cre"))
-Description: Provides a tidy and convenient R interface to the NCBI Gene
+Description: Provides a tidy and fast R interface to the NCBI Gene
     Expression Omnibus (GEO) database. Functions are included to query,
     download, and parse GEO metadata and expression data, making it easier to
     integrate GEO datasets into downstream analyses and workflows.
@@ -13,14 +13,13 @@ BugReports: https://github.com/WangLabCSU/geokit/issues
 Depends:
     R (>= 3.5)
 Imports:
-    data.table (>= 1.14.9),
+    methods,
     rlang (>= 0.4.11),
     cli (>= 3.6.0),
+    data.table (>= 1.14.9),
     curl (>= 6.0.0),
-    methods,
     rentrez,
     xml2,
-    R.utils,
     utils
 Suggests: 
     BiocGenerics,

@@ -1,12 +1,17 @@
-use std::collections::HashMap;
 use std::fs::File;
 use std::io::{self, BufRead, BufReader};
 use std::path::Path;
-use std::str::FromStr;
 
 use anyhow::{Context, Result};
 use extendr_api::{Attributes, Length};
-use flate2::bufread::GzDecoder;
+
+#[cfg(feature = "flate2")]
+use flate2::bufread::GzDecoder as GzipDecoder;
+
+#[cfg(not(feature = "flate2"))]
+use isal::read::GzipDecoder;
+
+use indexmap::IndexMap;
 use memchr::memchr;
 
 /// Represents a record in the SOFT (Simple Omnibus Format in Text) file.
@@ -21,10 +26,15 @@ use memchr::memchr;
 pub struct GEOSoftRecord {
     rcd_type: String, // Type of the GEO record (e.g., Series, Platform)
     rcd_name: String, // Name of the record
-    metadata: HashMap<String, Vec<Option<String>>>, // Attributes of the record (key-value pairs)
+    metadata: IndexMap<String, Vec<Option<String>>>, // Attributes of the record (key-value pairs)
     columns: Vec<(String, Option<String>)>, // Header names and descriptions
     header: Vec<Option<String>>, // Header
     datatable: Vec<Vec<Option<String>>>, // Data table (a data frame)
+}
+
+pub enum GEOSoftFormat {
+    Standard,
+    Matrix,
 }
 
 // Simple Omnibus Format in Text (SOFT) File
@@ -45,7 +55,7 @@ impl GEOSoftRecord {
         Self {
             rcd_type: String::new(),
             rcd_name: String::new(),
-            metadata: HashMap::new(),
+            metadata: IndexMap::new(),
             columns: Vec::new(),
             header: Vec::new(),
             datatable: Vec::new(),
@@ -73,7 +83,7 @@ impl GEOSoftRecord {
     }
 
     #[inline]
-    fn parse_line(&mut self, line: &[u8]) -> Result<()> {
+    fn parse_line(&mut self, line: &[u8], format: &GEOSoftFormat) -> Result<()> {
         // ignore empty lines
         if line.is_empty() || line.iter().all(|byte| byte.is_ascii_whitespace()) {
             return Ok(());
@@ -82,9 +92,13 @@ impl GEOSoftRecord {
             b'^' => self
                 .parse_caret(line)
                 .with_context(|| format!("Invalid caret line"))?,
-            b'!' => self
-                .parse_bang(line)
-                .with_context(|| format!("Invalid bang line"))?,
+            b'!' => {
+                let result = match format {
+                    GEOSoftFormat::Standard => self.parse_regular_bang(line),
+                    GEOSoftFormat::Matrix => self.parse_matrix_bang(line),
+                };
+                result.with_context(|| format!("Invalid bang line"))?;
+            }
             b'#' => self
                 .parse_hash(line)
                 .with_context(|| format!("Invalid hash line"))?,
@@ -113,7 +127,7 @@ impl GEOSoftRecord {
     }
 
     #[inline]
-    fn parse_bang(&mut self, line: &[u8]) -> Result<()> {
+    fn parse_regular_bang(&mut self, line: &[u8]) -> Result<()> {
         // for normal SOFT file, the metadata is seprated with `=`
         if let Some(pos) = memchr(b'=', line) {
             if pos + 1 < line.len() {
@@ -126,9 +140,12 @@ impl GEOSoftRecord {
                         .insert(label.to_owned(), vec![Some(value.to_string())]);
                 }
             }
-            return Ok(());
         }
+        Ok(())
+    }
 
+    #[inline]
+    fn parse_matrix_bang(&mut self, line: &[u8]) -> Result<()> {
         // for GSE matrix, the metadata is seprated with `\t`
         if let Some(pos) = memchr(b'\t', line) {
             if pos + 1 < line.len() {
@@ -136,13 +153,7 @@ impl GEOSoftRecord {
                 let fields = unsafe { line.get_unchecked(pos + 1..)}
                     .split(|byte| *byte == b'\t')
                     .map(|field| {
-                        let field = field.trim_ascii();
-                        // strip quotes
-                        let field = if let Some(field) = field.strip_prefix(b"\"").and_then(|f| f.strip_suffix(b"\"")) {
-                            field
-                        } else {
-                            field.strip_prefix(b"'").and_then(|f| f.strip_suffix(b"'")).unwrap_or(field)
-                        };
+                        let field = strip_quotes(field.trim_ascii());
                         if field.is_empty()
                             || matches!(field.to_ascii_lowercase().as_slice(), b"null" | b"na")
                         {
@@ -152,11 +163,14 @@ impl GEOSoftRecord {
                         }
                     })
                     .collect::<std::result::Result<Vec<Option<String>>, std::string::FromUtf8Error>>()?;
-                if let Some(metadata) = self.metadata.get_mut(label) {
-                    metadata.extend(fields);
-                } else {
-                    self.metadata.insert(label.to_owned(), fields);
+                // Check if the label already exists and add a suffix to ensure uniqueness
+                let mut owned_label = label.to_owned();
+                let mut suffix = 1;
+                while self.metadata.contains_key(&owned_label) {
+                    owned_label = format!("{}_{}", label, suffix);
+                    suffix += 1;
                 }
+                self.metadata.insert(owned_label, fields);
             }
         }
         Ok(())
@@ -187,7 +201,7 @@ impl GEOSoftRecord {
         let fields = line
             .split(|byte| *byte == b'\t')
             .map(|field| {
-                let field = field.trim_ascii();
+                let field = strip_quotes(field.trim_ascii());
                 if field.is_empty()
                     || matches!(field.to_ascii_lowercase().as_slice(), b"null" | b"na")
                 {
@@ -231,47 +245,41 @@ impl GEOSoftRecord {
     }
 }
 
+fn strip_quotes(bytes: &[u8]) -> &[u8] {
+    if let Some(bytes) = bytes
+        .strip_prefix(b"\"")
+        .and_then(|f| f.strip_suffix(b"\""))
+    {
+        bytes
+    } else {
+        bytes
+            .strip_prefix(b"'")
+            .and_then(|f| f.strip_suffix(b"'"))
+            .unwrap_or(bytes)
+    }
+}
+
 impl TryFrom<GEOSoftRecord> for extendr_api::List {
     type Error = extendr_api::Error;
 
     fn try_from(value: GEOSoftRecord) -> std::result::Result<Self, Self::Error> {
-        let metadata = extendr_api::List::try_from(value.metadata)?;
+        let (metadata_keys, metadata_values): (Vec<_>, Vec<_>) = value
+            .metadata
+            .into_iter()
+            .map(|(key, value)| (key, extendr_api::Robj::from(value)))
+            .unzip();
+        let mut metadata = extendr_api::List::from_values(metadata_values);
+        metadata.set_names(metadata_keys)?;
+
         let (columns_names, columns_values): (Vec<String>, Vec<Option<String>>) =
             value.columns.into_iter().unzip();
         let mut columns = extendr_api::Robj::from(columns_values);
         columns.set_names(columns_names)?;
+
         let header = extendr_api::Robj::from(value.header);
         let mut datatable = Vec::with_capacity(header.len());
-        for column in value.datatable.into_iter() {
-            if let Ok(i32_vec) = column
-                .iter()
-                .map(|s| s.as_ref().map(|s| s.parse::<i32>()).transpose())
-                .collect::<std::result::Result<Vec<Option<i32>>, <i32 as FromStr>::Err>>()
-            {
-                datatable.push(extendr_api::Robj::from(i32_vec));
-                continue;
-            };
-            if let Ok(f64_vec) = column
-                .iter()
-                .map(|s| s.as_ref().map(|s| s.parse::<f64>()).transpose())
-                .collect::<std::result::Result<Vec<Option<f64>>, <f64 as FromStr>::Err>>()
-            {
-                datatable.push(extendr_api::Robj::from(f64_vec));
-                continue;
-            };
-            if let Ok(bool_vec) = column
-                .iter()
-                .map(|s| {
-                    s.as_ref()
-                        .map(|s| s.to_ascii_lowercase().parse::<bool>())
-                        .transpose()
-                })
-                .collect::<std::result::Result<Vec<Option<bool>>, <bool as FromStr>::Err>>()
-            {
-                datatable.push(extendr_api::Robj::from(bool_vec));
-                continue;
-            };
-            datatable.push(extendr_api::Robj::from(column));
+        for field in value.datatable.into_iter() {
+            datatable.push(super::helper::parse_string(field));
         }
         let record = extendr_api::list![
             rcd_type = value.rcd_type,
@@ -295,7 +303,8 @@ impl TryFrom<GEOSoftRecord> for extendr_api::Robj {
 
 /// A reader for parsing SOFT (Simple Omnibus Format in Text) files.
 pub struct GEOSoftReader<R> {
-    reader: BufReader<R>,  // Underlying buffered reader
+    reader: BufReader<R>, // Underlying buffered reader
+    format: GEOSoftFormat,
     record: GEOSoftRecord, // The parser that interprets the SOFT data
     reuse_buffer: bool,    // Flag to indicate whether to reuse the parser
     leftover: Vec<u8>,
@@ -329,14 +338,14 @@ impl<R: io::Read> GEOSoftReader<R> {
     /// # Returns
     /// - A `GEOSoftReader` with the provided reader.
     pub fn new(reader: R) -> GEOSoftReader<R> {
-        Self::with_capacity(8 * (1 << 10), reader)
+        Self::with_capacity(4 * (1 << 20), reader)
     }
 
     /// Consumes the current `GEOSoftReader` and creates a new one that reads from a gzip-compressed stream.
     ///
     /// # Returns
     /// - A `GEOSoftReader` that reads from a gzip-compressed input stream.
-    pub fn into_gzip_reader(self) -> GEOSoftReader<flate2::bufread::GzDecoder<BufReader<R>>> {
+    pub fn into_gzip_reader(self) -> GEOSoftReader<GzipDecoder<BufReader<R>>> {
         let buffer_size = self.reader.capacity();
         self.into_gzip_reader_with_buffer_size(buffer_size)
     }
@@ -351,9 +360,10 @@ impl<R: io::Read> GEOSoftReader<R> {
     pub fn into_gzip_reader_with_buffer_size(
         self,
         buffer_size: usize,
-    ) -> GEOSoftReader<flate2::bufread::GzDecoder<BufReader<R>>> {
+    ) -> GEOSoftReader<GzipDecoder<BufReader<R>>> {
         GEOSoftReader {
-            reader: BufReader::with_capacity(buffer_size, GzDecoder::new(self.reader)),
+            reader: BufReader::with_capacity(buffer_size, GzipDecoder::new(self.reader)),
+            format: self.format,
             record: self.record,
             reuse_buffer: self.reuse_buffer,
             leftover: self.leftover,
@@ -372,19 +382,24 @@ impl<R: io::Read> GEOSoftReader<R> {
     pub fn with_capacity(capacity: usize, reader: R) -> GEOSoftReader<R> {
         Self {
             reader: BufReader::with_capacity(capacity, reader),
+            format: GEOSoftFormat::Standard,
             record: GEOSoftRecord::new(),
-            reuse_buffer: true,
+            reuse_buffer: false,
             leftover: Vec::new(),
             cur_pos: 1,
         }
     }
 
+    pub fn format(&mut self, format: GEOSoftFormat) {
+        self.format = format;
+    }
+
     /// Sets whether the parser state should be reused when reading new records.
     ///
     /// # Arguments
-    /// - `value`: If `false`, a new parser will be created for each new record.
-    pub fn reuse_buffer(&mut self, value: bool) {
-        self.reuse_buffer = value;
+    /// - `reuse`: If `false`, a new parser will be created for each new record.
+    pub fn reuse_buffer(&mut self, reuse: bool) {
+        self.reuse_buffer = reuse;
     }
 
     /// Reads and parses the record from the underlying reader.
@@ -400,13 +415,15 @@ impl<R: io::Read> GEOSoftReader<R> {
                     return Ok(self.build_record());
                 } else {
                     let line = &self.leftover;
-                    self.record.parse_line(line).with_context(|| {
-                        format!(
-                            "Error parsing line ({}): '{}'.",
-                            self.cur_pos,
-                            String::from_utf8_lossy(line)
-                        )
-                    })?;
+                    self.record
+                        .parse_line(line, &self.format)
+                        .with_context(|| {
+                            format!(
+                                "Error parsing line ({}): '{}'.",
+                                self.cur_pos,
+                                String::from_utf8_lossy(line)
+                            )
+                        })?;
                     self.cur_pos += 1;
                     self.leftover.clear();
                     return Ok(self.build_record());
@@ -437,13 +454,15 @@ impl<R: io::Read> GEOSoftReader<R> {
                     self.leftover.extend_from_slice(&input_bytes[..end]);
                     &self.leftover
                 };
-                self.record.parse_line(line).with_context(|| {
-                    format!(
-                        "Error parsing line ({}): '{}'.",
-                        self.cur_pos,
-                        String::from_utf8_lossy(line)
-                    )
-                })?;
+                self.record
+                    .parse_line(line, &self.format)
+                    .with_context(|| {
+                        format!(
+                            "Error parsing line ({}): '{}'.",
+                            self.cur_pos,
+                            String::from_utf8_lossy(line)
+                        )
+                    })?;
                 self.cur_pos += 1;
                 self.leftover.clear();
                 self.reader.consume(pos + 1); // Don't include the final '\n'

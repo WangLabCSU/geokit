@@ -1,5 +1,5 @@
 testthat::test_that("generic GDS parsing works as expected", {
-    gds <- geo("GDS507", odir = tempdir())
+    gds <- geo_soft("GDS507", odir = tempdir())
 
     testthat::expect_s4_class(gds, "GEODatatable")
     testthat::expect_type(metadata(gds), "list")

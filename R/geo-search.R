@@ -22,7 +22,7 @@
 #' @param interval Numeric. Time interval (in seconds) between successive
 #'   requests. Defaults to `0`. Increase this value if requests fail due to
 #'   rate limits.
-#' @return A [data.table][data.table::data.table] contains the search results
+#' @return A data frame contains the search results
 #' @examples
 #' geo_search("diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]")
 #' @export
@@ -63,7 +63,7 @@ geo_search <- function(query, step = 500L, interval = NULL) {
         str_replace_all(paste0(records, collapse = ""), "^\\n|\\n$", ""),
         "\\n\\n"
     )[[1L]]
-    out <- parse_name_value_pairs(preprocess_records(records))
+    out <- parse_key_value_elements(preprocess_records(records))
     tail_col <- c(
         intersect(
             c("Contains", "Datasets", "Series", "Platforms"),

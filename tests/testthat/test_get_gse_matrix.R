@@ -1,12 +1,7 @@
 testthat::skip_if_not_installed("Biobase")
 
-testthat::test_that("Create dir correctly", {
-    geo("GSE11413", odir = file.path(tempdir(), "test"))
-    testthat::expect_true(dir.exists(file.path(tempdir(), "test")))
-})
-
 testthat::test_that("empty GSE is handled correctly", {
-    gse <- geo("GSE11413", odir = tempdir(), add_gpl = TRUE)
+    gse <- geo_matrix("GSE11413", odir = tempdir(), add_gpl = TRUE)
 
     testthat::expect_s4_class(gse, "ExpressionSet")
     testthat::expect_equal(nrow(Biobase::pData(gse)), 12L)

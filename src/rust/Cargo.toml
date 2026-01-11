@@ -10,12 +10,15 @@ crate-type = [ 'staticlib' ]
 name = 'geokit'
 
 [dependencies]
-extendr-api = { version = "*", git = "https://github.com/extendr/extendr", default-features = false, features = ['result_list'] }
+extendr-api = { version = "*", default-features = false, features = ['result_list'] }
 thiserror = '*'
 anyhow = '*'
 regex = '*'
 memchr = '*'
-flate2 = '*'
+flate2 = { version = "*", optional = true }
+isal-rs = { version = "*" }
+indexmap = '*'
+pprof = { version = "0.14", features = ["flamegraph"] }
 
 # remove openssl dependency due to error when loading R package: undefined symbol: EVP_bf_ecb
 # enable the system proxy feature and socks5 proxy support: https://docs.rs/reqwest/latest/reqwest/#proxies
