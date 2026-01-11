@@ -113,17 +113,7 @@ fn geo_file_url_and_fname(
 }
 
 #[extendr]
-fn geo_parse_soft(
-    path: &str,
-    format: &str,
-    reuse_buffer: bool,
-    pprof_file: &str,
-) -> Result<Vec<Robj>, String> {
-    let guard = pprof::ProfilerGuardBuilder::default()
-        .frequency(2000)
-        .build()
-        .with_context(|| format!("cannot create profile guard"))
-        .map_err(|e| format!("{:?}", e))?;
+fn geo_parse_soft(path: &str, format: &str, reuse_buffer: bool) -> Result<Vec<Robj>, String> {
     let path: &Path = path.as_ref();
     let iter_records: Box<dyn Iterator<Item = anyhow::Result<soft::GEOSoftRecord>>>;
     let mut reader = soft::GEOSoftReader::from_path(path).map_err(|err| format!("{}", err))?;
@@ -147,7 +137,7 @@ fn geo_parse_soft(
     } else {
         iter_records = Box::new(reader);
     }
-    let out = iter_records
+    iter_records
         .map(|record_res| {
             record_res.map_or_else(
                 |err| Err(err),
@@ -155,8 +145,23 @@ fn geo_parse_soft(
             )
         })
         .collect::<anyhow::Result<Vec<Robj>>>()
-        .map_err(|err| format!("{:?}", err));
+        .map_err(|err| format!("{:?}", err))
+}
 
+#[extendr]
+#[cfg(feature = "pprof")]
+fn pprof_geo_parse_soft(
+    path: &str,
+    format: &str,
+    reuse_buffer: bool,
+    pprof_file: &str,
+) -> Result<Vec<Robj>, String> {
+    let guard = pprof::ProfilerGuardBuilder::default()
+        .frequency(2000)
+        .build()
+        .with_context(|| format!("Failed to create profile guard"))
+        .map_err(|e| format!("{:?}", e))?;
+    let out = geo_parse_soft(path, format, reuse_buffer);
     if let Ok(report) = guard.report().build() {
         let file = std::fs::File::create(pprof_file)
             .with_context(|| format!("Failed to create file {}", pprof_file))
@@ -267,6 +272,7 @@ fn is_all_same(x: Robj) -> Result<bool, String> {
     Ok(true) // All values are the same
 }
 
+#[cfg(not(feature = "pprof"))]
 extendr_module! {
     mod r;
     fn geo_gtype;
@@ -274,6 +280,20 @@ extendr_module! {
     fn geo_landing_page;
     fn geo_file_url_and_fname;
     fn geo_parse_soft;
+    fn is_all_same;
+    fn parse_key_value_elements;
+}
+
+
+#[cfg(feature = "pprof")]
+extendr_module! {
+    mod r;
+    fn geo_gtype;
+    fn geo_url;
+    fn geo_landing_page;
+    fn geo_file_url_and_fname;
+    fn geo_parse_soft;
+    fn pprof_geo_parse_soft;
     fn is_all_same;
     fn parse_key_value_elements;
 }

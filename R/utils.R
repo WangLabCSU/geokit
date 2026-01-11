@@ -4,7 +4,18 @@ is_all_same <- function(x) rust_call("is_all_same", x)
 
 parse_soft_rust <- function(path, format = "standard",
                             reuse_buffer = FALSE, pprof_file = NULL) {
-    rust_call("geo_parse_soft", path, format, reuse_buffer, "parse_soft.svg")
+    if (is.null(pprof_file)) {
+        rust_call("geo_parse_soft", path, format, reuse_buffer)
+    } else {
+        # Require add feature: pprof
+        rust_call(
+            "pprof_geo_parse_soft",
+            path,
+            format,
+            reuse_buffer,
+            pprof_file
+        )
+    }
 }
 
 # parse key-value pairs separeted by ":". For a list of key-value pairs
