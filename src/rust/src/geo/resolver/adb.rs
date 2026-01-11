@@ -126,10 +126,12 @@ impl Default for GEOADBResolverBuilder {
 // there are never any uninitialized values but does lead to more verbose
 // boilerplate code than is ideal.
 impl GEOADBResolverBuilder {
+    #[inline]
     pub fn new() -> Self {
         Self::default()
     }
 
+    #[inline]
     pub fn entity(&mut self, entity: GEOEntity) -> &mut Self {
         self.entity = Some(entity);
         self
@@ -141,21 +143,25 @@ impl GEOADBResolverBuilder {
     // |        Text (soft)         |  x  |  o  |  o  |  o  |
     // |         Xml (xml)          |  x  |  o  |  o  |  o  |
     // |        Html (html)         |  o  |  o  |  o  |  o  |
+    #[inline]
     pub fn format(&mut self, format: GEOADBFormat) -> &mut Self {
         self.format = Some(format);
         self
     }
 
+    #[inline]
     pub fn scope(&mut self, scope: GEOScope) -> &mut Self {
         self.scope = Some(scope);
         self
     }
 
+    #[inline]
     pub fn amount(&mut self, amount: GEOAmount) -> &mut Self {
         self.amount = Some(amount);
         self
     }
 
+    #[inline]
     pub fn build(&mut self) -> Result<GEOADBResolver, GEOParseError> {
         // https://docs.rs/derive_builder/latest/derive_builder/
         // Luckily Rust is clever enough to optimize these clone-calls away in

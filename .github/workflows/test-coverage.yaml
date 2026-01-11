@@ -16,6 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      GEOKIT_PROFILE: release
 
     steps:
       - uses: actions/checkout@v4

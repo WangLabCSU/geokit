@@ -13,6 +13,7 @@ pub enum GEOType {
 }
 
 impl GEOType {
+    #[inline]
     pub fn as_str(&self) -> &'static str {
         match self {
             GEOType::Datasets => "Datasets",
@@ -21,6 +22,7 @@ impl GEOType {
             GEOType::Samples => "Samples",
         }
     }
+    #[inline]
     pub fn abbre(&self) -> &'static str {
         match self {
             GEOType::Datasets => "GDS",
@@ -44,10 +46,12 @@ pub struct GEOEntity {
 }
 
 impl GEOEntity {
+    #[inline]
     pub fn accession(&self) -> &str {
         self.accession.as_str()
     }
 
+    #[inline]
     pub fn gtype(&self) -> &GEOType {
         &self.gtype
     }

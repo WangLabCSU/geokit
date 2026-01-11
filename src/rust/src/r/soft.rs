@@ -51,6 +51,7 @@ pub enum GEOSoftFormat {
 // |   #    | hash lines  | data table header description line |
 // |  n/a   | data lines  |           data table row           |
 impl GEOSoftRecord {
+    #[inline]
     fn new() -> Self {
         Self {
             rcd_type: String::new(),

@@ -14,11 +14,13 @@ pub struct GEOFTPResolver {
 }
 
 impl GEOFTPResolver {
+    #[allow(dead_code)]
     #[inline]
     pub fn new(entity: GEOEntity) -> Self {
         Self::builder().entity(entity).build().unwrap()
     }
 
+    #[allow(dead_code)]
     #[inline]
     pub fn builder() -> GEOFTPResolverBuilder {
         GEOFTPResolverBuilder::new()
@@ -131,10 +133,12 @@ pub struct GEOFTPResolverBuilder {
 // there are never any uninitialized values but does lead to more verbose
 // boilerplate code than is ideal.
 impl GEOFTPResolverBuilder {
+    #[inline]
     pub fn new() -> Self {
         Self::default()
     }
 
+    #[inline]
     pub fn entity(&mut self, entity: GEOEntity) -> &mut Self {
         self.entity = Some(entity);
         self
@@ -149,16 +153,19 @@ impl GEOFTPResolverBuilder {
     // |      Matrix (matrix)       |  x  |  o  |  x  |  x  |
     // |     Annotation (annot)     |  x  |  x  |  o  |  x  |
     // | Supplementaryfiles (suppl) |  x  |  o  |  o  |  o  |
+    #[inline]
     pub fn format(&mut self, format: GEOFTPFormat) -> &mut Self {
         self.format = Some(format);
         self
     }
 
+    #[inline]
     pub fn over_https(&mut self, over_https: bool) -> &mut Self {
         self.over_https = Some(over_https);
         self
     }
 
+    #[inline]
     pub fn build(&mut self) -> Result<GEOFTPResolver, GEOParseError> {
         // https://docs.rs/derive_builder/latest/derive_builder/
         // Luckily Rust is clever enough to optimize these clone-calls away in

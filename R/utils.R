@@ -55,17 +55,8 @@ read_internal <- function(file = NULL) {
 }
 
 set_rownames <- function(x, var = 1L) {
-    if (nrow(x)) {
-        data.table::setDF(x, rownames = as.character(x[[var]]))
-    } else {
-        data.table::setDF(x)
-    }
-}
-
-column_to_rownames <- function(x, var = 1L) {
-    data.table::setDF(x[, .SD, .SDcols = !var], # nolint
-        rownames = as.character(x[[var]])
-    )
+    if (nrow(x)) rownames(x) <- as.character(.subset2(x, var))
+    x
 }
 
 dir_create <- function(path, ...) {
@@ -108,17 +99,6 @@ check_bioc_installed <- function(pkg, reason = NULL, ...) {
             }
         }
     )
-}
-
-#' @importFrom rlang caller_arg caller_env
-assert_accession <- function(accession, arg = caller_arg(accession),
-                             call = caller_env()) {
-    if (!is_all_same(geo_gtype(accession))) {
-        cli::cli_abort(
-            "All {.arg {arg}} values must have the same GEO type.",
-            call = call
-        )
-    }
 }
 
 wrap_cat <- function(label, names, indent = 0L, exdent = 2L) {
