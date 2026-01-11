@@ -1,5 +1,5 @@
 file_url_and_fname <- function(accession, famount, scope = "self",
-                               ftp_over_https = TRUEs) {
+                               ftp_over_https = TRUE) {
     rust_call(
         "geo_file_url_and_fname",
         accession, famount, scope, ftp_over_https
