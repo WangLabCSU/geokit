@@ -52,7 +52,7 @@ access.}
 working directory.}
 }
 \value{
-A \linkS4class{GEODatatalbe} object
+A \link[=GEOSoft-class]{GEOSoft} object
 }
 \description{
 Retrieve GEO SOFT file from NCBI GEO

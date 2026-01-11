@@ -5,12 +5,12 @@
 #' **GEODatatable** `@@metadata` slot up and transforms the keys to column names
 #' and the values to column values.
 #'
-#' @param x A [GEOSeries] object or a list of GEODatatable from the `@@gsm` slot
-#' of a `GEOSeries` object.
+#' @param x A [GEOSeries][GEOSeries-class] object or a list of GEODatatable from
+#' the `@@gsm` slot of a `GEOSeries` object.
+#' @param ... Additional arguments passed on to methods.
 #' @param fields A character vector which fields should be parsed.
 #' @param sep A single byte string defined the pairing separator.
 #' @return A data.frame whose rows are samples and columns are the sample infos
-#'
 #' @examples
 #' gse201530_soft <- geo_soft("GSE201530", odir = tempdir())
 #' parse_sample_data(gse201530_soft)
@@ -20,11 +20,13 @@ parse_sample_data <- function(x, ...) {
 }
 
 #' @export
+#' @rdname parse_sample_data
 parse_sample_data.GEOSeries <- function(x, ...) {
     parse_sample_data.list(gsm(x), ...)
 }
 
 #' @export
+#' @rdname parse_sample_data
 parse_sample_data.list <- function(x, ..., fields = NULL, sep = ":") {
     test_gsm_list <- is.list(x) && all(vapply(
         x, function(x) {

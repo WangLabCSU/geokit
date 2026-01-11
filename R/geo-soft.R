@@ -5,7 +5,7 @@
 #'  [`multi_download`][curl::multi_download].
 #' @param odir Destination directory for downloads. Defaults to the current
 #' working directory.
-#' @return A [GEODatatalbe-class] object
+#' @return A [GEOSoft][GEOSoft-class] object
 #'
 #' @details
 #'

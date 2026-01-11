@@ -5,12 +5,12 @@
 #' these files based on the GEO accession. No parsing of the downloaded files is
 #' attempted, since the file format is not generally knowable.
 #'
-#' @inheritParams geo_url
+#' @inheritParams geo_soft
 #' @param pattern character string containing a
 #' [regular expression][base::regex] to be matched in the supplementary file
 #' names.
-#' @return A list (or a character atomic verctor if only one `id` is provided)
-#' of the full file paths of the resulting downloaded files.
+#' @return A list (or a character atomic verctor if only one `accession` is
+#' provided) of the full file paths of the resulting downloaded files.
 #' @examples
 #' geo_suppl("GSM1137", odir = tempdir())
 #' @export

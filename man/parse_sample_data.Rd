@@ -2,13 +2,21 @@
 % Please edit documentation in R/phenodata.R
 \name{parse_sample_data}
 \alias{parse_sample_data}
+\alias{parse_sample_data.GEOSeries}
+\alias{parse_sample_data.list}
 \title{Parse key-value pairs in the metadata of GEO Sample SOFT file}
 \usage{
 parse_sample_data(x, ...)
+
+\method{parse_sample_data}{GEOSeries}(x, ...)
+
+\method{parse_sample_data}{list}(x, ..., fields = NULL, sep = ":")
 }
 \arguments{
-\item{x}{A \link{GEOSeries} object or a list of GEODatatable from the \verb{@gsm} slot
-of a \code{GEOSeries} object.}
+\item{x}{A \link[=GEOSeries-class]{GEOSeries} object or a list of GEODatatable from
+the \verb{@gsm} slot of a \code{GEOSeries} object.}
+
+\item{...}{Additional arguments passed on to methods.}
 
 \item{fields}{A character vector which fields should be parsed.}
 

@@ -29,16 +29,22 @@ names.}
 via HTTPS (\url{https://ftp.ncbi.nlm.nih.gov/geo}); otherwise uses plain FTP
 (\url{ftp://ftp.ncbi.nlm.nih.gov/geo}). Only applicable to GEO FTP server
 access.}
+
+\item{handle_opts}{A list of named options / headers to be set in the
+\code{\link[curl:multi_download]{multi_download}}.}
+
+\item{odir}{Destination directory for downloads. Defaults to the current
+working directory.}
 }
 \value{
-A list (or a character atomic verctor if only one \code{id} is provided)
-of the full file paths of the resulting downloaded files.
+A list (or a character atomic verctor if only one \code{accession} is
+provided) of the full file paths of the resulting downloaded files.
 }
 \description{
 NCBI GEO allows supplemental files to be attached to GEO Series (GSE), GEO
 platforms (GPL), and GEO samples (GSM). This function 'knows' how to get
 these files based on the GEO accession. No parsing of the downloaded files is
-attempted, since the file format is not generally knowable by the computer.
+attempted, since the file format is not generally knowable.
 }
 \examples{
 geo_suppl("GSM1137", odir = tempdir())
