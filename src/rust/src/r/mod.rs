@@ -94,24 +94,38 @@ fn geo_file_url_and_fname(
     scope: Robj,
     ftp_over_https: Robj,
 ) -> Result<extendr_api::List, String> {
-    let (urls, fnames): (Vec<String>, Vec<Option<String>>) = resolver::resolvers_from_famount(
+    let (urls, fnames): (Vec<String>, Vec<_>) = resolver::resolvers_from_famount(
         &accession,
         &famount,
         &scope,
         &ftp_over_https,
         |gtype| match gtype {
-            GEOType::Datasets | GEOType::Platforms | GEOType::Series => "soft",
-            GEOType::Samples => "data",
+            GEOType::Datasets | GEOType::Series => "soft",
+            GEOType::Platforms | GEOType::Samples => "full",
         },
         "text",
     )
-    .map_err(|e| format!("{:?}", e))
-    .map(|resolvers| {
-        resolvers
-            .into_iter()
-            .map(|resovler| (resovler.url(), resovler.fname()))
-            .unzip()
-    })?;
+    .map_or_else(
+        |e| Err(format!("Failed to initialize the resolvers: {:?}", e)),
+        |resolvers| {
+            resolvers
+                .into_iter()
+                .map(|resolver| {
+                    resolver
+                        .fname()
+                        .ok_or_else(|| {
+                            format!(
+                                "Missing filename for resolver with URL '{}'. {}",
+                                resolver.url(),
+                                "Ensure that the famount is correct (e.g., not 'suppl' or 'matrix' type)."
+                            )
+                        })
+                        .map(|fname| (resolver.url(), fname))
+                })
+                .collect::<Result<Vec<_>, String>>() // Collecting the mapped results into a Result<Vec<_>, String>
+                .map(|items| items.into_iter().unzip()) // Using unzip only after it's a valid Result
+        },
+    )?;
     Ok(extendr_api::list![urls = urls, fnames = fnames])
 }
 
