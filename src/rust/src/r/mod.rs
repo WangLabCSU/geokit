@@ -5,14 +5,12 @@ use extendr_api::prelude::*;
 use indexmap::IndexMap;
 use memchr::memchr;
 
-use super::geo::{GEOADBFormat, GEOEntity, GEOFTPFormat, GEOType};
+use super::geo::{GEOEntity, GEOType};
 
 mod error;
 mod helper;
 mod resolver;
 mod soft;
-
-use resolver::GEOFormat;
 
 #[extendr]
 fn geo_gtype(accession: Robj, abbre: bool) -> Result<Vec<String>, String> {
@@ -52,10 +50,8 @@ fn geo_url(
         &scope,
         &ftp_over_https,
         |gtype| match gtype {
-            GEOType::Datasets | GEOType::Platforms | GEOType::Series => {
-                GEOFormat::FTP(GEOFTPFormat::SOFT)
-            }
-            GEOType::Samples => GEOFormat::ADB(GEOADBFormat::Text),
+            GEOType::Datasets | GEOType::Platforms | GEOType::Series => "soft",
+            GEOType::Samples => "text",
         },
     )
     .map_err(|e| format!("{:?}", e))
@@ -74,9 +70,14 @@ fn geo_landing_page(
     scope: Robj,
     ftp_over_https: Robj,
 ) -> Result<Vec<String>, String> {
-    resolver::resolvers_from_famount(&accession, &famount, &scope, &ftp_over_https, |_| {
-        GEOFormat::ADB(GEOADBFormat::Html)
-    })
+    resolver::resolvers_from_famount(
+        &accession,
+        &famount,
+        &scope,
+        &ftp_over_https,
+        |_| "brief",
+        "html",
+    )
     .map_err(|e| format!("{:?}", e))
     .map(|resolvers| {
         resolvers
@@ -93,22 +94,24 @@ fn geo_file_url_and_fname(
     scope: Robj,
     ftp_over_https: Robj,
 ) -> Result<extendr_api::List, String> {
-    let (urls, fnames): (Vec<String>, Vec<Option<String>>) =
-        resolver::resolvers_from_famount(&accession, &famount, &scope, &ftp_over_https, |gtype| {
-            match gtype {
-                GEOType::Datasets | GEOType::Platforms | GEOType::Series => {
-                    GEOFormat::FTP(GEOFTPFormat::SOFT)
-                }
-                GEOType::Samples => GEOFormat::ADB(GEOADBFormat::Text),
-            }
-        })
-        .map_err(|e| format!("{:?}", e))
-        .map(|resolvers| {
-            resolvers
-                .into_iter()
-                .map(|resovler| (resovler.url(), resovler.fname()))
-                .unzip()
-        })?;
+    let (urls, fnames): (Vec<String>, Vec<Option<String>>) = resolver::resolvers_from_famount(
+        &accession,
+        &famount,
+        &scope,
+        &ftp_over_https,
+        |gtype| match gtype {
+            GEOType::Datasets | GEOType::Platforms | GEOType::Series => "soft",
+            GEOType::Samples => "data",
+        },
+        "text",
+    )
+    .map_err(|e| format!("{:?}", e))
+    .map(|resolvers| {
+        resolvers
+            .into_iter()
+            .map(|resovler| (resovler.url(), resovler.fname()))
+            .unzip()
+    })?;
     Ok(extendr_api::list![urls = urls, fnames = fnames])
 }
 
@@ -283,7 +286,6 @@ extendr_module! {
     fn is_all_same;
     fn parse_key_value_elements;
 }
-
 
 #[cfg(feature = "pprof")]
 extendr_module! {
