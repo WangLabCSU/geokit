@@ -49,7 +49,7 @@ list_directory_url <- function(accession, format, ftp_over_https,
         curl::curl(url, "rb", handle = curl_handle),
         error = function(err) {
             cli::cli_abort(
-                "Failed to open {.url {url}} for {.field {id}}",
+                "Failed to open {.url {url}} for {.field {accession}}",
                 parent = err
             )
         }

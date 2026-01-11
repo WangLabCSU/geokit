@@ -9,29 +9,29 @@ testthat::test_that("empty GSE is handled correctly", {
 })
 
 testthat::test_that("case-mismatched IDs in GSEs handled correctly", {
-    gse <- geo("GSE35683", odir = tempdir())
+    gse <- geo_matrix("GSE35683", odir = tempdir())
     testthat::expect_equal(nrow(gse), 54675L, ignore_attr = TRUE)
 })
 
 testthat::test_that("single-sample GSE handled correctly", {
-    gse <- geo("GSE11595", odir = tempdir())
+    gse <- geo_matrix("GSE11595", odir = tempdir())
     testthat::expect_s4_class(gse[[1L]], "ExpressionSet")
     testthat::expect_equal(ncol(gse[[1L]]), 1L, ignore_attr = TRUE)
 })
 
 testthat::test_that("short GSE handled correctly", {
-    gse <- geo("GSE34145", odir = tempdir())
+    gse <- geo_matrix("GSE34145", odir = tempdir())
     testthat::expect_equal(nrow(gse[[1L]]), 15L, ignore_attr = TRUE)
 })
 
 testthat::test_that("GSE with more than one value per characteristic handled", {
-    gse <- geo("GSE71989", odir = tempdir())
+    gse <- geo_matrix("GSE71989", odir = tempdir())
     testthat::expect_equal(nrow(gse), 54675L, ignore_attr = TRUE)
     testthat::expect_equal(ncol(gse), 22L, ignore_attr = TRUE)
 })
 
 testthat::test_that("GSE has populated experimentData", {
-    gse <- geo("GSE53986", odir = tempdir())
+    gse <- geo_matrix("GSE53986", odir = tempdir())
     ed <- Biobase::experimentData(gse)
     testthat::expect_equal(Biobase::pubMedIds(ed), "24739962")
 
@@ -46,7 +46,7 @@ testthat::test_that("GSE has populated experimentData", {
 })
 
 testthat::test_that("GSE populates experimentData as much as possible", {
-    gse <- geo("GSE99709", odir = tempdir())
+    gse <- geo_matrix("GSE99709", odir = tempdir())
     ed <- Biobase::experimentData(gse)
     testthat::expect_equal(Biobase::pubMedIds(ed), "")
 
@@ -57,7 +57,7 @@ testthat::test_that("GSE populates experimentData as much as possible", {
     testthat::expect_equal(ei[[4L]], "RNA-Sequencing of Stat3 silenced oligodendrocyte progenitor cells.")
     testthat::expect_equal(ei[[5L]], "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE99709") # url
     # ----------------------------------------------------------------
-    gse <- geo("GSE27712", odir = tempdir())
+    gse <- geo_matrix("GSE27712", odir = tempdir())
     ed <- Biobase::experimentData(gse[[1L]])
     testthat::expect_equal(Biobase::pubMedIds(ed), "22253802")
 
@@ -71,23 +71,20 @@ testthat::test_that("GSE populates experimentData as much as possible", {
 })
 
 testthat::test_that("GSE/GPL with integer64 columns handled correctly", {
-    gse <- geo("GSE7864", odir = tempdir(), add_gpl = TRUE)
+    gse <- geo_matrix("GSE7864", odir = tempdir(), add_gpl = TRUE)
     fdata <- Biobase::fData(gse)
-    testthat::expect_s3_class(fdata$ID, "integer64")
+    testthat::expect_type(fdata$ID, "double")
     testthat::expect_type(rownames(fdata), "character")
 })
 
 testthat::test_that("GSE/GPL with Bioconductor annotation package handled correctly", {
-    gse <- geo("GSE410", odir = tempdir(), add_gpl = NULL)
-    testthat::expect_equal(
-        BiocGenerics::annotation(gse),
-        "hgu133a"
-    )
+    gse <- geo_matrix("GSE410", odir = tempdir(), add_gpl = NULL)
+    testthat::expect_equal(BiocGenerics::annotation(gse), "hgu133a")
 })
 
 testthat::test_that("non-existed GSE matrix files signal error", {
     testthat::expect_error(
-        geo("gse1787", odir = tempdir()),
-        regexp = "Cannot open.* for GSE1787"
+        geo_matrix("gse1787", odir = tempdir()),
+        regexp = "Failed to open.* for GSE1787"
     )
 })

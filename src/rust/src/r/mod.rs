@@ -172,12 +172,8 @@ fn geo_parse_soft(
 }
 
 #[extendr]
-fn parse_key_value_elements(elements: Robj, separator: u8) -> Result<extendr_api::List, String> {
-    let list = elements
-        .as_list()
-        .ok_or_else(|| format!("Invalid elements: Expected a list of character vector"))?;
-
-    let element_vec = list
+fn parse_key_value_elements(elements: List, separator: u8) -> Result<extendr_api::List, String> {
+    let element_vec = elements
         .as_slice()
         .into_iter()
         .map(|robj| {
@@ -186,7 +182,7 @@ fn parse_key_value_elements(elements: Robj, separator: u8) -> Result<extendr_api
         })
         .collect::<Result<Vec<Vec<&str>>, String>>()?;
 
-    let mut out: IndexMap<&str, Vec<Option<&str>>> = IndexMap::new();
+    let mut out: IndexMap<&str, Vec<Option<String>>> = IndexMap::new();
     let mut keys = HashSet::new();
     let mut reference;
     let mut num_added = 0;
@@ -209,12 +205,24 @@ fn parse_key_value_elements(elements: Robj, separator: u8) -> Result<extendr_api
                         unsafe { str::from_utf8_unchecked(element_bytes.get_unchecked(pos + 1..)) }
                             .trim_ascii();
                     if let Some(entry) = out.get_mut(label) {
-                        entry.push(Some(value));
-                        reference.remove(label);
+                        // add it or append it to the exist one
+                        if reference.contains(label) {
+                            entry.push(Some(value.to_owned()));
+                            reference.remove(label);
+                        } else {
+                            if let Some(last) = entry.pop() {
+                                if let Some(last_str) = last {
+                                    let new = format!("{}; {}", last_str, value);
+                                    entry.push(Some(new));
+                                } else {
+                                    entry.push(Some(value.to_owned()));
+                                }
+                            }
+                        }
                     } else {
                         let mut entry = Vec::with_capacity(total);
                         entry.resize(num_added, None);
-                        entry.push(Some(value));
+                        entry.push(Some(value.to_owned()));
                         out.insert(label, entry);
                         keys.insert(label);
                     }

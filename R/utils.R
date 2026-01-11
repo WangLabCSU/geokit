@@ -21,7 +21,7 @@ parse_key_value_elements <- function(elements, sep = ":", arg = caller_arg(sep),
     }
     out <- rust_call(
         "parse_key_value_elements",
-        elements, as.integer(separator)
+        as.list(elements), as.integer(separator)
     )
     quickdf(out)
 }

@@ -3,7 +3,7 @@ use std::io::{self, BufRead, BufReader};
 use std::path::Path;
 
 use anyhow::{Context, Result};
-use extendr_api::{Attributes, Length};
+use extendr_api::Attributes;
 
 #[cfg(feature = "flate2")]
 use flate2::bufread::GzDecoder as GzipDecoder;
@@ -112,17 +112,19 @@ impl GEOSoftRecord {
     #[inline]
     fn parse_caret(&mut self, line: &[u8]) -> Result<()> {
         let prefix = if let Some(pos) = memchr(b'=', line) {
+            // SAFETY: we have ensure the line starts with '^'
             let prefix = unsafe { line.get_unchecked(1..pos) };
             if pos + 1 < line.len() {
                 let rcd_name =
-                    str::from_utf8(unsafe { line.get_unchecked(pos + 1..) }.trim_ascii())?;
-                self.rcd_name.push_str(rcd_name);
+                    String::from_utf8_lossy(unsafe { line.get_unchecked(pos + 1..) }.trim_ascii())
+                        .to_string();
+                self.rcd_name = rcd_name;
             }
             prefix
         } else {
             unsafe { line.get_unchecked(1..) }
         };
-        self.rcd_type = String::from_utf8(prefix.trim_ascii_end().to_vec())?;
+        self.rcd_type = String::from_utf8_lossy(prefix.trim_ascii_end()).to_string();
         Ok(())
     }
 
@@ -131,13 +133,18 @@ impl GEOSoftRecord {
         // for normal SOFT file, the metadata is seprated with `=`
         if let Some(pos) = memchr(b'=', line) {
             if pos + 1 < line.len() {
-                let label = str::from_utf8(unsafe { line.get_unchecked(1..pos) }.trim_ascii_end())?;
-                let value = str::from_utf8(unsafe { line.get_unchecked(pos + 1..) }.trim_ascii())?;
-                if let Some(metadata) = self.metadata.get_mut(label) {
-                    metadata.push(Some(value.to_string()));
+                // SAFETY: we have ensure the line starts with '!'
+                let label =
+                    String::from_utf8_lossy(unsafe { line.get_unchecked(1..pos) }.trim_ascii_end())
+                        .to_string();
+                // SAFETY: we have ensured 'pos + 1' doesn't span the ending
+                let value =
+                    String::from_utf8_lossy(unsafe { line.get_unchecked(pos + 1..) }.trim_ascii())
+                        .to_string();
+                if let Some(metadata) = self.metadata.get_mut(&label) {
+                    metadata.push(Some(value));
                 } else {
-                    self.metadata
-                        .insert(label.to_owned(), vec![Some(value.to_string())]);
+                    self.metadata.insert(label.to_owned(), vec![Some(value)]);
                 }
             }
         }
@@ -149,28 +156,32 @@ impl GEOSoftRecord {
         // for GSE matrix, the metadata is seprated with `\t`
         if let Some(pos) = memchr(b'\t', line) {
             if pos + 1 < line.len() {
-                let label = str::from_utf8(unsafe { line.get_unchecked(1..pos) }.trim_ascii_end())?;
-                let fields = unsafe { line.get_unchecked(pos + 1..)}
+                // SAFETY: we have ensure the line starts with '!'
+                let label =
+                    String::from_utf8_lossy(unsafe { line.get_unchecked(1..pos) }.trim_ascii_end())
+                        .to_string();
+                // SAFETY: we have ensured 'pos + 1' doesn't span the ending
+                let fields = unsafe { line.get_unchecked(pos + 1..) }
                     .split(|byte| *byte == b'\t')
                     .map(|field| {
                         let field = strip_quotes(field.trim_ascii());
                         if field.is_empty()
                             || matches!(field.to_ascii_lowercase().as_slice(), b"null" | b"na")
                         {
-                            Ok(None)
+                            None
                         } else {
-                            String::from_utf8(field.to_vec()).map(|s| Some(s))
+                            Some(String::from_utf8_lossy(field).to_string())
                         }
                     })
-                    .collect::<std::result::Result<Vec<Option<String>>, std::string::FromUtf8Error>>()?;
+                    .collect::<Vec<Option<String>>>();
                 // Check if the label already exists and add a suffix to ensure uniqueness
-                let mut owned_label = label.to_owned();
                 let mut suffix = 1;
-                while self.metadata.contains_key(&owned_label) {
-                    owned_label = format!("{}_{}", label, suffix);
+                let mut label_check = label.clone();
+                while self.metadata.contains_key(&label_check) {
+                    label_check = format!("{}_{}", label, suffix);
                     suffix += 1;
                 }
-                self.metadata.insert(owned_label, fields);
+                self.metadata.insert(label, fields);
             }
         }
         Ok(())
@@ -178,18 +189,21 @@ impl GEOSoftRecord {
 
     #[inline]
     fn parse_hash(&mut self, line: &[u8]) -> Result<()> {
+        // SAFETY: we have ensure the line starts with '#'
         if let Some(pos) = memchr(b'=', line) {
-            let label = str::from_utf8(unsafe { line.get_unchecked(1..pos) }.trim_ascii_end())?;
+            let label =
+                String::from_utf8_lossy(unsafe { line.get_unchecked(1..pos) }.trim_ascii_end())
+                    .to_string();
             let value = if pos + 1 < line.len() {
-                str::from_utf8(unsafe { line.get_unchecked(pos + 1..) }.trim_ascii())?
+                String::from_utf8_lossy(unsafe { line.get_unchecked(pos + 1..) }.trim_ascii())
+                    .to_string()
             } else {
-                ""
+                String::new()
             };
             if value.is_empty() {
-                self.columns.push((label.to_owned(), None));
+                self.columns.push((label, None));
             } else {
-                self.columns
-                    .push((label.to_owned(), Some(value.to_owned())));
+                self.columns.push((label, Some(value)));
             }
         }
         Ok(())
@@ -205,12 +219,13 @@ impl GEOSoftRecord {
                 if field.is_empty()
                     || matches!(field.to_ascii_lowercase().as_slice(), b"null" | b"na")
                 {
-                    Ok(None)
+                    None
                 } else {
-                    String::from_utf8(field.to_vec()).map(|s| Some(s))
+                    // SOFT File may contain non-UTF8 character
+                    Some(String::from_utf8_lossy(field).to_string())
                 }
             })
-            .collect::<std::result::Result<Vec<Option<String>>, std::string::FromUtf8Error>>()?;
+            .collect::<Vec<Option<String>>>();
 
         // the first row is the header
         if self.header.is_empty() {
@@ -238,6 +253,7 @@ impl GEOSoftRecord {
                 }
             }
         }
+        // SAFETY: we have ensured has the same length of fields
         for (i, field) in fields.into_iter().enumerate() {
             unsafe { self.datatable.get_unchecked_mut(i) }.push(field);
         }
@@ -263,11 +279,7 @@ impl TryFrom<GEOSoftRecord> for extendr_api::List {
     type Error = extendr_api::Error;
 
     fn try_from(value: GEOSoftRecord) -> std::result::Result<Self, Self::Error> {
-        let (metadata_keys, metadata_values): (Vec<_>, Vec<_>) = value
-            .metadata
-            .into_iter()
-            .map(|(key, value)| (key, extendr_api::Robj::from(value)))
-            .unzip();
+        let (metadata_keys, metadata_values): (Vec<_>, Vec<_>) = value.metadata.into_iter().unzip();
         let mut metadata = extendr_api::List::from_values(metadata_values);
         metadata.set_names(metadata_keys)?;
 
@@ -277,7 +289,7 @@ impl TryFrom<GEOSoftRecord> for extendr_api::List {
         columns.set_names(columns_names)?;
 
         let header = extendr_api::Robj::from(value.header);
-        let mut datatable = Vec::with_capacity(header.len());
+        let mut datatable = Vec::with_capacity(value.datatable.len());
         for field in value.datatable.into_iter() {
             datatable.push(super::helper::parse_string(field));
         }

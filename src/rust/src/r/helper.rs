@@ -67,10 +67,10 @@ pub(in crate::r) fn robj_to_option_vec_bool(value: &Robj, len: usize) -> Result<
     }
 }
 
-pub(in crate::r) fn parse_string<S: AsRef<str>>(value: Vec<Option<S>>) -> extendr_api::Robj {
+pub(in crate::r) fn parse_string(value: Vec<Option<String>>) -> Robj {
     let input_str = value
         .iter()
-        .map(|option_str| option_str.as_ref().map(|s| s.as_ref()))
+        .map(|option_str| option_str.as_ref().map(|s| s.as_str()))
         .collect::<Vec<_>>();
 
     if let Ok(i32_vec) = input_str
@@ -78,14 +78,14 @@ pub(in crate::r) fn parse_string<S: AsRef<str>>(value: Vec<Option<S>>) -> extend
         .map(|option_str| option_str.map(|s| s.parse::<i32>()).transpose())
         .collect::<std::result::Result<Vec<Option<i32>>, <i32 as FromStr>::Err>>()
     {
-        return extendr_api::Robj::from(i32_vec);
+        return Robj::from(i32_vec);
     };
     if let Ok(f64_vec) = input_str
         .iter()
         .map(|option_str| option_str.map(|s| s.parse::<f64>()).transpose())
         .collect::<std::result::Result<Vec<Option<f64>>, <f64 as FromStr>::Err>>()
     {
-        return extendr_api::Robj::from(f64_vec);
+        return Robj::from(f64_vec);
     };
     if let Ok(bool_vec) = input_str
         .iter()
@@ -96,7 +96,7 @@ pub(in crate::r) fn parse_string<S: AsRef<str>>(value: Vec<Option<S>>) -> extend
         })
         .collect::<std::result::Result<Vec<Option<bool>>, <bool as FromStr>::Err>>()
     {
-        return extendr_api::Robj::from(bool_vec);
+        return Robj::from(bool_vec);
     };
-    extendr_api::Robj::from(input_str)
+    Robj::from(value)
 }
