@@ -3,8 +3,12 @@ use std::{collections::HashSet, path::Path, result::Result};
 use anyhow::{anyhow, Context};
 use extendr_api::prelude::*;
 use indexmap::IndexMap;
+use indicatif::{ParallelProgressIterator, ProgressBar, ProgressStyle};
 use memchr::memchr;
-use rayon::{prelude::*, ThreadPoolBuilder};
+use rayon::{
+    iter::{IndexedParallelIterator, IntoParallelRefIterator, ParallelIterator},
+    ThreadPoolBuilder,
+};
 
 use crate::r::soft::GEOSoftRecord;
 
@@ -161,8 +165,14 @@ fn geo_parse_soft(
         .map_err(|err| format!("{:?}", err))?
         .install(|| {
             // for each path, we parse the soft file, each file has multiple records
+            let style = ProgressStyle::with_template(
+                "{prefix:.bold.cyan/blue} {human_pos}/{human_len} {spinner:.green} [{elapsed_precise}] {per_sec} (ETA {eta})",
+            )?;
             path.par_iter()
                 .zip(format)
+                .progress()
+                .with_prefix("Parsing GEO File")
+                .with_style(style)
                 .map(|(path, format)| geo_parse_soft_impl(path, format, reuse_buffer))
                 .collect::<Result<Vec<Vec<GEOSoftRecord>>, _>>()
         });
@@ -231,7 +241,7 @@ fn pprof_geo_parse_soft(
         .build()
         .with_context(|| format!("Failed to create profile guard"))
         .map_err(|e| format!("{:?}", e))?;
-    let out = geo_parse_soft(path, format, reuse_buffer);
+    let out = geo_parse_soft(path, format, reuse_buffer, threads);
     if let Ok(report) = guard.report().build() {
         let file = std::fs::File::create(pprof_file)
             .with_context(|| format!("Failed to create file {}", pprof_file))

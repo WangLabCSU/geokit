@@ -18,6 +18,7 @@ memchr = { version = "*" }
 rayon = { version = "*" }
 indexmap = { version = "*" }
 rand = { version = "*" }
+indicatif = {version = "*", features = ["rayon"]}
 flate2 = { version = "*" }
 isal-rs = { version = "*", optional = true }
 pprof = { version = "0.14", features = ["flamegraph"], optional = true }
