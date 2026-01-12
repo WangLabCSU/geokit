@@ -182,7 +182,7 @@ impl GEOSoftRecord {
                     label_check = format!("{}_{}", label, suffix);
                     suffix += 1;
                 }
-                self.metadata.insert(label, fields);
+                self.metadata.insert(label_check, fields);
             }
         }
         Ok(())

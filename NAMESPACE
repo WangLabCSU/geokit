@@ -3,6 +3,7 @@
 S3method(log_trans,ExpressionSet)
 S3method(log_trans,matrix)
 S3method(parse_sample_data,GEOSeries)
+S3method(parse_sample_data,data.frame)
 S3method(parse_sample_data,list)
 export("accession<-")
 export("columns<-")

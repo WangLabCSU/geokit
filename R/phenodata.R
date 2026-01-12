@@ -27,7 +27,42 @@ parse_sample_data.GEOSeries <- function(x, ...) {
 
 #' @export
 #' @rdname parse_sample_data
-parse_sample_data.list <- function(x, ..., fields = NULL, sep = ":") {
+parse_sample_data.data.frame <- function(x, ..., fields = NULL, sep = ":") {
+    # parse the characteristics
+    if (is.null(fields)) {
+        # We select columns with names starting with "characteristics_ch" and at
+        # least 50% of the elements in the column contains character ":",
+        # For GEO use ":" string to separate Key-value pairs.
+        cols <- startsWith(colnames(x), "characteristics_ch")
+        column_with_sep <- vapply(which(cols), function(col) {
+            list_col <- .subset2(x, col)
+            have_sep <- vapply(list_col, function(x) {
+                all(grepl(sep, x, fixed = TRUE), na.rm = TRUE)
+            }, logical(1L), USE.NAMES = FALSE)
+            mean(have_sep, na.rm = TRUE) >= 0.5
+        }, logical(1L), USE.NAMES = FALSE)
+        fields <- colnames(x)[cols[column_with_sep]]
+    }
+    if (length(fields) == 0L) {
+        return(set_rownames(x, "geo_accession"))
+    }
+    characteristics <- parse_characteristics(x, fields, sep = sep)
+    for (characteristic_col in names(characteristics)) {
+        characteristic_data <- .subset2(characteristics, characteristic_col)
+        point <- which(colnames(x) == characteristic_col)
+        ordered_cols <- c(
+            colnames(x)[seq_len(point)],
+            colnames(characteristic_data),
+            colnames(x)[-seq_len(point)]
+        )
+        x <- cbind(x, characteristic_data)[, ordered_cols, drop = FALSE]
+    }
+    set_rownames(x, "geo_accession")
+}
+
+#' @export
+#' @rdname parse_sample_data
+parse_sample_data.list <- function(x, ...) {
     test_gsm_list <- is.list(x) && all(vapply(
         x, function(x) {
             methods::is(x, "GEODatatable") &&
@@ -56,40 +91,8 @@ parse_sample_data.list <- function(x, ..., fields = NULL, sep = ":") {
         use.names = TRUE, fill = TRUE, idcol = FALSE
     )
     data.table::setnames(metadata, function(x) sub("^Sample_", "", x))
-
-    # parse the characteristics
-    if (is.null(fields)) {
-        # We select columns with names starting with "characteristics_ch" and at
-        # least 50% of the elements in the column contains character ":",
-        # For GEO use ":" string to separate Key-value pairs.
-        cols <- startsWith(colnames(metadata), "characteristics_ch")
-        column_with_sep <- vapply(which(cols), function(col) {
-            list_col <- .subset2(metadata, col)
-            have_sep <- vapply(list_col, function(x) {
-                all(grepl(sep, x, fixed = TRUE), na.rm = TRUE)
-            }, logical(1L), USE.NAMES = FALSE)
-            mean(have_sep, na.rm = TRUE) >= 0.5
-        }, logical(1L), USE.NAMES = FALSE)
-        fields <- colnames(metadata)[cols[column_with_sep]]
-    }
-    if (length(fields) == 0L) {
-        data.table::setDF(metadata)
-        out <- set_rownames(metadata, "geo_accession")
-        return(out)
-    }
-    characteristics <- parse_characteristics(metadata, fields, sep = sep)
-    for (characteristic_col in names(characteristics)) {
-        characteristic_data <- .subset2(characteristics, characteristic_col)
-        characteristic_names <- colnames(characteristic_data)
-        metadata[, (characteristic_names) := characteristic_data]
-        data.table::setcolorder(
-            metadata,
-            neworder = characteristic_names,
-            before = characteristic_col
-        )
-    }
     data.table::setDF(metadata)
-    set_rownames(metadata, "geo_accession")
+    parse_sample_data.data.frame(metadata, ...)
 }
 
 parse_characteristics <- function(data, characteristic_cols, sep = ":") {
@@ -122,7 +125,10 @@ parse_characteristics <- function(data, characteristic_cols, sep = ":") {
             # This is just the second column of `str_match`.
             # Sometimes there may be a "\\.\\d*" tail
             new_names <- paste0(
-                str_match(col, "(ch\\d*)(\\.\\d*)?$")[, 2L, drop = TRUE],
+                str_match(col, "(ch\\d*)(\\.\\d*)?(_\\d*)?$")[
+                    , 2L,
+                    drop = TRUE
+                ],
                 "_",
                 colnames(data)
             )

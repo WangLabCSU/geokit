@@ -85,6 +85,27 @@ testthat::test_that("GSE/GPL with Bioconductor annotation package handled correc
 testthat::test_that("non-existed GSE matrix files signal error", {
     testthat::expect_error(
         geo_matrix("gse1787", odir = tempdir()),
-        regexp = "Failed to open.* for GSE1787"
+        regexp = "Failed to open.*GSE1787"
     )
+})
+
+testthat::test_that("GSE/GSM with characteristic column worked well", {
+    testthat::expect_s4_class(
+        geo_matrix("GSE8462", odir = tempdir()),
+        "ExpressionSet"
+    )
+    gse <- geo_matrix(
+        "GSE53987",
+        odir = tempdir(),
+        pdata_from_soft = FALSE, add_gpl = FALSE
+    )
+    pdata <- Biobase::pData(gse)
+    testthat::expect_type(pdata$ch1_age, "integer")
+    testthat::expect_type(pdata$ch1_gender, "character")
+    testthat::expect_type(pdata$ch1_race, "character")
+    testthat::expect_type(pdata$ch1_pmi, "double")
+    testthat::expect_type(pdata$ch1_ph, "double")
+    testthat::expect_type(pdata$ch1_rin, "double")
+    testthat::expect_type(pdata$ch1_tissue, "character")
+    testthat::expect_type(pdata$`ch1_disease state`, "character")
 })

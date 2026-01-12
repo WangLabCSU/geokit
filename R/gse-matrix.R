@@ -70,7 +70,7 @@ geo_matrix_impl <- function(accession, pdata_from_soft = TRUE,
             length(gse_soft), "{cli::qty(length(gse_soft))}"
         ))
     } else {
-        gse_soft <- NULL
+        gse_soft <- rep_len(list(NULL), length(paths_list))
     }
 
     # parsing GSE metrix files --------------------------------------
@@ -121,7 +121,6 @@ parse_gse_matrix <- function(path, gse_soft = NULL, add_gpl = NULL,
 
     # fetch phenoData -------------------------------------------
     if (is.null(gse_soft)) {
-        browser()
         sample_data <- parse_sample_data(metadata$Sample)
     } else {
         gsm_list <- gsm(gse_soft)
@@ -214,7 +213,6 @@ parse_gse_matrix <- function(path, gse_soft = NULL, add_gpl = NULL,
             data.frame(row.names = rownames(assay))
         )
     }
-
     # contructing ExpressionSet object
     Biobase::ExpressionSet(
         assayData = assay,

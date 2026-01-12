@@ -6,7 +6,7 @@
 #' entity soft file and `GEOData` contains extra two slots `columns` and
 #' `datatable` special for GEO samples, platforms, and datasets.
 #'
-#' @param object A [GEO-class] Class Object.
+#' @param object A [GEOSoft][GEO-class] Class Object.
 #' @param value A R object with the same class of corresponding slots.
 #' @name GEO-class
 #' @docType class

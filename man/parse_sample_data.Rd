@@ -3,6 +3,7 @@
 \name{parse_sample_data}
 \alias{parse_sample_data}
 \alias{parse_sample_data.GEOSeries}
+\alias{parse_sample_data.data.frame}
 \alias{parse_sample_data.list}
 \title{Parse key-value pairs in the metadata of GEO Sample SOFT file}
 \usage{
@@ -10,7 +11,9 @@ parse_sample_data(x, ...)
 
 \method{parse_sample_data}{GEOSeries}(x, ...)
 
-\method{parse_sample_data}{list}(x, ..., fields = NULL, sep = ":")
+\method{parse_sample_data}{data.frame}(x, ..., fields = NULL, sep = ":")
+
+\method{parse_sample_data}{list}(x, ...)
 }
 \arguments{
 \item{x}{A \link[=GEOSeries-class]{GEOSeries} object or a list of GEODatatable from

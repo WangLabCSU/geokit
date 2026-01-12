@@ -136,7 +136,7 @@ gpl(object) <- value
 \S4method{gpl}{GEOSeries}(object) <- value
 }
 \arguments{
-\item{object}{A \linkS4class{GEO} Class Object.}
+\item{object}{A \link[=GEO-class]{GEOSoft} Class Object.}
 
 \item{value}{A R object with the same class of corresponding slots.}
 }
