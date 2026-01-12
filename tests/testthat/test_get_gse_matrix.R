@@ -84,7 +84,7 @@ testthat::test_that("GSE/GPL with Bioconductor annotation package handled correc
 
 testthat::test_that("non-existed GSE matrix files signal error", {
     testthat::expect_error(
-        geo_matrix("gse1787", odir = tempdir()),
+        suppressWarnings(geo_matrix("gse1787", odir = tempdir())),
         regexp = "Failed to open.*GSE1787"
     )
 })

@@ -95,7 +95,7 @@ pub(in crate::r) fn parse_string(value: Vec<Option<String>>) -> Robj {
                 can_f64 = false;
             }
             if can_int && s.parse::<i32>().is_err() {
-                can_f64 = false;
+                can_int = false;
             }
             if can_bool && !(s.eq_ignore_ascii_case("true") || s.eq_ignore_ascii_case("false")) {
                 can_bool = false;
