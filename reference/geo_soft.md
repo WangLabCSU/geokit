@@ -75,7 +75,8 @@ geo_soft(
 
 ## Value
 
-A [GEOSoft](https://WangLabCSU.github.io/geokit/reference/GEO-class.md)
+A
+[GEOSoft](https://WangLabCSU.github.io/geokit/reference/GEOSoft-class.md)
 object
 
 ## Details

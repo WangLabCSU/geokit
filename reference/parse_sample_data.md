@@ -2,8 +2,8 @@
 
 Lots of GSEs now use `"characteristics_ch*"` meta header data for
 key-value pairs of annotation. If that is the case, this simply cleans
-the **GEODatatable** `@metadata` slot up and transforms the keys to
-column names and the values to column values.
+the **GEOSoft** `@metadata` slot up and transforms the keys to column
+names and the values to column values.
 
 ## Usage
 
@@ -25,9 +25,11 @@ parse_sample_data(x, ...)
 - x:
 
   A
-  [GEOSeries](https://WangLabCSU.github.io/geokit/reference/GEO-class.md)
-  object or a list of GEODatatable from the `@gsm` slot of a `GEOSeries`
-  object.
+  [GEOSeries](https://WangLabCSU.github.io/geokit/reference/GEOSoft-class.md)
+  object, a list of
+  [GEOSoft](https://WangLabCSU.github.io/geokit/reference/GEOSoft-class.md)
+  from the `@gsm` slot of a `GEOSeries` object, or a data frame from
+  Series matrix file data table.
 
 - ...:
 
