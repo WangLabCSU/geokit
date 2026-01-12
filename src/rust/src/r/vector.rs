@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+
 use extendr_api::Robj;
 use rand::{rng, seq::IteratorRandom};
 
@@ -15,8 +17,16 @@ pub enum Vector {
 }
 
 impl Vector {
-    pub fn parse_string(value: Vec<Option<String>>) -> Self {
+    pub fn parse_string<T>(value: Vec<Option<T>>) -> Self
+    where
+        T: AsRef<str>,
+        Vec<Option<T>>: Into<Vector>,
+    {
         const SAMPLE_SIZE: usize = 5_000; // data table uses 10_000
+        let input_str = value
+            .iter()
+            .map(|opt| opt.as_ref().map(|value| value.as_ref()))
+            .collect::<Vec<Option<&str>>>();
 
         let reservoir = if value.len() <= SAMPLE_SIZE {
             (0..value.len()).collect()
@@ -32,7 +42,7 @@ impl Vector {
 
         for index in reservoir {
             // SAFETY: reservoir indices are within bounds of value
-            if let Some(s) = unsafe { value.get_unchecked(index) } {
+            if let Some(s) = unsafe { input_str.get_unchecked(index) } {
                 if can_f64 && s.parse::<f64>().is_err() {
                     can_int = false; // int can be parsed by f64
                     can_f64 = false;
@@ -52,13 +62,9 @@ impl Vector {
 
         // Parse whole column once according to inferred type (prefer integer over float).
         if can_int {
-            if let Ok(parsed) = value
+            if let Ok(parsed) = input_str
                 .iter()
-                .map(|opt| {
-                    opt.as_ref()
-                        .and_then(|s| Some(s.parse::<i32>()))
-                        .transpose()
-                })
+                .map(|opt| opt.and_then(|s| Some(s.parse::<i32>())).transpose())
                 .collect::<std::result::Result<Vec<Option<i32>>, _>>()
             {
                 return Vector::I32(parsed);
@@ -66,13 +72,9 @@ impl Vector {
         }
 
         if can_f64 {
-            if let Ok(parsed) = value
+            if let Ok(parsed) = input_str
                 .iter()
-                .map(|opt| {
-                    opt.as_ref()
-                        .and_then(|s| Some(s.parse::<f64>()))
-                        .transpose()
-                })
+                .map(|opt| opt.and_then(|s| Some(s.parse::<f64>())).transpose())
                 .collect::<std::result::Result<Vec<Option<f64>>, _>>()
             {
                 return Vector::F64(parsed);
@@ -80,20 +82,19 @@ impl Vector {
         }
 
         if can_bool {
-            if let Ok(parsed) = value
+            if let Ok(parsed) = input_str
                 .iter()
                 .map(|opt| {
-                    opt.as_ref()
-                        .and_then(|s| {
-                            if s.eq_ignore_ascii_case("true") {
-                                Some(Ok(true))
-                            } else if s.eq_ignore_ascii_case("false") {
-                                Some(Ok(false))
-                            } else {
-                                Some(Err(())) // Ignore the error
-                            }
-                        })
-                        .transpose()
+                    opt.and_then(|s| {
+                        if s.eq_ignore_ascii_case("true") {
+                            Some(Ok(true))
+                        } else if s.eq_ignore_ascii_case("false") {
+                            Some(Ok(false))
+                        } else {
+                            Some(Err(())) // Ignore the error
+                        }
+                    })
+                    .transpose()
                 })
                 .collect::<std::result::Result<Vec<Option<bool>>, _>>()
             {
@@ -102,7 +103,7 @@ impl Vector {
         }
 
         // Fallback: keep as character vector, reuse original `value` (no extra cloning).
-        Vector::String(value)
+        value.into()
     }
 }
 
@@ -139,6 +140,40 @@ impl From<Vec<Option<String>>> for Vector {
 impl From<Vec<String>> for Vector {
     fn from(value: Vec<String>) -> Self {
         Self::String(value.into_iter().map(|v| Some(v)).collect())
+    }
+}
+
+impl<'a> From<Vec<Option<&'a str>>> for Vector {
+    fn from(value: Vec<Option<&'a str>>) -> Self {
+        Self::String(
+            value
+                .into_iter()
+                .map(|opt| opt.map(|s| s.to_owned()))
+                .collect(),
+        )
+    }
+}
+
+impl<'a> From<Vec<&'a str>> for Vector {
+    fn from(value: Vec<&'a str>) -> Self {
+        Self::String(value.into_iter().map(|v| Some(v.to_owned())).collect())
+    }
+}
+
+impl<'a> From<Vec<Option<Cow<'a, str>>>> for Vector {
+    fn from(value: Vec<Option<Cow<'a, str>>>) -> Self {
+        Self::String(
+            value
+                .into_iter()
+                .map(|opt| opt.map(|s| s.into_owned()))
+                .collect(),
+        )
+    }
+}
+
+impl<'a> From<Vec<Cow<'a, str>>> for Vector {
+    fn from(value: Vec<Cow<'a, str>>) -> Self {
+        Self::String(value.into_iter().map(|v| Some(v.into_owned())).collect())
     }
 }
 
