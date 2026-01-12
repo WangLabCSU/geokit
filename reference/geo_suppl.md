@@ -65,5 +65,5 @@ provided) of the full file paths of the resulting downloaded files.
 ``` r
 geo_suppl("GSM1137", odir = tempdir())
 #> Downloading 1 file
-#> [1] "/tmp/Rtmp1JgVRO/GSM1137.CEL.gz"
+#> [1] "/tmp/Rtmp0n7Smd/GSM1137.CEL.gz"
 ```

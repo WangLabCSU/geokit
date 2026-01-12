@@ -34,3 +34,26 @@ geo_gtype(accession, abbre = FALSE)
 ## Value
 
 A character of GEO accession type.
+
+## Examples
+
+``` r
+geo_gtype("GSE10")
+#> [1] "Series"
+geo_gtype("gpl98")
+#> [1] "Platforms"
+geo_gtype("GSM1")
+#> [1] "Samples"
+geo_gtype("GDS10")
+#> [1] "Datasets"
+
+# use abbreviation
+geo_gtype("GSE10", TRUE)
+#> [1] "GSE"
+geo_gtype("gpl98", TRUE)
+#> [1] "GPL"
+geo_gtype("GSM1", TRUE)
+#> [1] "GSM"
+geo_gtype("GDS10", TRUE)
+#> [1] "GDS"
+```
