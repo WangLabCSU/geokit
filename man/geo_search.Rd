@@ -41,7 +41,7 @@ for details.
 # Ensure you have an active internet connection before running the search.
 # The `geo_search` function queries NCBI Entrez, which may have network
 # restrictions and limited bandwidth usage for large queries. To avoid
-# interruptions due tonetwork issues or rate limits, we wrap the call with
+# interruptions due to network issues or rate limits, we wrap the call with
 # try().
 try(geo_search("diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"))
 }
