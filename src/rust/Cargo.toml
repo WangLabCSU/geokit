@@ -11,12 +11,13 @@ name = 'geokit'
 
 [dependencies]
 extendr-api = { version = "*", default-features = false, features = ['result_list'] }
-thiserror = '*'
-anyhow = '*'
-regex = '*'
-memchr = '*'
-indexmap = '*'
-rand = '*'
+thiserror = { version = "*" }
+anyhow = { version = "*" }
+regex = { version = "*" }
+memchr = { version = "*" }
+rayon = { version = "*" }
+indexmap = { version = "*" }
+rand = { version = "*" }
 flate2 = { version = "*" }
 isal-rs = { version = "*", optional = true }
 pprof = { version = "0.14", features = ["flamegraph"], optional = true }

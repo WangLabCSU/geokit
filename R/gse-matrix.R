@@ -93,7 +93,7 @@ parse_gse_matrix <- function(path, gse_soft = NULL, add_gpl = NULL,
                              ftp_over_https = TRUE, handle_opts = list(),
                              reuse_buffer = FALSE, odir = getwd()) {
     entity_list <- parse_soft_rust(path, "matrix", reuse_buffer = reuse_buffer)
-    gse_matrix <- parse_entity_list(entity_list)
+    gse_matrix <- parse_entity_list(.subset2(entity_list, 1L))
 
     # extract series matrix data
     matrix_data <- datatable(gse_matrix)
@@ -185,7 +185,7 @@ parse_gse_matrix <- function(path, gse_soft = NULL, add_gpl = NULL,
             odir = odir
         )
         entity_list <- parse_soft_rust(annot_file, reuse_buffer = reuse_buffer)
-        gpl <- parse_entity_list(entity_list)
+        gpl <- parse_entity_list(.subset2(entity_list, 1L))
         if (nrow(feature_data <- datatable(gpl))) {
             feature_data <- set_rownames(feature_data)
             # NCBI GEO uses case-insensitive matching between platform

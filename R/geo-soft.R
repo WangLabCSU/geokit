@@ -82,21 +82,9 @@ geo_soft_impl <- function(accession, famount = NULL, scope = NULL,
     parse_soft_multiple(accession, paths)
 }
 
-# TO-DO: Using rust to implement the `parallel`
 parse_soft_multiple <- function(accession, paths) {
-    cli::cli_progress_bar(
-        format = "{cli::pb_spin} Parsing {.field {accession[cli::pb_current]}} soft file | {cli::pb_current}/{cli::pb_total}",
-        format_done = "Parsing {.val {cli::pb_total}} {.field soft} file{?s} in {cli::pb_elapsed}",
-        total = length(paths),
-        clear = FALSE
-    )
-    olist <- vector("list", length(paths))
-    for (i in seq_along(paths)) {
-        cli::cli_progress_update()
-        entity_list <- parse_soft_rust(.subset(paths, i), reuse_buffer = FALSE)
-        olist[[i]] <- parse_entity_list(entity_list)
-    }
-    olist
+    entity_list <- parse_soft_rust(paths, reuse_buffer = FALSE)
+    lapply(entity_list, parse_entity_list)
 }
 
 #' @importFrom rlang caller_env

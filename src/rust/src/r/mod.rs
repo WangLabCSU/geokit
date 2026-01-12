@@ -4,6 +4,9 @@ use anyhow::{anyhow, Context};
 use extendr_api::prelude::*;
 use indexmap::IndexMap;
 use memchr::memchr;
+use rayon::{prelude::*, ThreadPoolBuilder};
+
+use crate::r::soft::GEOSoftRecord;
 
 use super::geo::{GEOEntity, GEOType};
 
@@ -130,17 +133,74 @@ fn geo_file_url_and_fname(
 }
 
 #[extendr]
-fn geo_parse_soft(path: &str, format: &str, reuse_buffer: bool) -> Result<Vec<Robj>, String> {
+fn geo_parse_soft(
+    path: Robj,
+    format: Robj,
+    reuse_buffer: bool,
+    threads: Option<usize>,
+) -> Result<List, String> {
+    let path = path
+        .as_str_vector()
+        .ok_or_else(|| anyhow!("Expected a character vector"))
+        .with_context(|| format!("Invalid 'path'"))
+        .map_err(|err| format!("{:?}", err))?;
+    let format = format
+        .as_str_vector()
+        .ok_or_else(|| anyhow!("Expected a character vector"))
+        .with_context(|| format!("Invalid 'format'"))
+        .map_err(|err| format!("{:?}", err))?;
+
+    // use rayon to implement parallel
+    let mut pool_builder = ThreadPoolBuilder::new();
+    if let Some(threads) = threads {
+        pool_builder = pool_builder.num_threads(threads);
+    }
+    let record_res = pool_builder
+        .build()
+        .with_context(|| format!("Failed to create rayon thread pool"))
+        .map_err(|err| format!("{:?}", err))?
+        .install(|| {
+            // for each path, we parse the soft file, each file has multiple records
+            path.par_iter()
+                .zip(format)
+                .map(|(path, format)| geo_parse_soft_impl(path, format, reuse_buffer))
+                .collect::<Result<Vec<Vec<GEOSoftRecord>>, _>>()
+        });
+
+    let out = record_res
+        .map_err(|err| format!("{:?}", err))?
+        // for each record, we convert it into a Robj
+        .into_iter()
+        .map(|record_vec| {
+            record_vec
+                .into_iter()
+                .map(|record| record.try_into().map_err(|err| anyhow!("{}", err)))
+                .collect::<anyhow::Result<Vec<Robj>>>()
+        })
+        .collect::<anyhow::Result<Vec<Vec<Robj>>>>()
+        .map_err(|err| format!("{:?}", err))?
+        // for each path, all of its records are grouped into a List
+        .into_iter()
+        .map(|record_vec| List::from_values(record_vec))
+        // in the final, we create a single list for all path
+        .collect::<List>();
+    Ok(out)
+}
+
+fn geo_parse_soft_impl(
+    path: &str,
+    format: &str,
+    reuse_buffer: bool,
+) -> anyhow::Result<Vec<GEOSoftRecord>> {
     let path: &Path = path.as_ref();
     let iter_records: Box<dyn Iterator<Item = anyhow::Result<soft::GEOSoftRecord>>>;
-    let mut reader = soft::GEOSoftReader::from_path(path).map_err(|err| format!("{}", err))?;
+    let mut reader = soft::GEOSoftReader::from_path(path)?;
     let format = match format {
         "standard" => soft::GEOSoftFormat::Standard,
         "matrix" => soft::GEOSoftFormat::Matrix,
         _ => {
             return Err(error::RGEOParseError::InvalidSoftFormat)
-                .with_context(|| format!("Invalid format"))
-                .map_err(|err| format!("{:?}", err));
+                .with_context(|| format!("Invalid format"));
         }
     };
     reader.format(format);
@@ -154,23 +214,16 @@ fn geo_parse_soft(path: &str, format: &str, reuse_buffer: bool) -> Result<Vec<Ro
     } else {
         iter_records = Box::new(reader);
     }
-    iter_records
-        .map(|record_res| {
-            record_res.map_or_else(
-                |err| Err(err),
-                |record| record.try_into().map_err(|err| anyhow!("{}", err)),
-            )
-        })
-        .collect::<anyhow::Result<Vec<Robj>>>()
-        .map_err(|err| format!("{:?}", err))
+    iter_records.collect::<anyhow::Result<Vec<_>>>()
 }
 
 #[extendr]
 #[cfg(feature = "pprof")]
 fn pprof_geo_parse_soft(
-    path: &str,
-    format: &str,
+    path: Robj,
+    format: Robj,
     reuse_buffer: bool,
+    threads: usize,
     pprof_file: &str,
 ) -> Result<Vec<Robj>, String> {
     let guard = pprof::ProfilerGuardBuilder::default()
