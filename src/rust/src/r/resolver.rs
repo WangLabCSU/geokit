@@ -278,25 +278,25 @@ fn build_resolvers(
 ) -> Result<Vec<GEOResolver>> {
     let mut resolvers = Vec::with_capacity(entity.len());
     let mut builder = GEOResolverBuilder::new();
-    for (i, entity) in entity.into_iter().enumerate() {
+    for (_, entity) in entity.into_iter().enumerate() {
         builder.entity(entity);
         // SAFETY: lengths were validated/recycled earlier
         // format is required
-        builder.format(format.remove(i));
+        builder.format(format.remove(0));
 
         // amount and scope are optional
         if let Some(amount) = amount.as_mut() {
-            if let RGEOAmount::Amount(a) = amount.remove(i) {
+            if let RGEOAmount::Amount(a) = amount.remove(0) {
                 builder.amount(a);
             }
         }
         if let Some(scope) = scope.as_mut() {
-            if let RGEOScope::Scope(s) = scope.remove(i) {
+            if let RGEOScope::Scope(s) = scope.remove(0) {
                 builder.scope(s);
             }
         }
         if let Some(over_https) = ftp_over_https.as_mut() {
-            builder.over_https(over_https.remove(i));
+            builder.over_https(over_https.remove(0));
         }
         let resolver = builder.build()?;
         resolvers.push(resolver);
