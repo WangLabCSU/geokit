@@ -14,6 +14,17 @@
 #'   if `TRUE`, a short abbreviation is used.
 #'
 #' @return A character of GEO accession type.
+#' @examples
+#' geo_gtype("GSE10")
+#' geo_gtype("gpl98")
+#' geo_gtype("GSM1")
+#' geo_gtype("GDS10")
+#'
+#' # use abbreviation
+#' geo_gtype("GSE10", TRUE)
+#' geo_gtype("gpl98", TRUE)
+#' geo_gtype("GSM1", TRUE)
+#' geo_gtype("GDS10", TRUE)
 #' @export
 geo_gtype <- function(accession, abbre = FALSE) {
     assert_bool(abbre)

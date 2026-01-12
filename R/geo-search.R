@@ -24,7 +24,12 @@
 #'   rate limits.
 #' @return A data frame contains the search results
 #' @examples
-#' geo_search("diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]")
+#' # Ensure you have an active internet connection before running the search.
+#' # The `geo_search` function queries NCBI Entrez, which may have network
+#' # restrictions and limited bandwidth usage for large queries. To avoid
+#' # interruptions due tonetwork issues or rate limits, we wrap the call with
+#' # try().
+#' try(geo_search("diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"))
 #' @export
 geo_search <- function(query, step = 500L, interval = NULL) {
     assert_number_whole(step, min = 1)

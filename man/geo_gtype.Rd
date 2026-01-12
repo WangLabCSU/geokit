@@ -27,3 +27,15 @@ Determine the type of a GEO accession ID (e.g. DataSet, Series, Sample,
 Platform). This function inspects the accession prefix and returns its
 corresponding GEO type, optionally in an abbreviated form.
 }
+\examples{
+geo_gtype("GSE10")
+geo_gtype("gpl98")
+geo_gtype("GSM1")
+geo_gtype("GDS10")
+
+# use abbreviation
+geo_gtype("GSE10", TRUE)
+geo_gtype("gpl98", TRUE)
+geo_gtype("GSM1", TRUE)
+geo_gtype("GDS10", TRUE)
+}
