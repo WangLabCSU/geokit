@@ -24,7 +24,7 @@ use isal::read::GzipDecoder;
 
 use super::geo::{GEOEntity, GEOType};
 use soft::{GEOSoftLine, GEOSoftReader, GEOSoftReaderBuilder, GEOSoftRecord};
-use vector::Vector;
+use vector::OpaqueVector;
 
 mod error;
 mod helper;
@@ -367,7 +367,7 @@ fn parse_key_value_elements(elements: List, separator: u8) -> Result<extendr_api
     }
     let (keys, columns): (Vec<_>, Vec<_>) = out
         .into_iter()
-        .map(|(key, value)| (key, Vector::parse_string(value)))
+        .map(|(key, value)| (key, OpaqueVector::parse_string(value)))
         .unzip();
     let mut olist = extendr_api::List::from_values(columns);
     olist.set_names(keys)?;

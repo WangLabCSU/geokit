@@ -8,7 +8,7 @@ use hashbrown::HashSet;
 use indexmap::IndexMap;
 use memchr::memchr;
 
-use super::vector::Vector;
+use super::vector::OpaqueVector;
 
 /// A reader for parsing SOFT (Simple Omnibus Format in Text) files.
 pub struct GEOSoftReader<R> {
@@ -333,7 +333,7 @@ impl GEOSoftParser {
         }
         let mut datatable = Vec::with_capacity(self.datatable.len());
         for field in self.datatable.iter() {
-            datatable.push(Vector::parse_string(field.clone()));
+            datatable.push(OpaqueVector::parse_string(field.clone()));
         }
         Some(GEOSoftRecord {
             rcd_type: self.rcd_type.clone(),
@@ -559,7 +559,7 @@ pub struct GEOSoftRecord {
     metadata: IndexMap<String, Vec<Option<String>>>, // Attributes of the record (key-value pairs)
     columns: Vec<(String, Option<String>)>, // Header names and descriptions
     header: Vec<Option<String>>, // Header
-    datatable: Vec<Vector>, // Data table (a data frame)
+    datatable: Vec<OpaqueVector>, // Data table (a data frame)
 }
 
 impl TryFrom<GEOSoftRecord> for extendr_api::List {

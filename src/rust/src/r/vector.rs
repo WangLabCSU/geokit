@@ -9,18 +9,18 @@ use rand::{rng, seq::IteratorRandom};
 /// column can be parsed as i32, f64, or bool. If so, parse the whole column
 /// once and return an R vector of that type. Otherwise, return an R character
 /// vector created directly from the input `value` (no cloning).
-pub enum Vector {
+pub enum OpaqueVector {
     I32(Vec<Option<i32>>),
     F64(Vec<Option<f64>>),
     Bool(Vec<Option<bool>>),
     String(Vec<Option<String>>),
 }
 
-impl Vector {
+impl OpaqueVector {
     pub fn parse_string<T>(value: Vec<Option<T>>) -> Self
     where
         T: AsRef<str>,
-        Vec<Option<T>>: Into<Vector>,
+        Vec<Option<T>>: Into<OpaqueVector>,
     {
         const SAMPLE_SIZE: usize = 5_000; // data table uses 10_000
         let input_str = value
@@ -67,7 +67,7 @@ impl Vector {
                 .map(|opt| opt.and_then(|s| Some(s.parse::<i32>())).transpose())
                 .collect::<std::result::Result<Vec<Option<i32>>, _>>()
             {
-                return Vector::I32(parsed);
+                return OpaqueVector::I32(parsed);
             }
         }
 
@@ -77,7 +77,7 @@ impl Vector {
                 .map(|opt| opt.and_then(|s| Some(s.parse::<f64>())).transpose())
                 .collect::<std::result::Result<Vec<Option<f64>>, _>>()
             {
-                return Vector::F64(parsed);
+                return OpaqueVector::F64(parsed);
             }
         }
 
@@ -98,7 +98,7 @@ impl Vector {
                 })
                 .collect::<std::result::Result<Vec<Option<bool>>, _>>()
             {
-                return Vector::Bool(parsed);
+                return OpaqueVector::Bool(parsed);
             }
         }
 
@@ -107,43 +107,43 @@ impl Vector {
     }
 }
 
-impl From<Vec<Option<i32>>> for Vector {
+impl From<Vec<Option<i32>>> for OpaqueVector {
     fn from(value: Vec<Option<i32>>) -> Self {
         Self::I32(value)
     }
 }
 
-impl From<Vec<i32>> for Vector {
+impl From<Vec<i32>> for OpaqueVector {
     fn from(value: Vec<i32>) -> Self {
         Self::I32(value.into_iter().map(|v| Some(v)).collect())
     }
 }
 
-impl From<Vec<Option<f64>>> for Vector {
+impl From<Vec<Option<f64>>> for OpaqueVector {
     fn from(value: Vec<Option<f64>>) -> Self {
         Self::F64(value)
     }
 }
 
-impl From<Vec<f64>> for Vector {
+impl From<Vec<f64>> for OpaqueVector {
     fn from(value: Vec<f64>) -> Self {
         Self::F64(value.into_iter().map(|v| Some(v)).collect())
     }
 }
 
-impl From<Vec<Option<String>>> for Vector {
+impl From<Vec<Option<String>>> for OpaqueVector {
     fn from(value: Vec<Option<String>>) -> Self {
         Self::String(value)
     }
 }
 
-impl From<Vec<String>> for Vector {
+impl From<Vec<String>> for OpaqueVector {
     fn from(value: Vec<String>) -> Self {
         Self::String(value.into_iter().map(|v| Some(v)).collect())
     }
 }
 
-impl<'a> From<Vec<Option<&'a str>>> for Vector {
+impl<'a> From<Vec<Option<&'a str>>> for OpaqueVector {
     fn from(value: Vec<Option<&'a str>>) -> Self {
         Self::String(
             value
@@ -154,13 +154,13 @@ impl<'a> From<Vec<Option<&'a str>>> for Vector {
     }
 }
 
-impl<'a> From<Vec<&'a str>> for Vector {
+impl<'a> From<Vec<&'a str>> for OpaqueVector {
     fn from(value: Vec<&'a str>) -> Self {
         Self::String(value.into_iter().map(|v| Some(v.to_owned())).collect())
     }
 }
 
-impl<'a> From<Vec<Option<Cow<'a, str>>>> for Vector {
+impl<'a> From<Vec<Option<Cow<'a, str>>>> for OpaqueVector {
     fn from(value: Vec<Option<Cow<'a, str>>>) -> Self {
         Self::String(
             value
@@ -171,31 +171,31 @@ impl<'a> From<Vec<Option<Cow<'a, str>>>> for Vector {
     }
 }
 
-impl<'a> From<Vec<Cow<'a, str>>> for Vector {
+impl<'a> From<Vec<Cow<'a, str>>> for OpaqueVector {
     fn from(value: Vec<Cow<'a, str>>) -> Self {
         Self::String(value.into_iter().map(|v| Some(v.into_owned())).collect())
     }
 }
 
-impl From<Vec<Option<bool>>> for Vector {
+impl From<Vec<Option<bool>>> for OpaqueVector {
     fn from(value: Vec<Option<bool>>) -> Self {
         Self::Bool(value)
     }
 }
 
-impl From<Vec<bool>> for Vector {
+impl From<Vec<bool>> for OpaqueVector {
     fn from(value: Vec<bool>) -> Self {
         Self::Bool(value.into_iter().map(|v| Some(v)).collect())
     }
 }
 
-impl From<Vector> for Robj {
-    fn from(value: Vector) -> Self {
+impl From<OpaqueVector> for Robj {
+    fn from(value: OpaqueVector) -> Self {
         match value {
-            Vector::I32(v) => Robj::from(v),
-            Vector::F64(v) => Robj::from(v),
-            Vector::Bool(v) => Robj::from(v),
-            Vector::String(v) => Robj::from(v),
+            OpaqueVector::I32(v) => Robj::from(v),
+            OpaqueVector::F64(v) => Robj::from(v),
+            OpaqueVector::Bool(v) => Robj::from(v),
+            OpaqueVector::String(v) => Robj::from(v),
         }
     }
 }
