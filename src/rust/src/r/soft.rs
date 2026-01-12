@@ -167,7 +167,8 @@ impl GEOSoftRecord {
                     .map(|field| {
                         let field = strip_quotes(field.trim_ascii());
                         if field.is_empty()
-                            || matches!(field.to_ascii_lowercase().as_slice(), b"null" | b"na")
+                            || field.eq_ignore_ascii_case(b"null")
+                            || field.eq_ignore_ascii_case(b"na")
                         {
                             None
                         } else {
@@ -218,7 +219,8 @@ impl GEOSoftRecord {
             .map(|field| {
                 let field = strip_quotes(field.trim_ascii());
                 if field.is_empty()
-                    || matches!(field.to_ascii_lowercase().as_slice(), b"null" | b"na")
+                    || field.eq_ignore_ascii_case(b"null")
+                    || field.eq_ignore_ascii_case(b"na")
                 {
                     None
                 } else {
