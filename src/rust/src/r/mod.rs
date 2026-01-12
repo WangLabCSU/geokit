@@ -22,7 +22,7 @@ use flate2::bufread::GzDecoder as GzipDecoder;
 use isal::read::GzipDecoder;
 
 use super::geo::{GEOEntity, GEOType};
-use soft::{GEOSoftLine, GEOSoftReader, GEOSoftReaderBuilder};
+use soft::{GEOSoftLine, GEOSoftReader, GEOSoftReaderBuilder, GEOSoftRecord};
 use vector::Vector;
 
 mod error;
@@ -30,8 +30,6 @@ mod helper;
 mod resolver;
 mod soft;
 mod vector;
-
-use soft::GEOSoftRecord;
 
 #[extendr]
 fn geo_gtype(accession: Robj, abbre: bool) -> Result<Vec<String>, String> {
