@@ -49,17 +49,10 @@
 
       <dl><dt>
 
-          <code><a href="GEO-class.html">show(<i>&lt;GEOData&gt;</i>)</a></code> <code><a href="GEO-class.html">meta(<i>&lt;GEOData&gt;</i>)</a></code> <code><a href="GEO-class.html">`meta&lt;-`(<i>&lt;GEOData&gt;</i>)</a></code> <code><a href="GEO-class.html">accession(<i>&lt;GEOData&gt;</i>)</a></code> <code><a href="GEO-class.html">`accession&lt;-`(<i>&lt;GEOData&gt;</i>)</a></code> <code><a href="GEO-class.html">show(<i>&lt;GEOSoft&gt;</i>)</a></code> <code><a href="GEO-class.html">columns(<i>&lt;GEOSoft&gt;</i>)</a></code> <code><a href="GEO-class.html">`columns&lt;-`(<i>&lt;GEOSoft&gt;</i>)</a></code> <code><a href="GEO-class.html">datatable(<i>&lt;GEOSoft&gt;</i>)</a></code> <code><a href="GEO-class.html">`datatable&lt;-`(<i>&lt;GEOSoft&gt;</i>)</a></code> <code><a href="GEO-class.html">show(<i>&lt;GEOSeries&gt;</i>)</a></code> <code><a href="GEO-class.html">gsm(<i>&lt;GEOSeries&gt;</i>)</a></code> <code><a href="GEO-class.html">`gsm&lt;-`(<i>&lt;GEOSeries&gt;</i>)</a></code> <code><a href="GEO-class.html">gpl(<i>&lt;GEOSeries&gt;</i>)</a></code> <code><a href="GEO-class.html">`gpl&lt;-`(<i>&lt;GEOSeries&gt;</i>)</a></code>
+          <code><a href="GEO-class.html">show(<i>&lt;GEOSoft&gt;</i>)</a></code> <code><a href="GEO-class.html">metadata()</a></code> <code><a href="GEO-class.html">`metadata&lt;-`()</a></code> <code><a href="GEO-class.html">accession()</a></code> <code><a href="GEO-class.html">`accession&lt;-`()</a></code> <code><a href="GEO-class.html">rcd_type()</a></code> <code><a href="GEO-class.html">`rcd_type&lt;-`()</a></code> <code><a href="GEO-class.html">rcd_name()</a></code> <code><a href="GEO-class.html">`rcd_name&lt;-`()</a></code> <code><a href="GEO-class.html">show(<i>&lt;GEODatatable&gt;</i>)</a></code> <code><a href="GEO-class.html">columns()</a></code> <code><a href="GEO-class.html">`columns&lt;-`()</a></code> <code><a href="GEO-class.html">datatable()</a></code> <code><a href="GEO-class.html">`datatable&lt;-`()</a></code> <code><a href="GEO-class.html">show(<i>&lt;GEOPlatform&gt;</i>)</a></code> <code><a href="GEO-class.html">gsm()</a></code> <code><a href="GEO-class.html">`gsm&lt;-`()</a></code> <code><a href="GEO-class.html">gse()</a></code> <code><a href="GEO-class.html">`gse&lt;-`()</a></code> <code><a href="GEO-class.html">show(<i>&lt;GEOSeries&gt;</i>)</a></code> <code><a href="GEO-class.html">gpl()</a></code> <code><a href="GEO-class.html">`gpl&lt;-`()</a></code>
 
         </dt>
         <dd>Virtual class for holding GEO series, samples, platforms, and datasets.</dd>
-
-        <dt>
-
-          <code><a href="geo.html">geo()</a></code>
-
-        </dt>
-        <dd>Retrieve GEO Objects from NCBI GEO</dd>
 
         <dt>
 
@@ -67,6 +60,13 @@
 
         </dt>
         <dd>GEO accession type</dd>
+
+        <dt>
+
+          <code><a href="geo_matrix.html">geo_matrix()</a></code>
+
+        </dt>
+        <dd>Retrieve Series Matrix and Create ExpressionSet</dd>
 
         <dt>
 
@@ -91,6 +91,13 @@
 
         <dt>
 
+          <code><a href="geo_soft.html">geo_soft()</a></code>
+
+        </dt>
+        <dd>Retrieve GEO SOFT file from NCBI GEO</dd>
+
+        <dt>
+
           <code><a href="geo_suppl.html">geo_suppl()</a></code>
 
         </dt>
@@ -112,17 +119,10 @@
 
         <dt>
 
-          <code><a href="parse_gsm_list.html">parse_gsm_list()</a></code>
+          <code><a href="parse_sample_data.html">parse_sample_data()</a></code>
 
         </dt>
-        <dd>Parse key-value pairs in GEO series soft file</dd>
-
-        <dt>
-
-          <code><a href="parse_pdata.html">parse_pdata()</a></code>
-
-        </dt>
-        <dd>Parse key-value pairs in GEO series matrix file</dd>
+        <dd>Parse key-value pairs in the metadata of GEO Sample SOFT file</dd>
       </dl></div>
   </main></div>
 

@@ -79,9 +79,9 @@ geo_url(
     | Matrix (matrix)            | x   | o   | x   | x   |
     | Annotation (annot)         | x   | x   | o   | x   |
     | Supplementaryfiles (suppl) | x   | o   | o   | o   |
-    | Html                       | o   | o   | o   | o   |
-    | Text (soft)                | x   | o   | o   | o   |
-    | Xml                        | x   | o   | o   | o   |
+    | Html (html)                | o   | o   | o   | o   |
+    | Text (text)                | x   | o   | o   | o   |
+    | Xml (xml)                  | x   | o   | o   | o   |
 
 - amount:
 
@@ -136,3 +136,16 @@ A character of GEO URL.
 
 - [Programmatic access to GEO FTP
   site](https://ftp.ncbi.nlm.nih.gov/geo/README.txt)
+
+## Examples
+
+``` r
+geo_url("GSE10")
+#> [1] "https://ftp.ncbi.nlm.nih.gov/geo/series/GSEnnn/GSE10/soft/GSE10_family.soft.gz"
+geo_url("gpl98")
+#> [1] "https://ftp.ncbi.nlm.nih.gov/geo/platforms/GPLnnn/GPL98/soft/GPL98_family.soft.gz"
+geo_url("GSM1")
+#> [1] "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSM1&targ=self&view=data&form=text"
+geo_url("GDS10")
+#> [1] "https://ftp.ncbi.nlm.nih.gov/geo/datasets/GDSnnn/GDS10/soft/GDS10.soft.gz"
+```

@@ -10,9 +10,10 @@ cannot get all long metadata of GEO identities.
 
 ``` r
 geo_meta(
-  ids,
-  amount = NULL,
-  ftp_over_https = TRUE,
+  accession,
+  famount = NULL,
+  scope = NULL,
+  ftp_over_https = NULL,
   handle_opts = list(),
   odir = getwd()
 )
@@ -20,46 +21,51 @@ geo_meta(
 
 ## Arguments
 
-- ids:
+- accession:
 
-  Character vector of GEO accession IDs to download and parse. All IDs
-  must belong to the same GEO entity type. Examples:
+  A character of GEO accession IDs. Examples:
 
-  - DataSets: `c("GDS505", "GDS606")`
+  - DataSets (GDS): `"GDS505"`, `"GDS606"`, `"GDS1234"`, `"GDS9999"`,
+    etc.
 
-  - Series: `c("GSE2", "GSE22")`
+  - Series (GSE): `"GSE2"`, `"GSE22"`, `"GSE100"`, `"GSE2000"`, etc.
 
-- amount:
+  - Platforms (GPL): `"GPL96"`, `"GPL570"`, `"GPL10558"`, etc.
 
-  A character string specifying the amount of data to retrieve. One of
-  `"brief"`, `"quick"`, `"data"`, `"full"`, `"soft"`, or `"soft_full"`:
+  - Samples (GSM): `"GSM12345"`, `"GSM67890"`, `"GSM112233"`, etc.
 
-  - `"brief"`: shows only the accession's attributes.
+- famount:
 
-  - `"quick"`: shows the accession's attributes and the first 20 rows of
-    its data table.
+  A character string specifying either:
 
-  - `"full"`: shows the accession's attributes and the complete data
-    table. This is the default when `ids` are not `DataSets` or
-    `Series`.
+  - the file format on the GEO FTP server, or
 
-  - `"data"`: omits the accession's attributes, showing only links to
-    other accessions and the full data table.
+  - the amount of data in the GEO Accession Display Bar.
 
-  - `"soft"`: SOFT (Simple Omnibus in Text Format) from GEO FTP site.
-    When `ids` is `DataSets` or `Series`, this is the default.
+  See
+  [`geo_url()`](https://WangLabCSU.github.io/geokit/reference/geo_url.md)
+  for details.
 
-  - `"soft_full"`: full SOFT (Simple Omnibus in Text Format) files from
-    GEO FTP site by DataSet (GDS) containging additionally contains
-    up-to-date gene annotation for the DataSet Platform.
+- scope:
 
-  For `DataSet`, `"data"` and `"full"` will be mapped to `"soft"` and
-  `"soft_full"` respectively.
+  A character specifying which GEO accessions to include (Only
+  applicable to Accession Display Bar access).
+
+  - `"none"`: Applicable only to DataSets; for DataSets, this is also
+    the sole valid option
+
+  - `"self"`: the queried accession only.
+
+  - `"gsm"`, `"gpl"`, `"gse"`: related samples, platforms, or series.
+
+  - `"all"`: all accessions related to the query (family view).
 
 - ftp_over_https:
 
-  Logical scalar. If `TRUE`, connects to GEO FTP via HTTPS
-  (`https://ftp.ncbi.nlm.nih.gov/geo`); otherwise, uses plain FTP.
+  Logical scalar. If `TRUE`, connects to GEO FTP server via HTTPS
+  (<https://ftp.ncbi.nlm.nih.gov/geo>); otherwise uses plain FTP
+  (<ftp://ftp.ncbi.nlm.nih.gov/geo>). Only applicable to GEO FTP server
+  access.
 
 - handle_opts:
 
@@ -73,6 +79,4 @@ geo_meta(
 
 ## Value
 
-A
-[data.table](https://rdatatable.gitlab.io/data.table/reference/data.table.html)
-contains metadata of all ids.
+A data frame contains metadata of all ids.

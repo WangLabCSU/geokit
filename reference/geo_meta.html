@@ -49,9 +49,10 @@ geo_search() cannot get all long metadata of GEO identities."></head><body>
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">geo_meta</span><span class="op">(</span></span>
-<span>  <span class="va">ids</span>,</span>
-<span>  amount <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  ftp_over_https <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">accession</span>,</span>
+<span>  famount <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  scope <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  ftp_over_https <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  handle_opts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  odir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -61,35 +62,35 @@ geo_search() cannot get all long metadata of GEO identities."></head><body>
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
 
 
-<dl><dt id="arg-ids">ids<a class="anchor" aria-label="anchor" href="#arg-ids"></a></dt>
-<dd><p>Character vector of GEO accession IDs to download and parse.
-All IDs must belong to the same GEO entity type. Examples:</p><ul><li><p>DataSets: <code>c("GDS505", "GDS606")</code></p></li>
-<li><p>Series: <code>c("GSE2", "GSE22")</code></p></li>
+<dl><dt id="arg-accession">accession<a class="anchor" aria-label="anchor" href="#arg-accession"></a></dt>
+<dd><p>A character of GEO accession IDs. Examples:</p><ul><li><p>DataSets (GDS): <code>"GDS505"</code>, <code>"GDS606"</code>, <code>"GDS1234"</code>, <code>"GDS9999"</code>, etc.</p></li>
+<li><p>Series (GSE): <code>"GSE2"</code>, <code>"GSE22"</code>, <code>"GSE100"</code>, <code>"GSE2000"</code>, etc.</p></li>
+<li><p>Platforms (GPL): <code>"GPL96"</code>, <code>"GPL570"</code>, <code>"GPL10558"</code>, etc.</p></li>
+<li><p>Samples (GSM): <code>"GSM12345"</code>, <code>"GSM67890"</code>, <code>"GSM112233"</code>, etc.</p></li>
 </ul></dd>
 
 
-<dt id="arg-amount">amount<a class="anchor" aria-label="anchor" href="#arg-amount"></a></dt>
-<dd><p>A character string specifying the amount of data to retrieve.
-One of <code>"brief"</code>, <code>"quick"</code>, <code>"data"</code>, <code>"full"</code>, <code>"soft"</code>, or
-<code>"soft_full"</code>:</p><ul><li><p><code>"brief"</code>: shows only the accession's attributes.</p></li>
-<li><p><code>"quick"</code>: shows the accession's attributes and the first 20 rows of
-its data table.</p></li>
-<li><p><code>"full"</code>: shows the accession's attributes and the complete data table.
-This is the default when <code>ids</code> are not <code>DataSets</code> or <code>Series</code>.</p></li>
-<li><p><code>"data"</code>: omits the accession's attributes, showing only links to other
-accessions and the full data table.</p></li>
-<li><p><code>"soft"</code>: SOFT (Simple Omnibus in Text Format) from GEO FTP site. When
-<code>ids</code> is <code>DataSets</code> or <code>Series</code>, this is the default.</p></li>
-<li><p><code>"soft_full"</code>: full SOFT (Simple Omnibus in Text Format) files from GEO
-FTP site by DataSet (GDS) containging additionally contains up-to-date
-gene annotation for the DataSet Platform.</p></li>
-</ul><p>For <code>DataSet</code>, <code>"data"</code> and <code>"full"</code> will be mapped to <code>"soft"</code> and
-<code>"soft_full"</code> respectively.</p></dd>
+<dt id="arg-famount">famount<a class="anchor" aria-label="anchor" href="#arg-famount"></a></dt>
+<dd><p>A character string specifying either:</p><ul><li><p>the file format on the GEO FTP server, or</p></li>
+<li><p>the amount of data in the GEO Accession Display Bar.</p></li>
+</ul><p>See <code><a href="geo_url.html">geo_url()</a></code> for details.</p></dd>
+
+
+<dt id="arg-scope">scope<a class="anchor" aria-label="anchor" href="#arg-scope"></a></dt>
+<dd><p>A character specifying which GEO accessions to include
+(Only applicable to Accession Display Bar access).</p><ul><li><p><code>"none"</code>: Applicable only to DataSets; for DataSets, this is also the
+sole valid option</p></li>
+<li><p><code>"self"</code>: the queried accession only.</p></li>
+<li><p><code>"gsm"</code>, <code>"gpl"</code>, <code>"gse"</code>: related samples, platforms, or series.</p></li>
+<li><p><code>"all"</code>: all accessions related to the query (family view).</p></li>
+</ul></dd>
 
 
 <dt id="arg-ftp-over-https">ftp_over_https<a class="anchor" aria-label="anchor" href="#arg-ftp-over-https"></a></dt>
-<dd><p>Logical scalar. If <code>TRUE</code>, connects to GEO FTP via
-HTTPS (<code>https://ftp.ncbi.nlm.nih.gov/geo</code>); otherwise, uses plain FTP.</p></dd>
+<dd><p>Logical scalar. If <code>TRUE</code>, connects to GEO FTP server
+via HTTPS (<a href="https://ftp.ncbi.nlm.nih.gov/geo" class="external-link">https://ftp.ncbi.nlm.nih.gov/geo</a>); otherwise uses plain FTP
+(<a href="ftp://ftp.ncbi.nlm.nih.gov/geo">ftp://ftp.ncbi.nlm.nih.gov/geo</a>). Only applicable to GEO FTP server
+access.</p></dd>
 
 
 <dt id="arg-handle-opts">handle_opts<a class="anchor" aria-label="anchor" href="#arg-handle-opts"></a></dt>
@@ -104,7 +105,7 @@ working directory.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A <a href="https://rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a> contains metadata of all ids.</p>
+    <p>A data frame contains metadata of all ids.</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

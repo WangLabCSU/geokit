@@ -11,8 +11,8 @@
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Tools for Accessing and Working with the Gene Expression Omnibus (GEO)">
-<meta name="description" content="Provides a tidy and convenient R interface to the NCBI Gene Expression Omnibus (GEO) database. Functions are included to query, download, and parse GEO metadata and expression data, making it easier to integrate GEO datasets into downstream analyses and workflows.">
-<meta property="og:description" content="Provides a tidy and convenient R interface to the NCBI Gene Expression Omnibus (GEO) database. Functions are included to query, download, and parse GEO metadata and expression data, making it easier to integrate GEO datasets into downstream analyses and workflows.">
+<meta name="description" content="Provides a tidy and fast R interface to the NCBI Gene Expression Omnibus (GEO) database. Functions are included to query, download, and parse GEO metadata and expression data, making it easier to integrate GEO datasets into downstream analyses and workflows.">
+<meta property="og:description" content="Provides a tidy and fast R interface to the NCBI Gene Expression Omnibus (GEO) database. Functions are included to query, download, and parse GEO metadata and expression data, making it easier to integrate GEO datasets into downstream analyses and workflows.">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -229,7 +229,7 @@
 <p>GEO database mainly provides SOFT (Simple Omnibus Format in Text) formatted files for GPL, GSM and GDS entity. SOFT is designed for rapid batch submission and download of data. SOFT is a simple line-based, plain text format, meaning that SOFT files may be readily generated from common spreadsheet and database applications. A single SOFT file can hold both data tables and accompanying descriptive information for multiple, concatenated Platforms, Samples, and/or Series records. <code>geokit</code> provide a <code>GEOSoft</code> class object to store SOFT file contents, <code>GEOSoft</code> object contains four slots (“accession”, “meta”, “datatable”, and “columns”). <code>accession</code> slot stores the GEO accession ID, <code>meta</code> slot contains the metadata header in the SOFT formatted file, and <code>datatable</code> slot contains the the data table in SOFT file which is the main data for us to use, along with a <code>columns</code> slot providing descriptive column header for the <code>datatable</code> data. We can use the function with the same name of these slots to extract the data.</p>
 <p><code>geo</code> can download SOFT files and preprocess them well, here is some example code to get soft file from <code>GPL</code>, <code>GSM</code> and <code>GDS</code> entity respectively.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">gpl</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/geo.html">geo</a></span><span class="op">(</span><span class="st">"gpl98"</span>, odir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">gpl</span> <span class="op">&lt;-</span> <span class="fu">geo</span><span class="op">(</span><span class="st">"gpl98"</span>, odir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Downloading 1 GPL full amount file from GEO Accession Site</span></span>
 <span><span class="va">gpl</span></span>
 <span><span class="co">#&gt; An object of GEOSoft</span></span>
@@ -313,7 +313,7 @@
 <span><span class="co">#&gt; Annotation Date                                                                                                                                                                       The date that the annotations for this probe array were last updated. It will generally be earlier than the date when the annotations were posted on the Affymetrix web site.</span></span>
 <span><span class="co">#&gt; Sequence Type           Indicates whether the sequence is an Exemplar, Consensus or Control sequence. An Exemplar is a single nucleotide sequence taken directly from a public database. This sequence could be an mRNA or EST. A Consensus sequence, is a nucleotide sequence assembled by Affymetrix, based on one or more sequence taken from a public database.</span></span></code></pre></div>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">gsm</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/geo.html">geo</a></span><span class="op">(</span><span class="st">"GSM1"</span>, odir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">gsm</span> <span class="op">&lt;-</span> <span class="fu">geo</span><span class="op">(</span><span class="st">"GSM1"</span>, odir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Downloading 1 GSM full amount file from GEO Accession Site</span></span>
 <span><span class="va">gsm</span></span>
 <span><span class="co">#&gt; An object of GEOSoft</span></span>
@@ -337,7 +337,7 @@
 <span><span class="co">#&gt; COUNT         TAG NUMBER</span></span>
 <span><span class="co">#&gt; TPM     tags per million</span></span></code></pre></div>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">gds</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/geo.html">geo</a></span><span class="op">(</span><span class="st">"GDS10"</span>, odir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">gds</span> <span class="op">&lt;-</span> <span class="fu">geo</span><span class="op">(</span><span class="st">"GDS10"</span>, odir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Downloading 1 GDS soft file from FTP site</span></span>
 <span><span class="va">gds</span></span>
 <span><span class="co">#&gt; An object of GEOSoft</span></span>
@@ -387,7 +387,7 @@
 <span><span class="co">#&gt; GSM590     spleen; Idd3; diabetic-resistant tissue; strain; disease state</span></span></code></pre></div>
 <p>For GSE entity, there is also a soft file associated with it. But the structure is different with <code>GPL</code>, <code>GSM</code> and <code>GDS</code> entity, <code>geokit</code> provide <code>GEOSeries</code> class to keep contents in GSE soft file. Actually, a GSE soft file contains almost all contents in its subsets soft file including both <code>GPL</code> and <code>GSM</code>, so <code>GEOSeries</code> class provides both <code>gpl</code> and <code>gsm</code> slots as a list of <code>GEOSoft</code>. To download GSE soft file, we just set <code>gse_matrix</code> to <code>FALSE</code> in <code>geo</code> function.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">gse</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/geo.html">geo</a></span><span class="op">(</span><span class="st">"GSE10"</span>, odir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, gse_matrix <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">gse</span> <span class="op">&lt;-</span> <span class="fu">geo</span><span class="op">(</span><span class="st">"GSE10"</span>, odir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, gse_matrix <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Downloading 1 GSE soft file from FTP site</span></span>
 <span><span class="va">gse</span></span>
 <span><span class="co">#&gt; An object of GEOSeries</span></span>
@@ -398,7 +398,7 @@
 <span><span class="co">#&gt; accession: GSE10</span></span></code></pre></div>
 <p>It’s more common to use a series matrix file in our usual analysis workflow, we can also handle it easily in <code>geokit</code>, as what we need to do is just set <code>gse_matrix</code> to <code>TRUE</code> in <code>geo</code> function, which is also the default value. When <code>gse_matrix</code> is <code>TRUE</code>, <code>geo</code> will return a <code>ExpressionSet</code> object which can interact with lots of Bioconductor packages. There are two parameters controling the processing details when parsing series matrix file. When parsing phenoData from series matrix files directly, it’s common to fail to discern <code>characteristics_ch*</code> columns, which contain the important traits informations of corresponding samples, since many <code>characteristics_ch*</code> columns in series matrix files often lacks separate strings. <code>pdata_from_soft</code>, which indicates whether retrieve phenoData from GEO Soft file, can help handle this problem well. When the soft file is large and we don’t want to use it, we can set <code>pdata_from_soft</code> to <code>FALSE</code> and use <code>parse_pdata</code> function to parse it manully. Another important parameter is <code>add_gpl</code>, where <code>FALSE</code> indicates <code>geo</code> will try to map the current GPL accession id into a Bioconductor annotation package, then we can use the latest bioconductor annotation package to get the up-to-date featureData, otherwise, <code>geo</code> will add featureData from GPL soft file directly.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">gse_matix</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/geo.html">geo</a></span><span class="op">(</span><span class="st">"GSE10"</span>, odir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">gse_matix</span> <span class="op">&lt;-</span> <span class="fu">geo</span><span class="op">(</span><span class="st">"GSE10"</span>, odir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Downloading 1 GSE matrix file from FTP site</span></span>
 <span><span class="co">#&gt; Finding 1 {.strong GSE} {.field soft} file already downloaded:</span></span>
 <span><span class="co">#&gt; 'GSE10_family.soft.gz'</span></span>
@@ -435,7 +435,7 @@
 <span><span class="co">#&gt;   pubMedIds: 11756676 </span></span>
 <span><span class="co">#&gt; Annotation: GPL4</span></span></code></pre></div>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">gse_matrix_with_pdata</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/geo.html">geo</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">gse_matrix_with_pdata</span> <span class="op">&lt;-</span> <span class="fu">geo</span><span class="op">(</span></span>
 <span>    <span class="st">"gse53987"</span>,</span>
 <span>    odir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>    pdata_from_soft <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -456,7 +456,7 @@
 <span>    <span class="st">"gender|race|pmi|ph|rin|tissue|disease state"</span>,</span>
 <span>    <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"; "</span>, <span class="va">x</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span><span class="va">gse_matrix_smp_info</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/parse_pdata.html">parse_pdata</a></span><span class="op">(</span><span class="va">gse_matrix_smp_info</span><span class="op">)</span></span>
+<span><span class="va">gse_matrix_smp_info</span> <span class="op">&lt;-</span> <span class="fu">parse_pdata</span><span class="op">(</span><span class="va">gse_matrix_smp_info</span><span class="op">)</span></span>
 <span><span class="va">gse_matrix_smp_info</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span></span>
 <span>    <span class="st">"^ch1_|characteristics_ch1"</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">gse_matrix_smp_info</span><span class="op">)</span></span>
 <span><span class="op">)</span><span class="op">]</span></span>
@@ -1137,7 +1137,7 @@
 <span><span class="co">#&gt; 5: hsa00603 Glycosphingolipid biosynthesis - globo and isoglobo series</span></span></code></pre></div>
 <p>If the expression matrix is given in the GSM supplementary files, in this way, we start from derive all GSM accession ids and then download all GSM supplementary files and combine them into a expression matrix. Although no expression matrix in the series matrix file, it still contains the samples informations.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">gse180383_smat</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/geo.html">geo</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">gse180383_smat</span> <span class="op">&lt;-</span> <span class="fu">geo</span><span class="op">(</span></span>
 <span>    <span class="st">"GSE180383"</span>,</span>
 <span>    odir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>    gse_matrix <span class="op">=</span> <span class="cn">TRUE</span>, add_gpl <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -1173,13 +1173,13 @@
 <span><span class="co">#&gt; Downloading 6 GSM suppl files from FTP site</span></span></code></pre></div>
 <p>Another way, we can also derive sample accession ids from GSE soft files, which is what our laboratory prefers to since we can easily get exact sample traits information as described in the above by utilizing <code>parse_gsm_list</code> function.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">gse180383_soft</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/geo.html">geo</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">gse180383_soft</span> <span class="op">&lt;-</span> <span class="fu">geo</span><span class="op">(</span></span>
 <span>    <span class="st">"GSE180383"</span>,</span>
 <span>    odir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>    gse_matrix <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; Downloading 1 GSE soft file from FTP site</span></span>
-<span><span class="va">gse180383_soft_cli</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/parse_gsm_list.html">parse_gsm_list</a></span><span class="op">(</span><span class="fu"><a href="reference/GEO-class.html">gsm</a></span><span class="op">(</span><span class="va">gse180383_soft</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">gse180383_soft_cli</span> <span class="op">&lt;-</span> <span class="fu">parse_gsm_list</span><span class="op">(</span><span class="fu"><a href="reference/GEO-class.html">gsm</a></span><span class="op">(</span><span class="va">gse180383_soft</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning: More than one characters ":" found in meta characteristics data</span></span>
 <span><span class="co">#&gt; ℹ Details see: "characteristics_ch1" column in returned data.</span></span>
 <span><span class="co">#&gt; ℹ Please use `parse_pdata()` or combine `strsplit()` and `parse_gsm_list()`</span></span>

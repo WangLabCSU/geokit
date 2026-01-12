@@ -3,14 +3,13 @@
 NCBI GEO allows supplemental files to be attached to GEO Series (GSE),
 GEO platforms (GPL), and GEO samples (GSM). This function 'knows' how to
 get these files based on the GEO accession. No parsing of the downloaded
-files is attempted, since the file format is not generally knowable by
-the computer.
+files is attempted, since the file format is not generally knowable.
 
 ## Usage
 
 ``` r
 geo_suppl(
-  ids,
+  accession,
   pattern = NULL,
   ftp_over_https = TRUE,
   handle_opts = list(),
@@ -20,14 +19,18 @@ geo_suppl(
 
 ## Arguments
 
-- ids:
+- accession:
 
-  Character vector of GEO accession IDs to download and parse. All IDs
-  must belong to the same GEO entity type. Examples:
+  A character of GEO accession IDs. Examples:
 
-  - DataSets: `c("GDS505", "GDS606")`
+  - DataSets (GDS): `"GDS505"`, `"GDS606"`, `"GDS1234"`, `"GDS9999"`,
+    etc.
 
-  - Series: `c("GSE2", "GSE22")`
+  - Series (GSE): `"GSE2"`, `"GSE22"`, `"GSE100"`, `"GSE2000"`, etc.
+
+  - Platforms (GPL): `"GPL96"`, `"GPL570"`, `"GPL10558"`, etc.
+
+  - Samples (GSM): `"GSM12345"`, `"GSM67890"`, `"GSM112233"`, etc.
 
 - pattern:
 
@@ -37,8 +40,10 @@ geo_suppl(
 
 - ftp_over_https:
 
-  Logical scalar. If `TRUE`, connects to GEO FTP via HTTPS
-  (`https://ftp.ncbi.nlm.nih.gov/geo`); otherwise, uses plain FTP.
+  Logical scalar. If `TRUE`, connects to GEO FTP server via HTTPS
+  (<https://ftp.ncbi.nlm.nih.gov/geo>); otherwise uses plain FTP
+  (<ftp://ftp.ncbi.nlm.nih.gov/geo>). Only applicable to GEO FTP server
+  access.
 
 - handle_opts:
 
@@ -52,13 +57,13 @@ geo_suppl(
 
 ## Value
 
-A list (or a character atomic verctor if only one `id` is provided) of
-the full file paths of the resulting downloaded files.
+A list (or a character atomic verctor if only one `accession` is
+provided) of the full file paths of the resulting downloaded files.
 
 ## Examples
 
 ``` r
 geo_suppl("GSM1137", odir = tempdir())
-#> Downloading 1 GSM suppl file from FTP site
-#> [1] "/tmp/RtmpBY6720/GSM1137.CEL.gz"
+#> Downloading 1 file
+#> [1] "/tmp/RtmprqwtXx/GSM1137.CEL.gz"
 ```

@@ -40,8 +40,7 @@ geo_show(
 
   See
   [`geo_url()`](https://WangLabCSU.github.io/geokit/reference/geo_url.md)
-  for details. For entries from the GEO Accession Display Bar, the
-  format will always be `"html"`.
+  for details.
 
 - scope:
 
