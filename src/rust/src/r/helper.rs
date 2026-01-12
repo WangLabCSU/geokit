@@ -73,7 +73,7 @@ pub(in crate::r) fn robj_to_option_vec_bool(value: &Robj, len: usize) -> Result<
 /// return an R vector of that type. Otherwise, return an R character vector created
 /// directly from the input `value` (no cloning).
 pub(in crate::r) fn parse_string(value: Vec<Option<String>>) -> Robj {
-    const SAMPLE_SIZE: usize = 10000;
+    const SAMPLE_SIZE: usize = 10_000;
 
     let reservoir = if value.len() <= SAMPLE_SIZE {
         (0..value.len()).collect()
@@ -90,10 +90,11 @@ pub(in crate::r) fn parse_string(value: Vec<Option<String>>) -> Robj {
     for index in reservoir {
         // SAFETY: reservoir indices are within bounds of value
         if let Some(s) = unsafe { value.get_unchecked(index) } {
-            if can_int && s.parse::<i32>().is_err() {
-                can_int = false;
-            }
             if can_f64 && s.parse::<f64>().is_err() {
+                can_int = false; // int can be parsed by f64
+                can_f64 = false;
+            }
+            if can_int && s.parse::<i32>().is_err() {
                 can_f64 = false;
             }
             if can_bool && !(s.eq_ignore_ascii_case("true") || s.eq_ignore_ascii_case("false")) {
