@@ -148,9 +148,7 @@ fn geo_parse_soft(
         .ok_or_else(|| anyhow!("Expected a character vector"))
         .with_context(|| format!("Invalid 'path'"))
         .map_err(|err| format!("{:?}", err))?;
-    let format = format
-        .as_str_vector()
-        .ok_or_else(|| anyhow!("Expected a character vector"))
+    let format = helper::robj_to_vec_str(&format, path.len())
         .with_context(|| format!("Invalid 'format'"))
         .map_err(|err| format!("{:?}", err))?;
 
@@ -170,7 +168,7 @@ fn geo_parse_soft(
             )?;
             path.par_iter()
                 .zip(format)
-                .progress()
+                .progress_count(path.len() as u64)
                 .with_prefix("Parsing GEO File")
                 .with_style(style)
                 .map(|(path, format)| geo_parse_soft_impl(path, format, reuse_buffer))

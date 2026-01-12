@@ -79,10 +79,6 @@ geo_soft_impl <- function(accession, famount = NULL, scope = NULL,
         handle_opts = handle_opts,
         odir = odir
     )
-    parse_soft_multiple(accession, paths)
-}
-
-parse_soft_multiple <- function(accession, paths) {
     entity_list <- parse_soft_rust(paths, reuse_buffer = FALSE)
     lapply(entity_list, parse_entity_list)
 }
