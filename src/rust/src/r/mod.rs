@@ -277,7 +277,7 @@ fn pprof_geo_parse_soft(
     use_lines: Robj,
     threads: Option<usize>,
     pprof_file: &str,
-) -> Result<Vec<Robj>, String> {
+) -> Result<List, String> {
     let guard = pprof::ProfilerGuardBuilder::default()
         .frequency(2000)
         .build()
