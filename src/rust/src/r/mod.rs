@@ -1,16 +1,27 @@
-use std::{collections::HashSet, path::Path, result::Result};
+use std::{
+    fs::File,
+    io::{BufReader, Read},
+    path::Path,
+    result::Result,
+};
 
 use anyhow::{anyhow, Context};
-use extendr_api::prelude::*;
+use extendr_api::prelude::{extendr, extendr_module, Attributes, List, Robj};
+use hashbrown::HashSet;
 use indexmap::IndexMap;
-use indicatif::{ParallelProgressIterator, ProgressBar, ProgressStyle};
+use indicatif::{ProgressBar, ProgressStyle};
 use memchr::memchr;
 use rayon::{
     iter::{IndexedParallelIterator, IntoParallelRefIterator, ParallelIterator},
     ThreadPoolBuilder,
 };
 
-use crate::r::soft::GEOSoftRecord;
+#[cfg(not(feature = "isal-rs"))]
+use flate2::bufread::GzDecoder as GzipDecoder;
+#[cfg(feature = "isal-rs")]
+use isal::read::GzipDecoder;
+
+use soft::{GEOSoftLine, GEOSoftReader, GEOSoftReaderBuilder};
 
 use super::geo::{GEOEntity, GEOType};
 
@@ -18,6 +29,8 @@ mod error;
 mod helper;
 mod resolver;
 mod soft;
+
+use soft::GEOSoftRecord;
 
 #[extendr]
 fn geo_gtype(accession: Robj, abbre: bool) -> Result<Vec<String>, String> {
@@ -140,6 +153,7 @@ fn geo_file_url_and_fname(
 fn geo_parse_soft(
     path: Robj,
     format: Robj,
+    use_lines: Robj,
     reuse_buffer: bool,
     threads: Option<usize>,
 ) -> Result<List, String> {
@@ -149,6 +163,9 @@ fn geo_parse_soft(
         .with_context(|| format!("Invalid 'path'"))
         .map_err(|err| format!("{:?}", err))?;
     let format = helper::robj_to_vec_str(&format, path.len())
+        .with_context(|| format!("Invalid 'format'"))
+        .map_err(|err| format!("{:?}", err))?;
+    let use_lines = helper::robj_to_option_vec_str(&use_lines, path.len())
         .with_context(|| format!("Invalid 'format'"))
         .map_err(|err| format!("{:?}", err))?;
 
@@ -165,25 +182,38 @@ fn geo_parse_soft(
             // for each path, we parse the soft file, each file has multiple records
             let style = ProgressStyle::with_template(
                 "{prefix:.bold.cyan/blue} {human_pos}/{human_len} {spinner:.green} [{elapsed_precise}] {per_sec} (ETA {eta})",
-            )?;
+            ).with_context(|| format!("Invalid progress style"))?;
+            let pb = ProgressBar::new(path.len() as u64)
+                .with_prefix("Parsing GEO File")
+                .with_style(style);
             path.par_iter()
                 .zip(format)
-                .progress_count(path.len() as u64)
-                .with_prefix("Parsing GEO File")
-                .with_style(style)
-                .map(|(path, format)| geo_parse_soft_impl(path, format, reuse_buffer))
+                .map(|(path, format)| {
+                    let out = geo_parse_soft_impl(path, format, &use_lines.as_ref().map(|l| l.as_slice()), reuse_buffer);
+                    pb.inc(1);
+                    out
+                })
                 .collect::<Result<Vec<Vec<GEOSoftRecord>>, _>>()
-        });
+        })
+        .map_err(|err| format!("{:?}", err))?;
 
+    // Building the result into R object
+    let style = ProgressStyle::with_template(
+        "{prefix:.bold.cyan/blue} {human_pos}/{human_len} {spinner:.green} [{elapsed_precise}] {per_sec} (ETA {eta})",
+    ).with_context(|| format!("Invalid progress style")).map_err(|err| format!("{:?}", err))?;
+    let pb = ProgressBar::new(record_res.len() as u64)
+        .with_prefix("Building R object")
+        .with_style(style);
     let out = record_res
-        .map_err(|err| format!("{:?}", err))?
         // for each record, we convert it into a Robj
         .into_iter()
         .map(|record_vec| {
-            record_vec
+            let out = record_vec
                 .into_iter()
                 .map(|record| record.try_into().map_err(|err| anyhow!("{}", err)))
-                .collect::<anyhow::Result<Vec<Robj>>>()
+                .collect::<anyhow::Result<Vec<Robj>>>();
+            pb.inc(1);
+            out
         })
         .collect::<anyhow::Result<Vec<Vec<Robj>>>>()
         .map_err(|err| format!("{:?}", err))?
@@ -198,31 +228,52 @@ fn geo_parse_soft(
 fn geo_parse_soft_impl(
     path: &str,
     format: &str,
+    use_lines: &Option<&[&str]>,
     reuse_buffer: bool,
 ) -> anyhow::Result<Vec<GEOSoftRecord>> {
     let path: &Path = path.as_ref();
-    let iter_records: Box<dyn Iterator<Item = anyhow::Result<soft::GEOSoftRecord>>>;
-    let mut reader = soft::GEOSoftReader::from_path(path)?;
+    let file =
+        File::open(path).with_context(|| format!("Failed to open file: {}", path.display()))?;
     let format = match format {
         "standard" => soft::GEOSoftFormat::Standard,
         "matrix" => soft::GEOSoftFormat::Matrix,
         _ => {
             return Err(error::RGEOParseError::InvalidSoftFormat)
-                .with_context(|| format!("Invalid format"));
+                .with_context(|| format!("Invalid 'format'"));
         }
     };
-    reader.format(format);
-    reader.reuse_buffer(reuse_buffer);
+    let reader: Box<dyn Read>;
     if path
         .extension()
         .and_then(|e| e.to_str())
         .map_or(false, |s| s.eq_ignore_ascii_case("gz"))
     {
-        iter_records = Box::new(reader.into_gzip_reader());
+        reader = Box::new(GzipDecoder::new(BufReader::with_capacity(
+            4 * (1 << 20),
+            file,
+        )));
     } else {
-        iter_records = Box::new(reader);
+        reader = Box::new(file);
     }
-    iter_records.collect::<anyhow::Result<Vec<_>>>()
+    let mut builder = GEOSoftReaderBuilder::new();
+    builder.format(format).reuse_buffer(reuse_buffer);
+    if let Some(use_lines) = use_lines {
+        let mut uses = HashSet::new();
+        for line in *use_lines {
+            let line = match line {
+                &"datatable" => GEOSoftLine::Datatable,
+                &"metadata" => GEOSoftLine::Metadata,
+                _ => {
+                    return Err(error::RGEOParseError::InvalidSoftLines)
+                        .with_context(|| format!("Invalid 'use_lines'"))
+                }
+            };
+            uses.insert(line);
+        }
+        builder.use_lines(uses);
+    }
+    let soft_reader = GEOSoftReader::<BufReader<Box<dyn Read>>>::new(&builder, reader);
+    soft_reader.collect::<anyhow::Result<Vec<_>>>()
 }
 
 #[extendr]
@@ -230,16 +281,17 @@ fn geo_parse_soft_impl(
 fn pprof_geo_parse_soft(
     path: Robj,
     format: Robj,
+    use_lines: Robj,
     reuse_buffer: bool,
-    threads: usize,
+    threads: Option<usize>,
     pprof_file: &str,
 ) -> Result<Vec<Robj>, String> {
     let guard = pprof::ProfilerGuardBuilder::default()
         .frequency(2000)
         .build()
-        .with_context(|| format!("Failed to create profile guard"))
+        .with_context(|| format!("Failed to create pprof guard"))
         .map_err(|e| format!("{:?}", e))?;
-    let out = geo_parse_soft(path, format, reuse_buffer, threads);
+    let out = geo_parse_soft(path, format, use_lines, reuse_buffer, threads);
     if let Ok(report) = guard.report().build() {
         let file = std::fs::File::create(pprof_file)
             .with_context(|| format!("Failed to create file {}", pprof_file))
@@ -267,14 +319,14 @@ fn parse_key_value_elements(elements: List, separator: u8) -> Result<extendr_api
 
     let mut out: IndexMap<&str, Vec<Option<String>>> = IndexMap::new();
     let mut keys = HashSet::new();
-    let mut reference;
+    let mut remaining;
     let mut num_added = 0;
     let total = element_vec.capacity();
     for elements in element_vec {
         if let Some(num_elements) = elements.len().checked_sub(out.len()) {
             out.reserve(num_elements);
         }
-        reference = keys.clone(); // used to follow if added elements
+        remaining = keys.clone(); // used to follow the added elements
         for element in elements {
             // for each paired element in the format of  'key: value'
             let element_bytes = element.as_bytes();
@@ -289,17 +341,16 @@ fn parse_key_value_elements(elements: List, separator: u8) -> Result<extendr_api
                             .trim_ascii();
                     if let Some(entry) = out.get_mut(label) {
                         // add it or append it to the exist one
-                        if reference.contains(label) {
+
+                        if remaining.contains(label) {
                             entry.push(Some(value.to_owned()));
-                            reference.remove(label);
-                        } else {
-                            if let Some(last) = entry.pop() {
-                                if let Some(last_str) = last {
-                                    let new = format!("{}; {}", last_str, value);
-                                    entry.push(Some(new));
-                                } else {
-                                    entry.push(Some(value.to_owned()));
-                                }
+                            remaining.remove(label);
+                        } else if let Some(last) = entry.pop() {
+                            if let Some(last_str) = last {
+                                let new = format!("{}; {}", last_str, value);
+                                entry.push(Some(new));
+                            } else {
+                                entry.push(Some(value.to_owned()));
                             }
                         }
                     } else {
@@ -313,8 +364,10 @@ fn parse_key_value_elements(elements: List, separator: u8) -> Result<extendr_api
             }
         }
         num_added += 1;
+
         // For entry not added in this elements, we add None
-        for key in reference {
+        let mut remaining_keys = remaining.iter();
+        while let Some(key) = remaining_keys.next() {
             if let Some(entry) = out.get_mut(key) {
                 entry.push(None);
             }

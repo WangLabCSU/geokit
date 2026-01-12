@@ -3,19 +3,19 @@
 is_all_same <- function(x) rust_call("is_all_same", x)
 
 parse_soft_rust <- function(path, format = "standard",
-                            reuse_buffer = FALSE, threads = NULL,
+                            use_lines = NULL, reuse_buffer = FALSE,
+                            threads = NULL,
                             pprof_file = NULL) {
     if (is.null(pprof_file)) {
-        rust_call("geo_parse_soft", path, format, reuse_buffer, threads)
+        rust_call(
+            "geo_parse_soft",
+            path, format, use_lines, reuse_buffer, threads
+        )
     } else {
         # Require add feature: pprof
         rust_call(
             "pprof_geo_parse_soft",
-            path,
-            format,
-            reuse_buffer,
-            threads,
-            pprof_file
+            path, format, use_lines, reuse_buffer, threads, pprof_file
         )
     }
 }

@@ -1,12 +1,13 @@
 #' Parse key-value pairs in the metadata of GEO Sample SOFT file
 #'
 #' Lots of GSEs now use `"characteristics_ch*"` meta header data for key-value
-#' pairs of annotation. If that is the case, this simply cleans the
-#' **GEODatatable** `@@metadata` slot up and transforms the keys to column names
-#' and the values to column values.
+#' pairs of annotation. If that is the case, this simply cleans the **GEOSoft**
+#' `@@metadata` slot up and transforms the keys to column names and the values
+#' to column values.
 #'
-#' @param x A [GEOSeries][GEOSeries-class] object or a list of GEODatatable from
-#' the `@@gsm` slot of a `GEOSeries` object.
+#' @param x A [GEOSeries][GEOSeries-class] object, a list of
+#' [GEOSoft][GEOSoft-class] from the `@@gsm` slot of a `GEOSeries` object, or a
+#' data frame from Series matrix file data table.
 #' @param ... Additional arguments passed on to methods.
 #' @param fields A character vector which fields should be parsed.
 #' @param sep A single byte string defined the pairing separator.
@@ -65,7 +66,7 @@ parse_sample_data.data.frame <- function(x, ..., fields = NULL, sep = ":") {
 parse_sample_data.list <- function(x, ...) {
     test_gsm_list <- is.list(x) && all(vapply(
         x, function(x) {
-            methods::is(x, "GEODatatable") &&
+            methods::is(x, "GEOSoft") &&
                 all(startsWith(names(metadata(x)), "Sample_"))
         },
         logical(1L),
@@ -73,7 +74,7 @@ parse_sample_data.list <- function(x, ...) {
     ))
     if (!test_gsm_list) {
         cli::cli_abort(paste(
-            "{.arg x} must be a list of {.cls GEODatatable} object,",
+            "{.arg x} must be a list of {.cls GEOSoft} object,",
             "especially for {.field @gsm} slot in a GEOSeries object."
         ))
     }

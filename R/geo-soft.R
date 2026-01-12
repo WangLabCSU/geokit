@@ -79,7 +79,7 @@ geo_soft_impl <- function(accession, famount = NULL, scope = NULL,
         handle_opts = handle_opts,
         odir = odir
     )
-    entity_list <- parse_soft_rust(paths, reuse_buffer = FALSE)
+    entity_list <- parse_soft_rust(paths)
     lapply(entity_list, parse_entity_list)
 }
 
@@ -123,6 +123,12 @@ parse_gpl_entity <- function(list) {
     rcd_types <- vapply(list, function(record) {
         .subset2(record, "rcd_type")
     }, character(1L), USE.NAMES = FALSE)
+    platforms <- .subset(list, rcd_types == "PLATFORM")
+    if (length(platforms) != 1L) {
+        cli::cli_abort("{.field Platforms} should contain only one single platform")
+    }
+    platform <- .subset2(platforms, 1L)
+
     gsm <- lapply(
         .subset(list, rcd_types == "SAMPLE"),
         parse_soft_entity
@@ -131,20 +137,9 @@ parse_gpl_entity <- function(list) {
         .subset(list, rcd_types == "SERIES"),
         parse_soft_entity
     )
-    metadata <- merge_metadata(
+    platform$metadata <- merge_metadata(
         .subset(list, !rcd_types %in% c("SAMPLE", "SERIES"))
     )
-
-    # the same dataset will be distributed into multiple entities
-    # But they should contain only one column, header and datatable data.
-    platforms <- .subset(list, vapply(list, function(data) {
-        .subset2(data, "rcd_type") == "PLATFORM"
-    }, logical(1L), USE.NAMES = FALSE))
-    if (length(platforms) != 1L) {
-        cli::cli_abort("{.field Platforms} should contain only one single platform")
-    }
-    platform <- .subset2(platforms, 1L)
-    platform$metadata <- metadata
 
     # build the object
     platform <- parse_soft_entity(platform, "GEOPlatform")
@@ -162,7 +157,6 @@ parse_gse_entity <- function(list) {
     if (length(series_list) != 1L) {
         cli::cli_abort("{.field Series} should contain only one single series")
     }
-    ensure_only_metadata(series_list)
     series <- .subset2(series_list, 1L)
 
     gsm <- lapply(
@@ -173,26 +167,18 @@ parse_gse_entity <- function(list) {
         .subset(list, rcd_types == "PLATFORM"),
         parse_soft_entity
     )
-    metadata <- merge_metadata(
+    series$metadata <- merge_metadata(
         .subset(list, !rcd_types %in% c("SAMPLE", "PLATFORM"))
     )
-
-    rcd_name <- .subset2(series, "rcd_name")
-    methods::new(
-        "GEOSeries",
-        rcd_type = .subset2(series, "rcd_type"),
-        rcd_name = rcd_name,
-        metadata = metadata,
-        gsm = gsm,
-        gpl = gpl,
-        accession = rcd_name
-    )
+    # build the object
+    series <- parse_soft_entity(series, "GEOSeries")
+    gsm(series) <- gsm
+    gpl(series) <- gpl
+    series
 }
 
 parse_gds_entity <- function(list) {
     ensure_only_metadata(list, "DATASET")
-    # the same dataset will be distributed into multiple entities
-    # But they should contain only one column, header and datatable data.
     datasets <- .subset(list, vapply(list, function(data) {
         .subset2(data, "rcd_type") == "DATASET"
     }, logical(1L), USE.NAMES = FALSE))
@@ -203,6 +189,8 @@ parse_gds_entity <- function(list) {
     if (!is_all_same(datasets_groups)) {
         cli::cli_abort("{.field Datasets} should contain only one single dataset")
     }
+    # the same dataset will be distributed into multiple entities
+    # But they should contain only one column, header and datatable data.
     dataset <- .subset2(datasets, 1L)
     for (other in .subset(datasets, -1L)) {
         if (length(.subset2(dataset, "columns")) &&
@@ -274,7 +262,7 @@ parse_soft_entity <- function(list, class = NULL) {
         names(datatable) <- header
     }
     methods::new(
-        class %||% "GEODatatable",
+        class %||% "GEOSoft",
         rcd_type = rcd_type,
         rcd_name = rcd_name,
         metadata = metadata,

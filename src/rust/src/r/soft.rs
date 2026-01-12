@@ -1,16 +1,11 @@
 use std::fs::File;
-use std::io::{self, BufRead, BufReader};
+use std::io::{self, BufRead, BufReader, Read};
 use std::path::Path;
 
 use anyhow::{Context, Result};
 use extendr_api::Attributes;
 
-#[cfg(not(feature = "isal-rs"))]
-use flate2::bufread::GzDecoder as GzipDecoder;
-
-#[cfg(feature = "isal-rs")]
-use isal::read::GzipDecoder;
-
+use hashbrown::HashSet;
 use indexmap::IndexMap;
 use memchr::memchr;
 
@@ -32,9 +27,17 @@ pub struct GEOSoftRecord {
     datatable: Vec<Vec<Option<String>>>, // Data table (a data frame)
 }
 
+#[derive(Debug, Clone)]
 pub enum GEOSoftFormat {
     Standard,
     Matrix,
+}
+
+#[derive(Eq, Hash, PartialEq, Debug, Clone)]
+pub enum GEOSoftLine {
+    Entity,
+    Metadata,
+    Datatable,
 }
 
 // Simple Omnibus Format in Text (SOFT) File
@@ -84,7 +87,12 @@ impl GEOSoftRecord {
     }
 
     #[inline]
-    fn parse_line(&mut self, line: &[u8], format: &GEOSoftFormat) -> Result<()> {
+    fn parse_line(
+        &mut self,
+        line: &[u8],
+        format: &GEOSoftFormat,
+        uses: &HashSet<GEOSoftLine>,
+    ) -> Result<()> {
         // ignore empty lines
         if line.is_empty() || line.iter().all(|byte| byte.is_ascii_whitespace()) {
             return Ok(());
@@ -94,18 +102,26 @@ impl GEOSoftRecord {
                 .parse_caret(line)
                 .with_context(|| format!("Invalid caret line"))?,
             b'!' => {
-                let result = match format {
-                    GEOSoftFormat::Standard => self.parse_regular_bang(line),
-                    GEOSoftFormat::Matrix => self.parse_matrix_bang(line),
-                };
-                result.with_context(|| format!("Invalid bang line"))?;
+                if uses.contains(&GEOSoftLine::Metadata) {
+                    let result = match format {
+                        GEOSoftFormat::Standard => self.parse_regular_bang(line),
+                        GEOSoftFormat::Matrix => self.parse_matrix_bang(line),
+                    };
+                    result.with_context(|| format!("Invalid bang line"))?;
+                }
             }
-            b'#' => self
-                .parse_hash(line)
-                .with_context(|| format!("Invalid hash line"))?,
-            _ => self
-                .parse_data(line)
-                .with_context(|| format!("Invalid data table line"))?,
+            b'#' => {
+                if uses.contains(&GEOSoftLine::Datatable) {
+                    self.parse_hash(line)
+                        .with_context(|| format!("Invalid hash line"))?
+                }
+            }
+            _ => {
+                if uses.contains(&GEOSoftLine::Datatable) {
+                    self.parse_data(line)
+                        .with_context(|| format!("Invalid data table line"))?
+                }
+            }
         }
         Ok(())
     }
@@ -318,8 +334,9 @@ impl TryFrom<GEOSoftRecord> for extendr_api::Robj {
 
 /// A reader for parsing SOFT (Simple Omnibus Format in Text) files.
 pub struct GEOSoftReader<R> {
-    reader: BufReader<R>, // Underlying buffered reader
+    reader: R, // Underlying buffered reader
     format: GEOSoftFormat,
+    use_lines: HashSet<GEOSoftLine>,
     record: GEOSoftRecord, // The parser that interprets the SOFT data
     reuse_buffer: bool,    // Flag to indicate whether to reuse the parser
     leftover: Vec<u8>,
@@ -330,21 +347,17 @@ pub struct GEOSoftReader<R> {
     cur_pos: usize,
 }
 
-impl GEOSoftReader<File> {
-    /// Creates a new `GEOSoftReader` with a default configuration for reading a file.
-    ///
-    /// # Arguments
-    /// - `path`: The file path of the SOFT file to be parsed.
-    ///
-    /// # Returns
-    /// - A `GEOSoftReader` that reads from the file at the given path.
-    pub fn from_path<P: AsRef<Path>>(path: P) -> io::Result<GEOSoftReader<File>> {
-        let file = File::open(path)?;
-        Ok(Self::new(file))
+// Methods for all instances of GEOSoftReader<T>
+impl<T> GEOSoftReader<T> {
+    /// Create a new SOFT reader given a builder and a source of underlying
+    /// bytes.
+    pub fn new<R: Read>(builder: &GEOSoftReaderBuilder, reader: R) -> GEOSoftReader<BufReader<R>> {
+        Self::from_bufreader_impl(
+            builder,
+            BufReader::with_capacity(builder.capacity.unwrap_or_else(|| 4 * (1 << 20)), reader),
+        )
     }
-}
 
-impl<R: io::Read> GEOSoftReader<R> {
     /// Creates a new `GEOSoftReader` given a reader and a default buffer capacity.
     ///
     /// # Arguments
@@ -352,38 +365,8 @@ impl<R: io::Read> GEOSoftReader<R> {
     ///
     /// # Returns
     /// - A `GEOSoftReader` with the provided reader.
-    pub fn new(reader: R) -> GEOSoftReader<R> {
-        Self::with_capacity(4 * (1 << 20), reader)
-    }
-
-    /// Consumes the current `GEOSoftReader` and creates a new one that reads from a gzip-compressed stream.
-    ///
-    /// # Returns
-    /// - A `GEOSoftReader` that reads from a gzip-compressed input stream.
-    pub fn into_gzip_reader(self) -> GEOSoftReader<GzipDecoder<BufReader<R>>> {
-        let buffer_size = self.reader.capacity();
-        self.into_gzip_reader_with_buffer_size(buffer_size)
-    }
-
-    /// Consumes the current `GEOSoftReader` and creates a new one that reads from a gzip-compressed stream.
-    ///
-    /// # Arguments
-    /// - `buffer_size`: The size of the buffer for reading the compressed stream.
-    ///
-    /// # Returns
-    /// - A `GEOSoftReader` that reads from a gzip-compressed input stream with the given buffer size.
-    pub fn into_gzip_reader_with_buffer_size(
-        self,
-        buffer_size: usize,
-    ) -> GEOSoftReader<GzipDecoder<BufReader<R>>> {
-        GEOSoftReader {
-            reader: BufReader::with_capacity(buffer_size, GzipDecoder::new(self.reader)),
-            format: self.format,
-            record: self.record,
-            reuse_buffer: self.reuse_buffer,
-            leftover: self.leftover,
-            cur_pos: self.cur_pos,
-        }
+    pub fn from_reader<R: Read>(reader: R) -> GEOSoftReader<BufReader<R>> {
+        Self::new(&GEOSoftReaderBuilder::new(), reader)
     }
 
     /// Creates a new `GEOSoftReader` with a specific buffer capacity.
@@ -394,29 +377,84 @@ impl<R: io::Read> GEOSoftReader<R> {
     ///
     /// # Returns
     /// - A `GEOSoftReader` with the given capacity and reader.
-    pub fn with_capacity(capacity: usize, reader: R) -> GEOSoftReader<R> {
-        Self {
-            reader: BufReader::with_capacity(capacity, reader),
-            format: GEOSoftFormat::Standard,
+    pub fn with_capacity<R: Read>(capacity: usize, reader: R) -> GEOSoftReader<BufReader<R>> {
+        Self::new(GEOSoftReaderBuilder::new().capacity(capacity), reader)
+    }
+
+    /// Create a new SOFT reader given a builder and a source of underlying
+    /// bytes.
+    pub fn from_bufreader<R: BufRead>(reader: R) -> GEOSoftReader<R> {
+        Self::from_bufreader_impl(&GEOSoftReaderBuilder::new(), reader)
+    }
+
+    fn from_bufreader_impl<R: BufRead>(
+        builder: &GEOSoftReaderBuilder,
+        reader: R,
+    ) -> GEOSoftReader<R> {
+        GEOSoftReader {
+            reader: reader,
+            format: builder
+                .format
+                .as_ref()
+                .map_or_else(|| GEOSoftFormat::Standard, |f| f.clone()),
+            use_lines: builder.use_lines.as_ref().map_or_else(
+                || {
+                    let mut uses = HashSet::with_capacity(2);
+                    uses.insert(GEOSoftLine::Metadata);
+                    uses.insert(GEOSoftLine::Datatable);
+                    uses
+                },
+                |u| u.clone(),
+            ),
             record: GEOSoftRecord::new(),
-            reuse_buffer: false,
+            reuse_buffer: builder.reuse_buffer,
             leftover: Vec::new(),
             cur_pos: 1,
         }
     }
 
-    pub fn format(&mut self, format: GEOSoftFormat) {
-        self.format = format;
-    }
-
-    /// Sets whether the parser state should be reused when reading new records.
+    /// Creates a new `GEOSoftReader` with a default configuration for reading a file.
     ///
     /// # Arguments
-    /// - `reuse`: If `false`, a new parser will be created for each new record.
-    pub fn reuse_buffer(&mut self, reuse: bool) {
-        self.reuse_buffer = reuse;
+    /// - `path`: The file path of the SOFT file to be parsed.
+    ///
+    /// # Returns
+    /// - A `GEOSoftReader` that reads from the file at the given path.
+    pub fn from_path<P: AsRef<Path>>(path: P) -> io::Result<GEOSoftReader<BufReader<File>>> {
+        Ok(Self::from_reader(File::open(path)?))
+    }
+}
+
+impl<R: io::Read> GEOSoftReader<BufReader<R>> {
+    /// Returns a reference to the underlying reader.
+    #[allow(dead_code)]
+    pub fn capacity(&self) -> usize {
+        self.reader.capacity()
     }
 
+    /// Returns a reference to the underlying reader.
+    #[allow(dead_code)]
+    pub fn get_ref(&self) -> &R {
+        self.reader.get_ref()
+    }
+
+    /// Returns a mutable reference to the underlying reader.
+    #[allow(dead_code)]
+    pub fn get_mut(&mut self) -> &mut R {
+        self.reader.get_mut()
+    }
+
+    /// Unwraps this CSV reader, returning the underlying reader.
+    ///
+    /// Note that any leftover data inside this reader's internal buffer is
+    /// lost.
+    #[allow(dead_code)]
+    pub fn into_inner(self) -> R {
+        self.reader.into_inner()
+    }
+}
+
+impl<R: io::BufRead> GEOSoftReader<R> {
     /// Reads and parses the record from the underlying reader.
     ///
     /// # Returns
@@ -431,7 +469,7 @@ impl<R: io::Read> GEOSoftReader<R> {
                 } else {
                     let line = &self.leftover;
                     self.record
-                        .parse_line(line, &self.format)
+                        .parse_line(line, &self.format, &self.use_lines)
                         .with_context(|| {
                             format!(
                                 "Error parsing line ({}): '{}'.",
@@ -470,7 +508,7 @@ impl<R: io::Read> GEOSoftReader<R> {
                     &self.leftover
                 };
                 self.record
-                    .parse_line(line, &self.format)
+                    .parse_line(line, &self.format, &self.use_lines)
                     .with_context(|| {
                         format!(
                             "Error parsing line ({}): '{}'.",
@@ -501,38 +539,53 @@ impl<R: io::Read> GEOSoftReader<R> {
             Some(std::mem::replace(&mut self.record, GEOSoftRecord::new()))
         }
     }
-
-    /// Returns a reference to the underlying reader.
-    #[allow(dead_code)]
-    pub fn capacity(&self) -> usize {
-        self.reader.capacity()
-    }
-
-    /// Returns a reference to the underlying reader.
-    #[allow(dead_code)]
-    pub fn get_ref(&self) -> &R {
-        self.reader.get_ref()
-    }
-
-    /// Returns a mutable reference to the underlying reader.
-    #[allow(dead_code)]
-    pub fn get_mut(&mut self) -> &mut R {
-        self.reader.get_mut()
-    }
-
-    /// Unwraps this CSV reader, returning the underlying reader.
-    ///
-    /// Note that any leftover data inside this reader's internal buffer is
-    /// lost.
-    #[allow(dead_code)]
-    pub fn into_inner(self) -> R {
-        self.reader.into_inner()
-    }
 }
 
-impl<R: io::Read> Iterator for GEOSoftReader<R> {
+impl<R: io::BufRead> Iterator for GEOSoftReader<R> {
     type Item = Result<GEOSoftRecord>;
     fn next(&mut self) -> Option<Self::Item> {
         self.read_record().transpose()
+    }
+}
+
+pub struct GEOSoftReaderBuilder {
+    capacity: Option<usize>,
+    format: Option<GEOSoftFormat>,
+    use_lines: Option<HashSet<GEOSoftLine>>,
+    reuse_buffer: bool,
+}
+
+impl GEOSoftReaderBuilder {
+    pub fn new() -> Self {
+        Self {
+            capacity: None,
+            format: None,
+            use_lines: None,
+            reuse_buffer: true,
+        }
+    }
+
+    pub fn capacity(&mut self, capacity: usize) -> &mut Self {
+        self.capacity = Some(capacity);
+        self
+    }
+
+    pub fn format(&mut self, format: GEOSoftFormat) -> &mut Self {
+        self.format = Some(format);
+        self
+    }
+
+    pub fn use_lines(&mut self, lines: HashSet<GEOSoftLine>) -> &mut Self {
+        self.use_lines = Some(lines);
+        self
+    }
+
+    /// Sets whether the parser state should be reused when reading new records.
+    ///
+    /// # Arguments
+    /// - `reuse_buffer`: If `false`, a new parser will be created for each new record.
+    pub fn reuse_buffer(&mut self, reuse_buffer: bool) -> &mut Self {
+        self.reuse_buffer = reuse_buffer;
+        self
     }
 }

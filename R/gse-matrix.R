@@ -91,8 +91,8 @@ geo_matrix_impl <- function(accession, pdata_from_soft = TRUE,
 #' @noRd
 parse_gse_matrix <- function(path, gse_soft = NULL, add_gpl = NULL,
                              ftp_over_https = TRUE, handle_opts = list(),
-                             reuse_buffer = FALSE, odir = getwd()) {
-    entity_list <- parse_soft_rust(path, "matrix", reuse_buffer = reuse_buffer)
+                             odir = getwd()) {
+    entity_list <- parse_soft_rust(path, "matrix")
     gse_matrix <- parse_entity_list(.subset2(entity_list, 1L))
 
     # extract series matrix data
@@ -184,7 +184,7 @@ parse_gse_matrix <- function(path, gse_soft = NULL, add_gpl = NULL,
             ftp_over_https = ftp_over_https,
             odir = odir
         )
-        entity_list <- parse_soft_rust(annot_file, reuse_buffer = reuse_buffer)
+        entity_list <- parse_soft_rust(annot_file)
         gpl <- parse_entity_list(.subset2(entity_list, 1L))
         if (nrow(feature_data <- datatable(gpl))) {
             feature_data <- set_rownames(feature_data)

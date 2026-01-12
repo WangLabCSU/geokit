@@ -22,6 +22,9 @@ pub enum RGEOParseError {
     #[error("Expected one of 'standard', or 'matrix'.")]
     InvalidSoftFormat,
 
+    #[error("Expected 'metadata' or 'datatable'.")]
+    InvalidSoftLines,
+
     #[error("(Landing page) Expected one of 'brief', 'quick', 'data', 'full', 'soft', 'soft_full', 'miniml', 'matrix', 'annot', or 'suppl'.")]
     InvalidFamount,
 }

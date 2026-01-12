@@ -16,8 +16,9 @@ parse_sample_data(x, ...)
 \method{parse_sample_data}{list}(x, ...)
 }
 \arguments{
-\item{x}{A \link[=GEOSeries-class]{GEOSeries} object or a list of GEODatatable from
-the \verb{@gsm} slot of a \code{GEOSeries} object.}
+\item{x}{A \link[=GEOSeries-class]{GEOSeries} object, a list of
+\link[=GEOSoft-class]{GEOSoft} from the \verb{@gsm} slot of a \code{GEOSeries} object, or a
+data frame from Series matrix file data table.}
 
 \item{...}{Additional arguments passed on to methods.}
 
@@ -30,9 +31,9 @@ A data.frame whose rows are samples and columns are the sample infos
 }
 \description{
 Lots of GSEs now use \code{"characteristics_ch*"} meta header data for key-value
-pairs of annotation. If that is the case, this simply cleans the
-\strong{GEODatatable} \verb{@metadata} slot up and transforms the keys to column names
-and the values to column values.
+pairs of annotation. If that is the case, this simply cleans the \strong{GEOSoft}
+\verb{@metadata} slot up and transforms the keys to column names and the values
+to column values.
 }
 \examples{
 gse201530_soft <- geo_soft("GSE201530", odir = tempdir())

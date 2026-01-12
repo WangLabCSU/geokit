@@ -16,6 +16,7 @@ anyhow = { version = "*" }
 regex = { version = "*" }
 memchr = { version = "*" }
 rayon = { version = "*" }
+hashbrown = { version = "0.16", default-features = false, features = ['default-hasher'] }
 indexmap = { version = "*" }
 rand = { version = "*" }
 indicatif = {version = "*", features = ["rayon"]}
