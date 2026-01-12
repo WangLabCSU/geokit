@@ -79,13 +79,13 @@ geo_soft_impl <- function(accession, famount = NULL, scope = NULL,
         handle_opts = handle_opts,
         odir = odir
     )
-    parse_soft_multiple(paths)
+    parse_soft_multiple(accession, paths)
 }
 
 # TO-DO: Using rust to implement the `parallel`
-parse_soft_multiple <- function(paths) {
+parse_soft_multiple <- function(accession, paths) {
     cli::cli_progress_bar(
-        format = "{cli::pb_spin} Parsing {.field {ids[cli::pb_current]}} soft file | {cli::pb_current}/{cli::pb_total}",
+        format = "{cli::pb_spin} Parsing {.field {accession[cli::pb_current]}} soft file | {cli::pb_current}/{cli::pb_total}",
         format_done = "Parsing {.val {cli::pb_total}} {.field soft} file{?s} in {cli::pb_elapsed}",
         total = length(paths),
         clear = FALSE
