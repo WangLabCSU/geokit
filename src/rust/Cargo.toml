@@ -17,8 +17,8 @@ regex = '*'
 memchr = '*'
 indexmap = '*'
 rand = '*'
-flate2 = { version = "*", optional = true }
-isal-rs = { version = "*" }
+flate2 = { version = "*" }
+isal-rs = { version = "*", optional = true }
 pprof = { version = "0.14", features = ["flamegraph"], optional = true }
 
 # remove openssl dependency due to error when loading R package: undefined symbol: EVP_bf_ecb

@@ -5,10 +5,10 @@ use std::path::Path;
 use anyhow::{Context, Result};
 use extendr_api::Attributes;
 
-#[cfg(feature = "flate2")]
+#[cfg(not(feature = "isal-rs"))]
 use flate2::bufread::GzDecoder as GzipDecoder;
 
-#[cfg(not(feature = "flate2"))]
+#[cfg(feature = "isal-rs")]
 use isal::read::GzipDecoder;
 
 use indexmap::IndexMap;
