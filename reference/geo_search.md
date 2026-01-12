@@ -52,11 +52,11 @@ for details.
 
 ``` r
 geo_search("diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]")
-#> ■■■■■■■■■■                       500/1762 [444/s] | ETA:  3s
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1763/1762 [378/s] | ETA:  0s
+#> ■■■■■■■■■■                       500/1762 [381/s] | ETA:  3s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■      1500/1762 [383/s] | ETA:  1s
 #> → Parsing GEO records
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1763/1762 [378/s] | ETA:  0s
-#> Get records from NCBI for 1762 queries in 4.8s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■      1500/1762 [383/s] | ETA:  1s
+#> Get records from NCBI for 1762 queries in 4.9s
 #> 
 #>                                                                                                                            Title
 #>                                                                                                                           <char>
