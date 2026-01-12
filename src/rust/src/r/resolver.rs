@@ -278,7 +278,7 @@ fn build_resolvers(
 ) -> Result<Vec<GEOResolver>> {
     let mut resolvers = Vec::with_capacity(entity.len());
     let mut builder = GEOResolverBuilder::new();
-    for (_, entity) in entity.into_iter().enumerate() {
+    for entity in entity.into_iter() {
         builder.entity(entity);
         // SAFETY: lengths were validated/recycled earlier
         // format is required
