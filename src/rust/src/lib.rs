@@ -1,4 +1,4 @@
-use extendr_api::prelude::*;
+use extendr_api::extendr_module;
 
 mod geo;
 mod r;

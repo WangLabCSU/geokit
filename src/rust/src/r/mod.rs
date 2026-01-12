@@ -6,7 +6,7 @@ use std::{
 };
 
 use anyhow::{anyhow, Context};
-use extendr_api::prelude::{extendr, extendr_module, Attributes, List, Robj};
+use extendr_api::{extendr, extendr_module, Attributes, List, Robj};
 use hashbrown::HashSet;
 use indexmap::IndexMap;
 use indicatif::{ProgressBar, ProgressStyle};
@@ -23,12 +23,15 @@ use isal::read::GzipDecoder;
 
 use soft::{GEOSoftLine, GEOSoftReader, GEOSoftReaderBuilder};
 
+use crate::r::vector::Vector;
+
 use super::geo::{GEOEntity, GEOType};
 
 mod error;
 mod helper;
 mod resolver;
 mod soft;
+mod vector;
 
 use soft::GEOSoftRecord;
 
@@ -154,7 +157,6 @@ fn geo_parse_soft(
     path: Robj,
     format: Robj,
     use_lines: Robj,
-    reuse_buffer: bool,
     threads: Option<usize>,
 ) -> Result<List, String> {
     let path = path
@@ -189,7 +191,7 @@ fn geo_parse_soft(
             path.par_iter()
                 .zip(format)
                 .map(|(path, format)| {
-                    let out = geo_parse_soft_impl(path, format, &use_lines.as_ref().map(|l| l.as_slice()), reuse_buffer);
+                    let out = geo_parse_soft_impl(path, format, &use_lines.as_ref().map(|l| l.as_slice()));
                     pb.inc(1);
                     out
                 })
@@ -229,7 +231,6 @@ fn geo_parse_soft_impl(
     path: &str,
     format: &str,
     use_lines: &Option<&[&str]>,
-    reuse_buffer: bool,
 ) -> anyhow::Result<Vec<GEOSoftRecord>> {
     let path: &Path = path.as_ref();
     let file =
@@ -256,7 +257,7 @@ fn geo_parse_soft_impl(
         reader = Box::new(file);
     }
     let mut builder = GEOSoftReaderBuilder::new();
-    builder.format(format).reuse_buffer(reuse_buffer);
+    builder.format(format);
     if let Some(use_lines) = use_lines {
         let mut uses = HashSet::new();
         for line in *use_lines {
@@ -282,7 +283,6 @@ fn pprof_geo_parse_soft(
     path: Robj,
     format: Robj,
     use_lines: Robj,
-    reuse_buffer: bool,
     threads: Option<usize>,
     pprof_file: &str,
 ) -> Result<Vec<Robj>, String> {
@@ -291,7 +291,7 @@ fn pprof_geo_parse_soft(
         .build()
         .with_context(|| format!("Failed to create pprof guard"))
         .map_err(|e| format!("{:?}", e))?;
-    let out = geo_parse_soft(path, format, use_lines, reuse_buffer, threads);
+    let out = geo_parse_soft(path, format, use_lines, threads);
     if let Ok(report) = guard.report().build() {
         let file = std::fs::File::create(pprof_file)
             .with_context(|| format!("Failed to create file {}", pprof_file))
@@ -375,7 +375,7 @@ fn parse_key_value_elements(elements: List, separator: u8) -> Result<extendr_api
     }
     let (keys, columns): (Vec<_>, Vec<_>) = out
         .into_iter()
-        .map(|(key, value)| (key, helper::parse_string(value)))
+        .map(|(key, value)| (key, Vector::parse_string(value)))
         .unzip();
     let mut olist = extendr_api::List::from_values(columns);
     olist.set_names(keys)?;
