@@ -57,11 +57,12 @@ for details.
 # interruptions due to network issues or rate limits, we wrap the call with
 # try().
 try(geo_search("diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"))
-#> ■■■■■■■■■■                       500/1762 [383/s] | ETA:  3s
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■      1500/1762 [368/s] | ETA:  1s
+#> ■■■■■■■■■■                       500/1762 [397/s] | ETA:  3s
+#> ■■■■■■■■■■■■■■■■■■               1000/1762 [378/s] | ETA:  2s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1763/1762 [269/s] | ETA:  0s
 #> → Parsing GEO records
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■      1500/1762 [368/s] | ETA:  1s
-#> Get records from NCBI for 1762 queries in 5.1s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1763/1762 [269/s] | ETA:  0s
+#> Get records from NCBI for 1762 queries in 6.7s
 #> 
 #>                                                                                                                            Title
 #>                                                                                                                           <char>
