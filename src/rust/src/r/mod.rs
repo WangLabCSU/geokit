@@ -21,11 +21,9 @@ use flate2::bufread::GzDecoder as GzipDecoder;
 #[cfg(feature = "isal-rs")]
 use isal::read::GzipDecoder;
 
-use soft::{GEOSoftLine, GEOSoftReader, GEOSoftReaderBuilder};
-
-use crate::r::vector::Vector;
-
 use super::geo::{GEOEntity, GEOType};
+use soft::{GEOSoftLine, GEOSoftReader, GEOSoftReaderBuilder};
+use vector::Vector;
 
 mod error;
 mod helper;
@@ -206,25 +204,21 @@ fn geo_parse_soft(
     let pb = ProgressBar::new(record_res.len() as u64)
         .with_prefix("Building R object")
         .with_style(style);
-    let out = record_res
-        // for each record, we convert it into a Robj
+    record_res
+        // each vec containing all records found in the file
         .into_iter()
         .map(|record_vec| {
+            // for each record in the file, we convert it into a Robj
+            // and then collected all records into a list
             let out = record_vec
                 .into_iter()
-                .map(|record| record.try_into().map_err(|err| anyhow!("{}", err)))
-                .collect::<anyhow::Result<Vec<Robj>>>();
+                .map(|record| Robj::try_from(record))
+                .collect::<Result<List, _>>();
             pb.inc(1);
             out
         })
-        .collect::<anyhow::Result<Vec<Vec<Robj>>>>()
-        .map_err(|err| format!("{:?}", err))?
-        // for each path, all of its records are grouped into a List
-        .into_iter()
-        .map(|record_vec| List::from_values(record_vec))
-        // in the final, we create a single list for all path
-        .collect::<List>();
-    Ok(out)
+        .collect::<Result<List, _>>()
+        .map_err(|err| format!("{:?}", err))
 }
 
 fn geo_parse_soft_impl(
