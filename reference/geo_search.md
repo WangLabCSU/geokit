@@ -54,14 +54,10 @@ for details.
 # Ensure you have an active internet connection before running the search.
 # The `geo_search` function queries NCBI Entrez, which may have network
 # restrictions and limited bandwidth usage for large queries. To avoid
-# interruptions due tonetwork issues or rate limits, we wrap the call with
+# interruptions due to network issues or rate limits, we wrap the call with
 # try().
 try(geo_search("diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"))
-#> Error : HTTP failure: 400
-#> <?xml version="1.0" encoding="UTF-8" ?>
-#> <!DOCTYPE eEfetchResult PUBLIC "-//NLM//DTD efetch 20131226//EN" "https://eutils.ncbi.nlm.nih.gov/eutils/dtd/20131226/efetch.dtd">
-#> <eFetchResult>
-#>  <ERROR>Couldn&apos;t resolve #pmquerysrv-mz?dbaf=gds, the address table is empty. connection: #pmquerysrv-mz?dbaf=gdsservice: search</ERROR>
-#> </eFetchResult>
-#> 
+#> Error in curl::curl_fetch_memory(url, handle = handle) : 
+#>   Timeout was reached [eutils.ncbi.nlm.nih.gov]:
+#> Failed to connect to eutils.ncbi.nlm.nih.gov port 443 after 10001 ms: Timeout was reached
 ```

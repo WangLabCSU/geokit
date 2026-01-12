@@ -95,16 +95,12 @@ for details.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Ensure you have an active internet connection before running the search.</span></span></span>
 <span class="r-in"><span><span class="co"># The `geo_search` function queries NCBI Entrez, which may have network</span></span></span>
 <span class="r-in"><span><span class="co"># restrictions and limited bandwidth usage for large queries. To avoid</span></span></span>
-<span class="r-in"><span><span class="co"># interruptions due tonetwork issues or rate limits, we wrap the call with</span></span></span>
+<span class="r-in"><span><span class="co"># interruptions due to network issues or rate limits, we wrap the call with</span></span></span>
 <span class="r-in"><span><span class="co"># try().</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/try.html" class="external-link">try</a></span><span class="op">(</span><span class="fu">geo_search</span><span class="op">(</span><span class="st">"diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Error : HTTP failure: 400</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;?xml version="1.0" encoding="UTF-8" ?&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;!DOCTYPE eEfetchResult PUBLIC "-//NLM//DTD efetch 20131226//EN" "https://eutils.ncbi.nlm.nih.gov/eutils/dtd/20131226/efetch.dtd"&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;eFetchResult&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	&lt;ERROR&gt;Couldn&amp;apos;t resolve #pmquerysrv-mz?dbaf=gds, the address table is empty. connection: #pmquerysrv-mz?dbaf=gdsservice: search&lt;/ERROR&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;/eFetchResult&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Error in curl::curl_fetch_memory(url, handle = handle) : </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Timeout was reached [eutils.ncbi.nlm.nih.gov]:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Failed to connect to eutils.ncbi.nlm.nih.gov port 443 after 10001 ms: Timeout was reached</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
