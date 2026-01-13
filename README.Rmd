@@ -60,9 +60,9 @@ diabetes_gse_records <- geo_search(
 head(diabetes_gse_records[1:5])
 ```
 
-Then, we can use whatever we're famaliar to filter the searching results.
-Providing we want GSE datasets with at least 6 diabetic nephropathy samples
-containing expression profiling. Here is the example code:
+Once you have the search results, you can filter them based on specific
+criteria. For instance, to filter for GSE datasets that contain at least 6
+diabetic nephropathy samples with expression profiling, use the following code:
 
 ```{r filtered_diabetes_gse_records}
 diabetes_nephropathy_gse_records <- diabetes_gse_records |>
@@ -84,12 +84,15 @@ diabetes_nephropathy_gse_records <- diabetes_gse_records |>
         stringr::str_detect(Type, "(?i)expression profiling"),
         number_of_samples >= 6L
     )
-head(diabetes_nephropathy_gse_records[1:5])
+head(diabetes_nephropathy_gse_records[1:5, 1:5])
 ```
 
-After filtering, we got `r nrow(diabetes_nephropathy_gse_records)` candidate
-datasets. This can reduce a lot of time of us comparing with refining datasets
-by reading the summary records. 
+After applying the filter, we obtain `r nrow(diabetes_nephropathy_gse_records)`
+candidate datasets. This filtering step significantly reduces the time spent
+manually reviewing summary records.
+
+You can also use `geo_meta()` to dynamically create a self-knowledge-concerned
+database in real-time.
 
 ### Download and Parse SOFT File from GEO database
 The GEO database provides SOFT (Simple Omnibus Format in Text) files for GPL,
