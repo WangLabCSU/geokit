@@ -108,10 +108,10 @@ head(diabetes_gse_records[1:5])
 #> 5:        GSE315753
 ```
 
-Then, we can use whatever we’re famaliar to filter the searching
-results. Providing we want GSE datasets with at least 6 diabetic
-nephropathy samples containing expression profiling. Here is the example
-code:
+Once you have the search results, you can filter them based on specific
+criteria. For instance, to filter for GSE datasets that contain at least
+6 diabetic nephropathy samples with expression profiling, use the
+following code:
 
 ``` r
 diabetes_nephropathy_gse_records <- diabetes_gse_records |>
@@ -133,7 +133,7 @@ diabetes_nephropathy_gse_records <- diabetes_gse_records |>
         stringr::str_detect(Type, "(?i)expression profiling"),
         number_of_samples >= 6L
     )
-head(diabetes_nephropathy_gse_records[1:5])
+head(diabetes_nephropathy_gse_records[1:5, 1:5])
 #>                                                                                                                              Title
 #>                                                                                                                             <char>
 #> 1:      Integrative RNA-seq and CLIP-seq analysis reveals hnRNP-F regulation of the TNFα/NFκB signaling in high glucose conditions
@@ -162,25 +162,15 @@ head(diabetes_nephropathy_gse_records[1:5])
 #> 3: GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE255nnn/GSE255028/
 #> 4: GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE192nnn/GSE192889/
 #> 5: GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE266nnn/GSE266108/
-#>           ID SRA Run Selector Project   Contains Datasets Platforms
-#>        <int>           <char>  <char>     <char>   <char>    <char>
-#> 1: 200273001             <NA>    <NA>  6 Samples     <NA>  GPL20795
-#> 2: 200265918             <NA>    <NA> 12 Samples     <NA>  GPL24676
-#> 3: 200255028             <NA>    <NA>  9 Samples     <NA>  GPL24676
-#> 4: 200192889             <NA>    <NA>  9 Samples     <NA>  GPL24676
-#> 5: 200266108             <NA>    <NA>  6 Samples     <NA>  GPL24676
-#>    Series Accession number_of_samples
-#>              <char>             <int>
-#> 1:        GSE273001                 6
-#> 2:        GSE265918                12
-#> 3:        GSE255028                 9
-#> 4:        GSE192889                 9
-#> 5:        GSE266108                 6
 ```
 
-After filtering, we got 38 candidate datasets. This can reduce a lot of
-time of us comparing with refining datasets by reading the summary
-records.
+After applying the filter, we obtain 38 candidate datasets. This
+filtering step significantly reduces the time spent manually reviewing
+summary records.
+
+You can also use
+[`geo_meta()`](https://WangLabCSU.github.io/geokit/reference/geo_meta.md)
+to dynamically create a self-knowledge-concerned database in real-time.
 
 ### Download and Parse SOFT File from GEO database
 
