@@ -4,15 +4,16 @@
 #' optionally mapping platform IDs to Bioconductor annotation packages.
 #'
 #' @inheritParams geo_soft
-#' @param pdata_from_soft Logical, whether to derive `phenoData` from the GSE
-#'   series SOFT file. Defaults to `TRUE`. If `FALSE`, `phenoData` is parsed
-#'   from the series matrix file; note that some `characteristics_ch*` columns
-#'   may not be parsed correctly.
 #' @param add_gpl Logical or `NULL`. Whether to include platform information
 #'   (the [`featureData`][Biobase::featureData] slot). If `NULL` (default), the
 #'   function attempts to map the GPL accession to a Bioconductor annotation
 #'   package. If successful, the [`annotation`][Biobase::eSet] slot is updated
 #'   and `add_gpl` is set to `FALSE`; otherwise, `add_gpl` is set to `TRUE`.
+#' @param pdata_from_soft Logical. Specifies whether to derive `phenoData` from
+#'   the GSE series SOFT file. Defaults to `FALSE`, in which case `phenoData` is
+#'   parsed directly from the series matrix file. Set to `TRUE` if you encounter
+#'   issues parsing `characteristics_ch*` columns correctly, as it will attempt
+#'   to retrieve the data from the SOFT file instead.
 #' @return An [`ExpressionSet`][Biobase::ExpressionSet] or a list of
 #'  `ExpressionSet`s, one per Series Matrix file.
 #' @examples
@@ -20,7 +21,7 @@
 #'     eset <- geo_matrix("GSE10", odir = tempdir())
 #' }
 #' @export
-geo_matrix <- function(accession, pdata_from_soft = TRUE, add_gpl = NULL,
+geo_matrix <- function(accession, add_gpl = NULL, pdata_from_soft = FALSE,
                        ftp_over_https = NULL, handle_opts = list(),
                        odir = getwd()) {
     check_bioc_installed("Biobase", "to build ExpressionSet")
