@@ -24,8 +24,8 @@ geo_meta(
 
 \item{famount}{A character string specifying either:
 \itemize{
-\item the file format on the GEO FTP server, or
-\item the amount of data in the GEO Accession Display Bar.
+\item the file \code{format} on the GEO FTP server, or
+\item the \code{amount} of data in the GEO Accession Display Bar.
 }
 
 See \code{\link[=geo_url]{geo_url()}} for details.}
@@ -55,6 +55,11 @@ working directory.}
 A data frame contains metadata of all ids.
 }
 \description{
-This is useful to combine with \code{\link[=geo_search]{geo_search()}} and filter results since
-\code{geo_search()} cannot get all long metadata of GEO identities.
+This function is useful for combining with \code{\link[=geo_search]{geo_search()}} to filter
+results, as \code{geo_search()} cannot retrieve the full metadata for all GEO
+identifiers. By default, it uses the \code{soft} format for GDS and GSE entities,
+and the \code{full} amount of data for GPL and GSM entities.
+}
+\examples{
+geo_meta("GSE10")
 }

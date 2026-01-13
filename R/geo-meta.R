@@ -1,10 +1,14 @@
 #' Get the metadata of multiple GEO identities
 #'
-#' This is useful to combine with [`geo_search()`] and filter results since
-#' `geo_search()` cannot get all long metadata of GEO identities.
+#' This function is useful for combining with [`geo_search()`] to filter
+#' results, as `geo_search()` cannot retrieve the full metadata for all GEO
+#' identifiers. By default, it uses the `soft` format for GDS and GSE entities,
+#' and the `full` amount of data for GPL and GSM entities.
 #'
 #' @inheritParams geo_soft
 #' @return A data frame contains metadata of all ids.
+#' @examples
+#' geo_meta("GSE10")
 #' @export
 geo_meta <- function(accession, famount = NULL, scope = NULL,
                      ftp_over_https = NULL,

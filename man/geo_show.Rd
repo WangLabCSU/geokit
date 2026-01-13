@@ -23,8 +23,8 @@ geo_show(
 
 \item{famount}{A character string specifying either:
 \itemize{
-\item the file format on the GEO FTP server, or
-\item the amount of data in the GEO Accession Display Bar.
+\item the file \code{format} on the GEO FTP server, or
+\item the \code{amount} of data in the GEO Accession Display Bar.
 }
 
 See \code{\link[=geo_url]{geo_url()}} for details.}

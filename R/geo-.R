@@ -36,8 +36,8 @@ geo_gtype <- function(accession, abbre = FALSE) {
 #' Construct and resolve URLs for GEO (Gene Expression Omnibus) resources. This
 #' function provides a unified interface for accessing GEO data either via
 #' Accession Display Bar of GEO database or directly from GEO FTP/HTTPS servers.
-#' Depending on the accession type or requested `famount`, it automatically
-#' generates the correct URL.
+#' Depending on the accession type or requested `format` and `amount`, it
+#' automatically generates the correct URL.
 #'
 #' @inheritParams geo_gtype
 #' @param format A character specifying file format type requested. GEO data can
@@ -125,8 +125,8 @@ geo_url <- function(accession, format = NULL, amount = NULL, scope = NULL,
 #' browser (or a user-specified browser).
 #'
 #' @param famount A character string specifying either:
-#'   - the file format on the GEO FTP server, or
-#'   - the amount of data in the GEO Accession Display Bar.
+#'   - the file `format` on the GEO FTP server, or
+#'   - the `amount` of data in the GEO Accession Display Bar.
 #'
 #'   See [`geo_url()`] for details.
 #'
