@@ -57,89 +57,101 @@ for details.
 # interruptions due to network issues or rate limits, we wrap the call with
 # try().
 try(geo_search("diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"))
-#> ■■■■■■■■■■                       500/1762 [397/s] | ETA:  3s
-#> ■■■■■■■■■■■■■■■■■■               1000/1762 [378/s] | ETA:  2s
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1763/1762 [269/s] | ETA:  0s
+#> ■■■■■■■■■                        500/1765 [378/s] | ETA:  3s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1766/1765 [374/s] | ETA:  0s
 #> → Parsing GEO records
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1763/1762 [269/s] | ETA:  0s
-#> Get records from NCBI for 1762 queries in 6.7s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1766/1765 [374/s] | ETA:  0s
+#> Get records from NCBI for 1765 queries in 4.9s
 #> 
-#>                                                                                                                            Title
-#>                                                                                                                           <char>
-#>    1:      Metabolic surgery mitigates early kidney injury in obese youth with diabetes by suppressing mTORC1/JAK–STAT signaling
-#>    2:            A stem cell knockout village reveals lineage rewiring and a non-canonical islet cell fate in monogenic diabetes
-#>    3:                          Natural daylight during office hours improves glucose control and whole-body substrate metabolism
-#>    4: Epigenome-wide association study of differential DNA-methylation in background mucosa among adults with colorectal adenoma
-#>    5:                                      HUMAN ALVEOLAR MACROPHAGE FUNCTION IS IMPAIRED IN TUBERCULOSIS CONTACTS WITH DIABETES
-#>   ---                                                                                                                           
-#> 1758:                                  Gestational Diabetes Induces Placental Genes for Chronic Stress and Inflammatory Pathways
-#> 1759:                                                   laughter regulates postprandial blood glucose levels and gene expression
-#> 1760:                                                                                                       Diabetic nephropathy
-#> 1761:                                                                              Muscle - atypical diabetes protein expression
-#> 1762:                                                                                     Type 2 diabetes and insulin resistance
-#>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  Summary
-#>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   <char>
-#>    1: Background Youth with type 2 diabetes (T2D) and severe obesity face high risk of diabetic kidney disease, which metabolic bariatric surgery (MBS) can mitigate. This study explores structural and molecular changes in kidneys after vertical sleeve gastrectomy (VSG), a form of MBS. Methods Paired analyses, including metabolic profiling, kidney volume assessment, histological evaluation, and single-cell RNA sequencing (scRNAseq) on kidney biopsies from five youth with T2D and obesity pre- and 12 months post-VSG in the IMPROVE-T2D (Impact of Metabolic surgery on Pancreatic, Renal and cardiOVascular hEalth in youth with T2D) cohort. more...
-#>    2:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        This SuperSeries is composed of the SubSeries listed below.
-#>    3:                                                                                               Chronic lack of daylight is increasingly considered as a risk factor for metabolic diseases, such as type 2 diabetes (T2D). In a randomized cross-over design (NCT05263232), 13 individuals with T2D were exposed to natural daylight facilitated through windows vs. constant artificial lighting during office hours for 4.5 consecutive days. Continuous glucose monitoring revealed that participants spent more time in the normal glucose range and whole-body substrate metabolism shifted towards a greater reliance on fat oxidation upon daylight. more...
-#>    4:                                                                                                                                               Background: Colorectal adenoma is the primary precursor in colorectal cancer development, partially driven by epigenetic alteration occurring at a very early stage. While aberrant DNA-methylations have been observed in mucosa adjacent to primary tumors, this study aimed to investigate whether such alterations exist in distant background mucosa as global defect rather than local transition, and identify adenoma-related CpG sites which may serve as potential targets for early intervention. more...
-#>    5:                                                                                                                                                         Patients with type 2 diabetes (T2D) are more susceptible to Mycobacterium tuberculosis (M.tb) infection and severe tuberculosis (TB). The underlying mechanisms contributing to this remain largely unknown. To fill this critical knowledge gap, we obtained human alveolar macrophages (HAMs) and monocyte-derived macrophages (MDMs) from TB-exposed individuals with and without T2D in South Africa. We infected HAMs and MDMs ex vivo with live M.tb then collected RNA for RNAseq after 2, 24, 72h.
-#>   ---                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
-#> 1758:                                                                                                                                             A physiological state of insulin resistance is required to preferentially direct maternal nutrients toward the feto-placental unit, allowing adequate growth of the fetus. When women develop gestational diabetes mellitus (GDM), insulin resistance is more severe and disrupts the intrauterine milieu, resulting in accelerated fetal development with increased risk of macrosomia. As a natural interface between mother and fetus, the placenta is the obligatory target of such environmental changes. more...
-#> 1759:                                                                                                                                                                                                                                                                                                                                                                                          Sample tissue: peripheral blood Disease: diabetes Samples for gene expression analysis were obtained before the meal and 1.5 hours after the event. Event: listening to a Japanese comic story or a monotonous academic lecture without humor. Keywords: equivalent probe
-#> 1760:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     Gene expression profiling in glomeruli from human kidneys with diabetic nephropathy Keywords = Diabetes Keywords = kidney Keywords = glomeruli Keywords: other
-#> 1761:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 Skeletal muscle biopsies from atypical diabetics at presentation and remission. Protein expression determined with antibody arrays Keywords: other
-#> 1762:                                                                                                                                                                                                                                                                                             Global transcript profiling to identify differentially expressed skeletal muscle genes in insulin resistance, a major risk factor for Type II (non-insulin-dependent) diabetes mellitus.  Compared gene expression profiles of skeletal muscle tissues from 18 insulin-sensitive versus 17 insulin-resistant equally obese, non-diabetic Pima Indians. Keywords: other
-#>           Organism                                               Type
-#>             <char>                                             <char>
-#>    1: Homo sapiens Expression profiling by high throughput sequencing
-#>    2: Homo sapiens Expression profiling by high throughput sequencing
-#>    3: Homo sapiens Expression profiling by high throughput sequencing
-#>    4: Homo sapiens       Methylation profiling by genome tiling array
-#>    5: Homo sapiens Expression profiling by high throughput sequencing
-#>   ---                                                                
-#> 1758: Homo sapiens                      Expression profiling by array
-#> 1759: Homo sapiens                      Expression profiling by array
-#> 1760: Homo sapiens                      Expression profiling by array
-#> 1761: Homo sapiens                 Protein profiling by protein array
-#> 1762: Homo sapiens                      Expression profiling by array
-#>                                                                     FTP download
-#>                                                                           <char>
-#>    1:  GEO (MTX, TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE315nnn/GSE315877/
-#>    2:             GEO ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE315nnn/GSE315753/
-#>    3:       GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE309nnn/GSE309688/
-#>    4: GEO (IDAT, TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE284nnn/GSE284238/
-#>    5:      GEO (XLSX) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE283nnn/GSE283452/
-#>   ---                                                                           
-#> 1758:                 GEO ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE2nnn/GSE2956/
-#> 1759:                 GEO ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE1nnn/GSE1322/
-#> 1760:           GEO (CEL) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE1nnn/GSE1009/
-#> 1761:                   GEO ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSEnnn/GSE634/
-#> 1762:                   GEO ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSEnnn/GSE121/
+#>                                                                                                                                    Title
+#>                                                                                                                                   <char>
+#>    1:    Functional gene regulatory networks and broad applications of the human expandable pancreatic progenitor-islet system [RNA-Seq]
+#>    2: Functional gene regulatory networks and broad applications of the human expandable pancreatic progenitor-islet system [snATAC-seq]
+#>    3:  Functional gene regulatory networks and broad applications of the human expandable pancreatic progenitor-islet system [scRNA-Seq]
+#>    4:              Metabolic surgery mitigates early kidney injury in obese youth with diabetes by suppressing mTORC1/JAK–STAT signaling
+#>    5:                    A stem cell knockout village reveals lineage rewiring and a non-canonical islet cell fate in monogenic diabetes
+#>   ---                                                                                                                                   
+#> 1761:                                          Gestational Diabetes Induces Placental Genes for Chronic Stress and Inflammatory Pathways
+#> 1762:                                                           laughter regulates postprandial blood glucose levels and gene expression
+#> 1763:                                                                                                               Diabetic nephropathy
+#> 1764:                                                                                      Muscle - atypical diabetes protein expression
+#> 1765:                                                                                             Type 2 diabetes and insulin resistance
+#>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Summary
+#>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <char>
+#>    1: Investigating the precise gene regulatory programs directing pancreatic differentiation provides insights into the mechanisms of pancreatic development and diabetes progression. Here, we performed integrated single-cell multi-omic analyses of the expandable pancreatic progenitor (ePP)-islet system. We defined the dynamic transcriptomic and chromatin landscapes of pancreatic differentiation, inferred the sophisticated gene regulatory networks (GRNs) that govern ePP self-renewal, endocrine specification and islet function, and identified the essential roles and interesting mechanisms of the NKX2.2-CLEC16A/endosomal pathway axis during cell-fate transitions. more...
+#>    2: Investigating the precise gene regulatory programs directing pancreatic differentiation provides insights into the mechanisms of pancreatic development and diabetes progression. Here, we performed integrated single-cell multi-omic analyses of the expandable pancreatic progenitor (ePP)-islet system. We defined the dynamic transcriptomic and chromatin landscapes of pancreatic differentiation, inferred the sophisticated gene regulatory networks (GRNs) that govern ePP self-renewal, endocrine specification and islet function, and identified the essential roles and interesting mechanisms of the NKX2.2-CLEC16A/endosomal pathway axis during cell-fate transitions. more...
+#>    3: Investigating the precise gene regulatory programs directing pancreatic differentiation provides insights into the mechanisms of pancreatic development and diabetes progression. Here, we performed integrated single-cell multi-omic analyses of the expandable pancreatic progenitor (ePP)-islet system. We defined the dynamic transcriptomic and chromatin landscapes of pancreatic differentiation, inferred the sophisticated gene regulatory networks (GRNs) that govern ePP self-renewal, endocrine specification and islet function, and identified the essential roles and interesting mechanisms of the NKX2.2-CLEC16A/endosomal pathway axis during cell-fate transitions. more...
+#>    4:                              Background Youth with type 2 diabetes (T2D) and severe obesity face high risk of diabetic kidney disease, which metabolic bariatric surgery (MBS) can mitigate. This study explores structural and molecular changes in kidneys after vertical sleeve gastrectomy (VSG), a form of MBS. Methods Paired analyses, including metabolic profiling, kidney volume assessment, histological evaluation, and single-cell RNA sequencing (scRNAseq) on kidney biopsies from five youth with T2D and obesity pre- and 12 months post-VSG in the IMPROVE-T2D (Impact of Metabolic surgery on Pancreatic, Renal and cardiOVascular hEalth in youth with T2D) cohort. more...
+#>    5:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     This SuperSeries is composed of the SubSeries listed below.
+#>   ---                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+#> 1761:                                                                                                                                                                          A physiological state of insulin resistance is required to preferentially direct maternal nutrients toward the feto-placental unit, allowing adequate growth of the fetus. When women develop gestational diabetes mellitus (GDM), insulin resistance is more severe and disrupts the intrauterine milieu, resulting in accelerated fetal development with increased risk of macrosomia. As a natural interface between mother and fetus, the placenta is the obligatory target of such environmental changes. more...
+#> 1762:                                                                                                                                                                                                                                                                                                                                                                                                                       Sample tissue: peripheral blood Disease: diabetes Samples for gene expression analysis were obtained before the meal and 1.5 hours after the event. Event: listening to a Japanese comic story or a monotonous academic lecture without humor. Keywords: equivalent probe
+#> 1763:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  Gene expression profiling in glomeruli from human kidneys with diabetic nephropathy Keywords = Diabetes Keywords = kidney Keywords = glomeruli Keywords: other
+#> 1764:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              Skeletal muscle biopsies from atypical diabetics at presentation and remission. Protein expression determined with antibody arrays Keywords: other
+#> 1765:                                                                                                                                                                                                                                                                                                                          Global transcript profiling to identify differentially expressed skeletal muscle genes in insulin resistance, a major risk factor for Type II (non-insulin-dependent) diabetes mellitus.  Compared gene expression profiles of skeletal muscle tissues from 18 insulin-sensitive versus 17 insulin-resistant equally obese, non-diabetic Pima Indians. Keywords: other
+#>           Organism
+#>             <char>
+#>    1: Homo sapiens
+#>    2: Homo sapiens
+#>    3: Homo sapiens
+#>    4: Homo sapiens
+#>    5: Homo sapiens
+#>   ---             
+#> 1761: Homo sapiens
+#> 1762: Homo sapiens
+#> 1763: Homo sapiens
+#> 1764: Homo sapiens
+#> 1765: Homo sapiens
+#>                                                                   Type
+#>                                                                 <char>
+#>    1:               Expression profiling by high throughput sequencing
+#>    2: Genome binding/occupancy profiling by high throughput sequencing
+#>    3:               Expression profiling by high throughput sequencing
+#>    4:               Expression profiling by high throughput sequencing
+#>    5:               Expression profiling by high throughput sequencing
+#>   ---                                                                 
+#> 1761:                                    Expression profiling by array
+#> 1762:                                    Expression profiling by array
+#> 1763:                                    Expression profiling by array
+#> 1764:                               Protein profiling by protein array
+#> 1765:                                    Expression profiling by array
+#>                                                                             FTP download
+#>                                                                                   <char>
+#>    1:               GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE284nnn/GSE284159/
+#>    2: GEO (CSV, H5, TBI, TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE284nnn/GSE284103/
+#>    3:          GEO (MTX, TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE284nnn/GSE284101/
+#>    4:          GEO (MTX, TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE315nnn/GSE315877/
+#>    5:                     GEO ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE315nnn/GSE315753/
+#>   ---                                                                                   
+#> 1761:                         GEO ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE2nnn/GSE2956/
+#> 1762:                         GEO ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE1nnn/GSE1322/
+#> 1763:                   GEO (CEL) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE1nnn/GSE1009/
+#> 1764:                           GEO ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSEnnn/GSE634/
+#> 1765:                           GEO ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSEnnn/GSE121/
 #>              ID SRA Run Selector Project                       Contains
 #>           <int>           <char>  <char>                         <char>
-#>    1: 200315877             <NA>    <NA>                     16 Samples
-#>    2: 200315753             <NA>    <NA>                     21 Samples
-#>    3: 200309688             <NA>    <NA>                     48 Samples
-#>    4: 200284238             <NA>    <NA>                     44 Samples
-#>    5: 200283452             <NA>    <NA>                     89 Samples
+#>    1: 200284159             <NA>    <NA>                     12 Samples
+#>    2: 200284103             <NA>    <NA>                      3 Samples
+#>    3: 200284101             <NA>    <NA>                      5 Samples
+#>    4: 200315877             <NA>    <NA>                     16 Samples
+#>    5: 200315753             <NA>    <NA>                     21 Samples
 #>   ---                                                                  
-#> 1758: 200002956             <NA>    <NA>                       1 Sample
-#> 1759: 200001322             <NA>    <NA>                     21 Samples
-#> 1760: 200001009             <NA>    <NA>                      6 Samples
-#> 1761: 200000634             <NA>    <NA>                      4 Samples
-#> 1762: 200000121             <NA>    <NA> 5 related Platforms 50 Samples
+#> 1761: 200002956             <NA>    <NA>                       1 Sample
+#> 1762: 200001322             <NA>    <NA>                     21 Samples
+#> 1763: 200001009             <NA>    <NA>                      6 Samples
+#> 1764: 200000634             <NA>    <NA>                      4 Samples
+#> 1765: 200000121             <NA>    <NA> 5 related Platforms 50 Samples
 #>                                 Datasets Platforms Series Accession
 #>                                   <char>    <char>           <char>
-#>    1:                               <NA>  GPL11154        GSE315877
-#>    2:                               <NA>  GPL34281        GSE315753
-#>    3:                               <NA>  GPL24676        GSE309688
-#>    4:                               <NA>  GPL33022        GSE284238
-#>    5:                               <NA>  GPL21290        GSE283452
+#>    1:                               <NA>  GPL24676        GSE284159
+#>    2:                               <NA>  GPL21697        GSE284103
+#>    3:                               <NA>  GPL21697        GSE284101
+#>    4:                               <NA>  GPL11154        GSE315877
+#>    5:                               <NA>  GPL34281        GSE315753
 #>   ---                                                              
-#> 1758:                               <NA>    GPL310          GSE2956
-#> 1759:                               <NA>    GPL887          GSE1322
-#> 1760:                             GDS961   GPL8300          GSE1009
-#> 1761:                               <NA>    GPL120           GSE634
-#> 1762: GDS157 GDS158 GDS160 GDS161 GDS162      <NA>           GSE121
+#> 1761:                               <NA>    GPL310          GSE2956
+#> 1762:                               <NA>    GPL887          GSE1322
+#> 1763:                             GDS961   GPL8300          GSE1009
+#> 1764:                               <NA>    GPL120           GSE634
+#> 1765: GDS157 GDS158 GDS160 GDS161 GDS162      <NA>           GSE121
 ```

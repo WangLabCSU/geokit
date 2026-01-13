@@ -8,8 +8,8 @@ optionally mapping platform IDs to Bioconductor annotation packages.
 ``` r
 geo_matrix(
   accession,
-  pdata_from_soft = TRUE,
   add_gpl = NULL,
+  pdata_from_soft = FALSE,
   ftp_over_https = NULL,
   handle_opts = list(),
   odir = getwd()
@@ -31,13 +31,6 @@ geo_matrix(
 
   - Samples (GSM): `"GSM12345"`, `"GSM67890"`, `"GSM112233"`, etc.
 
-- pdata_from_soft:
-
-  Logical, whether to derive `phenoData` from the GSE series SOFT file.
-  Defaults to `TRUE`. If `FALSE`, `phenoData` is parsed from the series
-  matrix file; note that some `characteristics_ch*` columns may not be
-  parsed correctly.
-
 - add_gpl:
 
   Logical or `NULL`. Whether to include platform information (the
@@ -46,6 +39,14 @@ geo_matrix(
   accession to a Bioconductor annotation package. If successful, the
   `annotation` slot is updated and `add_gpl` is set to `FALSE`;
   otherwise, `add_gpl` is set to `TRUE`.
+
+- pdata_from_soft:
+
+  Logical. Specifies whether to derive `phenoData` from the GSE series
+  SOFT file. Defaults to `FALSE`, in which case `phenoData` is parsed
+  directly from the series matrix file. Set to `TRUE` if you encounter
+  issues parsing `characteristics_ch*` columns correctly, as it will
+  attempt to retrieve the data from the SOFT file instead.
 
 - ftp_over_https:
 
@@ -103,8 +104,6 @@ if (require("Biobase")) {
 #>     'browseVignettes()'. To cite Bioconductor, see
 #>     'citation("Biobase")', and for packages 'citation("pkgname")'.
 #> Downloading 1 file
-#> Finding 1 file already downloaded
-#> ✔ Parsing 1 Series soft file successfully!
 #> ℹ No Bioconductor annotation package available for platform "GPL4".
 #> Downloading 1 file
 #> ℹ annot file in FTP site for "GPL4" is not available, will use data amount file from GEO Accession Site instead

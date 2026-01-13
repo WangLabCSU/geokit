@@ -131,6 +131,17 @@ gpl(object) <- value
 
   a `list`, containing the header metadata informations.
 
+- `rcd_type`:
+
+  A `character` indicating the type of record (e.g., Platform, Sample,
+  Series, Datasets).
+
+- `rcd_name`:
+
+  A `character` representing the name associated with the record (e.g.,
+  the GEO dataset name). It usually matches the `accession`, but may
+  differ in some cases.
+
 - `accession:`:
 
   a `character` giving the geo accession id of current GEO series,
