@@ -76,9 +76,7 @@ geo_search <- function(query, step = 500L, interval = NULL) {
         ),
         str_subset(names(out), "Accession$")
     )
-    data.table::setDT(out)
-    data.table::setcolorder(out, tail_col, after = ncol(out))
-    out[]
+    out[, c(setdiff(names(out), tail_col), tail_col), drop = FALSE]
 }
 
 # this function just processed GEO searched results returned by `entrez_fetch`
