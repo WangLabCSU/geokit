@@ -3,8 +3,8 @@
 Construct and resolve URLs for GEO (Gene Expression Omnibus) resources.
 This function provides a unified interface for accessing GEO data either
 via Accession Display Bar of GEO database or directly from GEO FTP/HTTPS
-servers. Depending on the accession type or requested `famount`, it
-automatically generates the correct URL.
+servers. Depending on the accession type or requested `format` and
+`amount`, it automatically generates the correct URL.
 
 ## Usage
 

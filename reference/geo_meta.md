@@ -1,10 +1,12 @@
 # Get the metadata of multiple GEO identities
 
-This is useful to combine with
+This function is useful for combining with
 [`geo_search()`](https://WangLabCSU.github.io/geokit/reference/geo_search.md)
-and filter results since
+to filter results, as
 [`geo_search()`](https://WangLabCSU.github.io/geokit/reference/geo_search.md)
-cannot get all long metadata of GEO identities.
+cannot retrieve the full metadata for all GEO identifiers. By default,
+it uses the `soft` format for GDS and GSE entities, and the `full`
+amount of data for GPL and GSM entities.
 
 ## Usage
 
@@ -38,9 +40,9 @@ geo_meta(
 
   A character string specifying either:
 
-  - the file format on the GEO FTP server, or
+  - the file `format` on the GEO FTP server, or
 
-  - the amount of data in the GEO Accession Display Bar.
+  - the `amount` of data in the GEO Accession Display Bar.
 
   See
   [`geo_url()`](https://WangLabCSU.github.io/geokit/reference/geo_url.md)
@@ -80,3 +82,40 @@ geo_meta(
 ## Value
 
 A data frame contains metadata of all ids.
+
+## Examples
+
+``` r
+geo_meta("GSE10")
+#> Downloading 1 file
+#>                   Database_name Database_institute
+#> 1 Gene Expression Omnibus (GEO)       NCBI NLM NIH
+#>                 Database_web_link       Database_email Series_title
+#> 1 http://www.ncbi.nlm.nih.gov/geo geo@ncbi.nlm.nih.gov     eye-SAGE
+#>   Series_geo_accession         Series_status Series_submission_date
+#> 1                GSE10 Public on Oct 03 2001            Oct 03 2001
+#>   Series_last_update_date Series_pubmed_id
+#> 1             Apr 18 2012         11756676
+#>                                                                                                                                                                                                                Series_summary
+#> 1 Human retinal and RPE SAGE libraries.; Profile of the genes expressed in the human peripheral retina, macula, and retinal pigment epithelium determined through serial analysis of gene expression (SAGE).; Keywords: other
+#>                    Series_type
+#> 1 Expression profiling by SAGE
+#>                                                   Series_contributor
+#> 1 Dror,,Sharon; Seth,,Blackshaw; Constance,L,Cepko; Thaddeus,P,Dryja
+#>                 Series_sample_id Series_contact_name
+#> 1 GSM571; GSM572; GSM573; GSM574        Dror,,Sharon
+#>           Series_contact_email Series_contact_phone Series_contact_fax
+#> 1 dror_sharon@meei.harvard.edu         617-573-4347       617-573-3168
+#>              Series_contact_laboratory Series_contact_department
+#> 1 Ocular Molecular Genetics Laboratory                          
+#>    Series_contact_institute Series_contact_address Series_contact_city
+#> 1 Massachusetts Eye and Ear        243 Charles St.              Boston
+#>   Series_contact_state Series_contact_zip/postal_code Series_contact_country
+#> 1                   MA                          02114                    USA
+#>            Series_contact_web_link Series_platform_id Series_platform_taxid
+#> 1 http://eyegene.meei.harvard.edu/               GPL4                  9606
+#>   Series_sample_taxid
+#> 1                9606
+#>                                                  Series_relation
+#> 1 BioProject: https://www.ncbi.nlm.nih.gov/bioproject/PRJNA84465
+```

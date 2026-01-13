@@ -34,9 +34,9 @@ geo_soft(
 
   A character string specifying either:
 
-  - the file format on the GEO FTP server, or
+  - the file `format` on the GEO FTP server, or
 
-  - the amount of data in the GEO Accession Display Bar.
+  - the `amount` of data in the GEO Accession Display Bar.
 
   See
   [`geo_url()`](https://WangLabCSU.github.io/geokit/reference/geo_url.md)
