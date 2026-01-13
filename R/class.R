@@ -24,6 +24,11 @@ NULL
 
 # Generic GEO classes:
 #' @slot metadata: a `list`, containing the header metadata informations.
+#' @slot rcd_type A `character` indicating the type of record (e.g., Platform,
+#' Sample, Series, Datasets).
+#' @slot rcd_name A `character` representing the name associated with the record
+#' (e.g., the GEO dataset name). It usually matches the `accession`, but may
+#' differ in some cases.
 #' @slot accession: a `character` giving the geo accession id of current GEO
 #' series, samples, platforms, and datasets.
 #' @slot columns: A `data.frame` gives the `datatable` header descriptions. The

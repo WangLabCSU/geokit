@@ -147,6 +147,13 @@ entity soft file and \code{GEOData} contains extra two slots \code{columns} and
 \describe{
 \item{\code{metadata:}}{a \code{list}, containing the header metadata informations.}
 
+\item{\code{rcd_type}}{A \code{character} indicating the type of record (e.g., Platform,
+Sample, Series, Datasets).}
+
+\item{\code{rcd_name}}{A \code{character} representing the name associated with the record
+(e.g., the GEO dataset name). It usually matches the \code{accession}, but may
+differ in some cases.}
+
 \item{\code{accession:}}{a \code{character} giving the geo accession id of current GEO
 series, samples, platforms, and datasets.}
 
