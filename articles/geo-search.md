@@ -1,0 +1,167 @@
+# Search GEO
+
+``` r
+library(geokit)
+```
+
+The NCBI uses a search term syntax which can be associated with a
+specific search field enclosed by a pair of square brackets. So, for
+instance `"Homo sapiens[ORGN]"` denotes a search for `Homo sapiens` in
+the `"Organism"` field. Details see
+<https://www.ncbi.nlm.nih.gov/geo/info/qqtutorial.html>. We can use the
+same term to query our desirable results in
+[`geo_search()`](https://WangLabCSU.github.io/geokit/reference/geo_search.md).
+[`geo_search()`](https://WangLabCSU.github.io/geokit/reference/geo_search.md)
+will parse the searching results and return a `data.frame` object
+containing all the records based on the search term. The internal of
+[`geo_search()`](https://WangLabCSU.github.io/geokit/reference/geo_search.md)
+is based on [`rentrez`](https://github.com/ropensci/rentrez) package,
+which provides functions working with the [NCBI
+Eutils](http://www.ncbi.nlm.nih.gov/books/NBK25500/) API, so we can
+utilize `NCBI API key` to increase the searching speed, details see
+<https://docs.ropensci.org/rentrez/articles/rentrez_tutorial.html#rate-limiting-and-api-keys>.
+
+Providing we want ***GSE*** GEO records related to ***human diabetes***,
+we can get these records by following code, the returned object is a
+`data.frame`:
+
+``` r
+diabetes_gse_records <- geo_search(
+  "diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"
+)
+#> ■■■■■■■■■                        500/1765 [418/s] | ETA:  3s
+#> ■■■■■■■■■■■■■■■■■■               1000/1765 [403/s] | ETA:  2s
+#> → Parsing GEO records
+#> ■■■■■■■■■■■■■■■■■■               1000/1765 [403/s] | ETA:  2sGet records from NCBI for 1765 queries in 4.6s
+head(diabetes_gse_records[1:5])
+#>                                                                                                                                Title
+#> 1    Functional gene regulatory networks and broad applications of the human expandable pancreatic progenitor-islet system [RNA-Seq]
+#> 2 Functional gene regulatory networks and broad applications of the human expandable pancreatic progenitor-islet system [snATAC-seq]
+#> 3  Functional gene regulatory networks and broad applications of the human expandable pancreatic progenitor-islet system [scRNA-Seq]
+#> 4              Metabolic surgery mitigates early kidney injury in obese youth with diabetes by suppressing mTORC1/JAK–STAT signaling
+#> 5                    A stem cell knockout village reveals lineage rewiring and a non-canonical islet cell fate in monogenic diabetes
+#> 6                                  Natural daylight during office hours improves glucose control and whole-body substrate metabolism
+#>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           Summary
+#> 1 Investigating the precise gene regulatory programs directing pancreatic differentiation provides insights into the mechanisms of pancreatic development and diabetes progression. Here, we performed integrated single-cell multi-omic analyses of the expandable pancreatic progenitor (ePP)-islet system. We defined the dynamic transcriptomic and chromatin landscapes of pancreatic differentiation, inferred the sophisticated gene regulatory networks (GRNs) that govern ePP self-renewal, endocrine specification and islet function, and identified the essential roles and interesting mechanisms of the NKX2.2-CLEC16A/endosomal pathway axis during cell-fate transitions. more...
+#> 2 Investigating the precise gene regulatory programs directing pancreatic differentiation provides insights into the mechanisms of pancreatic development and diabetes progression. Here, we performed integrated single-cell multi-omic analyses of the expandable pancreatic progenitor (ePP)-islet system. We defined the dynamic transcriptomic and chromatin landscapes of pancreatic differentiation, inferred the sophisticated gene regulatory networks (GRNs) that govern ePP self-renewal, endocrine specification and islet function, and identified the essential roles and interesting mechanisms of the NKX2.2-CLEC16A/endosomal pathway axis during cell-fate transitions. more...
+#> 3 Investigating the precise gene regulatory programs directing pancreatic differentiation provides insights into the mechanisms of pancreatic development and diabetes progression. Here, we performed integrated single-cell multi-omic analyses of the expandable pancreatic progenitor (ePP)-islet system. We defined the dynamic transcriptomic and chromatin landscapes of pancreatic differentiation, inferred the sophisticated gene regulatory networks (GRNs) that govern ePP self-renewal, endocrine specification and islet function, and identified the essential roles and interesting mechanisms of the NKX2.2-CLEC16A/endosomal pathway axis during cell-fate transitions. more...
+#> 4                              Background Youth with type 2 diabetes (T2D) and severe obesity face high risk of diabetic kidney disease, which metabolic bariatric surgery (MBS) can mitigate. This study explores structural and molecular changes in kidneys after vertical sleeve gastrectomy (VSG), a form of MBS. Methods Paired analyses, including metabolic profiling, kidney volume assessment, histological evaluation, and single-cell RNA sequencing (scRNAseq) on kidney biopsies from five youth with T2D and obesity pre- and 12 months post-VSG in the IMPROVE-T2D (Impact of Metabolic surgery on Pancreatic, Renal and cardiOVascular hEalth in youth with T2D) cohort. more...
+#> 5                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     This SuperSeries is composed of the SubSeries listed below.
+#> 6                                                                                                                            Chronic lack of daylight is increasingly considered as a risk factor for metabolic diseases, such as type 2 diabetes (T2D). In a randomized cross-over design (NCT05263232), 13 individuals with T2D were exposed to natural daylight facilitated through windows vs. constant artificial lighting during office hours for 4.5 consecutive days. Continuous glucose monitoring revealed that participants spent more time in the normal glucose range and whole-body substrate metabolism shifted towards a greater reliance on fat oxidation upon daylight. more...
+#>       Organism                                                             Type
+#> 1 Homo sapiens               Expression profiling by high throughput sequencing
+#> 2 Homo sapiens Genome binding/occupancy profiling by high throughput sequencing
+#> 3 Homo sapiens               Expression profiling by high throughput sequencing
+#> 4 Homo sapiens               Expression profiling by high throughput sequencing
+#> 5 Homo sapiens               Expression profiling by high throughput sequencing
+#> 6 Homo sapiens               Expression profiling by high throughput sequencing
+#>                                                                         FTP download
+#> 1               GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE284nnn/GSE284159/
+#> 2 GEO (CSV, H5, TBI, TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE284nnn/GSE284103/
+#> 3          GEO (MTX, TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE284nnn/GSE284101/
+#> 4          GEO (MTX, TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE315nnn/GSE315877/
+#> 5                     GEO ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE315nnn/GSE315753/
+#> 6               GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE309nnn/GSE309688/
+```
+
+Once you have the search results, you can filter them based on specific
+criteria. For instance, to filter for GSE datasets that contain at least
+6 diabetic nephropathy samples with expression profiling, use the
+following code:
+
+``` r
+diabetes_nephropathy_gse_records <- diabetes_gse_records |>
+  dplyr::mutate(
+    number_of_samples = stringr::str_match(
+      Contains, "(\\d+) Samples?"
+    )[, 2L, drop = TRUE],
+    number_of_samples = as.integer(number_of_samples)
+  ) |>
+  dplyr::filter(
+    dplyr::if_any(
+      c(Title, Summary),
+      ~ stringr::str_detect(.x, "(?i)diabetes|diabetic")
+    ),
+    dplyr::if_any(
+      c(Title, Summary),
+      ~ stringr::str_detect(.x, "(?i)nephropathy")
+    ),
+    stringr::str_detect(Type, "(?i)expression profiling"),
+    number_of_samples >= 6L
+  )
+head(diabetes_nephropathy_gse_records[1:5, 1:5])
+#>                                                                                                                             Title
+#> 1      Integrative RNA-seq and CLIP-seq analysis reveals hnRNP-F regulation of the TNFα/NFκB signaling in high glucose conditions
+#> 2                                                  Effect of FGF9 on human renal tubular epithelial cells in high glucose culture
+#> 3 Endothelial Kallikrein-Related Peptidase 8 Promotes Diabetic Nephropathy via Reducing SDC4 Expression and Enhancing LIF Release
+#> 4       Upregulation of FGF13 promotes type 2 diabetic nephropathy by modulating glomerular endothelial mitochondrial homeostasis
+#> 5                 Sodium Butyrate Ameliorates Renal Tubular Lipid Accumulation Through the PP2A-TFEB axis in Diabetic Nephropathy
+#>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           Summary
+#> 1                                                                                                                                                                                                                                             Using RNA-seq and ChIP-seq we found that we found that hnRNP-F may bind to lncRNA SNHG1 to negatively regulate the transcription of genes involved in the TNFα/NFκB signaling pathway in diabetic nephropathy. Our study suggests that hnRNP-F may play a role in diabetic nephropathy by regulating the differential expression and variable splicing of diabetic nephropathy-associated genes, especially those related to inflammatory response.
+#> 2                                                                                                                                                                                                                                                                 Diabetic nephropathy is characterised by the accumulation of extracellular matrix in the glomerular tunica and tubular interstitium, which ultimately leads to excessive renal scarring and decreased excretory function. The main pathological changes of renal fibrosis are: glomerulosclerosis, tubulointerstitial fibrosis, infiltration of inflammatory mediators and activation of α-SMA-positive myofibroblasts. more...
+#> 3                                                                                                                                                                                                                                                             The molecular mechanisms underlying diabetic nephropathy (DN) are poorly defined. We sought to investigate the roles of kallikrein-related peptidases (KLKs) in DN pathogenesis. Screening of renal tissue from diabetic mice revealed KLK8 as the most highly induced gene in KLK family. KLK8 expression was greater in glomerular endothelial cells (GECs) than other glomerular cells in DN patients and diabetic mice. more...
+#> 4 Studies of diabetic glomerular injury raise the possibility of developing useful early biomarkers and therapeutic approaches for the treatment of type 2 diabetic nephropathy (T2DN). In this study, it is found that FGF13 expression is induced in glomerular endothelial cells (GECs) during T2DN progression, and endothelial-specific deletion of Fgf13 potentially alleviates T2DN damage. Fgf13 deficiency restores the expression of Parkin both in the cytosolic, mitochondrial, and nuclear fractions under diabetic conditions, resulting in improved mitochondrial homeostasis and endothelial barrier integrity due to promotion of mitophagy and inhibition of apoptosis. more...
+#> 5                                                                                                                                                                                                                               Background: Diabetic kidney disease (DKD) is the leading cause of end-stage renal disease worldwide with limited treatment options. The intricate pathogenesis of dysregulated lipid metabolism leading to the development of DKD remains obscure. Lipophagy, which refers to the autophagic degradation of intracellular lipid droplets, has been found to be impaired in DKD, resulting in renal tubule dysfunction and ectopic lipid deposition (ELD). more...
+#>       Organism                                               Type
+#> 1 Homo sapiens Expression profiling by high throughput sequencing
+#> 2 Homo sapiens Expression profiling by high throughput sequencing
+#> 3 Homo sapiens Expression profiling by high throughput sequencing
+#> 4 Homo sapiens Expression profiling by high throughput sequencing
+#> 5 Homo sapiens Expression profiling by high throughput sequencing
+#>                                                           FTP download
+#> 1 GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE273nnn/GSE273001/
+#> 2 GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE265nnn/GSE265918/
+#> 3 GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE255nnn/GSE255028/
+#> 4 GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE192nnn/GSE192889/
+#> 5 GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE266nnn/GSE266108/
+```
+
+After applying the filter, we obtain 38 candidate datasets. This
+filtering step significantly reduces the time spent manually reviewing
+summary records.
+
+You can also use
+[`geo_meta()`](https://WangLabCSU.github.io/geokit/reference/geo_meta.md)
+to dynamically create a self-knowledge-concerned database in real-time.
+See ‘vignette(“geometadb”)’ for details.
+
+## Session Information
+
+``` r
+sessionInfo()
+#> R version 4.5.2 (2025-10-31)
+#> Platform: x86_64-pc-linux-gnu
+#> Running under: Ubuntu 24.04.3 LTS
+#> 
+#> Matrix products: default
+#> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
+#> LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0
+#> 
+#> locale:
+#>  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       
+#>  [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   
+#>  [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          
+#> [10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   
+#> 
+#> time zone: UTC
+#> tzcode source: system (glibc)
+#> 
+#> attached base packages:
+#> [1] stats     graphics  grDevices utils     datasets  methods   base     
+#> 
+#> other attached packages:
+#> [1] geokit_0.0.1.9000
+#> 
+#> loaded via a namespace (and not attached):
+#>  [1] vctrs_0.6.5       httr_1.4.7        cli_3.6.5         knitr_1.51       
+#>  [5] rlang_1.1.7       xfun_0.55         stringi_1.8.7     generics_0.1.4   
+#>  [9] textshaping_1.0.4 jsonlite_2.0.0    data.table_1.18.0 glue_1.8.0       
+#> [13] htmltools_0.5.9   XML_3.99-0.20     ragg_1.5.0        sass_0.4.10      
+#> [17] rmarkdown_2.30    tibble_3.3.1      evaluate_1.0.5    jquerylib_0.1.4  
+#> [21] fastmap_1.2.0     yaml_2.3.12       lifecycle_1.0.5   stringr_1.6.0    
+#> [25] compiler_4.5.2    dplyr_1.1.4       codetools_0.2-20  rentrez_1.2.4    
+#> [29] fs_1.6.6          pkgconfig_2.0.3   systemfonts_1.3.1 digest_0.6.39    
+#> [33] R6_2.6.1          tidyselect_1.2.1  pillar_1.11.1     curl_7.0.0       
+#> [37] magrittr_2.0.4    bslib_0.9.0       withr_3.0.2       tools_4.5.2      
+#> [41] pkgdown_2.2.0     cachem_1.1.0      desc_1.4.3
+```

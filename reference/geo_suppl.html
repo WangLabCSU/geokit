@@ -22,6 +22,14 @@ attempted, since the file format is not generally knowable."></head><body>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/geo-matrix.html">Download and Parse Seires matrix File from GEO database</a></li>
+    <li><a class="dropdown-item" href="../articles/geo-search.html">Search GEO</a></li>
+    <li><a class="dropdown-item" href="../articles/geo-soft.html">Download and Parse SOFT File from GEO database</a></li>
+    <li><a class="dropdown-item" href="../articles/geo-suppl.html">Download Supplementary File from GEO database</a></li>
+    <li><a class="dropdown-item" href="../articles/geometadb.html">Build Your Own GEOmetadb</a></li>
+  </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
@@ -109,7 +117,7 @@ provided) of the full file paths of the resulting downloaded files.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="fu">geo_suppl</span><span class="op">(</span><span class="st">"GSM1137"</span>, odir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Downloading <span style="color: #0000BB;">1</span> file</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpCnJZbV/GSM1137.CEL.gz"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/Rtmp3JTJU1/GSM1137.CEL.gz"</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>

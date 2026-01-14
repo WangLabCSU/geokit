@@ -56,11 +56,11 @@ for details.
 # restrictions and limited bandwidth usage for large queries.
 # \donttest{
 geo_search("diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]")
-#> ■■■■■■■■■                        500/1765 [374/s] | ETA:  3s
-#> ■■■■■■■■■■■■■■■■■■               1000/1765 [378/s] | ETA:  2s
+#> ■■■■■■■■■■■■■■■■■■               1000/1765 [311/s] | ETA:  2s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■■       1500/1765 [317/s] | ETA:  1s
 #> → Parsing GEO records
-#> ■■■■■■■■■■■■■■■■■■               1000/1765 [378/s] | ETA:  2s
-#> Get records from NCBI for 1765 queries in 4.7s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■■       1500/1765 [317/s] | ETA:  1s
+#> Get records from NCBI for 1765 queries in 5.8s
 #> 
 #>                                                                                                                                                                                                                                                         Title
 #> 1                                                                                                                             Functional gene regulatory networks and broad applications of the human expandable pancreatic progenitor-islet system [RNA-Seq]
