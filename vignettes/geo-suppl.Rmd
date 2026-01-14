@@ -1,0 +1,41 @@
+---
+title: "geo-suppl"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{geo-suppl}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(geokit)
+```
+
+GEO stores raw data and processed sequence data files as the external supplementary data files. Sometimes, we may want to preprocess and normalize the rawdata by ourselves, in addition, it's not uncommon that a GSE entity series matrix won't contain the expression matrix, which is almost the case of high-throughout sequencing data. `geo_suppl` is designed for these conditions. Usually, the expression matrix will be provided in the GSE supplementary files or in the GSM supplementary files.
+
+If the expression matrix is given in the GSE supplementary files, we can
+download it directly use `geo_suppl`, which will return a character vector
+containing the path of downloaded files.
+
+```{r gse160724, cache = TRUE}
+gse160724 <- geo_suppl(
+  "GSE160724",
+  pattern = "counts_anno",
+  odir = tempdir()
+)
+gse160724_dt <- data.table::fread(gse160724)
+head(gse160724_dt[1:5])
+```
+
+
+## sessionInfo
+```{r}
+sessionInfo()
+```

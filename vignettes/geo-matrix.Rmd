@@ -1,0 +1,52 @@
+---
+title: "Download and Parse Seires matrix File from GEO database"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{geo-matrix}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(geokit)
+```
+
+In many typical analysis workflows, a series matrix file is commonly used. You
+can easily handle it in `geokit` using the `gse_matrix()` function. The
+`gse_matrix()` function returns an `ExpressionSet` object, which is compatible
+with many Bioconductor packages.
+
+```{r gse_matrix, cache = TRUE}
+gse_matix <- geo_matrix("GSE180383", odir = tempdir())
+gse_matix
+```
+
+When parsing `phenoData` from series matrix files, the `gse_matrix()` function
+automatically discerns `characteristics_ch*` columns and parses multiple traits
+from them. Each trait is named with the prefix `ch*`, corresponding to the
+column name.
+
+```{r}
+Biobase::pData(gse_matix)[c("ch1_cultivar", "ch1_genotypes")]
+```
+
+By default, `gse_matrix()` attempts to map the GPL accession to a Bioconductor annotation package. You can control this behavior using the `add_gpl` parameter:
+
+* Set `add_gpl = FALSE` to exclude feature information.
+* Set `add_gpl = TRUE` to include platform information from GEO.
+
+```{r}
+Biobase::annotation(gse_matix)
+```
+
+## Session Information
+```{r}
+sessionInfo()
+```

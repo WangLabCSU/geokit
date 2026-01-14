@@ -1,0 +1,79 @@
+---
+title: "Search GEO"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{geo-search}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(geokit)
+```
+
+The NCBI uses a search term syntax which can be associated with a specific
+search field enclosed by a pair of square brackets. So, for instance `"Homo
+sapiens[ORGN]"` denotes a search for `Homo sapiens` in the `"Organism"` field.
+Details see <https://www.ncbi.nlm.nih.gov/geo/info/qqtutorial.html>. We can use
+the same term to query our desirable results in `geo_search()`. `geo_search()`
+will parse the searching results and return a `data.frame` object containing all
+the records based on the search term. The internal of `geo_search()` is based on
+[`rentrez`](https://github.com/ropensci/rentrez) package, which provides
+functions working with the [NCBI
+Eutils](http://www.ncbi.nlm.nih.gov/books/NBK25500/) API, so we can utilize
+`NCBI API key` to increase the searching speed, details see
+<https://docs.ropensci.org/rentrez/articles/rentrez_tutorial.html#rate-limiting-and-api-keys>.
+
+Providing we want ***GSE*** GEO records related to ***human diabetes***, we can get these records by following code, the returned object is a `data.frame`:
+```{r diabetes_gse_records, cache = TRUE}
+diabetes_gse_records <- geo_search(
+  "diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"
+)
+head(diabetes_gse_records[1:5])
+```
+
+Once you have the search results, you can filter them based on specific
+criteria. For instance, to filter for GSE datasets that contain at least 6
+diabetic nephropathy samples with expression profiling, use the following code:
+
+```{r filtered_diabetes_gse_records}
+diabetes_nephropathy_gse_records <- diabetes_gse_records |>
+  dplyr::mutate(
+    number_of_samples = stringr::str_match(
+      Contains, "(\\d+) Samples?"
+    )[, 2L, drop = TRUE],
+    number_of_samples = as.integer(number_of_samples)
+  ) |>
+  dplyr::filter(
+    dplyr::if_any(
+      c(Title, Summary),
+      ~ stringr::str_detect(.x, "(?i)diabetes|diabetic")
+    ),
+    dplyr::if_any(
+      c(Title, Summary),
+      ~ stringr::str_detect(.x, "(?i)nephropathy")
+    ),
+    stringr::str_detect(Type, "(?i)expression profiling"),
+    number_of_samples >= 6L
+  )
+head(diabetes_nephropathy_gse_records[1:5, 1:5])
+```
+
+After applying the filter, we obtain `r nrow(diabetes_nephropathy_gse_records)`
+candidate datasets. This filtering step significantly reduces the time spent
+manually reviewing summary records.
+
+You can also use `geo_meta()` to dynamically create a self-knowledge-concerned
+database in real-time. See 'vignette("geometadb")' for details.
+
+## Session Information
+```{r}
+sessionInfo()
+```

@@ -1,0 +1,92 @@
+---
+title: "Download and Parse SOFT File from GEO database"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{geo-soft}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(geokit)
+```
+
+The GEO database provides SOFT (Simple Omnibus Format in Text) files for GPL,
+GSM, and GDS entities. SOFT is designed for efficient batch submission and
+download of data. It is a simple, line-based, plain text format, which makes it
+easy to generate SOFT files from common spreadsheet and database applications.
+
+The `geo_soft` function allows you to download and preprocess SOFT files. Here
+are some example codes to download SOFT files for the GSM, and GDS entities:
+
+```{r gsm, cache = TRUE}
+gsm <- geo_soft("GSM1", odir = tempdir())
+gsm
+```
+
+```{r}
+gds <- geo_soft("GDS10", odir = tempdir())
+gds
+```
+
+A single SOFT file can contain both data tables and accompanying descriptive
+information for multiple, concatenated Platforms, Samples, and/or Series
+records. The `geokit` package provides a `GEOSoft` class object to store SOFT
+file contents. The `GEOSoft` object contains six slots: `accession`, `rcd_type`,
+`rcd_name`, `metadata`, `datatable`, and `columns`. 
+
+ - `accession`: Stores the GEO accession ID.
+
+ - `rcd_type`: Indicates the type of record (e.g., Platform, Sample, Series, Datasets). This helps categorize the data and identify the nature of the record.
+
+ - `rcd_name`: Represents the name associated with the record (e.g., the GEO dataset name). It usually matches the accession, but in some cases, it may differ. This allows for a more flexible identification of the record.
+
+ - `metadata`: Contains the header metadata from the SOFT file.
+
+ - `datatable`: Contains the main data table, which is the primary data for
+ analysis. 
+
+ - `columns`: Provides descriptive column headers for the datatable.
+
+You can use functions with the same names as the slots to extract the data.
+
+```{r}
+head(datatable(gsm))
+head(columns(gsm))
+```
+
+```{r gds, cache = TRUE}
+head(datatable(gds))
+head(columns(gds))
+```
+
+For the GPL entity, the structure differs from that of GSM and GDS. The `geokit`
+package provides the `GEOPlatform` class to store the contents of the GPL SOFT
+file. A GPL SOFT file typically includes most of the contents found in its
+subset entities, including both GSE and GSM. Therefore, the `GEOPlatform` class
+contains both `gse` and `gsm` slots, each being a list of GEOSoft objects.
+
+```{r gpl, cache = TRUE}
+gpl <- geo_soft("gpl98", odir = tempdir())
+gpl
+```
+
+Similarly, the GSE entity contains subset entities of GPL and GSM. The
+`GEOSeries` class provides both `gpl` and `gsm` slots as lists of GEOSoft
+objects.
+```{r gse, cache = TRUE}
+gse <- geo_soft("GSE10", odir = tempdir())
+gse
+```
+
+## Session Information
+```{r}
+sessionInfo()
+```
