@@ -86,8 +86,8 @@ A data frame contains metadata of all ids.
 ## Examples
 
 ``` r
-geo_meta("GSE10")
-#> Downloading 1 file
+geo_meta("GSE10", odir = tempdir())
+#> Found 1 file already downloaded
 #>                   Database_name Database_institute
 #> 1 Gene Expression Omnibus (GEO)       NCBI NLM NIH
 #>                 Database_web_link       Database_email Series_title
