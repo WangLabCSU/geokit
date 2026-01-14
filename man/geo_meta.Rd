@@ -62,5 +62,5 @@ entities, and the \code{full} amount of \code{text} format data for GPL and GSM
 entities.
 }
 \examples{
-geo_meta("GSE10")
+geo_meta("GSE10", odir = tempdir())
 }

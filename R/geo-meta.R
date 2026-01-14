@@ -9,7 +9,7 @@
 #' @inheritParams geo_soft
 #' @return A data frame contains metadata of all ids.
 #' @examples
-#' geo_meta("GSE10")
+#' geo_meta("GSE10", odir = tempdir())
 #' @export
 geo_meta <- function(accession, famount = NULL, scope = NULL,
                      ftp_over_https = NULL,
