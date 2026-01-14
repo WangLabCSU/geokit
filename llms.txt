@@ -197,7 +197,7 @@ descriptive information for multiple, concatenated Platforms, Samples,
 and/or Series records. The `geokit` package provides a `GEOSoft` class
 object to store SOFT file contents. The `GEOSoft` object contains six
 slots: `accession`, `rcd_type`, `rcd_name`, `metadata`,
-dat`atable, and`columns\`.
+`datatable, and`columns\`.
 
 - `accession`: Stores the GEO accession ID.
 
