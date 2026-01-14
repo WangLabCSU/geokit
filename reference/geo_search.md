@@ -57,11 +57,12 @@ for details.
 # interruptions due to network issues or rate limits, we wrap the call with
 # try().
 try(geo_search("diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"))
-#> ■■■■■■■■■                        500/1765 [402/s] | ETA:  3s
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■■       1500/1765 [361/s] | ETA:  1s
+#> ■■■■■■■■■                        500/1765 [456/s] | ETA:  3s
+#> ■■■■■■■■■■■■■■■■■■               1000/1765 [391/s] | ETA:  2s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1766/1765 [363/s] | ETA:  0s
 #> → Parsing GEO records
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■■       1500/1765 [361/s] | ETA:  1s
-#> Get records from NCBI for 1765 queries in 5.3s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1766/1765 [363/s] | ETA:  0s
+#> Get records from NCBI for 1765 queries in 5s
 #> 
 #>                                                                                                                                                                                                                                                         Title
 #> 1                                                                                                                             Functional gene regulatory networks and broad applications of the human expandable pancreatic progenitor-islet system [RNA-Seq]
