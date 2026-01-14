@@ -49,7 +49,8 @@ list_directory_url <- function(accession, format, ftp_over_https,
         error = function(err) {
             cli::cli_abort(
                 "Failed to open {.url {url}} for {.field {accession}}",
-                parent = err
+                parent = err,
+                class = "geokit_download_error"
             )
         }
     )
@@ -123,7 +124,7 @@ download_inform <- function(urls, ofiles, handle_opts, error = TRUE) {
                 "i" = "url{?s}: {.url {urls[!success]}}",
                 "!" = "status {cli::qty(n_failed_files)} code{?s}: {.val {status$status_code[!success]}}",
                 x = "error {cli::qty(n_failed_files)} message{?s}: {.val {status$error[!success]}}"
-            ))
+            ), class = "geokit_download_error")
         }
         out$success[!existed] <- success
     }

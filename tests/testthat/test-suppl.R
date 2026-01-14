@@ -1,5 +1,7 @@
+testthat::skip_if_offline()
+
 testthat::test_that("Create dir correctly", {
-    geo_suppl("GSM15789", odir = file.path(tempdir(), "test"))
+    skip_if_fail(geo_suppl("GSM15789", odir = file.path(tempdir(), "test")))
     testthat::expect_true(dir.exists(file.path(tempdir(), "test")))
 })
 
