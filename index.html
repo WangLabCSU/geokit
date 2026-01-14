@@ -63,8 +63,16 @@
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>You can install the development version of <code>geokit</code> from <a href="https://github.com/" class="external-link">GitHub</a> with:</p>
+<p>You can install the development version of <code>geokit</code> from <a href="https://wanglabcsu.r-universe.dev" class="external-link">R-universe</a> (Recommended):</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"geokit"</span>,</span>
+<span>    repos <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>        <span class="st">"https://wanglabcsu.r-universe.dev"</span>,</span>
+<span>        <span class="st">"https://cloud.r-project.org"</span></span>
+<span>    <span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>or from <a href="https://github.com/WangLabCSU/geokit" class="external-link">GitHub</a> (Require <code>rust</code> to compile) with:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"pak"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"pak"</span>,</span>
 <span>        repos <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span></span>
@@ -78,14 +86,14 @@
 <div class="section level2">
 <h2 id="vignettes">Vignettes<a class="anchor" aria-label="anchor" href="#vignettes"></a>
 </h2>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/WangLabCSU/geokit" class="external-link">geokit</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="search-geo-database">Search GEO database<a class="anchor" aria-label="anchor" href="#search-geo-database"></a>
 </h3>
 <p>The NCBI uses a search term syntax which can be associated with a specific search field enclosed by a pair of square brackets. So, for instance <code>"Homo sapiens[ORGN]"</code> denotes a search for <code>Homo sapiens</code> in the <code>“Organism”</code> field. Details see <a href="https://www.ncbi.nlm.nih.gov/geo/info/qqtutorial.html" class="external-link uri">https://www.ncbi.nlm.nih.gov/geo/info/qqtutorial.html</a>. We can use the same term to query our desirable results in <code>geo_search</code>. <code>geo_search</code> will parse the searching results and return a <code>data.frame</code> object containing all the records based on the search term. The internal of <code>geo_search</code> is based on <a href="https://github.com/ropensci/rentrez" class="external-link"><code>rentrez</code></a> package, which provides functions working with the <a href="http://www.ncbi.nlm.nih.gov/books/NBK25500/" class="external-link">NCBI Eutils</a> API, so we can utilize <code>NCBI API key</code> to increase the downloading speed, details see <a href="https://docs.ropensci.org/rentrez/articles/rentrez_tutorial.html#rate-limiting-and-api-keys" class="external-link uri">https://docs.ropensci.org/rentrez/articles/rentrez_tutorial.html#rate-limiting-and-api-keys</a>.</p>
 <p>Providing we want <strong><em>GSE</em></strong> GEO records related to <strong><em>human diabetes</em></strong>, we can get these records by following code, the returned object is a <code>data.frame</code>:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">diabetes_gse_records</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/geo_search.html">geo_search</a></span><span class="op">(</span></span>
 <span>    <span class="st">"diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"</span></span>
 <span><span class="op">)</span></span>
@@ -144,7 +152,7 @@
 <span><span class="co">#&gt; 4:        GSE315877</span></span>
 <span><span class="co">#&gt; 5:        GSE315753</span></span></code></pre></div>
 <p>Once you have the search results, you can filter them based on specific criteria. For instance, to filter for GSE datasets that contain at least 6 diabetic nephropathy samples with expression profiling, use the following code:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">diabetes_nephropathy_gse_records</span> <span class="op">&lt;-</span> <span class="va">diabetes_gse_records</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu">mutate</span><span class="op">(</span></span>
 <span>        number_of_samples <span class="op">=</span> <span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_match.html" class="external-link">str_match</a></span><span class="op">(</span></span>
@@ -201,8 +209,8 @@
 </h3>
 <p>The GEO database provides SOFT (Simple Omnibus Format in Text) files for GPL, GSM, and GDS entities. SOFT is designed for efficient batch submission and download of data. It is a simple, line-based, plain text format, which makes it easy to generate SOFT files from common spreadsheet and database applications.</p>
 <p>A single SOFT file can contain both data tables and accompanying descriptive information for multiple, concatenated Platforms, Samples, and/or Series records. The <code>geokit</code> package provides a <code>GEOSoft</code> class object to store SOFT file contents. The <code>GEOSoft</code> object contains six slots: <code>accession</code>, <code>rcd_type</code>, <code>rcd_name</code>, <code>metadata</code>, dat<code>atable, and</code>columns`.</p>
-<p>-<code>accession</code>: Stores the GEO accession ID.</p>
 <ul>
+<li><p><code>accession</code>: Stores the GEO accession ID.</p></li>
 <li><p><code>rcd_type</code>: Indicates the type of record (e.g., Platform, Sample, Series, Datasets). This helps categorize the data and identify the nature of the record.</p></li>
 <li><p><code>rcd_name</code>: Represents the name associated with the record (e.g., the GEO dataset name). It usually matches the accession, but in some cases, it may differ. This allows for a more flexible identification of the record.</p></li>
 <li><p><code>metadata</code>: Contains the header metadata from the SOFT file.</p></li>
@@ -211,7 +219,7 @@
 </ul>
 <p>You can use functions with the same names as the slots to extract the data.</p>
 <p>The <code>geo_soft</code> function allows you to download and preprocess SOFT files. Here are some example codes to download SOFT files for the GSM, GDS, and GPL entities:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gsm</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/geo_soft.html">geo_soft</a></span><span class="op">(</span><span class="st">"GSM1"</span>, odir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Downloading 1 file</span></span>
 <span><span class="va">gsm</span></span>
@@ -236,7 +244,7 @@
 <span><span class="co">#&gt; TAG   Ten base SAGE tag,</span></span>
 <span><span class="co">#&gt; COUNT         TAG NUMBER</span></span>
 <span><span class="co">#&gt; TPM     tags per million</span></span></code></pre></div>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gds</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/geo_soft.html">geo_soft</a></span><span class="op">(</span><span class="st">"GDS10"</span>, odir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Downloading 1 file</span></span>
 <span><span class="va">gds</span></span>
@@ -278,7 +286,7 @@
 <span><span class="co">#&gt; GSM583     Value for GSM583: Idd3_S1; src: Spleen</span></span>
 <span><span class="co">#&gt; GSM590     Value for GSM590: Idd3_S2; src: Spleen</span></span></code></pre></div>
 <p>For the GPL entity, the structure differs from that of GSM and GDS. The <code>geokit</code> package provides the <code>GEOPlatform</code> class to store the contents of the GPL SOFT file. A GPL SOFT file typically includes most of the contents found in its subset entities, including both GSE and GSM. Therefore, the <code>GEOPlatform</code> class contains both <code>gse</code> and <code>gsm</code> slots, each being a list of GEOSoft objects.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gpl</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/geo_soft.html">geo_soft</a></span><span class="op">(</span><span class="st">"gpl98"</span>, odir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Downloading 1 file</span></span>
 <span><span class="va">gpl</span></span>
@@ -292,7 +300,7 @@
 <span><span class="co">#&gt;   Platform_series_id Platform_data_row_count (26 total)</span></span>
 <span><span class="co">#&gt; accession: GPL98</span></span></code></pre></div>
 <p>Similarly, the GSE entity contains subset entities of GPL and GSM. The <code>GEOSeries</code> class provides both <code>gpl</code> and <code>gsm</code> slots as lists of GEOSoft objects.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gse</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/geo_soft.html">geo_soft</a></span><span class="op">(</span><span class="st">"GSE10"</span>, odir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Downloading 1 file</span></span>
 <span><span class="va">gse</span></span>
@@ -309,7 +317,7 @@
 <h3 id="download-and-parse-seires-matrix-file-from-geo-database">Download and Parse Seires matrix File from GEO database<a class="anchor" aria-label="anchor" href="#download-and-parse-seires-matrix-file-from-geo-database"></a>
 </h3>
 <p>In many typical analysis workflows, a series matrix file is commonly used. You can easily handle it in <code>geokit</code> using the <code>gse_matrix()</code> function. The <code>gse_matrix()</code> function returns an <code>ExpressionSet</code> object, which is compatible with many Bioconductor packages.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gse_matix</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/geo_matrix.html">geo_matrix</a></span><span class="op">(</span><span class="st">"GSE180383"</span>, odir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Downloading 1 file</span></span>
 <span><span class="co">#&gt; Warning: Multiple occurrences of ":" found in metadata characteristics</span></span>
@@ -331,7 +339,7 @@
 <span><span class="co">#&gt;   pubMedIds: 34897855 </span></span>
 <span><span class="co">#&gt; Annotation: GPL21359</span></span></code></pre></div>
 <p>When parsing <code>phenoData</code> from series matrix files, the <code>gse_matrix()</code> function automatically discerns <code>characteristics_ch*</code> columns and parses multiple traits from them. Each trait is named with the prefix <code>ch*</code>, corresponding to the column name.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">Biobase</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/phenoData.html" class="external-link">pData</a></span><span class="op">(</span><span class="va">gse_matix</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ch1_cultivar"</span>, <span class="st">"ch1_genotypes"</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co">#&gt;                                                              ch1_cultivar</span></span>
 <span><span class="co">#&gt; GSM5461787 Charantais type: Cucumis melo L. subsp. melo var cantalupensis</span></span>
@@ -352,7 +360,7 @@
 <li>Set <code>add_gpl = FALSE</code> to exclude feature information.</li>
 <li>Set <code>add_gpl = TRUE</code> to include platform information from GEO.</li>
 </ul>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">Biobase</span><span class="fu">::</span><span class="fu">annotation</span><span class="op">(</span><span class="va">gse_matix</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "GPL21359"</span></span></code></pre></div>
 </div>
@@ -361,7 +369,7 @@
 </h3>
 <p>GEO stores raw data and processed sequence data files as the external supplementary data files. Sometimes, we may want to preprocess and normalize the rawdata by ourselves, in addition, it’s not uncommon that a GSE entity series matrix won’t contain the expression matrix, which is almost the case of high-throughout sequencing data. <code>geo_suppl</code> is designed for these conditions. Usually, the expression matrix will be provided in the GSE supplementary files or in the GSM supplementary files.</p>
 <p>If the expression matrix is given in the GSE supplementary files, we can download it directly use <code>geo_suppl</code>, which will return a character vector containing the path of downloaded files.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gse160724</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/geo_suppl.html">geo_suppl</a></span><span class="op">(</span></span>
 <span>    <span class="st">"GSE160724"</span>,</span>
 <span>    pattern <span class="op">=</span> <span class="st">"counts_anno"</span>,</span>
@@ -427,7 +435,7 @@
 <div class="section level3">
 <h3 id="sessioninfo">sessionInfo<a class="anchor" aria-label="anchor" href="#sessioninfo"></a>
 </h3>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; R version 4.4.2 (2024-10-31)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu</span></span>

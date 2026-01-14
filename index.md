@@ -7,7 +7,19 @@ database](https://www.ncbi.nlm.nih.gov/geo/).
 ## Installation
 
 You can install the development version of `geokit` from
-[GitHub](https://github.com/) with:
+[R-universe](https://wanglabcsu.r-universe.dev) (Recommended):
+
+``` r
+install.packages("geokit",
+    repos = c(
+        "https://wanglabcsu.r-universe.dev",
+        "https://cloud.r-project.org"
+    )
+)
+```
+
+or from [GitHub](https://github.com/WangLabCSU/geokit) (Require `rust`
+to compile) with:
 
 ``` r
 if (!requireNamespace("pak")) {
@@ -187,7 +199,7 @@ object to store SOFT file contents. The `GEOSoft` object contains six
 slots: `accession`, `rcd_type`, `rcd_name`, `metadata`,
 dat`atable, and`columns\`.
 
-\-`accession`: Stores the GEO accession ID.
+- `accession`: Stores the GEO accession ID.
 
 - `rcd_type`: Indicates the type of record (e.g., Platform, Sample,
   Series, Datasets). This helps categorize the data and identify the
