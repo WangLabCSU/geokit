@@ -71,7 +71,7 @@ candidate datasets. This filtering step significantly reduces the time spent
 manually reviewing summary records.
 
 You can also use `geo_meta()` to dynamically create a self-knowledge-concerned
-database in real-time. See 'vignette("geometadb")' for details.
+database in real-time. See `vignette("geometadb")` for details.
 
 ## Session Information
 ```{r}
