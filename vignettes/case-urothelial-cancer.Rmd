@@ -1,0 +1,419 @@
+---
+title: "Case Study: Urothelial Cancer Expression Analysis"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Case Study: Urothelial Cancer Expression Analysis}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+This vignette demonstrates a complete workflow for extracting, filtering, downloading, and analyzing urothelial cancer expression data from GEO. We'll cover dataset discovery, quality-based filtering, data retrieval, and exploratory analysis with publication-quality visualizations.
+
+## Introduction
+
+Urothelial carcinoma (bladder cancer) is one of the most common urological malignancies. Meta-analysis of gene expression studies can reveal consistent molecular alterations across patient cohorts. This workflow shows how to:
+
+- Search and combine results for bladder/urothelial cancer datasets
+- Filter datasets by sample size and platform type
+- Download expression matrices
+- Perform log transformation and data integration
+- Conduct exploratory analysis (PCA, boxplots, heatmaps)
+- Generate publication-quality visualizations
+
+```{r setup, message = FALSE}
+library(geokit)
+library(dplyr)
+library(stringr)
+library(tidyr)
+library(ggplot2)
+```
+
+## 1. Dataset Discovery
+
+Search for bladder and urothelial cancer datasets using multiple related terms to maximize coverage.
+
+```{r search_uc, cache = TRUE}
+# Multiple search strategies for comprehensive coverage
+uc_searches <- list(
+  bladder = geo_search(
+    "bladder cancer[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"
+  ),
+  urothelial = geo_search(
+    "urothelial cancer[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"
+  )
+)
+
+# Combine and deduplicate
+uc_gse <- unique(dplyr::bind_rows(uc_searches))
+
+cat(sprintf("Found %d unique urothelial cancer datasets\n", nrow(uc_gse)))
+head(uc_gse[, 1:3])
+```
+
+## 2. Extract and Process Sample Information
+
+```{r extract_info}
+# Extract sample counts
+uc_gse <- uc_gse |>
+  dplyr::mutate(
+    number_of_samples = stringr::str_match(
+      Contains, "(\\d+) Samples?"
+    )[, 2L, drop = TRUE],
+    number_of_samples = as.integer(number_of_samples),
+    # Extract platform information
+    platform_count = stringr::str_match(
+      Contains, "(\\d+) Platforms?"
+    )[, 2L, drop = TRUE],
+    platform_count = as.integer(platform_count)
+  )
+
+# Summary statistics
+cat("\nSample size summary:\n")
+summary(uc_gse$number_of_samples)
+```
+
+## 3. Filter Datasets by Quality Criteria
+
+Apply stringent filters to select high-quality datasets suitable for meta-analysis.
+
+```{r filter_quality}
+uc_gse_filtered <- uc_gse |>
+  dplyr::filter(
+    # At least 20 samples for robust analysis
+    number_of_samples >= 20,
+    # Focus on expression profiling
+    stringr::str_detect(Type, "(?i)expression profiling"),
+    # Prefer microarray studies (exclude RNA-seq for now)
+    stringr::str_detect(Type, "(?i)array"),
+    # Exclude methylation studies
+    !stringr::str_detect(Type, "(?i)methylation")
+  ) |>
+  dplyr::arrange(desc(number_of_samples))
+
+cat(sprintf(
+  "\nFiltered to %d high-quality datasets (%.1f%% of original)\n",
+  nrow(uc_gse_filtered),
+  100 * nrow(uc_gse_filtered) / nrow(uc_gse)
+))
+
+# Display top candidates
+head(uc_gse_filtered[, c("Series Accession", "Title", "number_of_samples")], 10)
+```
+
+## 4. Download Expression Data
+
+For demonstration, we'll work with a subset of datasets. In practice, you would download all filtered datasets.
+
+```{r select_demo}
+# Select top 3 datasets for demonstration
+demo_gse <- head(uc_gse_filtered[["Series Accession"]], 3)
+cat("Demo datasets:", paste(demo_gse, collapse = ", "), "\n")
+```
+
+```{r download_data, eval = FALSE}
+# Download expression matrices
+expression_sets <- lapply(demo_gse, function(gse_id) {
+  cat(sprintf("Downloading %s...\n", gse_id))
+  tryCatch(
+    {
+      geo_matrix(gse_id, odir = tempdir())
+    },
+    error = function(e) {
+      message(sprintf("Failed to download %s: %s", gse_id, e$message))
+      return(NULL)
+    }
+  )
+})
+
+# Remove NULL entries (failed downloads)
+expression_sets <- expression_sets[!sapply(expression_sets, is.null)]
+names(expression_sets) <- sapply(expression_sets, function(x) {
+  Biobase::annotation(x)
+})
+
+cat(sprintf("Successfully downloaded %d datasets\n", length(expression_sets)))
+```
+
+## 5. Data Transformation
+
+Apply log2 transformation to ensure data comparability across datasets.
+
+```{r transform_data, eval = FALSE}
+# Apply log transformation
+expression_sets_log <- lapply(expression_sets, function(eset) {
+  log_trans(eset)
+})
+
+# Verify transformation
+sapply(expression_sets_log, function(eset) {
+  exprs <- Biobase::exprs(eset)
+  c(
+    min = min(exprs, na.rm = TRUE),
+    median = median(exprs, na.rm = TRUE),
+    max = max(exprs, na.rm = TRUE)
+  )
+})
+```
+
+## 6. Exploratory Analysis
+
+### 6.1 Expression Distribution
+
+Examine the distribution of expression values across samples using boxplots.
+
+```{r expr_boxplot, eval = FALSE, fig.width = 10, fig.height = 6}
+# Prepare data for plotting (first dataset as example)
+eset <- expression_sets_log[[1]]
+expr_matrix <- Biobase::exprs(eset)
+
+# Convert to long format for ggplot
+expr_df <- as.data.frame(expr_matrix) |>
+  tibble::rownames_to_column("gene") |>
+  tidyr::pivot_longer(
+    cols = -gene,
+    names_to = "sample",
+    values_to = "expression"
+  )
+
+# Create boxplot
+ggplot(expr_df, aes(x = sample, y = expression)) +
+  geom_boxplot(fill = "lightblue", outlier.size = 0.5, outlier.alpha = 0.3) +
+  labs(
+    title = sprintf("Expression Distribution - %s", names(expression_sets_log)[1]),
+    x = "Sample",
+    y = "Log2 Expression"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    panel.grid.major.x = element_blank()
+  )
+```
+
+### 6.2 Principal Component Analysis (PCA)
+
+Perform PCA to visualize sample relationships and identify potential batch effects.
+
+```{r pca_analysis, eval = FALSE, fig.width = 8, fig.height = 6}
+# Perform PCA on first dataset
+eset <- expression_sets_log[[1]]
+expr_matrix <- Biobase::exprs(eset)
+
+# Remove genes with missing values
+expr_matrix <- expr_matrix[complete.cases(expr_matrix), ]
+
+# Perform PCA
+pca_result <- stats::prcomp(t(expr_matrix), scale. = TRUE)
+
+# Extract PC scores
+pca_df <- as.data.frame(pca_result$x[, 1:2])
+pca_df$sample <- rownames(pca_df)
+
+# Calculate variance explained
+var_explained <- summary(pca_result)$importance[2, 1:2] * 100
+
+# Create PCA plot
+ggplot(pca_df, aes(x = PC1, y = PC2)) +
+  geom_point(size = 3, alpha = 0.7, color = "darkred") +
+  geom_text(aes(label = sample), size = 2.5, vjust = -1) +
+  labs(
+    title = sprintf("PCA - %s", names(expression_sets_log)[1]),
+    x = sprintf("PC1 (%.1f%% variance)", var_explained[1]),
+    y = sprintf("PC2 (%.1f%% variance)", var_explained[2])
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    panel.grid = element_line(color = "gray90")
+  )
+```
+
+### 6.3 Sample Correlation Heatmap
+
+Calculate and visualize pairwise sample correlations to assess data quality and identify outliers.
+
+```{r correlation_heatmap, eval = FALSE, fig.width = 10, fig.height = 9}
+# Calculate sample correlations
+eset <- expression_sets_log[[1]]
+expr_matrix <- Biobase::exprs(eset)
+expr_matrix <- expr_matrix[complete.cases(expr_matrix), ]
+
+# Compute correlation matrix
+cor_matrix <- cor(expr_matrix, method = "pearson")
+
+# Convert to long format for ggplot
+cor_df <- as.data.frame(as.table(cor_matrix))
+colnames(cor_df) <- c("Sample1", "Sample2", "Correlation")
+
+# Create heatmap
+ggplot(cor_df, aes(x = Sample1, y = Sample2, fill = Correlation)) +
+  geom_tile() +
+  scale_fill_gradient2(
+    low = "blue", mid = "white", high = "red",
+    midpoint = 0.8,
+    limits = c(min(cor_df$Correlation), 1),
+    name = "Pearson\nCorrelation"
+  ) +
+  labs(
+    title = sprintf("Sample Correlation Heatmap - %s", names(expression_sets_log)[1]),
+    x = "Sample",
+    y = "Sample"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
+    axis.text.y = element_text(size = 8),
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    panel.grid = element_blank()
+  )
+```
+
+### 6.4 Summary Statistics
+
+Generate comprehensive summary statistics across datasets.
+
+```{r summary_stats, eval = FALSE}
+# Calculate summary statistics for each dataset
+summary_stats <- lapply(names(expression_sets_log), function(name) {
+  eset <- expression_sets_log[[name]]
+  expr_matrix <- Biobase::exprs(eset)
+  
+  data.frame(
+    dataset = name,
+    n_samples = ncol(expr_matrix),
+    n_genes = nrow(expr_matrix),
+    mean_expr = mean(expr_matrix, na.rm = TRUE),
+    median_expr = median(expr_matrix, na.rm = TRUE),
+    sd_expr = sd(as.vector(expr_matrix), na.rm = TRUE),
+    missing_pct = 100 * sum(is.na(expr_matrix)) / length(expr_matrix)
+  )
+})
+
+summary_table <- dplyr::bind_rows(summary_stats)
+print(summary_table)
+
+# Export summary
+write.csv(summary_table, "uc_expression_summary.csv", row.names = FALSE)
+```
+
+## 7. Data Integration Considerations
+
+When integrating multiple datasets for meta-analysis:
+
+```{r integration_tips, eval = FALSE}
+# 1. Check for common genes across datasets
+common_genes <- Reduce(intersect, lapply(expression_sets_log, function(eset) {
+  rownames(Biobase::exprs(eset))
+}))
+
+cat(sprintf("Common genes across all datasets: %d\n", length(common_genes)))
+
+# 2. Subset to common genes
+expression_sets_common <- lapply(expression_sets_log, function(eset) {
+  eset[common_genes, ]
+})
+
+# 3. Combine expression matrices
+combined_expr <- do.call(cbind, lapply(expression_sets_common, Biobase::exprs))
+
+cat(sprintf(
+  "Combined matrix dimensions: %d genes x %d samples\n",
+  nrow(combined_expr),
+  ncol(combined_expr)
+))
+
+# 4. Create study labels for batch correction
+study_labels <- unlist(lapply(seq_along(expression_sets_common), function(i) {
+  rep(names(expression_sets_common)[i], ncol(Biobase::exprs(expression_sets_common[[i]])))
+}))
+
+# Note: At this point, you would apply batch correction methods
+# such as ComBat (sva package) or limma's removeBatchEffect
+```
+
+## 8. Visualization: Cross-Dataset Comparison
+
+Compare expression patterns across multiple datasets.
+
+```{r cross_dataset, eval = FALSE, fig.width = 10, fig.height = 6}
+# Calculate mean expression per dataset
+mean_expr_per_dataset <- sapply(expression_sets_log, function(eset) {
+  rowMeans(Biobase::exprs(eset), na.rm = TRUE)
+})
+
+# Convert to data frame for plotting
+mean_expr_df <- as.data.frame(mean_expr_per_dataset) |>
+  tibble::rownames_to_column("gene") |>
+  tidyr::pivot_longer(
+    cols = -gene,
+    names_to = "dataset",
+    values_to = "mean_expression"
+  )
+
+# Create density plot
+ggplot(mean_expr_df, aes(x = mean_expression, color = dataset)) +
+  geom_density(linewidth = 1, alpha = 0.7) +
+  labs(
+    title = "Mean Expression Distribution Across Datasets",
+    x = "Mean Log2 Expression",
+    y = "Density",
+    color = "Dataset"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    legend.position = "bottom"
+  )
+```
+
+## 9. Next Steps
+
+With the downloaded and processed data, you can proceed to:
+
+1. **Batch correction**: Use ComBat or similar methods to remove technical variation
+2. **Differential expression**: Identify genes altered in cancer vs. normal samples
+3. **Meta-analysis**: Combine results across studies using fixed/random effects models
+4. **Pathway analysis**: Investigate enriched biological processes and pathways
+5. **Validation**: Cross-validate findings in independent cohorts
+
+```{r next_steps, eval = FALSE}
+# Example: Extract phenotype data for differential expression
+eset <- expression_sets_log[[1]]
+pdata <- Biobase::pData(eset)
+
+# View available phenotype columns
+colnames(pdata)
+
+# Typical workflow would identify tumor vs. normal samples
+# and perform differential expression analysis
+```
+
+## Summary
+
+This workflow demonstrated:
+
+- Comprehensive dataset discovery using multiple search terms
+- Filtering by sample size (≥20), platform type (microarray), and relevance
+- Downloading expression matrices with `geo_matrix()`
+- Log2 transformation using `log_trans()`
+- Exploratory analysis including:
+  - Expression distribution boxplots
+  - Principal Component Analysis
+  - Sample correlation heatmaps
+  - Summary statistics
+- Data integration considerations for meta-analysis
+
+These steps provide a solid foundation for conducting rigorous gene expression meta-analysis in urothelial cancer research.
+
+## Session Information
+```{r}
+sessionInfo()
+```
