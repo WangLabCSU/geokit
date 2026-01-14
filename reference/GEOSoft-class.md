@@ -175,6 +175,7 @@ gpl(object) <- value
 ## Examples
 
 ``` r
+# \donttest{
 gse <- geo_soft("GSE10", odir = tempdir())
 #> Downloading 1 file
 accession(gse)
@@ -50225,4 +50226,5 @@ datatable(gpllist[[1L]])
 #> 49998 AGTGTTTGTT 158258834
 #> 49999 AGTGTTTTCC  13910276
 #>  [ reached 'max' / getOption("max.print") -- omitted 215578 rows ]
+# }
 ```

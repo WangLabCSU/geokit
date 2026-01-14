@@ -132,6 +132,11 @@ gse <- geo_soft("GSE10", odir = tempdir())
 #> Found 1 file already downloaded
 gpl <- geo_soft("gpl98", odir = tempdir())
 #> Downloading 1 file
+#> Error in download_inform(.subset2(urls_and_fnames, "urls"), file.path(odir,     .subset2(urls_and_fnames, "fnames")), handle_opts = handle_opts): Failed to download 1 file
+#> ℹ url:
+#>   <https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GPL98&targ=self&view=full&form=text>
+#> ! status code: 503
+#> ✖ error message: NA
 gsm <- geo_soft("GSM1", odir = tempdir())
 #> Downloading 1 file
 gds <- geo_soft("GDS10", odir = tempdir())

@@ -29,10 +29,10 @@ we can get these records by following code, the returned object is a
 diabetes_gse_records <- geo_search(
   "diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"
 )
-#> ■■■■■■■■■                        500/1765 [350/s] | ETA:  4s
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■■       1500/1765 [319/s] | ETA:  1s
+#> ■■■■■■■■■                        500/1765 [424/s] | ETA:  3s
+#> ■■■■■■■■■■■■■■■■■■               1000/1765 [393/s] | ETA:  2s
 #> → Parsing GEO records
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■■       1500/1765 [319/s] | ETA:  1sGet records from NCBI for 1765 queries in 5.9s
+#> ■■■■■■■■■■■■■■■■■■               1000/1765 [393/s] | ETA:  2sGet records from NCBI for 1765 queries in 4.6s
 head(diabetes_gse_records[1:5])
 #>                                                                                                                                Title
 #> 1    Functional gene regulatory networks and broad applications of the human expandable pancreatic progenitor-islet system [RNA-Seq]

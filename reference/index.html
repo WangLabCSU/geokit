@@ -47,9 +47,9 @@
     </div>
 
     <div class="section level2">
-      <h2 id="all-functions">All functions<a class="anchor" aria-label="anchor" href="#all-functions"></a></h2>
+      <h2 id="geo-database-operations">GEO Database operations<a class="anchor" aria-label="anchor" href="#geo-database-operations"></a></h2>
 
-
+      <div class="section-desc"><p>This category includes functions for retrieving and handling metadata from GEO datasets. It allows users to search for GEO entries and retrieve detailed information about them, including formats and supplementary data, to support further analysis.</p></div>
 
       <dl></dl></div><div class="section level2">
 
@@ -58,24 +58,10 @@
 
       <dl><dt>
 
-          <code><a href="GEOSoft-class.html">show(<i>&lt;GEOSoft&gt;</i>)</a></code> <code><a href="GEOSoft-class.html">metadata()</a></code> <code><a href="GEOSoft-class.html">`metadata&lt;-`()</a></code> <code><a href="GEOSoft-class.html">accession()</a></code> <code><a href="GEOSoft-class.html">`accession&lt;-`()</a></code> <code><a href="GEOSoft-class.html">rcd_type()</a></code> <code><a href="GEOSoft-class.html">`rcd_type&lt;-`()</a></code> <code><a href="GEOSoft-class.html">rcd_name()</a></code> <code><a href="GEOSoft-class.html">`rcd_name&lt;-`()</a></code> <code><a href="GEOSoft-class.html">columns()</a></code> <code><a href="GEOSoft-class.html">`columns&lt;-`()</a></code> <code><a href="GEOSoft-class.html">datatable()</a></code> <code><a href="GEOSoft-class.html">`datatable&lt;-`()</a></code> <code><a href="GEOSoft-class.html">show(<i>&lt;GEOPlatform&gt;</i>)</a></code> <code><a href="GEOSoft-class.html">gsm()</a></code> <code><a href="GEOSoft-class.html">`gsm&lt;-`()</a></code> <code><a href="GEOSoft-class.html">gse()</a></code> <code><a href="GEOSoft-class.html">`gse&lt;-`()</a></code> <code><a href="GEOSoft-class.html">show(<i>&lt;GEOSeries&gt;</i>)</a></code> <code><a href="GEOSoft-class.html">gpl()</a></code> <code><a href="GEOSoft-class.html">`gpl&lt;-`()</a></code>
+          <code><a href="geo_search.html">geo_search()</a></code>
 
         </dt>
-        <dd>Virtual class for holding GEO series, samples, platforms, and datasets.</dd>
-
-        <dt>
-
-          <code><a href="geo_gtype.html">geo_gtype()</a></code>
-
-        </dt>
-        <dd>GEO accession type</dd>
-
-        <dt>
-
-          <code><a href="geo_matrix.html">geo_matrix()</a></code>
-
-        </dt>
-        <dd>Retrieve Series Matrix and Create ExpressionSet</dd>
+        <dd>Search GEO database</dd>
 
         <dt>
 
@@ -86,10 +72,47 @@
 
         <dt>
 
-          <code><a href="geo_search.html">geo_search()</a></code>
+          <code><a href="geo_soft.html">geo_soft()</a></code>
 
         </dt>
-        <dd>Search GEO database</dd>
+        <dd>Retrieve GEO SOFT file from NCBI GEO</dd>
+
+        <dt>
+
+          <code><a href="geo_matrix.html">geo_matrix()</a></code>
+
+        </dt>
+        <dd>Retrieve Series Matrix and Create ExpressionSet</dd>
+
+        <dt>
+
+          <code><a href="geo_suppl.html">geo_suppl()</a></code>
+
+        </dt>
+        <dd>Get Supplemental Files from GEO</dd>
+      </dl></div><div class="section level2">
+      <h2 id="helper-functions-for-geo-database">Helper functions for GEO Database<a class="anchor" aria-label="anchor" href="#helper-functions-for-geo-database"></a></h2>
+
+
+
+      <dl></dl></div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="geo_url.html">geo_url()</a></code>
+
+        </dt>
+        <dd>GEO URL resolver</dd>
+
+        <dt>
+
+          <code><a href="geo_gtype.html">geo_gtype()</a></code>
+
+        </dt>
+        <dd>GEO accession type</dd>
 
         <dt>
 
@@ -100,24 +123,10 @@
 
         <dt>
 
-          <code><a href="geo_soft.html">geo_soft()</a></code>
+          <code><a href="parse_sample_data.html">parse_sample_data()</a></code>
 
         </dt>
-        <dd>Retrieve GEO SOFT file from NCBI GEO</dd>
-
-        <dt>
-
-          <code><a href="geo_suppl.html">geo_suppl()</a></code>
-
-        </dt>
-        <dd>Get Supplemental Files from GEO</dd>
-
-        <dt>
-
-          <code><a href="geo_url.html">geo_url()</a></code>
-
-        </dt>
-        <dd>GEO URL resolver</dd>
+        <dd>Parse key-value pairs in the metadata of GEO Sample SOFT file</dd>
 
         <dt>
 
@@ -125,15 +134,9 @@
 
         </dt>
         <dd>Apply log2 Transformation to Expression Data</dd>
-
-        <dt>
-
-          <code><a href="parse_sample_data.html">parse_sample_data()</a></code>
-
-        </dt>
-        <dd>Parse key-value pairs in the metadata of GEO Sample SOFT file</dd>
       </dl></div>
-  </main></div>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside></div>
 
 
     <footer><div class="pkgdown-footer-left">
