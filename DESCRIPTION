@@ -27,6 +27,8 @@ Suggests:
     stats,
     dplyr,
     stringr,
+    tidyr,
+    ggplot2,
     R.utils,
     testthat (>= 3.0.0),
     knitr,
