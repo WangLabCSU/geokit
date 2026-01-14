@@ -363,7 +363,7 @@ mean_expr_df <- as.data.frame(mean_expr_per_dataset) |>
 
 # Create density plot
 ggplot(mean_expr_df, aes(x = mean_expression, color = dataset)) +
-  geom_density(linewidth = 1, alpha = 0.7) +
+  geom_density(size = 1, alpha = 0.7) +
   labs(
     title = "Mean Expression Distribution Across Datasets",
     x = "Mean Log2 Expression",

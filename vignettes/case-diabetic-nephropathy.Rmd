@@ -131,19 +131,19 @@ Categorize datasets by specific criteria relevant to diabetic nephropathy resear
 dn_metadb <- dn_metadb |>
   dplyr::mutate(
     # Check for nephropathy mentions
-    has_nephropathy = dplyr::if_any(
-      c(Series_title, Series_summary, Series_overall_design),
-      ~ stringr::str_detect(.x, "(?i)nephropath")
+    has_nephropathy = grepl(
+      "(?i)nephropath",
+      paste(Series_title, Series_summary, Series_overall_design)
     ),
     # Check for kidney mentions
-    has_kidney = dplyr::if_any(
-      c(Series_title, Series_summary, Series_overall_design),
-      ~ stringr::str_detect(.x, "(?i)kidney|renal")
+    has_kidney = grepl(
+      "(?i)kidney|renal",
+      paste(Series_title, Series_summary, Series_overall_design)
     ),
     # Check for biopsy samples
-    has_biopsy = dplyr::if_any(
-      c(Series_title, Series_summary, Series_overall_design),
-      ~ stringr::str_detect(.x, "(?i)biopsy|biopsies")
+    has_biopsy = grepl(
+      "(?i)biopsy|biopsies",
+      paste(Series_title, Series_summary, Series_overall_design)
     ),
     # Extract tissue type mentions
     tissue_type = dplyr::case_when(
@@ -199,7 +199,7 @@ ggplot(dn_metadb, aes(x = number_of_samples)) +
   geom_histogram(binwidth = 5, fill = "coral", color = "white") +
   geom_vline(
     xintercept = median(dn_metadb$number_of_samples, na.rm = TRUE),
-    linetype = "dashed", color = "red", linewidth = 1
+    linetype = "dashed", color = "red", size = 1
   ) +
   labs(
     title = "Distribution of Sample Sizes in DN Datasets",
