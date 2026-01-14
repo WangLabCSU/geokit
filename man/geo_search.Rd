@@ -42,6 +42,7 @@ for details.
 # The `geo_search` function queries NCBI Entrez, which may have network
 # restrictions and limited bandwidth usage for large queries.
 \donttest{
-geo_search("diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]")
+out <- geo_search("diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]")
+head(out)
 }
 }
