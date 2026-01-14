@@ -3,6 +3,9 @@
 skip_if_fail <- function(expr) {
     deparsed <- deparse(substitute(expr))
     tryCatch(expr, geokit_download_error = function(cnd) {
-        testthat::skip(sprintf("Failed to execute '%s'", deparsed))
+        testthat::skip(sprintf(
+            "Failed to execute '%s' due to %s",
+            deparsed, conditionMessage(cnd)
+        ))
     })
 }
