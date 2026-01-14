@@ -86,6 +86,7 @@ A data frame contains metadata of all ids.
 ## Examples
 
 ``` r
+# \donttest{
 geo_meta("GSE10", odir = tempdir())
 #> Found 1 file already downloaded
 #>                   Database_name Database_institute
@@ -118,4 +119,5 @@ geo_meta("GSE10", odir = tempdir())
 #> 1                9606
 #>                                                  Series_relation
 #> 1 BioProject: https://www.ncbi.nlm.nih.gov/bioproject/PRJNA84465
+# }
 ```

@@ -73,6 +73,7 @@ file.
 ## Examples
 
 ``` r
+# \donttest{
 if (require("Biobase")) {
     eset <- geo_matrix("GSE10", odir = tempdir())
 }
@@ -109,4 +110,5 @@ if (require("Biobase")) {
 #> ℹ annot file in FTP site for "GPL4" is not available, will use data amount file from GEO Accession Site instead
 #> Downloading 1 file
 #> ✔ Parsing 1 Series matrix successfully!
+# }
 ```
