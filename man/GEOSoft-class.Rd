@@ -174,6 +174,7 @@ of current GEO series.}
 }}
 
 \examples{
+\donttest{
 gse <- geo_soft("GSE10", odir = tempdir())
 accession(gse)
 gpllist <- gpl(gse)
@@ -181,5 +182,6 @@ metadata(gpllist[[1L]])
 accession(gpllist[[1L]])
 columns(gpllist[[1L]])
 datatable(gpllist[[1L]])
+}
 }
 \keyword{internal}

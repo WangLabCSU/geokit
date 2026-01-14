@@ -12,6 +12,7 @@
 #' @docType class
 #' @keywords internal
 #' @examples
+#' \donttest{
 #' gse <- geo_soft("GSE10", odir = tempdir())
 #' accession(gse)
 #' gpllist <- gpl(gse)
@@ -19,6 +20,7 @@
 #' accession(gpllist[[1L]])
 #' columns(gpllist[[1L]])
 #' datatable(gpllist[[1L]])
+#' }
 #' @rdname GEOSoft-class
 NULL
 
