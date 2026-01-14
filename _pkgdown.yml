@@ -3,3 +3,20 @@ url: https://WangLabCSU.github.io/geokit/
 template:
   bootstrap: 5
   light-switch: true
+
+navbar:
+ components:
+   articles:
+    text: Articles
+    menu:
+    - text: Searching
+      href: articles/geo-search.html
+    - text: GEO metadata
+      href: articles/geometadb.html
+    - text: -------
+    - text: GEO SOFT FIle
+      href: articles/geo-soft.html
+    - text: GSE Matrix FIle
+      href: articles/geo-matrix.html
+    - text: GSE Supplemental File
+      href: articles/geo-suppl.html
