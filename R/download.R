@@ -65,7 +65,7 @@ list_directory_url <- function(accession, format, ftp_over_https,
     } else {
         fnames <- readLines(url_connection)
     }
-    fnames <- str_subset(fnames, "^G")
+    fnames <- grep("^G", fnames, value = TRUE)
 
     # build urls for all found files ------------------------
     if (length(fnames)) {

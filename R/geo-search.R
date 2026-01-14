@@ -74,7 +74,7 @@ geo_search <- function(query, step = 500L, interval = NULL) {
             c("Contains", "Datasets", "Series", "Platforms"),
             names(out)
         ),
-        str_subset(names(out), "Accession$")
+        grep("Accession$", names(out), value = TRUE)
     )
     out[, c(setdiff(names(out), tail_col), tail_col), drop = FALSE]
 }
