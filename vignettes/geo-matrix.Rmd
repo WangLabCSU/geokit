@@ -2,7 +2,7 @@
 title: "Download and Parse Seires matrix File from GEO database"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{geo-matrix}
+  %\VignetteIndexEntry{Download and Parse Seires matrix File from GEO database}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

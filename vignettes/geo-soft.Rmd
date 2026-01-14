@@ -2,7 +2,7 @@
 title: "Download and Parse SOFT File from GEO database"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{geo-soft}
+  %\VignetteIndexEntry{Download and Parse SOFT File from GEO database}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

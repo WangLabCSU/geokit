@@ -1,8 +1,8 @@
 ---
-title: "geo-suppl"
+title: "Download Supplementary File from GEO database"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{geo-suppl}
+  %\VignetteIndexEntry{Download Supplementary File from GEO database}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

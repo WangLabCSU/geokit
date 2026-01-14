@@ -2,7 +2,7 @@
 title: "Search GEO"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{geo-search}
+  %\VignetteIndexEntry{Search GEO}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

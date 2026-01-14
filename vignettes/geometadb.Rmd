@@ -2,7 +2,7 @@
 title: "Build Your Own GEOmetadb"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{geometadb}
+  %\VignetteIndexEntry{Build Your Own GEOmetadb}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
