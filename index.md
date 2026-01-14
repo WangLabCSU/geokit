@@ -36,4 +36,4 @@ pak::pak("WangLabCSU/geokit")
 ## Learning geokit
 
 Check out the [guides](https://wanglabcsu.github.io/geokit/) for
-learning everything, there is to know about all the different features:
+learning everything, there is to know about all the different features.
