@@ -20,3 +20,25 @@ navbar:
       href: articles/geo-matrix.html
     - text: GSE Supplemental File
       href: articles/geo-suppl.html
+
+reference:
+- title: GEO Database operations
+  desc: >
+    This category includes functions for retrieving and handling metadata from
+    GEO datasets. It allows users to search for GEO entries and retrieve
+    detailed information about them, including formats and supplementary data,
+    to support further analysis.
+  contents:
+  - geo_search
+  - geo_meta
+  - geo_soft
+  - geo_matrix
+  - geo_suppl
+
+- title: Helper functions for GEO Database
+  contents:
+  - geo_url
+  - geo_gtype
+  - geo_show
+  - parse_sample_data
+  - log_trans

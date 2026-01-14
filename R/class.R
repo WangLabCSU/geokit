@@ -10,7 +10,7 @@
 #' @param value A R object with the same class of corresponding slots.
 #' @name GEOSoft-class
 #' @docType class
-#' @keywords classes
+#' @keywords internal
 #' @examples
 #' gse <- geo_soft("GSE10", odir = tempdir())
 #' accession(gse)

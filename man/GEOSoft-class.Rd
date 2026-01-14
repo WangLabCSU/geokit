@@ -182,4 +182,4 @@ accession(gpllist[[1L]])
 columns(gpllist[[1L]])
 datatable(gpllist[[1L]])
 }
-\keyword{classes}
+\keyword{internal}
