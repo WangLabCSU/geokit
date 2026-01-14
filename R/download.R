@@ -37,12 +37,11 @@ list_directory_url <- function(accession, format, ftp_over_https,
     url <- geo_url(accession, format = format, ftp_over_https = ftp_over_https)
 
     # connect to remote dir ---------------------------------
-    handle_opts <- setup_handle(handle_opts)
-    if (!is.null(ftp_over_https) && !ftp_over_https) {
-        handle_opts$ftp_use_epsv <- TRUE
-        handle_opts$dirlistonly <- TRUE
-    }
+    handle_opts <- setup_handle_opts(handle_opts)
+    handle_opts$dirlistonly <- TRUE
     handle_opts$noprogress <- TRUE
+    handle_opts$multi_timeout <- NULL
+    handle_opts$multiplex <- NULL
     curl_handle <- curl::new_handle()
     curl::handle_setopt(curl_handle, .list = handle_opts)
     url_connection <- tryCatch(
@@ -93,16 +92,20 @@ download_inform <- function(urls, ofiles, handle_opts, error = TRUE) {
     existed <- file.exists(ofiles)
     if (any(existed)) {
         cli::cli_inform(
-            "Finding {.val {sum(existed)}} file{?s} already downloaded"
+            "Found {.val {sum(existed)}} file{?s} already downloaded"
         )
         urls <- urls[!existed]
         ofiles <- ofiles[!existed]
     }
     if (length(urls)) {
         cli::cli_inform("Downloading {.val {length(urls)}} file{?s}")
-        handle_opts$progress <- handle_opts$progress %||% interactive()
+        handle_opts <- setup_handle_opts(handle_opts)
+        if (is.null(handle_opts$noprogress)) {
+            handle_opts$progress <- interactive()
+        } else {
+            handle_opts$progress <- !handle_opts$noprogress
+        }
         handle_opts$multi_timeout <- handle_opts$multi_timeout %||% Inf
-        handle_opts <- setup_handle(handle_opts)
         status <- rlang::inject(curl::multi_download(
             urls = urls, destfiles = ofiles, resume = FALSE,
             !!!handle_opts
@@ -127,12 +130,18 @@ download_inform <- function(urls, ofiles, handle_opts, error = TRUE) {
     out
 }
 
-setup_handle <- function(handle_opts) {
+setup_handle_opts <- function(handle_opts) {
+    handle_opts$httpheader <- handle_opts$httpheader %||%
+        utils::getFromNamespace("format_request_headers", "curl")(
+            list("User-Agent" = "geokit")
+        )
+    handle_opts$followlocation <- handle_opts$followlocation %||% TRUE
     handle_opts$connecttimeout <- handle_opts$connecttimeout %||% 60L
     # this is recommended by GEO FTP site
     # since we don't upload files, we just set buffersize only.
     handle_opts$buffersize <- handle_opts$buffersize %||% 33554432L
     handle_opts$upload_buffersize <- handle_opts$upload_buffersize %||%
         33554432L
+    handle_opts$ftp_use_epsv <- handle_opts$ftp_use_epsv %||% TRUE
     handle_opts
 }
