@@ -196,8 +196,8 @@ A single SOFT file can contain both data tables and accompanying
 descriptive information for multiple, concatenated Platforms, Samples,
 and/or Series records. The `geokit` package provides a `GEOSoft` class
 object to store SOFT file contents. The `GEOSoft` object contains six
-slots: `accession`, `rcd_type`, `rcd_name`, `metadata`,
-`datatable, and`columns\`.
+slots: `accession`, `rcd_type`, `rcd_name`, `metadata`, `datatable`, and
+`columns`.
 
 - `accession`: Stores the GEO accession ID.
 

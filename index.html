@@ -208,7 +208,7 @@
 <h3 id="download-and-parse-soft-file-from-geo-database">Download and Parse SOFT File from GEO database<a class="anchor" aria-label="anchor" href="#download-and-parse-soft-file-from-geo-database"></a>
 </h3>
 <p>The GEO database provides SOFT (Simple Omnibus Format in Text) files for GPL, GSM, and GDS entities. SOFT is designed for efficient batch submission and download of data. It is a simple, line-based, plain text format, which makes it easy to generate SOFT files from common spreadsheet and database applications.</p>
-<p>A single SOFT file can contain both data tables and accompanying descriptive information for multiple, concatenated Platforms, Samples, and/or Series records. The <code>geokit</code> package provides a <code>GEOSoft</code> class object to store SOFT file contents. The <code>GEOSoft</code> object contains six slots: <code>accession</code>, <code>rcd_type</code>, <code>rcd_name</code>, <code>metadata</code>, <code>datatable, and</code>columns`.</p>
+<p>A single SOFT file can contain both data tables and accompanying descriptive information for multiple, concatenated Platforms, Samples, and/or Series records. The <code>geokit</code> package provides a <code>GEOSoft</code> class object to store SOFT file contents. The <code>GEOSoft</code> object contains six slots: <code>accession</code>, <code>rcd_type</code>, <code>rcd_name</code>, <code>metadata</code>, <code>datatable</code>, and <code>columns</code>.</p>
 <ul>
 <li><p><code>accession</code>: Stores the GEO accession ID.</p></li>
 <li><p><code>rcd_type</code>: Indicates the type of record (e.g., Platform, Sample, Series, Datasets). This helps categorize the data and identify the nature of the record.</p></li>
