@@ -3,7 +3,7 @@ use std::borrow::Cow;
 use extendr_api::Robj;
 use rand::{rng, seq::IteratorRandom};
 
-/// Convert a column represented as Vec<Option<String>> into the most specific R vector.
+/// Opaque Vector without type paramter to represent the most specific R vector.
 ///
 /// Sampling-based inference: test up to SAMPLE_SIZE cells to decide whether the
 /// column can be parsed as i32, f64, or bool. If so, parse the whole column
@@ -35,7 +35,7 @@ impl OpaqueVector {
             (0..value.len()).choose_multiple(&mut rng, SAMPLE_SIZE)
         };
 
-        // Fast sample pass (no allocations): inspect up to SAMPLE_SIZE non-None cells.
+        // Fast sample pass (no allocations): inspect up to SAMPLE_SIZE cells.
         let mut can_int = true;
         let mut can_f64 = true;
         let mut can_bool = true;

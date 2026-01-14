@@ -23,7 +23,7 @@ use flate2::bufread::GzDecoder as GzipDecoder;
 use isal::read::GzipDecoder;
 
 use super::geo::{GEOEntity, GEOType};
-use soft::{GEOSoftLine, GEOSoftReader, GEOSoftReaderBuilder, GEOSoftRecord};
+use soft::{GEOSoftConfig, GEOSoftLine, GEOSoftReader, GEOSoftRecord};
 use vector::OpaqueVector;
 
 mod error;
@@ -249,8 +249,9 @@ fn geo_parse_soft_impl(
     } else {
         reader = Box::new(file);
     }
-    let mut builder = GEOSoftReaderBuilder::new();
-    builder.format(format);
+
+    let mut config = GEOSoftConfig::new();
+    config.set_format(format);
     if let Some(use_lines) = use_lines {
         let mut uses = HashSet::new();
         for line in *use_lines {
@@ -264,9 +265,9 @@ fn geo_parse_soft_impl(
             };
             uses.insert(line);
         }
-        builder.use_lines(uses);
+        config.set_lines(uses);
     }
-    let soft_reader = GEOSoftReader::<BufReader<Box<dyn Read>>>::new(&builder, reader);
+    let soft_reader = GEOSoftReader::<BufReader<Box<dyn Read>>>::new(&config, reader);
     soft_reader.collect::<anyhow::Result<Vec<_>>>()
 }
 
