@@ -283,7 +283,7 @@ fn pprof_geo_parse_soft(
     let guard = pprof::ProfilerGuardBuilder::default()
         .frequency(2000)
         .build()
-        .with_context(|| format!("Failed to create pprof guard"))
+        .with_context(|| format!("Failed to create pprof profile guard"))
         .map_err(|e| format!("{:?}", e))?;
     let out = geo_parse_soft(path, format, use_lines, threads);
     if let Ok(report) = guard.report().build() {
@@ -298,6 +298,23 @@ fn pprof_geo_parse_soft(
             .map_err(|e| format!("{:?}", e))?;
     };
     out
+}
+
+#[extendr]
+#[cfg(not(feature = "pprof"))]
+fn pprof_geo_parse_soft(
+    _path: Robj,
+    _format: Robj,
+    _use_lines: Robj,
+    _threads: Option<usize>,
+    _pprof_file: &str,
+) -> Result<List, String> {
+    Err(format!(
+        r###"
+This function requires the 'pprof' feature. 
+Please compile with the '--features pprof' argument or set the 'GEOKIT_FEATURES' environment variable to 'pprof'.
+        "###
+    ))
 }
 
 #[extendr]
@@ -396,27 +413,14 @@ fn is_all_same(x: Robj) -> Result<bool, String> {
     Ok(true) // All values are the same
 }
 
-#[cfg(not(feature = "pprof"))]
 extendr_module! {
     mod r;
     fn geo_gtype;
     fn geo_url;
     fn geo_landing_page;
     fn geo_file_url_and_fname;
-    fn geo_parse_soft;
-    fn is_all_same;
-    fn parse_key_value_elements;
-}
-
-#[cfg(feature = "pprof")]
-extendr_module! {
-    mod r;
-    fn geo_gtype;
-    fn geo_url;
-    fn geo_landing_page;
-    fn geo_file_url_and_fname;
-    fn geo_parse_soft;
     fn pprof_geo_parse_soft;
+    fn geo_parse_soft;
     fn is_all_same;
     fn parse_key_value_elements;
 }
