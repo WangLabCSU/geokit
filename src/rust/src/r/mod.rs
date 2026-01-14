@@ -165,7 +165,7 @@ fn geo_parse_soft(
         .with_context(|| format!("Invalid 'format'"))
         .map_err(|err| format!("{:?}", err))?;
     let use_lines = helper::robj_to_option_vec_str(&use_lines, path.len())
-        .with_context(|| format!("Invalid 'format'"))
+        .with_context(|| format!("Invalid 'use_lines'"))
         .map_err(|err| format!("{:?}", err))?;
 
     // use rayon to implement parallel
