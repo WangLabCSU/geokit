@@ -162,28 +162,32 @@ table(dn_metadb$tissue_type)
 
 ### Timeline of Dataset Submissions
 
+**Note**: This visualization requires date information from the metadata. The actual implementation depends on the available date fields in the GEO metadata structure. If submission dates are not available in the metadata, consider alternative visualizations such as chronological ordering by GEO accession number ranges.
+
 ```{r timeline, eval = FALSE, fig.width = 8, fig.height = 4}
-# Extract submission year from GEO accession or date fields
-# Note: This assumes availability of date information in metadata
-# You may need to adjust based on actual metadata structure
+# Alternative: Create a proxy year from GEO accession number
+# GSE numbers are assigned chronologically, so they can serve as a time proxy
+# This is a workaround when actual submission dates are not available
 dn_metadb <- dn_metadb |>
   dplyr::mutate(
-    submission_year = as.integer(
-      stringr::str_extract(Series_geo_accession, "\\d{4}$")
+    gse_number = as.integer(
+      stringr::str_extract(Series_geo_accession, "\\d+")
     )
   )
 
-# Create timeline plot
-ggplot(dn_metadb, aes(x = submission_year)) +
-  geom_histogram(binwidth = 1, fill = "steelblue", color = "white") +
+# Create distribution plot by GSE number (proxy for time)
+ggplot(dn_metadb, aes(x = gse_number)) +
+  geom_histogram(bins = 30, fill = "steelblue", color = "white") +
   labs(
-    title = "Timeline of Diabetic Nephropathy GEO Dataset Submissions",
-    x = "Submission Year",
+    title = "Distribution of DN Datasets by GEO Accession Number",
+    subtitle = "GSE numbers are assigned chronologically (lower = older)",
+    x = "GSE Number",
     y = "Number of Datasets"
   ) +
   theme_minimal() +
   theme(
     plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5, size = 9),
     panel.grid.minor = element_blank()
   )
 ```

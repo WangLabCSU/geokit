@@ -178,7 +178,7 @@ expr_matrix <- Biobase::exprs(eset)
 
 # Convert to long format for ggplot
 expr_df <- as.data.frame(expr_matrix) |>
-  tibble::rownames_to_column("gene") |>
+  dplyr::mutate(gene = rownames(expr_matrix)) |>
   tidyr::pivot_longer(
     cols = -gene,
     names_to = "sample",
@@ -354,7 +354,7 @@ mean_expr_per_dataset <- sapply(expression_sets_log, function(eset) {
 
 # Convert to data frame for plotting
 mean_expr_df <- as.data.frame(mean_expr_per_dataset) |>
-  tibble::rownames_to_column("gene") |>
+  dplyr::mutate(gene = rownames(mean_expr_per_dataset)) |>
   tidyr::pivot_longer(
     cols = -gene,
     names_to = "dataset",
