@@ -22,13 +22,13 @@ geo_meta(
 \item Samples (GSM): \code{"GSM12345"}, \code{"GSM67890"}, \code{"GSM112233"}, etc.
 }}
 
-\item{famount}{A character string specifying either:
+\item{famount}{A character specifying either:
 \itemize{
 \item the file \code{format} on the GEO FTP server, or
 \item the \code{amount} of data in the GEO Accession Display Bar.
 }
 
-See \code{\link[=geo_url]{geo_url()}} for details.}
+See \code{\link[=geo_url]{geo_url()}} for details on the \code{format} and \code{amount} arguments.}
 
 \item{scope}{A character specifying which GEO accessions to include
 (Only applicable to Accession Display Bar access).
@@ -57,8 +57,9 @@ A data frame contains metadata of all ids.
 \description{
 This function is useful for combining with \code{\link[=geo_search]{geo_search()}} to filter
 results, as \code{geo_search()} cannot retrieve the full metadata for all GEO
-identifiers. By default, it uses the \code{soft} format for GDS and GSE entities,
-and the \code{full} amount of data for GPL and GSM entities.
+identifiers. By default, this function uses the \code{soft} format for GDS and GSE
+entities, and the \code{full} amount of \code{text} format data for GPL and GSM
+entities.
 }
 \examples{
 geo_meta("GSE10")

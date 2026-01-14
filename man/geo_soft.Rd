@@ -22,13 +22,13 @@ geo_soft(
 \item Samples (GSM): \code{"GSM12345"}, \code{"GSM67890"}, \code{"GSM112233"}, etc.
 }}
 
-\item{famount}{A character string specifying either:
+\item{famount}{A character specifying either:
 \itemize{
 \item the file \code{format} on the GEO FTP server, or
 \item the \code{amount} of data in the GEO Accession Display Bar.
 }
 
-See \code{\link[=geo_url]{geo_url()}} for details.}
+See \code{\link[=geo_url]{geo_url()}} for details on the \code{format} and \code{amount} arguments.}
 
 \item{scope}{A character specifying which GEO accessions to include
 (Only applicable to Accession Display Bar access).
@@ -55,7 +55,8 @@ working directory.}
 A \link[=GEOSoft-class]{GEOSoft} object
 }
 \description{
-Retrieve GEO SOFT file from NCBI GEO
+By default, this function uses the \code{soft} format for GDS and GSE entities,
+and the \code{full} amount of \code{text} format data for GPL and GSM entities.
 }
 \details{
 The Gene Expression Omnibus (GEO) from NCBI serves as a public repository

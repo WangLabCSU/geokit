@@ -2,8 +2,9 @@
 #'
 #' This function is useful for combining with [`geo_search()`] to filter
 #' results, as `geo_search()` cannot retrieve the full metadata for all GEO
-#' identifiers. By default, it uses the `soft` format for GDS and GSE entities,
-#' and the `full` amount of data for GPL and GSM entities.
+#' identifiers. By default, this function uses the `soft` format for GDS and GSE
+#' entities, and the `full` amount of `text` format data for GPL and GSM
+#' entities.
 #'
 #' @inheritParams geo_soft
 #' @return A data frame contains metadata of all ids.

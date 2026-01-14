@@ -124,11 +124,11 @@ geo_url <- function(accession, format = NULL, amount = NULL, scope = NULL,
 #' Construct a GEO landing page and open it directly in the system's default web
 #' browser (or a user-specified browser).
 #'
-#' @param famount A character string specifying either:
+#' @param famount A character specifying either:
 #'   - the file `format` on the GEO FTP server, or
 #'   - the `amount` of data in the GEO Accession Display Bar.
 #'
-#'   See [`geo_url()`] for details.
+#'   See [`geo_url()`] for details on the `format` and `amount` arguments.
 #'
 #' @inheritParams geo_url
 #' @inheritParams utils::browseURL

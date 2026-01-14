@@ -1,5 +1,8 @@
 #' Retrieve GEO SOFT file from NCBI GEO
 #'
+#' By default, this function uses the `soft` format for GDS and GSE entities,
+#' and the `full` amount of `text` format data for GPL and GSM entities.
+#'
 #' @inheritParams geo_show
 #' @param handle_opts A list of named options / headers to be set in the
 #'  [`multi_download`][curl::multi_download].
