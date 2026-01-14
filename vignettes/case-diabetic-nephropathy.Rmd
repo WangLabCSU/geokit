@@ -163,11 +163,13 @@ table(dn_metadb$tissue_type)
 ### Timeline of Dataset Submissions
 
 ```{r timeline, eval = FALSE, fig.width = 8, fig.height = 4}
-# Extract submission year
+# Extract submission year from GEO accession or date fields
+# Note: This assumes availability of date information in metadata
+# You may need to adjust based on actual metadata structure
 dn_metadb <- dn_metadb |>
   dplyr::mutate(
     submission_year = as.integer(
-      stringr::str_extract(Series_pubmed_id, "^\\d{4}")
+      stringr::str_extract(Series_geo_accession, "\\d{4}$")
     )
   )
 

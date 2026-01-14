@@ -119,6 +119,9 @@ cat("Demo datasets:", paste(demo_gse, collapse = ", "), "\n")
 
 ```{r download_data, eval = FALSE}
 # Download expression matrices
+# Note: Using tempdir() for demo. For persistent storage, use a dedicated directory:
+# odir <- "uc_expression_data"
+# dir.create(odir, showWarnings = FALSE, recursive = TRUE)
 expression_sets <- lapply(demo_gse, function(gse_id) {
   cat(sprintf("Downloading %s...\n", gse_id))
   tryCatch(
@@ -293,7 +296,7 @@ summary_stats <- lapply(names(expression_sets_log), function(name) {
     mean_expr = mean(expr_matrix, na.rm = TRUE),
     median_expr = median(expr_matrix, na.rm = TRUE),
     sd_expr = sd(as.vector(expr_matrix), na.rm = TRUE),
-    missing_pct = 100 * sum(is.na(expr_matrix)) / length(expr_matrix)
+    missing_pct = mean(is.na(expr_matrix)) * 100
   )
 })
 
