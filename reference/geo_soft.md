@@ -128,7 +128,7 @@ design is provided through GDS subsets.
 
 ``` r
 gse <- geo_soft("GSE10", odir = tempdir())
-#> Finding 1 file already downloaded
+#> Found 1 file already downloaded
 gpl <- geo_soft("gpl98", odir = tempdir())
 #> Downloading 1 file
 gsm <- geo_soft("GSM1", odir = tempdir())
