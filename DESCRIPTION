@@ -27,6 +27,7 @@ Suggests:
     stats,
     dplyr,
     stringr,
+    R.utils,
     testthat (>= 3.0.0),
     knitr,
     rmarkdown
