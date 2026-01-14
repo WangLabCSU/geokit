@@ -33,11 +33,12 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/geo-matrix.html">Download and Parse Seires matrix File from GEO database</a></li>
-    <li><a class="dropdown-item" href="../articles/geo-search.html">Search GEO</a></li>
-    <li><a class="dropdown-item" href="../articles/geo-soft.html">Download and Parse SOFT File from GEO database</a></li>
-    <li><a class="dropdown-item" href="../articles/geo-suppl.html">Download Supplementary File from GEO database</a></li>
-    <li><a class="dropdown-item" href="../articles/geometadb.html">Build Your Own GEOmetadb</a></li>
+<li><a class="dropdown-item" href="../articles/geo-search.html">Searching</a></li>
+    <li><a class="dropdown-item" href="../articles/geometadb.html">GEO metadata</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" href="../articles/geo-soft.html">GEO SOFT FIle</a></li>
+    <li><a class="dropdown-item" href="../articles/geo-matrix.html">GSE Matrix FIle</a></li>
+    <li><a class="dropdown-item" href="../articles/geo-suppl.html">GSE Supplemental File</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -141,9 +142,10 @@ GEO DataSets</a></p>
 <span>        <span class="st">"urothelial cancer[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"</span></span>
 <span>    <span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■ </span> 627/626 [292/s] | ETA:  0s</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■■■■■       </span> 500/626 [165/s] | ETA:  1s</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■ </span> 627/626 [128/s] | ETA:  0s</span></span>
 <span><span class="co">#&gt; → Parsing GEO records</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■ </span> 627/626 [292/s] | ETA:  0sGet records from NCBI for <span style="color: #0000BB;">626</span> queries in 2.2s</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■ </span> 627/626 [128/s] | ETA:  0sGet records from NCBI for <span style="color: #0000BB;">626</span> queries in 4.9s</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; → Parsing GEO records</span></span>
 <span><span class="va">uc_gse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">uc_gse</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
