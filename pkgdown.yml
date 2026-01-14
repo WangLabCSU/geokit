@@ -2,7 +2,7 @@ pandoc: 3.1.11
 pkgdown: 2.2.0
 pkgdown_sha: ~
 articles: {}
-last_built: 2026-01-14T04:27Z
+last_built: 2026-01-14T04:56Z
 urls:
   reference: https://WangLabCSU.github.io/geokit/reference
   article: https://WangLabCSU.github.io/geokit/articles
