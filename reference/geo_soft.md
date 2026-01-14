@@ -1,6 +1,8 @@
 # Retrieve GEO SOFT file from NCBI GEO
 
-Retrieve GEO SOFT file from NCBI GEO
+By default, this function uses the `soft` format for GDS and GSE
+entities, and the `full` amount of `text` format data for GPL and GSM
+entities.
 
 ## Usage
 
@@ -32,7 +34,7 @@ geo_soft(
 
 - famount:
 
-  A character string specifying either:
+  A character specifying either:
 
   - the file `format` on the GEO FTP server, or
 
@@ -40,7 +42,7 @@ geo_soft(
 
   See
   [`geo_url()`](https://WangLabCSU.github.io/geokit/reference/geo_url.md)
-  for details.
+  for details on the `format` and `amount` arguments.
 
 - scope:
 

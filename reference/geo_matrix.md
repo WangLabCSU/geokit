@@ -108,5 +108,9 @@ if (require("Biobase")) {
 #> Downloading 1 file
 #> ℹ annot file in FTP site for "GPL4" is not available, will use data amount file from GEO Accession Site instead
 #> Downloading 1 file
-#> ✔ Parsing 1 Series matrix successfully!
+#> Error in download_inform(.subset2(url_and_fname, "urls"), file.path(odir,     .subset2(url_and_fname, "fnames")), handle_opts = handle_opts): Failed to download 1 file
+#> ℹ url:
+#>   <https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GPL4&targ=self&view=data&form=text>
+#> ! status code: 502
+#> ✖ error message: NA
 ```

@@ -5,8 +5,8 @@ This function is useful for combining with
 to filter results, as
 [`geo_search()`](https://WangLabCSU.github.io/geokit/reference/geo_search.md)
 cannot retrieve the full metadata for all GEO identifiers. By default,
-it uses the `soft` format for GDS and GSE entities, and the `full`
-amount of data for GPL and GSM entities.
+this function uses the `soft` format for GDS and GSE entities, and the
+`full` amount of `text` format data for GPL and GSM entities.
 
 ## Usage
 
@@ -38,7 +38,7 @@ geo_meta(
 
 - famount:
 
-  A character string specifying either:
+  A character specifying either:
 
   - the file `format` on the GEO FTP server, or
 
@@ -46,7 +46,7 @@ geo_meta(
 
   See
   [`geo_url()`](https://WangLabCSU.github.io/geokit/reference/geo_url.md)
-  for details.
+  for details on the `format` and `amount` arguments.
 
 - scope:
 

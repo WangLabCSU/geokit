@@ -32,7 +32,7 @@ geo_show(
 
 - famount:
 
-  A character string specifying either:
+  A character specifying either:
 
   - the file `format` on the GEO FTP server, or
 
@@ -40,7 +40,7 @@ geo_show(
 
   See
   [`geo_url()`](https://WangLabCSU.github.io/geokit/reference/geo_url.md)
-  for details.
+  for details on the `format` and `amount` arguments.
 
 - scope:
 
