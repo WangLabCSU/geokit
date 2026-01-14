@@ -17,6 +17,15 @@
 #' NCBI GEO2R: <https://www.ncbi.nlm.nih.gov/geo/geo2r/?acc=GSE1122>
 #' @return A `matrix` or an [ExpressionSet][Biobase::ExpressionSet] with
 #'   log2-transformed expression values.
+#' @examples
+#' sample_means <- 2^runif(2, 2, 10)
+#' sample_disp <- 100 / sample_means + 0.5
+#' data <- matrix(
+#'     rnbinom(4, mu = sample_means, size = 1 / sample_disp),
+#'     nrow = 2
+#' )
+#' log_trans(data)
+#' log_trans(log2(data))
 #' @export
 log_trans <- function(data, pseudo = 1, ...) {
     assert_number_decimal(pseudo, allow_infinite = FALSE)

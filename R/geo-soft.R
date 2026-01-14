@@ -52,11 +52,12 @@
 #' provided through GDS subsets.
 #'
 #' @examples
+#' \donttest{
 #' gse <- geo_soft("GSE10", odir = tempdir())
 #' gpl <- geo_soft("gpl98", odir = tempdir())
 #' gsm <- geo_soft("GSM1", odir = tempdir())
 #' gds <- geo_soft("GDS10", odir = tempdir())
-#'
+#' }
 #' @export
 geo_soft <- function(accession, famount = NULL, scope = NULL,
                      ftp_over_https = NULL, handle_opts = list(),

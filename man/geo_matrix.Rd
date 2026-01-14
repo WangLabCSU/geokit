@@ -54,7 +54,9 @@ The function downloads and parses the relevant Series Matrix files,
 optionally mapping platform IDs to Bioconductor annotation packages.
 }
 \examples{
+\donttest{
 if (require("Biobase")) {
     eset <- geo_matrix("GSE10", odir = tempdir())
+}
 }
 }

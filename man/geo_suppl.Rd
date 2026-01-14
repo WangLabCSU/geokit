@@ -47,5 +47,7 @@ these files based on the GEO accession. No parsing of the downloaded files is
 attempted, since the file format is not generally knowable.
 }
 \examples{
+\donttest{
 geo_suppl("GSM1137", odir = tempdir())
+}
 }

@@ -35,6 +35,16 @@ log-transformed, following the methodology used in
 \href{https://www.ncbi.nlm.nih.gov/geo/geo2r/}{GEO2R}. If not, it
 applies \code{log2()} with the specified \code{pseudo} offset.
 }
+\examples{
+sample_means <- 2^runif(2, 2, 10)
+sample_disp <- 100 / sample_means + 0.5
+data <- matrix(
+    rnbinom(4, mu = sample_means, size = 1 / sample_disp),
+    nrow = 2
+)
+log_trans(data)
+log_trans(log2(data))
+}
 \references{
 NCBI GEO2R: \url{https://www.ncbi.nlm.nih.gov/geo/geo2r/?acc=GSE1122}
 }

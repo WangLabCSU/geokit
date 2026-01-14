@@ -29,7 +29,9 @@
 #' # restrictions and limited bandwidth usage for large queries. To avoid
 #' # interruptions due to network issues or rate limits, we wrap the call with
 #' # try().
-#' try(geo_search("diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"))
+#' \donttest{
+#' geo_search("diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]")
+#' }
 #' @export
 geo_search <- function(query, step = 500L, interval = NULL) {
     assert_number_whole(step, min = 1)

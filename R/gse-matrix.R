@@ -17,8 +17,10 @@
 #' @return An [`ExpressionSet`][Biobase::ExpressionSet] or a list of
 #'  `ExpressionSet`s, one per Series Matrix file.
 #' @examples
+#' \donttest{
 #' if (require("Biobase")) {
 #'     eset <- geo_matrix("GSE10", odir = tempdir())
+#' }
 #' }
 #' @export
 geo_matrix <- function(accession, add_gpl = NULL, pdata_from_soft = FALSE,

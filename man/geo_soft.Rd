@@ -99,9 +99,10 @@ consistent across the dataset. Information reflecting experimental design is
 provided through GDS subsets.
 }
 \examples{
+\donttest{
 gse <- geo_soft("GSE10", odir = tempdir())
 gpl <- geo_soft("gpl98", odir = tempdir())
 gsm <- geo_soft("GSM1", odir = tempdir())
 gds <- geo_soft("GDS10", odir = tempdir())
-
+}
 }

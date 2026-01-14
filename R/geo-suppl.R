@@ -12,7 +12,9 @@
 #' @return A list (or a character atomic verctor if only one `accession` is
 #' provided) of the full file paths of the resulting downloaded files.
 #' @examples
+#' \donttest{
 #' geo_suppl("GSM1137", odir = tempdir())
+#' }
 #' @export
 geo_suppl <- function(accession, pattern = NULL, ftp_over_https = TRUE,
                       handle_opts = list(), odir = getwd()) {

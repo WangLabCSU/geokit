@@ -62,5 +62,7 @@ entities, and the \code{full} amount of \code{text} format data for GPL and GSM
 entities.
 }
 \examples{
+\donttest{
 geo_meta("GSE10", odir = tempdir())
+}
 }
