@@ -56,12 +56,12 @@ for details.
 # restrictions and limited bandwidth usage for large queries.
 # \donttest{
 out <- geo_search("diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]")
-#> ■■■■■■■■■                        500/1765 [458/s] | ETA:  3s
-#> ■■■■■■■■■■■■■■■■■■               1000/1765 [395/s] | ETA:  2s
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1766/1765 [405/s] | ETA:  0s
+#> ■■■■■■■■■■■■■■■■■■               1000/1765 [413/s] | ETA:  2s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■■       1500/1765 [214/s] | ETA:  1s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1766/1765 [227/s] | ETA:  0s
 #> → Parsing GEO records
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1766/1765 [405/s] | ETA:  0s
-#> Get records from NCBI for 1765 queries in 4.5s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1766/1765 [227/s] | ETA:  0s
+#> Get records from NCBI for 1765 queries in 7.9s
 #> 
 head(out)
 #>                                                                                                                                Title
