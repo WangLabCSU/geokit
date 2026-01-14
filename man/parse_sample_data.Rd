@@ -36,6 +36,8 @@ pairs of annotation. If that is the case, this simply cleans the \strong{GEOSoft
 to column values.
 }
 \examples{
+\donttest{
 gse201530_soft <- geo_soft("GSE201530", odir = tempdir())
-parse_sample_data(gse201530_soft)
+head(parse_sample_data(gse201530_soft))
+}
 }

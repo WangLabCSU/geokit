@@ -13,8 +13,10 @@
 #' @param sep A single byte string defined the pairing separator.
 #' @return A data.frame whose rows are samples and columns are the sample infos
 #' @examples
+#' \donttest{
 #' gse201530_soft <- geo_soft("GSE201530", odir = tempdir())
-#' parse_sample_data(gse201530_soft)
+#' head(parse_sample_data(gse201530_soft))
+#' }
 #' @export
 parse_sample_data <- function(x, ...) {
     UseMethod("parse_sample_data")
