@@ -53,17 +53,14 @@ for details.
 ``` r
 # Ensure you have an active internet connection before running the search.
 # The `geo_search` function queries NCBI Entrez, which may have network
-# restrictions and limited bandwidth usage for large queries. To avoid
-# interruptions due to network issues or rate limits, we wrap the call with
-# try().
+# restrictions and limited bandwidth usage for large queries.
 # \donttest{
 geo_search("diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]")
-#> ■■■■■■■■■                        500/1765 [394/s] | ETA:  3s
-#> ■■■■■■■■■■■■■■■■■■               1000/1765 [425/s] | ETA:  2s
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1766/1765 [330/s] | ETA:  0s
+#> ■■■■■■■■■                        500/1765 [374/s] | ETA:  3s
+#> ■■■■■■■■■■■■■■■■■■               1000/1765 [378/s] | ETA:  2s
 #> → Parsing GEO records
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1766/1765 [330/s] | ETA:  0s
-#> Get records from NCBI for 1765 queries in 5.5s
+#> ■■■■■■■■■■■■■■■■■■               1000/1765 [378/s] | ETA:  2s
+#> Get records from NCBI for 1765 queries in 4.7s
 #> 
 #>                                                                                                                                                                                                                                                         Title
 #> 1                                                                                                                             Functional gene regulatory networks and broad applications of the human expandable pancreatic progenitor-islet system [RNA-Seq]
