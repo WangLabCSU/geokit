@@ -20,3 +20,4 @@
 ^Scratch\.RConsole$
 ^\.radian_history$
 ^\.Rhistory$
+^geo_cache$

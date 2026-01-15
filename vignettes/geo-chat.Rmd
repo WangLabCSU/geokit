@@ -6,12 +6,12 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
-
+  
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  eval = FALSE
+collapse = TRUE,
+comment = "#>",
+eval = FALSE
 )
 ```
 
@@ -21,6 +21,8 @@ The `geo_chat()` function enables interactive, AI-powered exploration of GEO
 (Gene Expression Omnibus) metadata. By leveraging the
 [ellmer](https://ellmer.tidyverse.org/) package, you can use natural language
 to query, filter, and understand your GEO datasets.
+
+> Warning: Be aware of the instability in results caused by some issues within the large language model itself.
 
 ## Prerequisites
 
@@ -67,6 +69,17 @@ Create a chat session with your metadata:
 chat <- geo_chat(meta, provider = ellmer::chat_openai)
 ```
 
+Or OpenAI-compatible model:
+
+```{r create-chat2}
+chat <- geo_chat(meta,
+                 provider = ellmer::chat_openai_compatible,
+                 base_url = "https://open.cherryin.cc/v1",
+                 model = "openai/gpt-4.1-mini", 
+                 system_prompt = "Be terse")
+```
+
+
 ## Step 3: Ask Questions!
 
 Now you can interact with your metadata using natural language:
@@ -83,6 +96,51 @@ chat$chat("Write R code to filter studies that mention 'tumor' in the summary")
 # Understand specific datasets
 chat$chat("Tell me more about the study with the most samples")
 ```
+
+Example output:
+
+~~~
+> chat$chat("What types of studies are in this metadata?")
+The types of studies (Series_type) in this metadata are:
+
+1. Expression profiling by high throughput sequencing
+2. Expression profiling by high throughput sequencing; Genome variation profiling by high 
+throughput sequencing
+3. Expression profiling by high throughput sequencing; Other
+4. Non-coding RNA profiling by high throughput sequencing
+> chat$chat("Which studies have more than 50 samples?")
+The study with more than 50 samples is:
+
+- Series_geo_accession: GSE266330  
+  - Series_sample_id count: 66 samples (GSM8245005 to GSM8245057 and GSM8669376 to GSM8669385)
+> chat$chat("Write R code to filter studies that mention 'tumor' in the summary")
+```r
+# Assuming the data frame is named geo_data
+
+tumor_studies <- subset(geo_data, grepl("tumor", Series_summary, ignore.case = TRUE))
+```
+> chat$chat("Tell me more about the study with the most samples")
+The study with the most samples is Series_geo_accession GSE266330.
+
+- Title: Single cell profiling of bone metastasis ecosystems from multiple cancer types reveals 
+convergent and divergent mechanisms of bone colonization
+- Summary: This study performed single-cell RNA-seq on 34 bone metastases (BMs) samples from 6 
+cancer types to identify 3 ecosystem archetypes characterized by macrophages/osteoclasts, 
+regulatory/exhausted T cells, and monocytes. Breast cancer BMs mostly exhibit 
+macrophage-osteoclast archetype driven by osteolytic vicious cycle, kidney cancer BMs mainly 
+belong to the regulatory/exhausted T cell archetype without osteoclasts, and lung cancer BMs are 
+evenly distributed across all archetypes. The work reveals parallel immunosuppression and bone 
+remodeling mechanisms and estrogen signaling differences in macrophages of the 
+macrophage-osteoclast subtype.
+- Overall design: Patient samples collected from multiple institutions, including 
+surgery-obtained bone metastasis tissues from human patients and healthy bone marrow from 
+individuals. Single-cell sequencing and pathology tissue sections were generated as relevant to 
+clinical needs.
+- Number of samples: 66 samples (GSM8245005 to GSM8245057 and GSM8669376 to GSM8669385)
+- Contributor contact: Xiang Zhang (xiangz@bcm.edu), Baylor College of Medicine, Houston, USA
+- Publication PubMed ID: 40412393
+~~~
+
 
 # Interactive Console Mode
 
@@ -163,24 +221,87 @@ meta <- geo_meta(
 )
 
 # 3. Start AI chat session
-chat <- geo_chat(meta, provider = ellmer::chat_openai)
+chat <- geo_chat(meta, 
+                 provider = ellmer::chat_openai_compatible,
+                 base_url = "https://open.cherryin.cc/v1",
+                 model = "openai/gpt-4.1-mini", 
+                 system_prompt = "Be terse")
 
 # 4. Use AI to analyze and filter
 chat$chat("
   Identify studies that:
-  1. Use 10x Genomics technology
-  2. Have at least 10,000 cells
-  3. Include treatment and control samples
+  1. Use scRNA-seq
+  2. Include treatment and control samples
   
   List the accession numbers that match these criteria.
 ")
 
 # 5. Get code to extract the filtered results
 chat$chat("
-  Write R code using dplyr to filter the metadata 
+  Write R code using dplyr to filter the metadata `meta`
   for the studies you identified.
 ")
+
 ```
+
+Example output:
+
+~~~
+> # 1. Search for relevant studies
+> cancer_gse <- geo_search(
++   "single cell[ALL] AND cancer[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"
++ )
+→ Parsing GEO records                                         
+Get records from NCBI for 4527 queries in 32.1s              
+> cat("Found", nrow(cancer_gse), "potential studies\n")
+Found 4527 potential studies
+> # 2. Get detailed metadata
+> meta <- geo_meta(
++   cancer_gse$`Series Accession`[1:20],
++   odir = "geo_cache"
++ )
+Downloading 20 files
+Download status: 20 done; 0 in progress. Total size: 95.55 Kb (100%)... done! 
+
+> # 3. Start AI chat session
+> chat <- geo_chat(meta, 
++                  provider = ellmer::chat_openai_compatible,
++                  base_url = "https://open.cherryin.cc/v1",
++                  model = "openai/gpt-4.1-mini", 
++                  system_prompt = "Be terse")
+> # 4. Use AI to analyze and filter
+> chat$chat("
++   Identify studies that:
++   1. Use scRNA-seq
++   2. Include treatment and control samples
++   
++   List the accession numbers that match these criteria.
++ ")
+The studies that use scRNA-seq and include treatment and control samples are:
+
+- GSE274638: "MYOD1L122R induces cancer stem cell pathways..." - single-cell RNA sequencing of 
+mutant and wildtype PDX samples (treatment/control model)
+- GSE253213: "Plastic state transitions and developmental potential predict response to Notch 
+inhibition" - single-cell transcriptomics on treated and untreated T-ALL PDX models
+- GSE306473: "Phase II Trial of Ixazomib combined with Gemcitabine and Doxorubicin in Patients 
+with SMARCB1-Deficient Renal Medullary Carcinoma" - scRNAseq on samples from patients treated in 
+the trial
+- GSE299651: "Pooled single-cell screening in colorectal cancer identifies transcriptional 
+modules..." - scRNA-seq of oncogene transfected cell lines, control and treatment-like conditions
+
+These accessions meet both criteria of using scRNA-seq and having treatment and control samples.
+> # 5. Get code to extract the filtered results
+> chat$chat("
++   Write R code using dplyr to filter the metadata `meta`
++   for the studies you identified.
++ ")
+```r
+library(dplyr)
+
+filtered_studies <- meta %>%
+  filter(Series_geo_accession %in% c("GSE274638", "GSE253213", "GSE306473", "GSE299651"))
+```
+~~~
 
 # Tips and Best Practices
 
