@@ -28,6 +28,8 @@ Suggests:
     dplyr,
     stringr,
     R.utils,
+    ellmer,
+    withr,
     testthat (>= 3.0.0),
     knitr,
     rmarkdown

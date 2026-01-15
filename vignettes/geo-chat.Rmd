@@ -1,0 +1,201 @@
+---
+title: "AI-Powered GEO Metadata Exploration with geo_chat()"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{AI-Powered GEO Metadata Exploration with geo_chat()}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = FALSE
+)
+```
+
+# Introduction
+
+The `geo_chat()` function enables interactive, AI-powered exploration of GEO
+(Gene Expression Omnibus) metadata. By leveraging the
+[ellmer](https://ellmer.tidyverse.org/) package, you can use natural language
+to query, filter, and understand your GEO datasets.
+
+## Prerequisites
+
+Before using `geo_chat()`, you need to:
+
+1. Install the `ellmer` package:
+```{r install-ellmer}
+install.packages("ellmer")
+```
+
+2. Configure an API key for your preferred AI provider. For example, for OpenAI:
+```{r set-api-key}
+# Set in your .Renviron file or directly:
+Sys.setenv(OPENAI_API_KEY = "your-api-key-here")
+```
+
+Supported providers include:
+- **OpenAI** (`ellmer::chat_openai`): Set `OPENAI_API_KEY`
+- **Anthropic Claude** (`ellmer::chat_anthropic`): Set `ANTHROPIC_API_KEY`
+- **Google Gemini** (`ellmer::chat_google_gemini`): Set `GOOGLE_API_KEY`
+- And many more! See the [ellmer documentation](https://ellmer.tidyverse.org/) for the full list.
+
+# Basic Usage
+
+## Step 1: Get GEO Metadata
+
+First, use geokit functions to retrieve metadata:
+
+```{r setup}
+library(geokit)
+
+# Search for GEO Series related to your research topic
+records <- geo_search("single cell RNA-seq[ALL] AND lung cancer[ALL] AND GSE[ETYP]")
+
+# Get detailed metadata for the top results
+meta <- geo_meta(records$`Series Accession`[1:10], odir = tempdir())
+```
+
+## Step 2: Start an AI Chat Session
+
+Create a chat session with your metadata:
+
+```{r create-chat}
+chat <- geo_chat(meta, provider = ellmer::chat_openai)
+```
+
+## Step 3: Ask Questions!
+
+Now you can interact with your metadata using natural language:
+```{r chat-examples}
+# Ask about the datasets
+chat$chat("What types of studies are in this metadata?")
+
+# Filter studies
+chat$chat("Which studies have more than 50 samples?")
+
+# Get R code suggestions
+chat$chat("Write R code to filter studies that mention 'tumor' in the summary")
+
+# Understand specific datasets
+chat$chat("Tell me more about the study with the most samples")
+```
+
+# Interactive Console Mode
+
+For a more immersive experience, use the interactive console:
+
+```{r live-console}
+ellmer::live_console(chat)
+```
+
+This opens an interactive chat interface where you can have a back-and-forth
+conversation with the AI about your GEO metadata.
+
+# Using Different AI Providers
+
+## OpenAI (GPT-4, GPT-3.5)
+
+```{r openai}
+chat <- geo_chat(meta, provider = ellmer::chat_openai, model = "gpt-4o")
+```
+
+## Anthropic Claude
+
+```{r anthropic}
+chat <- geo_chat(meta, provider = ellmer::chat_anthropic)
+```
+
+## Google Gemini
+
+```{r gemini}
+chat <- geo_chat(meta, provider = ellmer::chat_google_gemini)
+```
+
+# Customizing the AI Behavior
+
+You can add custom instructions to guide the AI:
+
+```{r custom-prompt}
+chat <- geo_chat(
+  meta,
+  provider = ellmer::chat_openai,
+  system_prompt = "
+    Focus on identifying single-cell RNA-seq studies.
+    When suggesting R code, use tidyverse syntax.
+    Always explain your reasoning step by step.
+  "
+)
+```
+
+# Controlling Context Size
+
+For large metadata tables, you can control how much data is sent to the AI:
+
+```{r max-rows}
+# Only include first 50 rows in context
+chat <- geo_chat(meta, provider = ellmer::chat_openai, max_rows = 50)
+
+# Disable column statistics summary
+chat <- geo_chat(meta, provider = ellmer::chat_openai, include_summary = FALSE)
+```
+
+# Example Workflow: Finding Single-Cell Cancer Studies
+
+Here's a complete workflow for finding relevant single-cell cancer studies:
+
+```{r workflow}
+library(geokit)
+
+# 1. Search for relevant studies
+cancer_gse <- geo_search(
+  "single cell[ALL] AND cancer[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"
+)
+cat("Found", nrow(cancer_gse), "potential studies\n")
+
+# 2. Get detailed metadata
+meta <- geo_meta(
+  cancer_gse$`Series Accession`[1:20],
+  odir = "geo_cache"
+)
+
+# 3. Start AI chat session
+chat <- geo_chat(meta, provider = ellmer::chat_openai)
+
+# 4. Use AI to analyze and filter
+chat$chat("
+  Identify studies that:
+  1. Use 10x Genomics technology
+  2. Have at least 10,000 cells
+  3. Include treatment and control samples
+  
+  List the accession numbers that match these criteria.
+")
+
+# 5. Get code to extract the filtered results
+chat$chat("
+  Write R code using dplyr to filter the metadata 
+  for the studies you identified.
+")
+```
+
+# Tips and Best Practices
+
+1. **Be specific**: The more specific your questions, the better the AI can help.
+
+2. **Ask for code**: The AI can generate R code for filtering, visualization, and analysis.
+
+3. **Iterate**: Build on previous responses - the chat maintains conversation history.
+
+4. **Verify results**: Always verify AI suggestions against your actual data.
+
+5. **Use appropriate models**: For complex analyses, consider using more capable models like GPT-4.
+
+# Session Information
+
+```{r session-info, eval=TRUE}
+sessionInfo()
+```
