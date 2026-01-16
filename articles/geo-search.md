@@ -29,10 +29,11 @@ we can get these records by following code, the returned object is a
 diabetes_gse_records <- geo_search(
   "diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"
 )
-#> ■■■■■■■■■                        500/1766 [258/s] | ETA:  5s
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■■       1500/1766 [299/s] | ETA:  1s
+#> ■■■■■■■■■                        500/1766 [408/s] | ETA:  3s
+#> ■■■■■■■■■■■■■■■■■■               1000/1766 [366/s] | ETA:  2s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1767/1766 [371/s] | ETA:  0s
 #> → Parsing GEO records
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■■       1500/1766 [299/s] | ETA:  1sGet records from NCBI for 1766 queries in 6.3s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1767/1766 [371/s] | ETA:  0sGet records from NCBI for 1766 queries in 4.9s
 head(diabetes_gse_records[1:5])
 #>                                                                                                                                Title
 #> 1              Cutaneous adipose tissue has a strong inflammatory signature in psoriasis patients, and it is partly IL-17 dependent.
