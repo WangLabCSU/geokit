@@ -1,8 +1,5 @@
-use extendr_api::{Attributes, List, Robj};
 use indexmap::IndexMap;
 use memchr::memchr;
-
-use crate::r::vector::OpaqueVector;
 
 use super::{GEOSoftConfig, GEOSoftFormat, GEOSoftLine};
 
@@ -15,13 +12,16 @@ use super::{GEOSoftConfig, GEOSoftFormat, GEOSoftLine};
 /// - `columns`: A Vector describing the columns of the data table (header name and description).
 /// - `datatable`: A data frame (Vec of Vecs) holding the actual data for the record (rows and columns).
 #[derive(Debug, Clone)]
-pub struct GEOSoftRecord {
-    rcd_type: String, // Type of the GEO record (e.g., Series, Platform)
-    rcd_name: String, // Name of the record
-    metadata: IndexMap<String, Vec<Option<String>>>, // Attributes of the record (key-value pairs)
-    columns: Vec<(String, Option<String>)>, // Header names and descriptions
-    header: Vec<Option<String>>, // Header
-    datatable: Vec<Vec<Option<String>>>, // Data table (a data frame)
+pub struct GEOSoftRecord(pub(crate) Box<GEOSoftRecordInner>);
+
+#[derive(Debug, Clone)]
+pub(crate) struct GEOSoftRecordInner {
+    pub(crate) rcd_type: String, // Type of the GEO record (e.g., Series, Platform)
+    pub(crate) rcd_name: String, // Name of the record
+    pub(crate) metadata: IndexMap<String, Vec<Option<String>>>, // Attributes of the record (key-value pairs)
+    pub(crate) columns: Vec<(String, Option<String>)>,          // Header names and descriptions
+    pub(crate) header: Vec<Option<String>>,                     // Header
+    pub(crate) datatable: Vec<Vec<Option<String>>>,             // Data table (a data frame)
 }
 
 // Simple Omnibus Format in Text (SOFT) File
@@ -39,23 +39,49 @@ pub struct GEOSoftRecord {
 // |  n/a   | data lines  |           data table row           |
 impl GEOSoftRecord {
     pub fn new() -> Self {
-        Self {
+        Self(Box::new(GEOSoftRecordInner {
             rcd_type: String::new(),
             rcd_name: String::new(),
             metadata: IndexMap::new(),
             columns: Vec::new(),
             header: Vec::new(),
             datatable: Vec::new(),
-        }
+        }))
     }
 
+    #[inline]
+    pub fn rcd_type(&self) -> &str {
+        &self.0.rcd_type
+    }
+
+    #[inline]
+    pub fn rcd_name(&self) -> &str {
+        &self.0.rcd_name
+    }
+
+    #[inline]
+    pub fn metadata(&self) -> &IndexMap<String, Vec<Option<String>>> {
+        &self.0.metadata
+    }
+
+    #[inline]
+    pub fn columns(&self) -> &Vec<(String, Option<String>)> {
+        &self.0.columns
+    }
+
+    #[inline]
+    pub fn header(&self) -> &Vec<Option<String>> {
+        &self.0.header
+    }
+
+    #[inline]
     pub fn empty(&self) -> bool {
-        self.rcd_type.is_empty()
-            && self.rcd_name.is_empty()
-            && self.metadata.is_empty()
-            && self.columns.is_empty()
-            && self.header.is_empty()
-            && self.datatable.is_empty()
+        self.0.rcd_type.is_empty()
+            && self.0.rcd_name.is_empty()
+            && self.0.metadata.is_empty()
+            && self.0.columns.is_empty()
+            && self.0.header.is_empty()
+            && self.0.datatable.is_empty()
     }
 
     #[inline]
@@ -95,13 +121,13 @@ impl GEOSoftRecord {
             if pos + 1 < line.len() {
                 let rcd_name =
                     bytes_to_string(unsafe { line.get_unchecked(pos + 1..) }.trim_ascii());
-                self.rcd_name = rcd_name;
+                self.0.rcd_name = rcd_name;
             }
             prefix
         } else {
             unsafe { line.get_unchecked(1..) }
         };
-        self.rcd_type = bytes_to_string(prefix.trim_ascii_end());
+        self.0.rcd_type = bytes_to_string(prefix.trim_ascii_end());
     }
 
     #[inline]
@@ -113,10 +139,10 @@ impl GEOSoftRecord {
                 let label = bytes_to_string(unsafe { line.get_unchecked(1..pos) }.trim_ascii_end());
                 // SAFETY: we have ensured 'pos + 1' doesn't span the ending
                 let value = bytes_to_string(unsafe { line.get_unchecked(pos + 1..) }.trim_ascii());
-                if let Some(metadata) = self.metadata.get_mut(&label) {
+                if let Some(metadata) = self.0.metadata.get_mut(&label) {
                     metadata.push(Some(value));
                 } else {
-                    self.metadata.insert(label, vec![Some(value)]);
+                    self.0.metadata.insert(label, vec![Some(value)]);
                 }
             }
         }
@@ -148,11 +174,11 @@ impl GEOSoftRecord {
                 // Check if the label already exists and add a suffix to ensure uniqueness
                 let mut suffix = 1;
                 let mut label_check = label.clone();
-                while self.metadata.contains_key(&label_check) {
+                while self.0.metadata.contains_key(&label_check) {
                     label_check = format!("{}_{}", label, suffix);
                     suffix += 1;
                 }
-                self.metadata.insert(label_check, fields);
+                self.0.metadata.insert(label_check, fields);
             }
         }
     }
@@ -168,9 +194,9 @@ impl GEOSoftRecord {
                 String::new()
             };
             if value.is_empty() {
-                self.columns.push((label, None));
+                self.0.columns.push((label, None));
             } else {
-                self.columns.push((label, Some(value)));
+                self.0.columns.push((label, Some(value)));
             }
         }
     }
@@ -195,107 +221,35 @@ impl GEOSoftRecord {
             .collect::<Vec<Option<String>>>();
 
         // the first row is the data table header
-        if self.header.is_empty() {
-            self.header = fields;
+        if self.0.header.is_empty() {
+            self.0.header = fields;
             return;
         }
 
         // ensure `datatable` has the same length of `fields`
-        if let Some(num_added) = fields.len().checked_sub(self.datatable.len()) {
+        if let Some(num_added) = fields.len().checked_sub(self.0.datatable.len()) {
             if num_added > 0 {
-                let num_fill: usize = if self.datatable.len() > 0 {
-                    unsafe { self.datatable.get_unchecked(0) }.len()
+                let num_fill: usize = if self.0.datatable.len() > 0 {
+                    unsafe { self.0.datatable.get_unchecked(0) }.len()
                 } else {
                     0
                 };
-                self.datatable.reserve(num_added);
+                self.0.datatable.reserve(num_added);
                 if num_fill > 0 {
                     for _ in 0..num_added {
-                        self.datatable.push(vec![None; num_fill]);
+                        self.0.datatable.push(vec![None; num_fill]);
                     }
                 } else {
                     for _ in 0..num_added {
-                        self.datatable.push(Vec::with_capacity(4));
+                        self.0.datatable.push(Vec::with_capacity(4));
                     }
                 }
             }
         }
         // SAFETY: we have ensured has the same length of fields
         for (i, field) in fields.into_iter().enumerate() {
-            unsafe { self.datatable.get_unchecked_mut(i) }.push(field);
+            unsafe { self.0.datatable.get_unchecked_mut(i) }.push(field);
         }
-    }
-}
-
-pub struct RGEOSoftRecord {
-    rcd_type: String, // Type of the GEO record (e.g., Series, Platform)
-    rcd_name: String, // Name of the record
-    metadata: IndexMap<String, Vec<Option<String>>>, // Attributes of the record (key-value pairs)
-    columns: Vec<(String, Option<String>)>, // Header names and descriptions
-    header: Vec<Option<String>>, // Header
-    datatable: Vec<OpaqueVector>, // Data table (a data frame)
-}
-
-impl From<GEOSoftRecord> for RGEOSoftRecord {
-    fn from(value: GEOSoftRecord) -> Self {
-        let mut datatable = Vec::with_capacity(value.datatable.len());
-        for field in value.datatable.into_iter() {
-            datatable.push(OpaqueVector::parse_string(field));
-        }
-        RGEOSoftRecord {
-            rcd_type: value.rcd_type,
-            rcd_name: value.rcd_name,
-            metadata: value.metadata,
-            columns: value.columns,
-            header: value.header,
-            datatable,
-        }
-    }
-}
-
-impl TryFrom<RGEOSoftRecord> for extendr_api::List {
-    type Error = extendr_api::Error;
-
-    fn try_from(value: RGEOSoftRecord) -> std::result::Result<Self, Self::Error> {
-        // A named list
-        let (metadata_keys, metadata_values): (Vec<_>, Vec<_>) = value.metadata.into_iter().unzip();
-        let mut metadata = extendr_api::List::from_values(metadata_values);
-        metadata.set_names(metadata_keys)?;
-
-        // A named character
-        let (columns_names, columns_values): (Vec<String>, Vec<Option<String>>) =
-            value.columns.into_iter().unzip();
-        let mut columns = extendr_api::Robj::from(columns_values);
-        columns.set_names(columns_names)?;
-
-        // A character
-        let header = extendr_api::Robj::from(value.header);
-
-        // A data frame
-        let datatable = value
-            .datatable
-            .into_iter()
-            .map(|v| Robj::from(v))
-            .collect::<List>();
-
-        // Build the final list
-        let record = extendr_api::list![
-            rcd_type = value.rcd_type,
-            rcd_name = value.rcd_name,
-            metadata = metadata,
-            columns = columns,
-            header = header,
-            datatable = datatable
-        ];
-        Ok(record)
-    }
-}
-
-impl TryFrom<RGEOSoftRecord> for extendr_api::Robj {
-    type Error = extendr_api::Error;
-
-    fn try_from(value: RGEOSoftRecord) -> std::result::Result<Self, Self::Error> {
-        extendr_api::List::try_from(value).map(|ok| ok.into())
     }
 }
 

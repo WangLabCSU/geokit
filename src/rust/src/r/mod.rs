@@ -22,15 +22,16 @@ use flate2::bufread::GzDecoder as GzipDecoder;
 #[cfg(feature = "isal-rs")]
 use isal::read::GzipDecoder;
 
-use super::geo::{GEOEntity, GEOType};
-use soft::{GEOSoftConfig, GEOSoftLine, GEOSoftReader, RGEOSoftRecord};
-use vector::OpaqueVector;
+use super::geo::{GEOEntity, GEOSoftConfig, GEOSoftFormat, GEOSoftLine, GEOSoftReader, GEOType};
 
 mod error;
 mod helper;
 mod resolver;
 mod soft;
 mod vector;
+
+use soft::RGEOSoftRecord;
+use vector::OpaqueVector;
 
 #[extendr]
 fn geo_gtype(accession: Robj, abbre: bool) -> Result<Vec<String>, String> {
@@ -229,8 +230,8 @@ fn geo_parse_soft_impl(
     let file =
         File::open(path).with_context(|| format!("Failed to open file: {}", path.display()))?;
     let format = match format {
-        "standard" => soft::GEOSoftFormat::Standard,
-        "matrix" => soft::GEOSoftFormat::Matrix,
+        "standard" => GEOSoftFormat::Standard,
+        "matrix" => GEOSoftFormat::Matrix,
         _ => {
             return Err(error::RGEOParseError::InvalidSoftFormat)
                 .with_context(|| format!("Invalid 'format'"));

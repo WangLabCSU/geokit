@@ -3,13 +3,13 @@ use std::{fmt::Display, str::FromStr};
 use anyhow::{anyhow, Context, Result};
 use extendr_api::Robj;
 
-use super::error::RGEOParseError;
-use super::helper::*;
-
 use crate::geo::{
     GEOADBFormat, GEOADBResolver, GEOADBResolverBuilder, GEOAmount, GEOEntity, GEOFTPFormat,
     GEOFTPResolver, GEOFTPResolverBuilder, GEOScope, GEOType,
 };
+
+use super::error::RGEOParseError;
+use super::helper::*;
 
 // Resolver for GEO (Gene Expression Omnibus) resources.
 //
