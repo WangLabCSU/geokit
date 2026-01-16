@@ -1,13 +1,10 @@
-use std::mem;
-
 use extendr_api::{Attributes, List, Robj};
-use hashbrown::HashSet;
 use indexmap::IndexMap;
 use memchr::memchr;
 
 use crate::r::vector::OpaqueVector;
 
-use super::{bytes_to_string, GEOSoftConfig, GEOSoftFormat, GEOSoftLine};
+use super::{GEOSoftConfig, GEOSoftFormat, GEOSoftLine};
 
 /// Represents a record in the SOFT (Simple Omnibus Format in Text) file.
 ///
@@ -18,9 +15,7 @@ use super::{bytes_to_string, GEOSoftConfig, GEOSoftFormat, GEOSoftLine};
 /// - `columns`: A Vector describing the columns of the data table (header name and description).
 /// - `datatable`: A data frame (Vec of Vecs) holding the actual data for the record (rows and columns).
 #[derive(Debug, Clone)]
-pub(super) struct GEOSoftParser {
-    format: GEOSoftFormat,
-    use_lines: HashSet<GEOSoftLine>,
+pub struct GEOSoftRecord {
     rcd_type: String, // Type of the GEO record (e.g., Series, Platform)
     rcd_name: String, // Name of the record
     metadata: IndexMap<String, Vec<Option<String>>>, // Attributes of the record (key-value pairs)
@@ -42,12 +37,9 @@ pub(super) struct GEOSoftParser {
 // |   !    | bang lines  |       entity attribute line        |
 // |   #    | hash lines  | data table header description line |
 // |  n/a   | data lines  |           data table row           |
-impl GEOSoftParser {
-    #[inline]
-    pub(super) fn new(config: &GEOSoftConfig) -> Self {
+impl GEOSoftRecord {
+    pub fn new() -> Self {
         Self {
-            format: config.format(),
-            use_lines: config.use_lines(),
             rcd_type: String::new(),
             rcd_name: String::new(),
             metadata: IndexMap::new(),
@@ -57,18 +49,7 @@ impl GEOSoftParser {
         }
     }
 
-    #[inline]
-    pub(super) fn clear(&mut self) {
-        self.rcd_type.clear();
-        self.rcd_name.clear();
-        self.metadata.clear();
-        self.columns.clear();
-        self.header.clear();
-        self.datatable.clear();
-    }
-
-    #[inline]
-    pub(super) fn empty(&self) -> bool {
+    pub fn empty(&self) -> bool {
         self.rcd_type.is_empty()
             && self.rcd_name.is_empty()
             && self.metadata.is_empty()
@@ -78,34 +59,7 @@ impl GEOSoftParser {
     }
 
     #[inline]
-    pub(super) fn take_record(&mut self) -> Option<GEOSoftRecord> {
-        if self.empty() {
-            return None;
-        }
-        // Move strings and collections out
-        let rcd_type = mem::take(&mut self.rcd_type);
-        let rcd_name = mem::take(&mut self.rcd_name);
-        let metadata = mem::take(&mut self.metadata);
-        let columns = mem::take(&mut self.columns);
-        let header = mem::take(&mut self.header);
-        let datatable_vecs = mem::take(&mut self.datatable);
-
-        let mut datatable = Vec::with_capacity(datatable_vecs.len());
-        for field in datatable_vecs.into_iter() {
-            datatable.push(OpaqueVector::parse_string(field));
-        }
-        Some(GEOSoftRecord {
-            rcd_type,
-            rcd_name,
-            metadata,
-            columns,
-            header,
-            datatable,
-        })
-    }
-
-    #[inline]
-    pub(super) fn parse_line(&mut self, line: &[u8]) {
+    pub fn parse_line(&mut self, line: &[u8], config: &GEOSoftConfig) {
         // ignore empty lines
         if line.is_empty() || line.iter().all(|byte| byte.is_ascii_whitespace()) {
             return;
@@ -113,20 +67,20 @@ impl GEOSoftParser {
         match unsafe { line.get_unchecked(0) } {
             b'^' => self.parse_caret(line),
             b'!' => {
-                if self.use_lines.contains(&GEOSoftLine::Metadata) {
-                    match self.format {
+                if config.use_lines().contains(&GEOSoftLine::Metadata) {
+                    match config.format() {
                         GEOSoftFormat::Standard => self.parse_regular_bang(line),
                         GEOSoftFormat::Matrix => self.parse_matrix_bang(line),
                     };
                 }
             }
             b'#' => {
-                if self.use_lines.contains(&GEOSoftLine::Datatable) {
+                if config.use_lines().contains(&GEOSoftLine::Datatable) {
                     self.parse_hash(line);
                 }
             }
             _ => {
-                if self.use_lines.contains(&GEOSoftLine::Datatable) {
+                if config.use_lines().contains(&GEOSoftLine::Datatable) {
                     self.parse_data(line);
                 }
             }
@@ -273,29 +227,6 @@ impl GEOSoftParser {
     }
 }
 
-#[inline]
-fn strip_quotes(bytes: &[u8]) -> &[u8] {
-    // strip double quotes or single quotes
-    bytes
-        .strip_prefix(b"\"")
-        .and_then(|f| f.strip_suffix(b"\""))
-        .unwrap_or_else(|| {
-            bytes
-                .strip_prefix(b"'")
-                .and_then(|f| f.strip_suffix(b"'"))
-                .unwrap_or_else(|| bytes)
-        })
-}
-
-pub struct GEOSoftRecord {
-    rcd_type: String, // Type of the GEO record (e.g., Series, Platform)
-    rcd_name: String, // Name of the record
-    metadata: IndexMap<String, Vec<Option<String>>>, // Attributes of the record (key-value pairs)
-    columns: Vec<(String, Option<String>)>, // Header names and descriptions
-    header: Vec<Option<String>>, // Header
-    datatable: Vec<OpaqueVector>, // Data table (a data frame)
-}
-
 impl TryFrom<GEOSoftRecord> for extendr_api::List {
     type Error = extendr_api::Error;
 
@@ -313,8 +244,13 @@ impl TryFrom<GEOSoftRecord> for extendr_api::List {
 
         // A character
         let header = extendr_api::Robj::from(value.header);
-        let datatable = value
-            .datatable
+
+        // A data frame
+        let mut datatable = Vec::with_capacity(value.datatable.len());
+        for field in value.datatable.into_iter() {
+            datatable.push(OpaqueVector::parse_string(field));
+        }
+        let datatable = datatable
             .into_iter()
             .map(|v| Robj::from(v))
             .collect::<List>();
@@ -337,5 +273,29 @@ impl TryFrom<GEOSoftRecord> for extendr_api::Robj {
 
     fn try_from(value: GEOSoftRecord) -> std::result::Result<Self, Self::Error> {
         extendr_api::List::try_from(value).map(|ok| ok.into())
+    }
+}
+
+#[inline]
+fn strip_quotes(bytes: &[u8]) -> &[u8] {
+    // strip double quotes or single quotes
+    bytes
+        .strip_prefix(b"\"")
+        .and_then(|f| f.strip_suffix(b"\""))
+        .unwrap_or_else(|| {
+            bytes
+                .strip_prefix(b"'")
+                .and_then(|f| f.strip_suffix(b"'"))
+                .unwrap_or_else(|| bytes)
+        })
+}
+
+// Try to produce a String from bytes cheaply for valid UTF-8, fall back to lossless conversion.
+// This avoids the cost of allocating via from_utf8_lossy when bytes are already valid UTF-8.
+#[inline]
+fn bytes_to_string(bytes: &[u8]) -> String {
+    match std::str::from_utf8(bytes) {
+        Ok(s) => s.to_owned(),
+        Err(_) => String::from_utf8_lossy(bytes).into_owned(),
     }
 }

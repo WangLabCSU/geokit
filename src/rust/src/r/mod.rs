@@ -250,8 +250,8 @@ fn geo_parse_soft_impl(
         reader = Box::new(file);
     }
 
-    let mut config = GEOSoftConfig::new();
-    config.set_format(format);
+    let mut builder = GEOSoftConfig::builder();
+    builder.format(format);
     if let Some(use_lines) = use_lines {
         let mut uses = HashSet::new();
         for line in *use_lines {
@@ -265,10 +265,11 @@ fn geo_parse_soft_impl(
             };
             uses.insert(line);
         }
-        config.set_lines(uses);
+        builder.use_lines(uses);
     }
-    let soft_reader = GEOSoftReader::<BufReader<Box<dyn Read>>>::new(&config, reader);
-    soft_reader.collect::<anyhow::Result<Vec<_>>>()
+    let records =
+        GEOSoftReader::<BufReader<Box<dyn Read>>>::new(builder.build(), reader).into_records();
+    records.collect::<anyhow::Result<Vec<_>>>()
 }
 
 #[extendr]
