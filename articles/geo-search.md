@@ -29,40 +29,40 @@ we can get these records by following code, the returned object is a
 diabetes_gse_records <- geo_search(
   "diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"
 )
-#> ■■■■■■■■■                        500/1765 [397/s] | ETA:  3s
-#> ■■■■■■■■■■■■■■■■■■               1000/1765 [370/s] | ETA:  2s
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1766/1765 [357/s] | ETA:  0s
+#> ■■■■■■■■■                        500/1766 [428/s] | ETA:  3s
+#> ■■■■■■■■■■■■■■■■■■               1000/1766 [366/s] | ETA:  2s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1767/1766 [368/s] | ETA:  0s
 #> → Parsing GEO records
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1766/1765 [357/s] | ETA:  0sGet records from NCBI for 1765 queries in 5.1s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1767/1766 [368/s] | ETA:  0sGet records from NCBI for 1766 queries in 4.9s
 head(diabetes_gse_records[1:5])
 #>                                                                                                                                Title
-#> 1    Functional gene regulatory networks and broad applications of the human expandable pancreatic progenitor-islet system [RNA-Seq]
-#> 2 Functional gene regulatory networks and broad applications of the human expandable pancreatic progenitor-islet system [snATAC-seq]
-#> 3  Functional gene regulatory networks and broad applications of the human expandable pancreatic progenitor-islet system [scRNA-Seq]
-#> 4              Metabolic surgery mitigates early kidney injury in obese youth with diabetes by suppressing mTORC1/JAK–STAT signaling
-#> 5                    A stem cell knockout village reveals lineage rewiring and a non-canonical islet cell fate in monogenic diabetes
-#> 6                                  Natural daylight during office hours improves glucose control and whole-body substrate metabolism
+#> 1              Cutaneous adipose tissue has a strong inflammatory signature in psoriasis patients, and it is partly IL-17 dependent.
+#> 2    Functional gene regulatory networks and broad applications of the human expandable pancreatic progenitor-islet system [RNA-Seq]
+#> 3 Functional gene regulatory networks and broad applications of the human expandable pancreatic progenitor-islet system [snATAC-seq]
+#> 4  Functional gene regulatory networks and broad applications of the human expandable pancreatic progenitor-islet system [scRNA-Seq]
+#> 5              Metabolic surgery mitigates early kidney injury in obese youth with diabetes by suppressing mTORC1/JAK–STAT signaling
+#> 6                    A stem cell knockout village reveals lineage rewiring and a non-canonical islet cell fate in monogenic diabetes
 #>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           Summary
-#> 1 Investigating the precise gene regulatory programs directing pancreatic differentiation provides insights into the mechanisms of pancreatic development and diabetes progression. Here, we performed integrated single-cell multi-omic analyses of the expandable pancreatic progenitor (ePP)-islet system. We defined the dynamic transcriptomic and chromatin landscapes of pancreatic differentiation, inferred the sophisticated gene regulatory networks (GRNs) that govern ePP self-renewal, endocrine specification and islet function, and identified the essential roles and interesting mechanisms of the NKX2.2-CLEC16A/endosomal pathway axis during cell-fate transitions. more...
+#> 1                                                                                                                                         Background: Psoriasis is an inflammatory skin disease associated with systemic inflammation and comorbidities such as diabetes and cardiovascular disease. Although the association between psoriasis and obesity has been studied extensively, the role of cutaneous adipose tissue (CAT) in pathogenesis of psoriasis remains unclear. Objectives This study aimed to provide a comprehensive evaluation of the CAT transcriptome in psoriasis patients and investigate the effects of IL-17 pathway blockade on adipose tissue inflammation. more...
 #> 2 Investigating the precise gene regulatory programs directing pancreatic differentiation provides insights into the mechanisms of pancreatic development and diabetes progression. Here, we performed integrated single-cell multi-omic analyses of the expandable pancreatic progenitor (ePP)-islet system. We defined the dynamic transcriptomic and chromatin landscapes of pancreatic differentiation, inferred the sophisticated gene regulatory networks (GRNs) that govern ePP self-renewal, endocrine specification and islet function, and identified the essential roles and interesting mechanisms of the NKX2.2-CLEC16A/endosomal pathway axis during cell-fate transitions. more...
 #> 3 Investigating the precise gene regulatory programs directing pancreatic differentiation provides insights into the mechanisms of pancreatic development and diabetes progression. Here, we performed integrated single-cell multi-omic analyses of the expandable pancreatic progenitor (ePP)-islet system. We defined the dynamic transcriptomic and chromatin landscapes of pancreatic differentiation, inferred the sophisticated gene regulatory networks (GRNs) that govern ePP self-renewal, endocrine specification and islet function, and identified the essential roles and interesting mechanisms of the NKX2.2-CLEC16A/endosomal pathway axis during cell-fate transitions. more...
-#> 4                              Background Youth with type 2 diabetes (T2D) and severe obesity face high risk of diabetic kidney disease, which metabolic bariatric surgery (MBS) can mitigate. This study explores structural and molecular changes in kidneys after vertical sleeve gastrectomy (VSG), a form of MBS. Methods Paired analyses, including metabolic profiling, kidney volume assessment, histological evaluation, and single-cell RNA sequencing (scRNAseq) on kidney biopsies from five youth with T2D and obesity pre- and 12 months post-VSG in the IMPROVE-T2D (Impact of Metabolic surgery on Pancreatic, Renal and cardiOVascular hEalth in youth with T2D) cohort. more...
-#> 5                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     This SuperSeries is composed of the SubSeries listed below.
-#> 6                                                                                                                            Chronic lack of daylight is increasingly considered as a risk factor for metabolic diseases, such as type 2 diabetes (T2D). In a randomized cross-over design (NCT05263232), 13 individuals with T2D were exposed to natural daylight facilitated through windows vs. constant artificial lighting during office hours for 4.5 consecutive days. Continuous glucose monitoring revealed that participants spent more time in the normal glucose range and whole-body substrate metabolism shifted towards a greater reliance on fat oxidation upon daylight. more...
+#> 4 Investigating the precise gene regulatory programs directing pancreatic differentiation provides insights into the mechanisms of pancreatic development and diabetes progression. Here, we performed integrated single-cell multi-omic analyses of the expandable pancreatic progenitor (ePP)-islet system. We defined the dynamic transcriptomic and chromatin landscapes of pancreatic differentiation, inferred the sophisticated gene regulatory networks (GRNs) that govern ePP self-renewal, endocrine specification and islet function, and identified the essential roles and interesting mechanisms of the NKX2.2-CLEC16A/endosomal pathway axis during cell-fate transitions. more...
+#> 5                              Background Youth with type 2 diabetes (T2D) and severe obesity face high risk of diabetic kidney disease, which metabolic bariatric surgery (MBS) can mitigate. This study explores structural and molecular changes in kidneys after vertical sleeve gastrectomy (VSG), a form of MBS. Methods Paired analyses, including metabolic profiling, kidney volume assessment, histological evaluation, and single-cell RNA sequencing (scRNAseq) on kidney biopsies from five youth with T2D and obesity pre- and 12 months post-VSG in the IMPROVE-T2D (Impact of Metabolic surgery on Pancreatic, Renal and cardiOVascular hEalth in youth with T2D) cohort. more...
+#> 6                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     This SuperSeries is composed of the SubSeries listed below.
 #>       Organism                                                             Type
 #> 1 Homo sapiens               Expression profiling by high throughput sequencing
-#> 2 Homo sapiens Genome binding/occupancy profiling by high throughput sequencing
-#> 3 Homo sapiens               Expression profiling by high throughput sequencing
+#> 2 Homo sapiens               Expression profiling by high throughput sequencing
+#> 3 Homo sapiens Genome binding/occupancy profiling by high throughput sequencing
 #> 4 Homo sapiens               Expression profiling by high throughput sequencing
 #> 5 Homo sapiens               Expression profiling by high throughput sequencing
 #> 6 Homo sapiens               Expression profiling by high throughput sequencing
 #>                                                                         FTP download
-#> 1               GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE284nnn/GSE284159/
-#> 2 GEO (CSV, H5, TBI, TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE284nnn/GSE284103/
-#> 3          GEO (MTX, TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE284nnn/GSE284101/
-#> 4          GEO (MTX, TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE315nnn/GSE315877/
-#> 5                     GEO ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE315nnn/GSE315753/
-#> 6               GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE309nnn/GSE309688/
+#> 1               GEO (CSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE287nnn/GSE287022/
+#> 2               GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE284nnn/GSE284159/
+#> 3 GEO (CSV, H5, TBI, TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE284nnn/GSE284103/
+#> 4          GEO (MTX, TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE284nnn/GSE284101/
+#> 5          GEO (MTX, TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE315nnn/GSE315877/
+#> 6                     GEO ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE315nnn/GSE315753/
 ```
 
 Once you have the search results, you can filter them based on specific

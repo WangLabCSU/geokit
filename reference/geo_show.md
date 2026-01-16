@@ -1,7 +1,8 @@
 # Open the GEO landing page in a browser
 
 Construct a GEO landing page and open it directly in the system's
-default web browser (or a user-specified browser).
+default web browser (or a user-specified browser). By default, this
+function uses the `brief` amount of `html` format data for all entities.
 
 ## Usage
 
