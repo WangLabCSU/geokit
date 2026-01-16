@@ -7,7 +7,7 @@ use super::vector::OpaqueVector;
 
 pub struct RGEOSoftRecord(Box<RGEOSoftRecordInner>);
 
-pub struct RGEOSoftRecordInner {
+struct RGEOSoftRecordInner {
     rcd_type: String, // Type of the GEO record (e.g., Series, Platform)
     rcd_name: String, // Name of the record
     metadata: IndexMap<String, Vec<Option<String>>>, // Attributes of the record (key-value pairs)
@@ -18,14 +18,13 @@ pub struct RGEOSoftRecordInner {
 
 impl From<GEOSoftRecord> for RGEOSoftRecord {
     fn from(value: GEOSoftRecord) -> Self {
-        let record = *value.0;
         Self(Box::new(RGEOSoftRecordInner {
-            rcd_type: record.rcd_type,
-            rcd_name: record.rcd_name,
-            metadata: record.metadata,
-            columns: record.columns,
-            header: record.header,
-            datatable: record
+            rcd_type: value.0.rcd_type,
+            rcd_name: value.0.rcd_name,
+            metadata: value.0.metadata,
+            columns: value.0.columns,
+            header: value.0.header,
+            datatable: value.0
                 .datatable
                 .into_iter()
                 .map(OpaqueVector::parse_string)
