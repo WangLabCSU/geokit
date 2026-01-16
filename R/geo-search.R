@@ -70,12 +70,12 @@ geo_search <- function(query, step = 500L, interval = NULL) {
         "\\n\\n"
     )[[1L]]
     out <- parse_key_value_elements(preprocess_records(records))
-    tail_col <- c(
-        intersect(
-            c("Contains", "Datasets", "Series", "Platforms"),
-            names(out)
+    tail_col <- intersect(
+        c(
+            "Contains", "Datasets", "Series", "Platforms",
+            grep("Accession$", names(out), value = TRUE)
         ),
-        grep("Accession$", names(out), value = TRUE)
+        names(out)
     )
     out[, c(setdiff(names(out), tail_col), tail_col), drop = FALSE]
 }
