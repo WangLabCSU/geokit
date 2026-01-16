@@ -26,37 +26,53 @@ pub struct GEOSoftReader<R> {
 
 // Methods for all instances of GEOSoftReader<T>
 impl<T> GEOSoftReader<T> {
-    /// Create a new SOFT reader given a builder and a source of underlying
-    /// bytes.
+    /// Creates a new `GEOSoftReader` with a specified configuration and an underlying reader.
+    ///
+    /// This method initializes the reader with a default buffer capacity of 4MB.
+    ///
+    /// # Arguments
+    /// - `config`: The configuration used for reading and parsing the SOFT data.
+    /// - `reader`: The source of bytes for reading and parsing the SOFT data.
+    ///
+    /// # Returns
+    /// - A `GEOSoftReader` with the specified configuration and reader.
     pub fn new<R: Read>(config: GEOSoftConfig, reader: R) -> GEOSoftReader<BufReader<R>> {
         let reader = BufReader::with_capacity(4 * (1 << 20), reader);
         Self::from_bufreader_impl(config, reader)
     }
 
-    /// Creates a new `GEOSoftReader` given a reader and a default buffer capacity.
+    /// Creates a new `GEOSoftReader` with a default configuration and the provided reader.
+    ///
+    /// This method uses the default configuration (`GEOSoftConfig::new()`).
     ///
     /// # Arguments
     /// - `reader`: The reader that provides the input data for parsing.
     ///
     /// # Returns
-    /// - A `GEOSoftReader` with the provided reader.
+    /// - A `GEOSoftReader` initialized with the provided reader and the default configuration.
     pub fn from_reader<R: Read>(reader: R) -> GEOSoftReader<BufReader<R>> {
         Self::new(GEOSoftConfig::new(), reader)
     }
 
-    /// Creates a new `GEOSoftReader` with a default configuration for reading a file.
+    /// Creates a new `GEOSoftReader` that reads from a file at the specified path.
     ///
     /// # Arguments
     /// - `path`: The file path of the SOFT file to be parsed.
     ///
     /// # Returns
     /// - A `GEOSoftReader` that reads from the file at the given path.
+    /// - Returns an `io::Result` to handle any potential I/O errors during file opening.
     pub fn from_path<P: AsRef<Path>>(path: P) -> io::Result<GEOSoftReader<BufReader<File>>> {
         Ok(Self::from_reader(File::open(path)?))
     }
 
-    /// Create a new SOFT reader given a builder and a source of underlying
-    /// bytes.
+    /// Creates a new `GEOSoftReader` with a specified underlying `BufRead` reader.
+    ///
+    /// # Arguments
+    /// - `reader`: The `BufRead` reader used for parsing the SOFT data.
+    ///
+    /// # Returns
+    /// - A `GEOSoftReader` with the specified `BufRead` reader.
     pub fn from_bufreader<R: BufRead>(reader: R) -> GEOSoftReader<R> {
         Self::from_bufreader_impl(GEOSoftConfig::new(), reader)
     }
@@ -64,11 +80,11 @@ impl<T> GEOSoftReader<T> {
     /// Creates a new `GEOSoftReader` with a specific buffer capacity.
     ///
     /// # Arguments
-    /// - `capacity`: The size of the buffer for the underlying reader.
+    /// - `capacity`: The size of the buffer for the underlying reader (in bytes).
     /// - `reader`: The reader that provides the input data for parsing.
     ///
     /// # Returns
-    /// - A `GEOSoftReader` with the given capacity and reader.
+    /// - A `GEOSoftReader` with the specified buffer capacity and reader.
     pub fn with_capacity<R: Read>(capacity: usize, reader: R) -> GEOSoftReader<BufReader<R>> {
         let reader = BufReader::with_capacity(capacity, reader);
         Self::from_bufreader_impl(GEOSoftConfig::new(), reader)
