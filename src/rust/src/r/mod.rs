@@ -23,7 +23,7 @@ use flate2::bufread::GzDecoder as GzipDecoder;
 use isal::read::GzipDecoder;
 
 use super::geo::{GEOEntity, GEOType};
-use soft::{GEOSoftConfig, GEOSoftLine, GEOSoftReader, GEOSoftRecord};
+use soft::{GEOSoftConfig, GEOSoftLine, GEOSoftReader, RGEOSoftRecord};
 use vector::OpaqueVector;
 
 mod error;
@@ -192,7 +192,7 @@ fn geo_parse_soft(
                     pb.inc(1);
                     out
                 })
-                .collect::<Result<Vec<Vec<GEOSoftRecord>>, _>>()
+                .collect::<Result<Vec<Vec<RGEOSoftRecord>>, _>>()
         })
         .map_err(|err| format!("{:?}", err))?;
 
@@ -224,7 +224,7 @@ fn geo_parse_soft_impl(
     path: &str,
     format: &str,
     use_lines: &Option<&[&str]>,
-) -> anyhow::Result<Vec<GEOSoftRecord>> {
+) -> anyhow::Result<Vec<RGEOSoftRecord>> {
     let path: &Path = path.as_ref();
     let file =
         File::open(path).with_context(|| format!("Failed to open file: {}", path.display()))?;
@@ -269,7 +269,9 @@ fn geo_parse_soft_impl(
     }
     let records =
         GEOSoftReader::<BufReader<Box<dyn Read>>>::new(builder.build(), reader).into_records();
-    records.collect::<anyhow::Result<Vec<_>>>()
+    records
+        .map(|record_res| record_res.map(|rcd| RGEOSoftRecord::from(rcd)))
+        .collect::<anyhow::Result<Vec<_>>>()
 }
 
 #[extendr]

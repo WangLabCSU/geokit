@@ -9,7 +9,7 @@ mod config;
 mod record;
 
 pub use config::{GEOSoftConfig, GEOSoftFormat, GEOSoftLine};
-pub use record::GEOSoftRecord;
+pub use record::{GEOSoftRecord, RGEOSoftRecord};
 
 /// A reader for parsing SOFT (Simple Omnibus Format in Text) files.
 #[derive(Debug, Clone)]
