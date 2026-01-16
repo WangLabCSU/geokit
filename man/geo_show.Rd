@@ -55,7 +55,8 @@ access.}
 }
 \description{
 Construct a GEO landing page and open it directly in the system's default web
-browser (or a user-specified browser).
+browser (or a user-specified browser). By default, this function uses the
+\code{brief} amount of \code{html} format data for all entities.
 }
 \details{
 See \code{\link[utils:browseURL]{utils::browseURL()}}

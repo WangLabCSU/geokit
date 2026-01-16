@@ -1,7 +1,7 @@
 #' Search GEO database
 #'
 #' Search the [GDS](https://www.ncbi.nlm.nih.gov/gds) database and return
-#' search results as a [data.table][data.table::data.table].
+#' search results as a data frame.
 #'
 #' The NCBI allows higher request limits (10 per second) when using an API key.
 #' You can set this key for the current R session with

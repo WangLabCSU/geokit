@@ -95,7 +95,7 @@ download_soft <- function(accession, famount, scope, ftp_over_https,
     )
     downloaded <- download_inform(
         .subset2(urls_and_fnames, "urls"),
-        file.path(odir, .subset2(urls_and_fnames, "fnames")),
+        file.path(odir, .subset2(urls_and_fnames, "fnames"), fsep = "/"),
         handle_opts = handle_opts
     )
     .subset2(downloaded, "paths")

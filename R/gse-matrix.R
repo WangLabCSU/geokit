@@ -55,19 +55,16 @@ geo_matrix_impl <- function(accession, pdata_from_soft = TRUE,
     )
     paths_list <- rlang::inject(download_url_directory(
         accession,
-        format = "matrix",
-        !!!collected
+        format = "matrix", !!!collected
     ))
 
     # we handle `pdata_from_soft` here, since a single series soft can be used
     # by multiple series matrix files
     if (pdata_from_soft) {
-        gse_soft <- geo_soft_impl(
-            accession, "soft",
-            ftp_over_https = ftp_over_https,
-            handle_opts = handle_opts,
-            odir = odir
-        )
+        gse_soft <- rlang::inject(geo_soft_impl(
+            accession,
+            famount = "soft", !!!collected
+        ))
         cli::cli_alert_success(sprintf(
             "Parsing {.val {%s}} Series {.field soft} %sfile{?s} successfully!",
             length(gse_soft), "{cli::qty(length(gse_soft))}"
@@ -179,7 +176,6 @@ parse_gse_matrix <- function(path, gse_soft = NULL, add_gpl = NULL,
         }
     }
 
-    # adding featureData
     if (isTRUE(add_gpl)) {
         annot_file <- download_annot(
             annotation,
@@ -239,7 +235,7 @@ download_annot <- function(accession, ftp_over_https = TRUE,
     )
     downloaded <- download_inform(
         .subset2(url_and_fname, "urls"),
-        file.path(odir, .subset2(url_and_fname, "fnames")),
+        file.path(odir, .subset2(url_and_fname, "fnames"), fsep = "/"),
         handle_opts = handle_opts,
         error = FALSE
     )
@@ -255,7 +251,7 @@ download_annot <- function(accession, ftp_over_https = TRUE,
         )
         downloaded <- download_inform(
             .subset2(url_and_fname, "urls"),
-            file.path(odir, .subset2(url_and_fname, "fnames")),
+            file.path(odir, .subset2(url_and_fname, "fnames"), fsep = "/"),
             handle_opts = handle_opts
         )
     }

@@ -93,8 +93,8 @@ parse_sample_data.list <- function(x, ...) {
         metadata,
         use.names = TRUE, fill = TRUE, idcol = FALSE
     )
-    data.table::setnames(metadata, function(x) sub("^Sample_", "", x))
     data.table::setDF(metadata)
+    metadata <- rlang::set_names(metadata, function(x) sub("^Sample_", "", x))
     parse_sample_data.data.frame(metadata, ...)
 }
 

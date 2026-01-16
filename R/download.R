@@ -22,7 +22,7 @@ download_url_directory <- function(accession, format, pattern = NULL,
     ofile_list <- lapply(url_list, function(urls) {
         # urls may be NULL or character(0L)
         if (length(urls) == 0L) return(NULL) # styler: off
-        file.path(odir, basename(urls))
+        file.path(odir, basename(urls), fsep = "/")
     })
     download_inform(
         unlist(url_list, recursive = FALSE, use.names = FALSE),
@@ -69,7 +69,7 @@ list_directory_url <- function(accession, format, ftp_over_https,
 
     # build urls for all found files ------------------------
     if (length(fnames)) {
-        urls <- file.path(url, fnames)
+        urls <- file.path(url, fnames, fsep = "/")
     } else {
         urls <- NULL
         cli::cli_alert_warning(sprintf(

@@ -26,7 +26,7 @@ A data frame contains the search results
 }
 \description{
 Search the \href{https://www.ncbi.nlm.nih.gov/gds}{GDS} database and return
-search results as a \link[data.table:data.table]{data.table}.
+search results as a data frame.
 }
 \details{
 The NCBI allows higher request limits (10 per second) when using an API key.

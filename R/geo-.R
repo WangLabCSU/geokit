@@ -122,7 +122,8 @@ geo_url <- function(accession, format = NULL, amount = NULL, scope = NULL,
 #' Open the GEO landing page in a browser
 #'
 #' Construct a GEO landing page and open it directly in the system's default web
-#' browser (or a user-specified browser).
+#' browser (or a user-specified browser). By default, this function uses the
+#' `brief` amount of `html` format data for all entities.
 #'
 #' @param famount A character specifying either:
 #'   - the file `format` on the GEO FTP server, or
