@@ -48,9 +48,6 @@ impl TryFrom<RGEOSoftRecord> for List {
         let mut columns = Robj::from(columns_values);
         columns.set_names(columns_names)?;
 
-        // A character
-        let header = Robj::from(value.0.header);
-
         // A data frame
         let datatable = value
             .0
@@ -61,11 +58,11 @@ impl TryFrom<RGEOSoftRecord> for List {
 
         // Build the final list
         let record = list![
-            rcd_type = value.0.rcd_type,
-            rcd_name = value.0.rcd_name,
+            rcd_type = Robj::from(value.0.rcd_type),
+            rcd_name = Robj::from(value.0.rcd_name),
             metadata = metadata,
             columns = columns,
-            header = header,
+            header = Robj::from(value.0.header),
             datatable = datatable
         ];
         Ok(record)
