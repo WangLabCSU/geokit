@@ -92,8 +92,8 @@ impl<T> GEOSoftReader<T> {
 
     fn from_bufreader_impl<R: BufRead>(config: GEOSoftConfig, reader: R) -> GEOSoftReader<R> {
         GEOSoftReader {
-            reader: reader,
-            config: config,
+            reader,
+            config,
             leftover: Vec::new(),
             cur_pos: 1,
         }
@@ -245,7 +245,7 @@ impl<R: io::BufRead> Iterator for GEOSoftRecordsIntoIter<R> {
             Err(err) => Some(Err(err)),
             Ok(0) => None,
             Ok(_) => {
-                let record = std::mem::replace(&mut self.record, GEOSoftRecord::new());
+                let record = std::mem::take(&mut self.record);
                 Some(Ok(record))
             }
         }

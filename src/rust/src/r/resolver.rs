@@ -140,7 +140,7 @@ impl GEOResolverBuilder {
         let format = self
             .format
             .as_ref()
-            .map_or_else(|| GEOFormat::default(), |v| v.clone());
+            .map_or_else(GEOFormat::default, |v| v.clone());
         match format {
             GEOFormat::ADB(format) => {
                 let mut builder = GEOADBResolverBuilder::new();
@@ -159,8 +159,8 @@ impl GEOResolverBuilder {
                 builder.format(format);
                 builder
                     .build()
-                    .map(|solver| GEOResolver::ADB(solver))
-                    .map_err(|e| RGEOParseError::GEOError(e))
+                    .map(GEOResolver::ADB)
+                    .map_err(RGEOParseError::GEOError)
             }
             GEOFormat::FTP(format) => {
                 let mut builder = GEOFTPResolverBuilder::new();
@@ -171,8 +171,8 @@ impl GEOResolverBuilder {
                 builder.format(format);
                 builder
                     .build()
-                    .map(|solver| GEOResolver::FTP(solver))
-                    .map_err(|e| RGEOParseError::GEOError(e))
+                    .map(GEOResolver::FTP)
+                    .map_err(RGEOParseError::GEOError)
             }
         }
     }
@@ -196,7 +196,7 @@ pub(crate) fn resolvers_from_format<F: Fn(&GEOType) -> &str>(
 
     // Optional arguments: may be NULL -> None, or character/logical vectors, recycled if necessary
     let format = robj_to_option_vec_str(format, entity_vec.len())
-        .with_context(|| format!("Invalid 'format'"))?
+        .with_context(|| "Invalid 'format'".to_string())?
         .unwrap_or_else(|| {
             entity_vec
                 .iter()
@@ -205,15 +205,15 @@ pub(crate) fn resolvers_from_format<F: Fn(&GEOType) -> &str>(
         });
     let format = build_format(&format)?;
     let amount = robj_to_option_vec_str(amount, entity_vec.len())
-        .with_context(|| format!("Invalid 'amount'"))?
+        .with_context(|| "Invalid 'amount'".to_string())?
         .map(|vec| build_amount(&vec))
         .transpose()?;
     let scope = robj_to_option_vec_str(scope, entity_vec.len())
-        .with_context(|| format!("Invalid 'scope'"))?
+        .with_context(|| "Invalid 'scope'".to_string())?
         .map(|vec| build_scope(&vec))
         .transpose()?;
-    let ftp_over_https = robj_to_option_vec_bool(&ftp_over_https, entity_vec.len())
-        .with_context(|| format!("Invalid 'ftp_over_https'"))?;
+    let ftp_over_https = robj_to_option_vec_bool(ftp_over_https, entity_vec.len())
+        .with_context(|| "Invalid 'ftp_over_https'".to_string())?;
     build_resolvers(entity_vec, format, amount, scope, ftp_over_https)
 }
 
@@ -231,7 +231,7 @@ pub(crate) fn resolvers_from_famount<F: Fn(&GEOType) -> &str>(
 
     // Optional arguments: may be NULL -> None, or character/logical vectors, recycled if necessary
     let famount = robj_to_option_vec_str(famount, entity_vec.len())
-        .with_context(|| format!("Invalid 'famount'"))?
+        .with_context(|| "Invalid 'famount'".to_string())?
         .unwrap_or_else(|| {
             entity_vec
                 .iter()
@@ -260,11 +260,11 @@ pub(crate) fn resolvers_from_famount<F: Fn(&GEOType) -> &str>(
     let amount = build_amount(&amount)?;
 
     let scope = robj_to_option_vec_str(scope, entity_vec.len())
-        .with_context(|| format!("Invalid 'scope'"))?
+        .with_context(|| "Invalid 'scope'".to_string())?
         .map(|vec| build_scope(&vec))
         .transpose()?;
-    let ftp_over_https = robj_to_option_vec_bool(&ftp_over_https, entity_vec.len())
-        .with_context(|| format!("Invalid 'ftp_over_https'"))?;
+    let ftp_over_https = robj_to_option_vec_bool(ftp_over_https, entity_vec.len())
+        .with_context(|| "Invalid 'ftp_over_https'".to_string())?;
 
     build_resolvers(entity_vec, format, Some(amount), scope, ftp_over_https)
 }
@@ -309,16 +309,16 @@ fn build_entity(accession: &Robj) -> Result<Vec<GEOEntity>> {
     accession
         .as_str_vector()
         .ok_or_else(|| anyhow!("Expected a character vector"))
-        .with_context(|| format!("Invalid 'accession'"))?
+        .with_context(|| "Invalid 'accession'".to_string())?
         .into_iter()
-        .map(|acc| GEOEntity::try_from(acc))
+        .map(GEOEntity::try_from)
         .collect::<Result<Vec<_>, _>>()
-        .with_context(|| format!("Invalid 'accession'"))
+        .with_context(|| "Invalid 'accession'".to_string())
 }
 
 fn build_format(format: &[&str]) -> Result<Vec<GEOFormat>> {
     format
-        .into_iter()
+        .iter()
         .map(|&s| {
             s.try_into()
                 .with_context(|| format!("Invalid 'format': {}", s))
@@ -328,7 +328,7 @@ fn build_format(format: &[&str]) -> Result<Vec<GEOFormat>> {
 
 fn build_amount(amount: &[&str]) -> Result<Vec<RGEOAmount>> {
     amount
-        .into_iter()
+        .iter()
         .map(|&s| {
             s.try_into()
                 .with_context(|| format!("Invalid 'amount': {}", s))
@@ -338,7 +338,7 @@ fn build_amount(amount: &[&str]) -> Result<Vec<RGEOAmount>> {
 
 fn build_scope(scope: &[&str]) -> Result<Vec<RGEOScope>> {
     scope
-        .into_iter()
+        .iter()
         .map(|&s| {
             s.try_into()
                 .with_context(|| format!("Invalid 'scope': {}", s))

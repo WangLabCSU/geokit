@@ -6,6 +6,12 @@ pub struct GEOSoftConfig {
     use_lines: HashSet<GEOSoftLine>,
 }
 
+impl Default for GEOSoftConfig {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl GEOSoftConfig {
     pub fn new() -> Self {
         let builder = GEOSoftConfigBuilder::new();
@@ -28,7 +34,7 @@ impl GEOSoftConfig {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct GEOSoftConfigBuilder {
     format: Option<GEOSoftFormat>,
     use_lines: Option<HashSet<GEOSoftLine>>,

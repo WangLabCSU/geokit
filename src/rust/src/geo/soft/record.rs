@@ -14,6 +14,12 @@ use super::{GEOSoftConfig, GEOSoftFormat, GEOSoftLine};
 #[derive(Debug, Clone)]
 pub struct GEOSoftRecord(pub(crate) Box<GEOSoftRecordInner>);
 
+impl Default for GEOSoftRecord {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 #[derive(Debug, Clone)]
 pub(crate) struct GEOSoftRecordInner {
     pub(crate) rcd_type: String, // Type of the GEO record (e.g., Series, Platform)
@@ -229,7 +235,7 @@ impl GEOSoftRecord {
         // ensure `datatable` has the same length of `fields`
         if let Some(num_added) = fields.len().checked_sub(self.0.datatable.len()) {
             if num_added > 0 {
-                let num_fill: usize = if self.0.datatable.len() > 0 {
+                let num_fill: usize = if !self.0.datatable.is_empty() {
                     unsafe { self.0.datatable.get_unchecked(0) }.len()
                 } else {
                     0
@@ -263,7 +269,7 @@ fn strip_quotes(bytes: &[u8]) -> &[u8] {
             bytes
                 .strip_prefix(b"'")
                 .and_then(|f| f.strip_suffix(b"'"))
-                .unwrap_or_else(|| bytes)
+                .unwrap_or(bytes)
         })
 }
 

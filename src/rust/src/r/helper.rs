@@ -4,7 +4,7 @@ use extendr_api::{Rinternals, Robj};
 /// Convert an R object to a string vector of length `len`.
 /// - If the R object has length 1, its value is recycled.
 /// - Otherwise, its length must match `len`.
-pub(in crate::r) fn robj_to_vec_str<'a>(value: &'a Robj, len: usize) -> Result<Vec<&'a str>> {
+pub(in crate::r) fn robj_to_vec_str(value: &Robj, len: usize) -> Result<Vec<&str>> {
     let value = value
         .as_str_vector()
         .ok_or_else(|| anyhow!("Expected a character vector"))?;
@@ -22,14 +22,14 @@ pub(in crate::r) fn robj_to_vec_str<'a>(value: &'a Robj, len: usize) -> Result<V
 
 /// Convert an R object to an optional string vector (with recycling).
 /// Returns `None` if the R object is NULL.
-pub(in crate::r) fn robj_to_option_vec_str<'a>(
-    value: &'a Robj,
+pub(in crate::r) fn robj_to_option_vec_str(
+    value: &Robj,
     len: usize,
-) -> Result<Option<Vec<&'a str>>> {
+) -> Result<Option<Vec<&str>>> {
     if value.is_null() {
         return Ok(None);
     }
-    robj_to_vec_str(value, len).map(|o| Some(o))
+    robj_to_vec_str(value, len).map(Some)
 }
 
 /// Convert an R object to an optional boolean vector (with recycling).

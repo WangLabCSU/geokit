@@ -57,7 +57,7 @@ impl TryFrom<RGEOSoftRecord> for extendr_api::List {
             .0
             .datatable
             .into_iter()
-            .map(|v| Robj::from(v))
+            .map(Robj::from)
             .collect::<List>();
 
         // Build the final list

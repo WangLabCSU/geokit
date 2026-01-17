@@ -103,6 +103,7 @@ impl GEOADBResolver {
     }
 }
 
+#[derive(Default)]
 pub struct GEOADBResolverBuilder {
     entity: Option<GEOEntity>,
     format: Option<GEOADBFormat>,
@@ -110,16 +111,6 @@ pub struct GEOADBResolverBuilder {
     amount: Option<GEOAmount>,
 }
 
-impl Default for GEOADBResolverBuilder {
-    fn default() -> Self {
-        Self {
-            entity: None,
-            format: None,
-            scope: None,
-            amount: None,
-        }
-    }
-}
 
 // Rust insists that all fields in a struct must be filled in when a new
 // instance of that struct is created. This keeps the code safe by ensuring that
@@ -174,10 +165,8 @@ impl GEOADBResolverBuilder {
             .as_ref()
             .map_or_else(|| Err(GEOParseError::RequireEntity), |v| Ok(v.clone()))?;
         let format = self
-            .format
-            .as_ref()
-            .map(|f| f.clone())
-            .unwrap_or_else(|| GEOADBFormat::default());
+            .format.clone()
+            .unwrap_or_default();
 
         // check format is valid
         if let (GEOType::Datasets, GEOADBFormat::Text | GEOADBFormat::Xml) =

@@ -115,7 +115,7 @@ impl From<Vec<Option<i32>>> for OpaqueVector {
 
 impl From<Vec<i32>> for OpaqueVector {
     fn from(value: Vec<i32>) -> Self {
-        Self::I32(value.into_iter().map(|v| Some(v)).collect())
+        Self::I32(value.into_iter().map(Some).collect())
     }
 }
 
@@ -127,7 +127,7 @@ impl From<Vec<Option<f64>>> for OpaqueVector {
 
 impl From<Vec<f64>> for OpaqueVector {
     fn from(value: Vec<f64>) -> Self {
-        Self::F64(value.into_iter().map(|v| Some(v)).collect())
+        Self::F64(value.into_iter().map(Some).collect())
     }
 }
 
@@ -139,7 +139,7 @@ impl From<Vec<Option<String>>> for OpaqueVector {
 
 impl From<Vec<String>> for OpaqueVector {
     fn from(value: Vec<String>) -> Self {
-        Self::String(value.into_iter().map(|v| Some(v)).collect())
+        Self::String(value.into_iter().map(Some).collect())
     }
 }
 
@@ -185,7 +185,7 @@ impl From<Vec<Option<bool>>> for OpaqueVector {
 
 impl From<Vec<bool>> for OpaqueVector {
     fn from(value: Vec<bool>) -> Self {
-        Self::Bool(value.into_iter().map(|v| Some(v)).collect())
+        Self::Bool(value.into_iter().map(Some).collect())
     }
 }
 
