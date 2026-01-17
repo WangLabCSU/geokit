@@ -1,4 +1,4 @@
-use extendr_api::{Attributes, List, Robj};
+use extendr_api::{list, Attributes, List, Robj};
 use indexmap::IndexMap;
 
 use crate::geo::GEOSoftRecord;
@@ -24,7 +24,8 @@ impl From<GEOSoftRecord> for RGEOSoftRecord {
             metadata: value.0.metadata,
             columns: value.0.columns,
             header: value.0.header,
-            datatable: value.0
+            datatable: value
+                .0
                 .datatable
                 .into_iter()
                 .map(OpaqueVector::parse_string)
@@ -33,24 +34,24 @@ impl From<GEOSoftRecord> for RGEOSoftRecord {
     }
 }
 
-impl TryFrom<RGEOSoftRecord> for extendr_api::List {
+impl TryFrom<RGEOSoftRecord> for List {
     type Error = extendr_api::Error;
 
     fn try_from(value: RGEOSoftRecord) -> std::result::Result<Self, Self::Error> {
         // A named list
         let (metadata_keys, metadata_values): (Vec<_>, Vec<_>) =
             value.0.metadata.into_iter().unzip();
-        let mut metadata = extendr_api::List::from_values(metadata_values);
+        let mut metadata = List::from_values(metadata_values);
         metadata.set_names(metadata_keys)?;
 
         // A named character
         let (columns_names, columns_values): (Vec<String>, Vec<Option<String>>) =
             value.0.columns.into_iter().unzip();
-        let mut columns = extendr_api::Robj::from(columns_values);
+        let mut columns = Robj::from(columns_values);
         columns.set_names(columns_names)?;
 
         // A character
-        let header = extendr_api::Robj::from(value.0.header);
+        let header = Robj::from(value.0.header);
 
         // A data frame
         let datatable = value
@@ -61,7 +62,7 @@ impl TryFrom<RGEOSoftRecord> for extendr_api::List {
             .collect::<List>();
 
         // Build the final list
-        let record = extendr_api::list![
+        let record = list![
             rcd_type = value.0.rcd_type,
             rcd_name = value.0.rcd_name,
             metadata = metadata,
@@ -73,10 +74,10 @@ impl TryFrom<RGEOSoftRecord> for extendr_api::List {
     }
 }
 
-impl TryFrom<RGEOSoftRecord> for extendr_api::Robj {
+impl TryFrom<RGEOSoftRecord> for Robj {
     type Error = extendr_api::Error;
 
     fn try_from(value: RGEOSoftRecord) -> std::result::Result<Self, Self::Error> {
-        extendr_api::List::try_from(value).map(|ok| ok.into())
+        List::try_from(value).map(|ok| ok.into())
     }
 }
