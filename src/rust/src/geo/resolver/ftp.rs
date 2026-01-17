@@ -224,6 +224,7 @@ impl GEOFTPResolverBuilder {
 }
 
 #[derive(Debug, Clone)]
+#[allow(clippy::upper_case_acronyms)]
 pub enum GEOFTPFormat {
     SOFT,
     SOFTFull,

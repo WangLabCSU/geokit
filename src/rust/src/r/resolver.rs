@@ -20,6 +20,7 @@ use super::helper::*;
 // Currently, two resolver backends are supported:
 // - [`FTP`](GEOResolver::FTP): For direct FTP/HTTPS file retrieval from GEO FTP servers.
 // - [`ADB`](GEOResolver::ADB): For file retrieval from Accession Display Bar of GEO database.
+#[allow(clippy::upper_case_acronyms)]
 pub(crate) enum GEOResolver {
     /// Resolver for Accession Display Bar (ADB).
     ADB(GEOADBResolver),
@@ -353,6 +354,7 @@ fn build_scope(scope: &[&str]) -> Result<Vec<RGEOScope>> {
 // form, or in machine readable, "text" format, which is the same with "soft"
 // format. SOFT stands for "simple omnibus format in text".
 #[derive(Debug, Clone)]
+#[allow(clippy::upper_case_acronyms)]
 pub(crate) enum GEOFormat {
     // Accession Display Bar
     ADB(GEOADBFormat),

@@ -281,6 +281,7 @@ impl fmt::Display for GEOAmount {
 // ("Family") of the accessions related to the accession number typed into the
 // text box.
 #[derive(Debug, Clone, Default)]
+#[allow(clippy::upper_case_acronyms)]
 pub enum GEOScope {
     #[default]
     Itself,

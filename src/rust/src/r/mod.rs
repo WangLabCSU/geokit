@@ -237,19 +237,18 @@ fn geo_parse_soft_impl(
                 .with_context(|| "Invalid 'format'".to_string());
         }
     };
-    let reader: Box<dyn Read>;
-    if path
+    let reader: Box<dyn Read> = if path
         .extension()
         .and_then(|e| e.to_str())
         .is_some_and(|s| s.eq_ignore_ascii_case("gz"))
     {
-        reader = Box::new(GzipDecoder::new(BufReader::with_capacity(
+        Box::new(GzipDecoder::new(BufReader::with_capacity(
             4 * (1 << 20),
             file,
-        )));
+        )))
     } else {
-        reader = Box::new(file);
-    }
+        Box::new(file)
+    };
 
     let mut builder = GEOSoftConfig::builder();
     builder.format(format);
@@ -333,9 +332,8 @@ fn parse_key_value_elements(elements: List, separator: u8) -> Result<extendr_api
     let mut out: IndexMap<&str, Vec<Option<Cow<str>>>> = IndexMap::new();
     let mut keys = HashSet::new();
     let mut remaining;
-    let mut num_added = 0;
     let total = element_vec.capacity();
-    for elements in element_vec {
+    for (num_added, elements) in element_vec.into_iter().enumerate() {
         if let Some(num_elements) = elements.len().checked_sub(out.len()) {
             out.reserve(num_elements);
         }
@@ -375,7 +373,6 @@ fn parse_key_value_elements(elements: List, separator: u8) -> Result<extendr_api
                 }
             }
         }
-        num_added += 1;
 
         // For entry not added in this elements, we add None
         let remaining_keys = remaining.iter();
