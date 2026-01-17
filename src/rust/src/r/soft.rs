@@ -39,10 +39,8 @@ impl TryFrom<RGEOSoftRecord> for List {
 
     fn try_from(value: RGEOSoftRecord) -> std::result::Result<Self, Self::Error> {
         // A named list
-        let (metadata_keys, metadata_values): (Vec<_>, Vec<_>) =
-            value.0.metadata.into_iter().unzip();
-        let mut metadata = List::from_values(metadata_values);
-        metadata.set_names(metadata_keys)?;
+        let metadata =
+            List::from_names_and_values(value.0.metadata.keys(), value.0.metadata.values())?;
 
         // A named character
         let (columns_names, columns_values): (Vec<String>, Vec<Option<String>>) =
