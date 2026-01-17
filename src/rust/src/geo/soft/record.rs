@@ -81,6 +81,11 @@ impl GEOSoftRecord {
     }
 
     #[inline]
+    pub fn datatable(&self) -> &Vec<Vec<Option<String>>> {
+        &self.0.datatable
+    }
+
+    #[inline]
     pub fn empty(&self) -> bool {
         self.0.rcd_type.is_empty()
             && self.0.rcd_name.is_empty()
