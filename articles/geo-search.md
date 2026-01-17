@@ -29,40 +29,39 @@ we can get these records by following code, the returned object is a
 diabetes_gse_records <- geo_search(
   "diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"
 )
-#> ■■■■■■■■■                        500/1766 [408/s] | ETA:  3s
-#> ■■■■■■■■■■■■■■■■■■               1000/1766 [366/s] | ETA:  2s
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1767/1766 [371/s] | ETA:  0s
+#> ■■■■■■■■■                        500/1767 [395/s] | ETA:  3s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1768/1767 [406/s] | ETA:  0s
 #> → Parsing GEO records
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1767/1766 [371/s] | ETA:  0sGet records from NCBI for 1766 queries in 4.9s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1768/1767 [406/s] | ETA:  0sGet records from NCBI for 1767 queries in 4.5s
 head(diabetes_gse_records[1:5])
-#>                                                                                                                                Title
-#> 1              Cutaneous adipose tissue has a strong inflammatory signature in psoriasis patients, and it is partly IL-17 dependent.
-#> 2    Functional gene regulatory networks and broad applications of the human expandable pancreatic progenitor-islet system [RNA-Seq]
-#> 3 Functional gene regulatory networks and broad applications of the human expandable pancreatic progenitor-islet system [snATAC-seq]
-#> 4  Functional gene regulatory networks and broad applications of the human expandable pancreatic progenitor-islet system [scRNA-Seq]
-#> 5              Metabolic surgery mitigates early kidney injury in obese youth with diabetes by suppressing mTORC1/JAK–STAT signaling
-#> 6                    A stem cell knockout village reveals lineage rewiring and a non-canonical islet cell fate in monogenic diabetes
+#>                                                                                                                                                                                        Title
+#> 1 Multi-omics profiling reveals microbiota, metabolite, lipid, and immunological heterogeneity underlying distinct pathophysiological mechanisms of age-related endotypes in type 1 diabetes
+#> 2                                                                      Cutaneous adipose tissue has a strong inflammatory signature in psoriasis patients, and it is partly IL-17 dependent.
+#> 3                                                            Functional gene regulatory networks and broad applications of the human expandable pancreatic progenitor-islet system [RNA-Seq]
+#> 4                                                         Functional gene regulatory networks and broad applications of the human expandable pancreatic progenitor-islet system [snATAC-seq]
+#> 5                                                          Functional gene regulatory networks and broad applications of the human expandable pancreatic progenitor-islet system [scRNA-Seq]
+#> 6                                                                      Metabolic surgery mitigates early kidney injury in obese youth with diabetes by suppressing mTORC1/JAK–STAT signaling
 #>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           Summary
-#> 1                                                                                                                                         Background: Psoriasis is an inflammatory skin disease associated with systemic inflammation and comorbidities such as diabetes and cardiovascular disease. Although the association between psoriasis and obesity has been studied extensively, the role of cutaneous adipose tissue (CAT) in pathogenesis of psoriasis remains unclear. Objectives This study aimed to provide a comprehensive evaluation of the CAT transcriptome in psoriasis patients and investigate the effects of IL-17 pathway blockade on adipose tissue inflammation. more...
-#> 2 Investigating the precise gene regulatory programs directing pancreatic differentiation provides insights into the mechanisms of pancreatic development and diabetes progression. Here, we performed integrated single-cell multi-omic analyses of the expandable pancreatic progenitor (ePP)-islet system. We defined the dynamic transcriptomic and chromatin landscapes of pancreatic differentiation, inferred the sophisticated gene regulatory networks (GRNs) that govern ePP self-renewal, endocrine specification and islet function, and identified the essential roles and interesting mechanisms of the NKX2.2-CLEC16A/endosomal pathway axis during cell-fate transitions. more...
+#> 1                                                                                     Type 1 diabetes (T1D) is an autoimmune disease characterized by marked heterogeneity in age at diagnosis, clinical progression, and immune pathology. Increasing evidence suggests that age-related T1D endotypes may reflect distinct underlying molecular mechanisms; however, these mechanisms remain incompletely characterized at the cellular and transcriptional levels. To investigate age-associated immune heterogeneity in T1D, peripheral blood mononuclear cells (PBMCs) were collected from a selected cohort of newly diagnosed pediatric individuals with T1D and healthy controls. more...
+#> 2                                                                                                                                         Background: Psoriasis is an inflammatory skin disease associated with systemic inflammation and comorbidities such as diabetes and cardiovascular disease. Although the association between psoriasis and obesity has been studied extensively, the role of cutaneous adipose tissue (CAT) in pathogenesis of psoriasis remains unclear. Objectives This study aimed to provide a comprehensive evaluation of the CAT transcriptome in psoriasis patients and investigate the effects of IL-17 pathway blockade on adipose tissue inflammation. more...
 #> 3 Investigating the precise gene regulatory programs directing pancreatic differentiation provides insights into the mechanisms of pancreatic development and diabetes progression. Here, we performed integrated single-cell multi-omic analyses of the expandable pancreatic progenitor (ePP)-islet system. We defined the dynamic transcriptomic and chromatin landscapes of pancreatic differentiation, inferred the sophisticated gene regulatory networks (GRNs) that govern ePP self-renewal, endocrine specification and islet function, and identified the essential roles and interesting mechanisms of the NKX2.2-CLEC16A/endosomal pathway axis during cell-fate transitions. more...
 #> 4 Investigating the precise gene regulatory programs directing pancreatic differentiation provides insights into the mechanisms of pancreatic development and diabetes progression. Here, we performed integrated single-cell multi-omic analyses of the expandable pancreatic progenitor (ePP)-islet system. We defined the dynamic transcriptomic and chromatin landscapes of pancreatic differentiation, inferred the sophisticated gene regulatory networks (GRNs) that govern ePP self-renewal, endocrine specification and islet function, and identified the essential roles and interesting mechanisms of the NKX2.2-CLEC16A/endosomal pathway axis during cell-fate transitions. more...
-#> 5                              Background Youth with type 2 diabetes (T2D) and severe obesity face high risk of diabetic kidney disease, which metabolic bariatric surgery (MBS) can mitigate. This study explores structural and molecular changes in kidneys after vertical sleeve gastrectomy (VSG), a form of MBS. Methods Paired analyses, including metabolic profiling, kidney volume assessment, histological evaluation, and single-cell RNA sequencing (scRNAseq) on kidney biopsies from five youth with T2D and obesity pre- and 12 months post-VSG in the IMPROVE-T2D (Impact of Metabolic surgery on Pancreatic, Renal and cardiOVascular hEalth in youth with T2D) cohort. more...
-#> 6                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     This SuperSeries is composed of the SubSeries listed below.
+#> 5 Investigating the precise gene regulatory programs directing pancreatic differentiation provides insights into the mechanisms of pancreatic development and diabetes progression. Here, we performed integrated single-cell multi-omic analyses of the expandable pancreatic progenitor (ePP)-islet system. We defined the dynamic transcriptomic and chromatin landscapes of pancreatic differentiation, inferred the sophisticated gene regulatory networks (GRNs) that govern ePP self-renewal, endocrine specification and islet function, and identified the essential roles and interesting mechanisms of the NKX2.2-CLEC16A/endosomal pathway axis during cell-fate transitions. more...
+#> 6                              Background Youth with type 2 diabetes (T2D) and severe obesity face high risk of diabetic kidney disease, which metabolic bariatric surgery (MBS) can mitigate. This study explores structural and molecular changes in kidneys after vertical sleeve gastrectomy (VSG), a form of MBS. Methods Paired analyses, including metabolic profiling, kidney volume assessment, histological evaluation, and single-cell RNA sequencing (scRNAseq) on kidney biopsies from five youth with T2D and obesity pre- and 12 months post-VSG in the IMPROVE-T2D (Impact of Metabolic surgery on Pancreatic, Renal and cardiOVascular hEalth in youth with T2D) cohort. more...
 #>       Organism                                                             Type
 #> 1 Homo sapiens               Expression profiling by high throughput sequencing
 #> 2 Homo sapiens               Expression profiling by high throughput sequencing
-#> 3 Homo sapiens Genome binding/occupancy profiling by high throughput sequencing
-#> 4 Homo sapiens               Expression profiling by high throughput sequencing
+#> 3 Homo sapiens               Expression profiling by high throughput sequencing
+#> 4 Homo sapiens Genome binding/occupancy profiling by high throughput sequencing
 #> 5 Homo sapiens               Expression profiling by high throughput sequencing
 #> 6 Homo sapiens               Expression profiling by high throughput sequencing
 #>                                                                         FTP download
-#> 1               GEO (CSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE287nnn/GSE287022/
-#> 2               GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE284nnn/GSE284159/
-#> 3 GEO (CSV, H5, TBI, TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE284nnn/GSE284103/
-#> 4          GEO (MTX, TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE284nnn/GSE284101/
-#> 5          GEO (MTX, TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE315nnn/GSE315877/
-#> 6                     GEO ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE315nnn/GSE315753/
+#> 1          GEO (MTX, TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE316nnn/GSE316337/
+#> 2               GEO (CSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE287nnn/GSE287022/
+#> 3               GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE284nnn/GSE284159/
+#> 4 GEO (CSV, H5, TBI, TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE284nnn/GSE284103/
+#> 5          GEO (MTX, TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE284nnn/GSE284101/
+#> 6          GEO (MTX, TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE315nnn/GSE315877/
 ```
 
 Once you have the search results, you can filter them based on specific
@@ -156,7 +155,7 @@ sessionInfo()
 #> [1] geokit_0.0.1.9000
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] vctrs_0.6.5       httr_1.4.7        cli_3.6.5         knitr_1.51       
+#>  [1] vctrs_0.7.0       httr_1.4.7        cli_3.6.5         knitr_1.51       
 #>  [5] rlang_1.1.7       xfun_0.55         stringi_1.8.7     generics_0.1.4   
 #>  [9] textshaping_1.0.4 jsonlite_2.0.0    data.table_1.18.0 glue_1.8.0       
 #> [13] htmltools_0.5.9   XML_3.99-0.20     ragg_1.5.0        sass_0.4.10      
