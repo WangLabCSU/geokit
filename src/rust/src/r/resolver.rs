@@ -272,32 +272,50 @@ pub(crate) fn resolvers_from_famount<F: Fn(&GEOType) -> &str>(
 
 fn build_resolvers(
     entity: Vec<GEOEntity>,
-    mut format: Vec<GEOFormat>,
-    mut amount: Option<Vec<RGEOAmount>>,
-    mut scope: Option<Vec<RGEOScope>>,
-    mut ftp_over_https: Option<Vec<bool>>,
+    format: Vec<GEOFormat>,
+    amount: Option<Vec<RGEOAmount>>,
+    scope: Option<Vec<RGEOScope>>,
+    ftp_over_https: Option<Vec<bool>>,
 ) -> Result<Vec<GEOResolver>> {
     let mut resolvers = Vec::with_capacity(entity.len());
     let mut builder = GEOResolverBuilder::new();
-    for entity in entity.into_iter() {
+    for ((((entity, format), amount), scope), over_https) in entity
+        .into_iter()
+        .zip(format.into_iter())
+        .zip(
+            amount
+                .unwrap_or_default()
+                .into_iter()
+                .map(Some)
+                .chain(std::iter::repeat(None)),
+        )
+        .zip(
+            scope
+                .unwrap_or_default()
+                .into_iter()
+                .map(Some)
+                .chain(std::iter::repeat(None)),
+        )
+        .zip(
+            ftp_over_https
+                .unwrap_or_default()
+                .into_iter()
+                .map(Some)
+                .chain(std::iter::repeat(None)),
+        )
+    {
         builder.entity(entity);
-        // SAFETY: lengths were validated/recycled earlier
-        // format is required
-        builder.format(format.remove(0));
+        builder.format(format);
 
         // amount and scope are optional
-        if let Some(amount) = amount.as_mut() {
-            if let RGEOAmount::Amount(a) = amount.remove(0) {
-                builder.amount(a);
-            }
+        if let Some(RGEOAmount::Amount(a)) = amount {
+            builder.amount(a);
         }
-        if let Some(scope) = scope.as_mut() {
-            if let RGEOScope::Scope(s) = scope.remove(0) {
-                builder.scope(s);
-            }
+        if let Some(RGEOScope::Scope(s)) = scope {
+            builder.scope(s);
         }
-        if let Some(over_https) = ftp_over_https.as_mut() {
-            builder.over_https(over_https.remove(0));
+        if let Some(o) = over_https {
+            builder.over_https(o);
         }
         let resolver = builder.build()?;
         resolvers.push(resolver);
