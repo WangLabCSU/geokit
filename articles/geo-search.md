@@ -29,10 +29,10 @@ we can get these records by following code, the returned object is a
 diabetes_gse_records <- geo_search(
   "diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"
 )
-#> ■■■■■■■■■                        500/1767 [395/s] | ETA:  3s
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1768/1767 [406/s] | ETA:  0s
+#> ■■■■■■■■■                        500/1767 [480/s] | ETA:  3s
+#> ■■■■■■■■■■■■■■■■■■               1000/1767 [479/s] | ETA:  2s
 #> → Parsing GEO records
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1768/1767 [406/s] | ETA:  0sGet records from NCBI for 1767 queries in 4.5s
+#> ■■■■■■■■■■■■■■■■■■               1000/1767 [479/s] | ETA:  2sGet records from NCBI for 1767 queries in 4.4s
 head(diabetes_gse_records[1:5])
 #>                                                                                                                                                                                        Title
 #> 1 Multi-omics profiling reveals microbiota, metabolite, lipid, and immunological heterogeneity underlying distinct pathophysiological mechanisms of age-related endotypes in type 1 diabetes
