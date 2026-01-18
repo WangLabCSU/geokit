@@ -10,7 +10,7 @@ use anyhow::{anyhow, Context};
 use extendr_api::{extendr, extendr_module, Attributes, List, Robj};
 use hashbrown::HashSet;
 use indexmap::IndexMap;
-use indicatif::{ProgressBar, ProgressStyle};
+use indicatif::{ProgressBar, ProgressFinish, ProgressStyle};
 use memchr::memchr;
 use rayon::{
     iter::{IndexedParallelIterator, IntoParallelRefIterator, ParallelIterator},
@@ -183,7 +183,8 @@ fn geo_parse_soft(
             ).with_context(|| "Invalid progress style".to_string())?;
             let pb = ProgressBar::new(path.len() as u64)
                 .with_prefix("Parsing GEO File")
-                .with_style(style);
+                .with_style(style)
+                .with_finish(ProgressFinish::Abandon);
             path.par_iter()
                 .zip(format)
                 .map(|(path, format)| {
@@ -201,7 +202,8 @@ fn geo_parse_soft(
     ).with_context(|| "Invalid progress style".to_string()).map_err(|err| format!("{:?}", err))?;
     let pb = ProgressBar::new(record_res.len() as u64)
         .with_prefix("Building R object")
-        .with_style(style);
+        .with_style(style)
+        .with_finish(ProgressFinish::Abandon);
     record_res
         // each vec containing all records found in the file
         .into_iter()
