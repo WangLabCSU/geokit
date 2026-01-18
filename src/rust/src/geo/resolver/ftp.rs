@@ -45,7 +45,6 @@ impl GEOFTPResolver {
         &self.format
     }
 
-    #[inline]
     pub fn landing_page(&self) -> String {
         static RE: OnceLock<Regex> = OnceLock::new();
         let regex = RE.get_or_init(|| {
@@ -85,7 +84,6 @@ impl GEOFTPResolver {
         )
     }
 
-    #[inline]
     pub fn fname(&self) -> Option<String> {
         let fname = match (self.gtype(), self.format()) {
             // build the filename
@@ -165,7 +163,6 @@ impl GEOFTPResolverBuilder {
         self
     }
 
-    #[inline]
     pub fn build(&mut self) -> Result<GEOFTPResolver, GEOParseError> {
         // https://docs.rs/derive_builder/latest/derive_builder/
         // Luckily Rust is clever enough to optimize these clone-calls away in
@@ -235,6 +232,7 @@ pub enum GEOFTPFormat {
 }
 
 impl GEOFTPFormat {
+    #[inline]
     pub fn as_str(&self) -> &'static str {
         match self {
             GEOFTPFormat::SOFT => "soft",

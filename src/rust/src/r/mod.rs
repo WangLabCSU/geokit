@@ -28,10 +28,8 @@ mod error;
 mod helper;
 mod resolver;
 mod soft;
-mod vector;
 
 use soft::RGEOSoftRecord;
-use vector::OpaqueVector;
 
 #[extendr]
 fn geo_gtype(accession: Robj, abbre: bool) -> Result<Vec<String>, String> {
@@ -384,7 +382,7 @@ fn parse_key_value_elements(elements: List, separator: u8) -> Result<extendr_api
     }
     let (keys, columns): (Vec<_>, Vec<_>) = out
         .into_iter()
-        .map(|(key, value)| (key, OpaqueVector::parse_string(value)))
+        .map(|(key, value)| (key, helper::robj_from_parsing_str(&value)))
         .unzip();
     let mut olist = extendr_api::List::from_values(columns);
     olist.set_names(keys)?;

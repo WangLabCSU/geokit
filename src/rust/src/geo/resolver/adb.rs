@@ -61,7 +61,6 @@ impl GEOADBResolver {
         self.url_with_format(&self.format)
     }
 
-    #[inline]
     fn url_with_format(&self, format: &GEOADBFormat) -> String {
         match self.gtype() {
             GEOType::Datasets => format!(
@@ -152,7 +151,6 @@ impl GEOADBResolverBuilder {
         self
     }
 
-    #[inline]
     pub fn build(&mut self) -> Result<GEOADBResolver, GEOParseError> {
         // https://docs.rs/derive_builder/latest/derive_builder/
         // Luckily Rust is clever enough to optimize these clone-calls away in
@@ -226,6 +224,7 @@ pub enum GEOADBFormat {
 }
 
 impl GEOADBFormat {
+    #[inline]
     pub fn as_str(&self) -> &'static str {
         match self {
             GEOADBFormat::Text => "text",
@@ -292,6 +291,7 @@ pub enum GEOScope {
 }
 
 impl GEOScope {
+    #[inline]
     pub fn as_str(&self) -> &'static str {
         match self {
             GEOScope::Itself => "self",

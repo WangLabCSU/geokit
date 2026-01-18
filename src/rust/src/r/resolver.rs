@@ -42,7 +42,6 @@ impl GEOResolver {
 
     /// Returns the GEO accession string (e.g., "GSE12345" or "GSM67890")
     /// associated with this resolver.
-    #[inline]
     #[allow(dead_code)]
     pub(crate) fn accession(&self) -> &str {
         match self {
@@ -53,7 +52,6 @@ impl GEOResolver {
 
     /// Returns the [`GEOType`] (such as `Datasets`, `Series`, or `Samples`)
     /// associated with this resolver.
-    #[inline]
     #[allow(dead_code)]
     pub(crate) fn gtype(&self) -> &GEOType {
         match self {

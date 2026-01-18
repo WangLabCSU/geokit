@@ -1,36 +1,14 @@
 use extendr_api::{list, Attributes, List, Robj};
-use indexmap::IndexMap;
 
 use crate::geo::GEOSoftRecord;
 
-use super::vector::OpaqueVector;
+use super::helper::robj_from_parsing_str;
 
-pub struct RGEOSoftRecord(Box<RGEOSoftRecordInner>);
-
-struct RGEOSoftRecordInner {
-    rcd_type: String, // Type of the GEO record (e.g., Series, Platform)
-    rcd_name: String, // Name of the record
-    metadata: IndexMap<String, Vec<Option<String>>>, // Attributes of the record (key-value pairs)
-    columns: Vec<(String, Option<String>)>, // Header names and descriptions
-    header: Vec<Option<String>>, // Header
-    datatable: Vec<OpaqueVector>, // Data table (a data frame)
-}
+pub struct RGEOSoftRecord(GEOSoftRecord);
 
 impl From<GEOSoftRecord> for RGEOSoftRecord {
     fn from(value: GEOSoftRecord) -> Self {
-        Self(Box::new(RGEOSoftRecordInner {
-            rcd_type: value.0.rcd_type,
-            rcd_name: value.0.rcd_name,
-            metadata: value.0.metadata,
-            columns: value.0.columns,
-            header: value.0.header,
-            datatable: value
-                .0
-                .datatable
-                .into_iter()
-                .map(OpaqueVector::parse_string)
-                .collect(),
-        }))
+        Self(value)
     }
 }
 
@@ -40,29 +18,38 @@ impl TryFrom<RGEOSoftRecord> for List {
     fn try_from(value: RGEOSoftRecord) -> std::result::Result<Self, Self::Error> {
         // A named list
         let metadata =
-            List::from_names_and_values(value.0.metadata.keys(), value.0.metadata.values())?;
+            List::from_names_and_values(value.0.metadata().keys(), value.0.metadata().values())?;
 
         // A named character
-        let (columns_names, columns_values): (Vec<String>, Vec<Option<String>>) =
-            value.0.columns.into_iter().unzip();
-        let mut columns = Robj::from(columns_values);
-        columns.set_names(columns_names)?;
+        let mut columns: Robj = value
+            .0
+            .columns()
+            .iter()
+            .map(|(_, values)| values.as_ref().map(|s| s.as_str()))
+            .collect();
+        let columns_names: Robj = value
+            .0
+            .columns()
+            .iter()
+            .map(|(names, _)| names.as_str())
+            .collect();
+        columns.set_attrib(extendr_api::symbol::names_symbol(), columns_names)?;
 
         // A data frame
         let datatable = value
             .0
-            .datatable
+            .datatable()
             .into_iter()
-            .map(Robj::from)
+            .map(|vec| robj_from_parsing_str(vec))
             .collect::<List>();
 
         // Build the final list
         let record = list![
-            rcd_type = Robj::from(value.0.rcd_type),
-            rcd_name = Robj::from(value.0.rcd_name),
+            rcd_type = Robj::from(value.0.rcd_type()),
+            rcd_name = Robj::from(value.0.rcd_name()),
             metadata = metadata,
             columns = columns,
-            header = Robj::from(value.0.header),
+            header = Robj::from(value.0.header()),
             datatable = datatable
         ];
         Ok(record)

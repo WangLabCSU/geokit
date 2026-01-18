@@ -10,7 +10,7 @@ crate-type = [ 'staticlib' ]
 name = 'geokit'
 
 [dependencies]
-extendr-api = { version = "*", default-features = false, features = ['result_list'] }
+extendr-api = { version = "*", default-features = false, features = ['result_list'], git = "https://github.com/Yunuuuu/extendr.git", branch = "from_iterator"  }
 thiserror = { version = "*" }
 anyhow = { version = "*" }
 regex = { version = "*" }
@@ -18,7 +18,7 @@ memchr = { version = "*" }
 rayon = { version = "*" }
 hashbrown = { version = "0.16", default-features = false, features = ['default-hasher'] }
 indexmap = { version = "*" }
-rand = { version = "*" }
+# itertools = { version = "0.14", default-features = false, features = ['use_std'] }
 indicatif = {version = "*", features = ["rayon"]}
 flate2 = { version = "*" }
 isal-rs = { version = "*", optional = true }

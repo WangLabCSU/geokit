@@ -13,6 +13,7 @@ impl Default for GEOSoftConfig {
 }
 
 impl GEOSoftConfig {
+    #[inline]
     pub fn new() -> Self {
         let builder = GEOSoftConfigBuilder::new();
         builder.build()
@@ -41,6 +42,7 @@ pub struct GEOSoftConfigBuilder {
 }
 
 impl GEOSoftConfigBuilder {
+    #[inline]
     pub fn new() -> Self {
         Self {
             format: None,

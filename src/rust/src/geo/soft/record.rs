@@ -12,7 +12,7 @@ use super::{GEOSoftConfig, GEOSoftFormat, GEOSoftLine};
 /// - `columns`: A Vector describing the columns of the data table (header name and description).
 /// - `datatable`: A data frame (Vec of Vecs) holding the actual data for the record (rows and columns).
 #[derive(Debug, Clone)]
-pub struct GEOSoftRecord(pub(crate) Box<GEOSoftRecordInner>);
+pub struct GEOSoftRecord(Box<GEOSoftRecordInner>);
 
 impl Default for GEOSoftRecord {
     fn default() -> Self {
@@ -22,12 +22,12 @@ impl Default for GEOSoftRecord {
 
 #[derive(Debug, Clone)]
 pub(crate) struct GEOSoftRecordInner {
-    pub(crate) rcd_type: String, // Type of the GEO record (e.g., Series, Platform)
-    pub(crate) rcd_name: String, // Name of the record
-    pub(crate) metadata: IndexMap<String, Vec<Option<String>>>, // Attributes of the record (key-value pairs)
-    pub(crate) columns: Vec<(String, Option<String>)>,          // Header names and descriptions
-    pub(crate) header: Vec<Option<String>>,                     // Header
-    pub(crate) datatable: Vec<Vec<Option<String>>>,             // Data table (a data frame)
+    rcd_type: String, // Type of the GEO record (e.g., Series, Platform)
+    rcd_name: String, // Name of the record
+    metadata: IndexMap<String, Vec<Option<String>>>, // Attributes of the record (key-value pairs)
+    columns: Vec<(String, Option<String>)>,          // Header names and descriptions
+    header: Vec<Option<String>>,                     // Header
+    datatable: Vec<Vec<Option<String>>>,             // Data table (a data frame)
 }
 
 // Simple Omnibus Format in Text (SOFT) File
@@ -44,6 +44,7 @@ pub(crate) struct GEOSoftRecordInner {
 // |   #    | hash lines  | data table header description line |
 // |  n/a   | data lines  |           data table row           |
 impl GEOSoftRecord {
+    #[inline]
     pub fn new() -> Self {
         Self(Box::new(GEOSoftRecordInner {
             rcd_type: String::new(),
@@ -95,7 +96,6 @@ impl GEOSoftRecord {
             && self.0.datatable.is_empty()
     }
 
-    #[inline]
     pub fn parse_line(&mut self, line: &[u8], config: &GEOSoftConfig) {
         // ignore empty lines
         if line.is_empty() || line.iter().all(|byte| byte.is_ascii_whitespace()) {
@@ -124,7 +124,6 @@ impl GEOSoftRecord {
         }
     }
 
-    #[inline]
     fn parse_caret(&mut self, line: &[u8]) {
         let prefix = if let Some(pos) = memchr(b'=', line) {
             // SAFETY: we have ensure the line starts with '^'
@@ -141,7 +140,6 @@ impl GEOSoftRecord {
         self.0.rcd_type = bytes_to_string(prefix.trim_ascii_end());
     }
 
-    #[inline]
     fn parse_regular_bang(&mut self, line: &[u8]) {
         // for normal SOFT file, the metadata is seprated with `=`
         if let Some(pos) = memchr(b'=', line) {
@@ -159,7 +157,6 @@ impl GEOSoftRecord {
         }
     }
 
-    #[inline]
     fn parse_matrix_bang(&mut self, line: &[u8]) {
         // for GSE matrix, the metadata is seprated with `\t`
         if let Some(pos) = memchr(b'\t', line) {
@@ -194,7 +191,6 @@ impl GEOSoftRecord {
         }
     }
 
-    #[inline]
     fn parse_hash(&mut self, line: &[u8]) {
         // SAFETY: we have ensure the line starts with '#'
         if let Some(pos) = memchr(b'=', line) {
@@ -212,7 +208,6 @@ impl GEOSoftRecord {
         }
     }
 
-    #[inline]
     fn parse_data(&mut self, line: &[u8]) {
         // data table follows the csv file with a separater of '\t'
         let fields = line
@@ -264,7 +259,6 @@ impl GEOSoftRecord {
     }
 }
 
-#[inline]
 fn strip_quotes(bytes: &[u8]) -> &[u8] {
     // strip double quotes or single quotes
     bytes
@@ -280,7 +274,6 @@ fn strip_quotes(bytes: &[u8]) -> &[u8] {
 
 // Try to produce a String from bytes cheaply for valid UTF-8, fall back to lossless conversion.
 // This avoids the cost of allocating via from_utf8_lossy when bytes are already valid UTF-8.
-#[inline]
 fn bytes_to_string(bytes: &[u8]) -> String {
     match std::str::from_utf8(bytes) {
         Ok(s) => s.to_owned(),
