@@ -66,6 +66,6 @@ provided) of the full file paths of the resulting downloaded files.
 # \donttest{
 geo_suppl("GSM1137", odir = tempdir())
 #> Downloading 1 file
-#> [1] "/tmp/RtmpBtz7ti/GSM1137.CEL.gz"
+#> [1] "/tmp/Rtmpkwt4SA/GSM1137.CEL.gz"
 # }
 ```
