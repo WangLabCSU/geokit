@@ -120,6 +120,7 @@ where
         sampling_numbers += 1;
         if sampling_interval > 0 && sampling_numbers >= sampling_size {
             index += sampling_interval;
+            sampling_numbers = 0;
         }
     }
 
