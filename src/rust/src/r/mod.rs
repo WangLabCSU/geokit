@@ -211,7 +211,7 @@ fn geo_parse_soft(
             // for each record in the file, we convert it into a Robj
             // and then collected all records into a list
             let out = record_vec
-                .into_iter()
+                .iter()
                 .map(Robj::try_from)
                 .collect::<Result<List, _>>();
             pb.inc(1);

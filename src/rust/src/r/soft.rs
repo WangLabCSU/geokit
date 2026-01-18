@@ -12,10 +12,10 @@ impl From<GEOSoftRecord> for RGEOSoftRecord {
     }
 }
 
-impl TryFrom<RGEOSoftRecord> for List {
+impl TryFrom<&RGEOSoftRecord> for List {
     type Error = extendr_api::Error;
 
-    fn try_from(value: RGEOSoftRecord) -> std::result::Result<Self, Self::Error> {
+    fn try_from(value: &RGEOSoftRecord) -> std::result::Result<Self, Self::Error> {
         // A named list
         let metadata =
             List::from_names_and_values(value.0.metadata().keys(), value.0.metadata().values())?;
@@ -56,10 +56,10 @@ impl TryFrom<RGEOSoftRecord> for List {
     }
 }
 
-impl TryFrom<RGEOSoftRecord> for Robj {
+impl TryFrom<&RGEOSoftRecord> for Robj {
     type Error = extendr_api::Error;
 
-    fn try_from(value: RGEOSoftRecord) -> std::result::Result<Self, Self::Error> {
+    fn try_from(value: &RGEOSoftRecord) -> std::result::Result<Self, Self::Error> {
         List::try_from(value).map(|ok| ok.into())
     }
 }
