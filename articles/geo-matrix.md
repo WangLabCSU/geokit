@@ -104,6 +104,6 @@ sessionInfo()
 #> [19] compiler_4.5.2      codetools_0.2-20    fs_1.6.6           
 #> [22] systemfonts_1.3.1   digest_0.6.39       R6_2.6.1           
 #> [25] curl_7.0.0          bslib_0.9.0         tools_4.5.2        
-#> [28] xml2_1.5.1          pkgdown_2.2.0       BiocGenerics_0.56.0
+#> [28] xml2_1.5.2          pkgdown_2.2.0       BiocGenerics_0.56.0
 #> [31] cachem_1.1.0        desc_1.4.3
 ```

@@ -105,5 +105,5 @@ sessionInfo()
 #> [17] compiler_4.5.2    codetools_0.2-20  fs_1.6.6          R.oo_1.27.1      
 #> [21] systemfonts_1.3.1 R.utils_2.13.0    digest_0.6.39     R6_2.6.1         
 #> [25] curl_7.0.0        bslib_0.9.0       R.methodsS3_1.8.2 tools_4.5.2      
-#> [29] pkgdown_2.2.0     xml2_1.5.1        cachem_1.1.0      desc_1.4.3
+#> [29] pkgdown_2.2.0     xml2_1.5.2        cachem_1.1.0      desc_1.4.3
 ```
