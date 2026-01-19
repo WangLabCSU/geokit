@@ -25,9 +25,9 @@ pub(crate) struct GEOSoftRecordInner {
     rcd_type: String, // Type of the GEO record (e.g., Series, Platform)
     rcd_name: String, // Name of the record
     metadata: IndexMap<String, Vec<Option<String>>>, // Attributes of the record (key-value pairs)
-    columns: Vec<(String, Option<String>)>,          // Header names and descriptions
-    header: Vec<Option<String>>,                     // Header
-    datatable: Vec<Vec<Option<String>>>,             // Data table (a data frame)
+    columns: Vec<(String, Option<String>)>, // Header names and descriptions
+    header: Vec<Option<String>>, // Header
+    datatable: Vec<Vec<Option<String>>>, // Data table (a data frame)
 }
 
 // Simple Omnibus Format in Text (SOFT) File
@@ -126,7 +126,7 @@ impl GEOSoftRecord {
 
     fn parse_caret(&mut self, line: &[u8]) {
         let prefix = if let Some(pos) = memchr(b'=', line) {
-            // SAFETY: we have ensure the line starts with '^'
+            // SAFETY: we have ensure the line starts with '^' and has '='
             let prefix = unsafe { line.get_unchecked(1..pos) };
             if pos + 1 < line.len() {
                 let rcd_name =
@@ -235,25 +235,22 @@ impl GEOSoftRecord {
         // ensure `datatable` has the same length of `fields`
         if let Some(num_added) = fields.len().checked_sub(self.0.datatable.len()) {
             if num_added > 0 {
-                let num_fill: usize = if !self.0.datatable.is_empty() {
-                    unsafe { self.0.datatable.get_unchecked(0) }.len()
-                } else {
-                    0
-                };
                 self.0.datatable.reserve(num_added);
-                if num_fill > 0 {
-                    for _ in 0..num_added {
+                let num_fill: usize = self.0.datatable.get(0).map_or(0, |col| col.len());
+                for _ in 0..num_added {
+                    if num_fill > 0 {
+                        // pre-fill with Nones so columns are aligned
                         self.0.datatable.push(vec![None; num_fill]);
-                    }
-                } else {
-                    for _ in 0..num_added {
-                        self.0.datatable.push(Vec::with_capacity(4));
+                    } else {
+                        self.0.datatable.push(Vec::new());
                     }
                 }
             }
         }
+
         // SAFETY: we have ensured has the same length of fields
         for (i, field) in fields.into_iter().enumerate() {
+            // SAFETY: datatable.len() >= fields.len()
             unsafe { self.0.datatable.get_unchecked_mut(i) }.push(field);
         }
     }
