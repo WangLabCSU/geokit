@@ -29,11 +29,11 @@ we can get these records by following code, the returned object is a
 diabetes_gse_records <- geo_search(
   "diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"
 )
-#> ■■■■■■■■■                        500/1767 [486/s] | ETA:  3s
-#> ■■■■■■■■■■■■■■■■■■               1000/1767 [390/s] | ETA:  2s
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1768/1767 [376/s] | ETA:  0s
+#> ■■■■■■■■■                        500/1767 [416/s] | ETA:  3s
+#> ■■■■■■■■■■■■■■■■■■               1000/1767 [392/s] | ETA:  2s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1768/1767 [353/s] | ETA:  0s
 #> → Parsing GEO records
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1768/1767 [376/s] | ETA:  0sGet records from NCBI for 1767 queries in 4.8s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1768/1767 [353/s] | ETA:  0sGet records from NCBI for 1767 queries in 5.1s
 head(diabetes_gse_records[1:5])
 #>                                                                                                                                                                                        Title
 #> 1 Multi-omics profiling reveals microbiota, metabolite, lipid, and immunological heterogeneity underlying distinct pathophysiological mechanisms of age-related endotypes in type 1 diabetes
@@ -157,7 +157,7 @@ sessionInfo()
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] vctrs_0.7.0       httr_1.4.7        cli_3.6.5         knitr_1.51       
-#>  [5] rlang_1.1.7       xfun_0.55         stringi_1.8.7     generics_0.1.4   
+#>  [5] rlang_1.1.7       xfun_0.56         stringi_1.8.7     generics_0.1.4   
 #>  [9] textshaping_1.0.4 jsonlite_2.0.0    data.table_1.18.0 glue_1.8.0       
 #> [13] htmltools_0.5.9   XML_3.99-0.20     ragg_1.5.0        sass_0.4.10      
 #> [17] rmarkdown_2.30    tibble_3.3.1      evaluate_1.0.5    jquerylib_0.1.4  

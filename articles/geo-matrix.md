@@ -96,7 +96,7 @@ sessionInfo()
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] cli_3.6.5           knitr_1.51          rlang_1.1.7        
-#>  [4] xfun_0.55           generics_0.1.4      textshaping_1.0.4  
+#>  [4] xfun_0.56           generics_0.1.4      textshaping_1.0.4  
 #>  [7] jsonlite_2.0.0      data.table_1.18.0   htmltools_0.5.9    
 #> [10] ragg_1.5.0          sass_0.4.10         rmarkdown_2.30     
 #> [13] Biobase_2.70.0      evaluate_1.0.5      jquerylib_0.1.4    
