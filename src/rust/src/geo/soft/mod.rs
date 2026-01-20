@@ -8,8 +8,10 @@ use memchr::memchr;
 mod parser;
 mod record;
 
-pub use parser::{GEOSoftFormat, GEOSoftLine, GEOSoftParser, GEOSoftParserBuilder};
+pub use parser::{GEOSoftFormat, GEOSoftLine};
 pub use record::GEOSoftRecord;
+
+use parser::{GEOSoftParser, GEOSoftParserBuilder};
 
 #[derive(Debug, Clone, Default)]
 pub struct GEOSoftReaderBuilder {
@@ -274,15 +276,15 @@ impl<'r, R: Read> GEOSoftRecordsIter<'r, R> {
 }
 
 impl<'r, R: Read> Iterator for GEOSoftRecordsIter<'r, R> {
-    type Item = io::Result<GEOSoftRecord>;
+    type Item = io::Result<Box<GEOSoftRecord>>;
 
-    fn next(&mut self) -> Option<io::Result<GEOSoftRecord>> {
+    fn next(&mut self) -> Option<io::Result<Box<GEOSoftRecord>>> {
         match self.reader.read_record(&mut self.record) {
             Err(err) => Some(Err(err)),
             Ok(0) => None,
             Ok(_) => {
                 let record = std::mem::take(&mut self.record);
-                Some(Ok(*record))
+                Some(Ok(record))
             }
         }
     }
@@ -292,14 +294,14 @@ impl<'r, R: Read> Iterator for GEOSoftRecordsIter<'r, R> {
 #[derive(Debug)]
 pub struct GEOSoftRecords<R> {
     reader: GEOSoftReader<R>,
-    record: Box<GEOSoftRecord>,
+    record: GEOSoftRecord,
 }
 
 impl<R: Read> GEOSoftRecords<R> {
     fn new(rdr: GEOSoftReader<R>) -> GEOSoftRecords<R> {
         GEOSoftRecords {
             reader: rdr,
-            record: Box::new(GEOSoftRecord::new()),
+            record: GEOSoftRecord::new(),
         }
     }
 
@@ -334,7 +336,7 @@ impl<R: Read> Iterator for GEOSoftRecords<R> {
             Ok(0) => None,
             Ok(_) => {
                 let record = std::mem::take(&mut self.record);
-                Some(Ok(*record))
+                Some(Ok(record))
             }
         }
     }

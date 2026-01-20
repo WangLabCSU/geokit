@@ -9,7 +9,10 @@ use indexmap::IndexMap;
 /// - `columns`: A Vector describing the columns of the data table (header name and description).
 /// - `datatable`: A data frame (Vec of Vecs) holding the actual data for the record (rows and columns).
 #[derive(Debug, Clone)]
-pub struct GEOSoftRecord {
+pub struct GEOSoftRecord(pub(super) Box<GEOSoftRecordInner>);
+
+#[derive(Debug, Clone)]
+pub(super) struct GEOSoftRecordInner {
     pub(super) rcd_type: String, // Type of the GEO record (e.g., Series, Platform)
     pub(super) rcd_name: String, // Name of the record
     pub(super) metadata: IndexMap<String, Vec<Option<String>>>, // Attributes of the record (key-value pairs)
@@ -20,14 +23,14 @@ pub struct GEOSoftRecord {
 
 impl Default for GEOSoftRecord {
     fn default() -> Self {
-        Self {
+        Self(Box::new(GEOSoftRecordInner {
             rcd_type: String::new(),
             rcd_name: String::new(),
             metadata: IndexMap::new(),
             columns: Vec::new(),
             header: Vec::new(),
             datatable: Vec::new(),
-        }
+        }))
     }
 }
 
@@ -52,51 +55,51 @@ impl GEOSoftRecord {
 
     #[inline]
     pub fn rcd_type(&self) -> &str {
-        &self.rcd_type
+        &self.0.rcd_type
     }
 
     #[inline]
     pub fn rcd_name(&self) -> &str {
-        &self.rcd_name
+        &self.0.rcd_name
     }
 
     #[inline]
     pub fn metadata(&self) -> &IndexMap<String, Vec<Option<String>>> {
-        &self.metadata
+        &self.0.metadata
     }
 
     #[inline]
     pub fn columns(&self) -> &Vec<(String, Option<String>)> {
-        &self.columns
+        &self.0.columns
     }
 
     #[inline]
     pub fn header(&self) -> &Vec<Option<String>> {
-        &self.header
+        &self.0.header
     }
 
     #[inline]
     pub fn datatable(&self) -> &Vec<Vec<Option<String>>> {
-        &self.datatable
+        &self.0.datatable
     }
 
     #[inline]
     pub fn is_empty(&self) -> bool {
-        self.rcd_type.is_empty()
-            && self.rcd_name.is_empty()
-            && self.metadata.is_empty()
-            && self.columns.is_empty()
-            && self.header.is_empty()
-            && self.datatable.is_empty()
+        self.0.rcd_type.is_empty()
+            && self.0.rcd_name.is_empty()
+            && self.0.metadata.is_empty()
+            && self.0.columns.is_empty()
+            && self.0.header.is_empty()
+            && self.0.datatable.is_empty()
     }
 
     #[inline]
     pub fn clear(&mut self) {
-        self.rcd_type.clear();
-        self.rcd_name.clear();
-        self.metadata.clear();
-        self.columns.clear();
-        self.header.clear();
-        self.datatable.clear();
+        self.0.rcd_type.clear();
+        self.0.rcd_name.clear();
+        self.0.metadata.clear();
+        self.0.columns.clear();
+        self.0.header.clear();
+        self.0.datatable.clear();
     }
 }

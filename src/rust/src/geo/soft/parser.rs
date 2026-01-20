@@ -4,7 +4,7 @@ use memchr::memchr;
 use super::record::GEOSoftRecord;
 
 #[derive(Debug, Clone)]
-pub struct GEOSoftParser {
+pub(super) struct GEOSoftParser {
     format: GEOSoftFormat,
     use_lines: HashSet<GEOSoftLine>,
 }
@@ -31,32 +31,32 @@ impl Default for GEOSoftParser {
 impl GEOSoftParser {
     #[inline]
     #[allow(dead_code)]
-    pub fn new() -> Self {
+    pub(super) fn new() -> Self {
         let builder = GEOSoftParserBuilder::new();
         builder.build()
     }
 
     #[inline]
     #[allow(dead_code)]
-    pub fn builder() -> GEOSoftParserBuilder {
+    pub(super) fn builder() -> GEOSoftParserBuilder {
         GEOSoftParserBuilder::new()
     }
 
     #[inline]
     #[allow(dead_code)]
-    pub fn format(&self) -> &GEOSoftFormat {
+    pub(super) fn format(&self) -> &GEOSoftFormat {
         &self.format
     }
 
     #[inline]
     #[allow(dead_code)]
-    pub fn use_lines(&self) -> &HashSet<GEOSoftLine> {
+    pub(super) fn use_lines(&self) -> &HashSet<GEOSoftLine> {
         &self.use_lines
     }
 
     #[inline]
     #[allow(dead_code)]
-    pub fn parse_line(&self, line: &[u8], record: &mut GEOSoftRecord) {
+    pub(super) fn parse_line(&self, line: &[u8], record: &mut GEOSoftRecord) {
         // ignore empty lines
         if line.is_empty() || line.iter().all(|byte| byte.is_ascii_whitespace()) {
             return;
@@ -91,13 +91,13 @@ impl GEOSoftParser {
             if pos + 1 < line.len() {
                 let rcd_name =
                     bytes_to_string(unsafe { line.get_unchecked(pos + 1..) }.trim_ascii());
-                record.rcd_name = rcd_name;
+                record.0.rcd_name = rcd_name;
             }
             prefix
         } else {
             unsafe { line.get_unchecked(1..) }
         };
-        record.rcd_type = bytes_to_string(prefix.trim_ascii_end());
+        record.0.rcd_type = bytes_to_string(prefix.trim_ascii_end());
     }
 
     fn parse_regular_bang(&self, line: &[u8], record: &mut GEOSoftRecord) {
@@ -108,10 +108,10 @@ impl GEOSoftParser {
                 let label = bytes_to_string(unsafe { line.get_unchecked(1..pos) }.trim_ascii_end());
                 // SAFETY: we have ensured 'pos + 1' doesn't span the ending
                 let value = bytes_to_string(unsafe { line.get_unchecked(pos + 1..) }.trim_ascii());
-                if let Some(metadata) = record.metadata.get_mut(&label) {
+                if let Some(metadata) = record.0.metadata.get_mut(&label) {
                     metadata.push(Some(value));
                 } else {
-                    record.metadata.insert(label, vec![Some(value)]);
+                    record.0.metadata.insert(label, vec![Some(value)]);
                 }
             }
         }
@@ -142,11 +142,11 @@ impl GEOSoftParser {
                 // Check if the label already exists and add a suffix to ensure uniqueness
                 let mut suffix = 1;
                 let mut label_check = label.clone();
-                while record.metadata.contains_key(&label_check) {
+                while record.0.metadata.contains_key(&label_check) {
                     label_check = format!("{}_{}", label, suffix);
                     suffix += 1;
                 }
-                record.metadata.insert(label_check, fields);
+                record.0.metadata.insert(label_check, fields);
             }
         }
     }
@@ -161,9 +161,9 @@ impl GEOSoftParser {
                 String::new()
             };
             if value.is_empty() {
-                record.columns.push((label, None));
+                record.0.columns.push((label, None));
             } else {
-                record.columns.push((label, Some(value)));
+                record.0.columns.push((label, Some(value)));
             }
         }
     }
@@ -187,22 +187,22 @@ impl GEOSoftParser {
             .collect::<Vec<Option<String>>>();
 
         // the first row is the data table header
-        if record.header.is_empty() {
-            record.header = fields;
+        if record.0.header.is_empty() {
+            record.0.header = fields;
             return;
         }
 
         // ensure `datatable` has the same length of `fields`
-        if let Some(num_added) = fields.len().checked_sub(record.datatable.len()) {
+        if let Some(num_added) = fields.len().checked_sub(record.0.datatable.len()) {
             if num_added > 0 {
-                record.datatable.reserve(num_added);
-                let num_fill: usize = record.datatable.get(0).map_or(0, |col| col.len());
+                record.0.datatable.reserve(num_added);
+                let num_fill: usize = record.0.datatable.get(0).map_or(0, |col| col.len());
                 for _ in 0..num_added {
                     if num_fill > 0 {
                         // pre-fill with Nones so columns are aligned
-                        record.datatable.push(vec![None; num_fill]);
+                        record.0.datatable.push(vec![None; num_fill]);
                     } else {
-                        record.datatable.push(Vec::new());
+                        record.0.datatable.push(Vec::new());
                     }
                 }
             }
@@ -211,20 +211,20 @@ impl GEOSoftParser {
         // SAFETY: we have ensured has the same length of fields
         for (i, field) in fields.into_iter().enumerate() {
             // SAFETY: datatable.len() >= fields.len()
-            unsafe { record.datatable.get_unchecked_mut(i) }.push(field);
+            unsafe { record.0.datatable.get_unchecked_mut(i) }.push(field);
         }
     }
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct GEOSoftParserBuilder {
+pub(super) struct GEOSoftParserBuilder {
     format: Option<GEOSoftFormat>,
     use_lines: Option<HashSet<GEOSoftLine>>,
 }
 
 impl GEOSoftParserBuilder {
     #[inline]
-    pub fn new() -> Self {
+    pub(super) fn new() -> Self {
         Self {
             format: None,
             use_lines: None,
@@ -232,19 +232,19 @@ impl GEOSoftParserBuilder {
     }
 
     #[inline]
-    pub fn format(&mut self, format: GEOSoftFormat) -> &mut Self {
+    pub(super) fn format(&mut self, format: GEOSoftFormat) -> &mut Self {
         self.format = Some(format);
         self
     }
 
     #[inline]
-    pub fn use_lines(&mut self, lines: HashSet<GEOSoftLine>) -> &mut Self {
+    pub(super) fn use_lines(&mut self, lines: HashSet<GEOSoftLine>) -> &mut Self {
         self.use_lines = Some(lines);
         self
     }
 
     #[inline]
-    pub fn build(&self) -> GEOSoftParser {
+    pub(super) fn build(&self) -> GEOSoftParser {
         let format = self
             .format
             .as_ref()
