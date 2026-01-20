@@ -30,27 +30,32 @@ impl Default for GEOSoftParser {
 // |  n/a   | data lines  |           data table row           |
 impl GEOSoftParser {
     #[inline]
+    #[allow(dead_code)]
     pub fn new() -> Self {
         let builder = GEOSoftParserBuilder::new();
         builder.build()
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub fn builder() -> GEOSoftParserBuilder {
         GEOSoftParserBuilder::new()
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub fn format(&self) -> &GEOSoftFormat {
         &self.format
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub fn use_lines(&self) -> &HashSet<GEOSoftLine> {
         &self.use_lines
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub fn parse_line(&self, line: &[u8], record: &mut GEOSoftRecord) {
         // ignore empty lines
         if line.is_empty() || line.iter().all(|byte| byte.is_ascii_whitespace()) {

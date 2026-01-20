@@ -51,6 +51,7 @@ impl GEOSoftReaderBuilder {
     /// # Returns
     /// - A `GEOSoftReader` initialized with the provided reader and the default configuration.
     #[inline]
+    #[allow(dead_code)]
     pub fn build_from_reader<R: Read>(&self, reader: R) -> GEOSoftReader<R> {
         let capacity = self.capacity.unwrap_or(4 * (1 << 20));
         let parser = self.parser.build();
@@ -71,6 +72,7 @@ impl GEOSoftReaderBuilder {
     /// - A `GEOSoftReader` that reads from the file at the given path.
     /// - Returns an `io::Result` to handle any potential I/O errors during file opening.
     #[inline]
+    #[allow(dead_code)]
     pub fn build_from_path<P: AsRef<Path>>(&self, path: P) -> io::Result<GEOSoftReader<File>> {
         Ok(self.build_from_reader(File::open(path)?))
     }
@@ -106,6 +108,7 @@ impl<T> GEOSoftReader<T> {
     /// # Returns
     /// - A `GEOSoftReader` with the specified configuration and reader.
     #[inline]
+    #[allow(dead_code)]
     pub fn new<R: Read>(reader: R) -> GEOSoftReader<R> {
         let builder = Self::builder();
         builder.build_from_reader(reader)
@@ -119,30 +122,36 @@ impl<T> GEOSoftReader<T> {
     ///
     /// # Returns
     /// - A `GEOSoftReader` with the specified buffer capacity and reader.
+    #[inline]
+    #[allow(dead_code)]
     pub fn with_capacity<R: Read>(capacity: usize, reader: R) -> GEOSoftReader<R> {
         let mut builder = Self::builder();
         builder.capacity(capacity).build_from_reader(reader)
     }
 
     /// Returns a reference to the underlying reader.
+    #[inline]
     #[allow(dead_code)]
     pub fn get_ref(&self) -> &T {
         self.reader.get_ref()
     }
 
     /// Returns a mutable reference to the underlying reader.
+    #[inline]
     #[allow(dead_code)]
     pub fn get_mut(&mut self) -> &mut T {
         self.reader.get_mut()
     }
 
     /// Unwraps this CSV reader, returning the underlying reader.
+    #[inline]
     #[allow(dead_code)]
     pub fn into_inner(self) -> T {
         self.reader.into_inner()
     }
 
     /// Returns a reference to the underlying reader.
+    #[inline]
     #[allow(dead_code)]
     pub fn capacity(&self) -> usize {
         self.reader.capacity()
@@ -219,10 +228,14 @@ impl<R: Read> GEOSoftReader<R> {
         }
     }
 
+    #[inline]
+    #[allow(dead_code)]
     pub fn records(&mut self) -> GEOSoftRecordsIter<'_, R> {
         GEOSoftRecordsIter::new(self)
     }
 
+    #[inline]
+    #[allow(dead_code)]
     pub fn into_records(self) -> GEOSoftRecords<R> {
         GEOSoftRecords::new(self)
     }
@@ -246,10 +259,14 @@ impl<'r, R: Read> GEOSoftRecordsIter<'r, R> {
     }
 
     /// Return a reference to the underlying GEOSoftReader.
+    #[inline]
+    #[allow(dead_code)]
     pub fn get_ref(&self) -> &GEOSoftReader<R> {
         self.reader
     }
 
+    #[inline]
+    #[allow(dead_code)]
     /// Return a mutable reference to the underlying GEOSoftReader.
     pub fn get_mut(&mut self) -> &mut GEOSoftReader<R> {
         self.reader
@@ -287,18 +304,21 @@ impl<R: Read> GEOSoftRecords<R> {
     }
 
     /// Return a reference to the underlying CSV reader.
+    #[inline]
     #[allow(dead_code)]
     pub fn get_ref(&self) -> &GEOSoftReader<R> {
         &self.reader
     }
 
     /// Return a mutable reference to the underlying CSV reader.
+    #[inline]
     #[allow(dead_code)]
     pub fn get_mut(&mut self) -> &mut GEOSoftReader<R> {
         &mut self.reader
     }
 
     /// Drop this iterator and return the underlying CSV reader.
+    #[inline]
     #[allow(dead_code)]
     pub fn into_inner(self) -> GEOSoftReader<R> {
         self.reader
