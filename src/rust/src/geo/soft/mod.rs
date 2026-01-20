@@ -247,14 +247,14 @@ impl<R: Read> GEOSoftReader<R> {
 #[derive(Debug)]
 pub struct GEOSoftRecordsIter<'r, R: 'r> {
     reader: &'r mut GEOSoftReader<R>,
-    record: GEOSoftRecord,
+    record: Box<GEOSoftRecord>,
 }
 
 impl<'r, R: Read> GEOSoftRecordsIter<'r, R> {
     fn new(rdr: &'r mut GEOSoftReader<R>) -> GEOSoftRecordsIter<'r, R> {
         GEOSoftRecordsIter {
             reader: rdr,
-            record: GEOSoftRecord::new(),
+            record: Box::new(GEOSoftRecord::new()),
         }
     }
 
@@ -282,7 +282,7 @@ impl<'r, R: Read> Iterator for GEOSoftRecordsIter<'r, R> {
             Ok(0) => None,
             Ok(_) => {
                 let record = std::mem::take(&mut self.record);
-                Some(Ok(record))
+                Some(Ok(*record))
             }
         }
     }
@@ -292,14 +292,14 @@ impl<'r, R: Read> Iterator for GEOSoftRecordsIter<'r, R> {
 #[derive(Debug)]
 pub struct GEOSoftRecords<R> {
     reader: GEOSoftReader<R>,
-    record: GEOSoftRecord,
+    record: Box<GEOSoftRecord>,
 }
 
 impl<R: Read> GEOSoftRecords<R> {
     fn new(rdr: GEOSoftReader<R>) -> GEOSoftRecords<R> {
         GEOSoftRecords {
             reader: rdr,
-            record: GEOSoftRecord::new(),
+            record: Box::new(GEOSoftRecord::new()),
         }
     }
 
@@ -334,7 +334,7 @@ impl<R: Read> Iterator for GEOSoftRecords<R> {
             Ok(0) => None,
             Ok(_) => {
                 let record = std::mem::take(&mut self.record);
-                Some(Ok(record))
+                Some(Ok(*record))
             }
         }
     }

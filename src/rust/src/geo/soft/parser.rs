@@ -91,13 +91,13 @@ impl GEOSoftParser {
             if pos + 1 < line.len() {
                 let rcd_name =
                     bytes_to_string(unsafe { line.get_unchecked(pos + 1..) }.trim_ascii());
-                record.0.rcd_name = rcd_name;
+                record.rcd_name = rcd_name;
             }
             prefix
         } else {
             unsafe { line.get_unchecked(1..) }
         };
-        record.0.rcd_type = bytes_to_string(prefix.trim_ascii_end());
+        record.rcd_type = bytes_to_string(prefix.trim_ascii_end());
     }
 
     fn parse_regular_bang(&self, line: &[u8], record: &mut GEOSoftRecord) {
@@ -108,10 +108,10 @@ impl GEOSoftParser {
                 let label = bytes_to_string(unsafe { line.get_unchecked(1..pos) }.trim_ascii_end());
                 // SAFETY: we have ensured 'pos + 1' doesn't span the ending
                 let value = bytes_to_string(unsafe { line.get_unchecked(pos + 1..) }.trim_ascii());
-                if let Some(metadata) = record.0.metadata.get_mut(&label) {
+                if let Some(metadata) = record.metadata.get_mut(&label) {
                     metadata.push(Some(value));
                 } else {
-                    record.0.metadata.insert(label, vec![Some(value)]);
+                    record.metadata.insert(label, vec![Some(value)]);
                 }
             }
         }
@@ -142,11 +142,11 @@ impl GEOSoftParser {
                 // Check if the label already exists and add a suffix to ensure uniqueness
                 let mut suffix = 1;
                 let mut label_check = label.clone();
-                while record.0.metadata.contains_key(&label_check) {
+                while record.metadata.contains_key(&label_check) {
                     label_check = format!("{}_{}", label, suffix);
                     suffix += 1;
                 }
-                record.0.metadata.insert(label_check, fields);
+                record.metadata.insert(label_check, fields);
             }
         }
     }
@@ -161,9 +161,9 @@ impl GEOSoftParser {
                 String::new()
             };
             if value.is_empty() {
-                record.0.columns.push((label, None));
+                record.columns.push((label, None));
             } else {
-                record.0.columns.push((label, Some(value)));
+                record.columns.push((label, Some(value)));
             }
         }
     }
@@ -187,22 +187,22 @@ impl GEOSoftParser {
             .collect::<Vec<Option<String>>>();
 
         // the first row is the data table header
-        if record.0.header.is_empty() {
-            record.0.header = fields;
+        if record.header.is_empty() {
+            record.header = fields;
             return;
         }
 
         // ensure `datatable` has the same length of `fields`
-        if let Some(num_added) = fields.len().checked_sub(record.0.datatable.len()) {
+        if let Some(num_added) = fields.len().checked_sub(record.datatable.len()) {
             if num_added > 0 {
-                record.0.datatable.reserve(num_added);
-                let num_fill: usize = record.0.datatable.get(0).map_or(0, |col| col.len());
+                record.datatable.reserve(num_added);
+                let num_fill: usize = record.datatable.get(0).map_or(0, |col| col.len());
                 for _ in 0..num_added {
                     if num_fill > 0 {
                         // pre-fill with Nones so columns are aligned
-                        record.0.datatable.push(vec![None; num_fill]);
+                        record.datatable.push(vec![None; num_fill]);
                     } else {
-                        record.0.datatable.push(Vec::new());
+                        record.datatable.push(Vec::new());
                     }
                 }
             }
@@ -211,7 +211,7 @@ impl GEOSoftParser {
         // SAFETY: we have ensured has the same length of fields
         for (i, field) in fields.into_iter().enumerate() {
             // SAFETY: datatable.len() >= fields.len()
-            unsafe { record.0.datatable.get_unchecked_mut(i) }.push(field);
+            unsafe { record.datatable.get_unchecked_mut(i) }.push(field);
         }
     }
 }
