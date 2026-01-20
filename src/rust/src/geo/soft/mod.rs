@@ -98,6 +98,24 @@ impl<T> GEOSoftReader<T> {
             cur_pos: 1,
         }
     }
+
+    /// Returns a reference to the underlying reader.
+    #[allow(dead_code)]
+    pub fn get_ref(&self) -> &T {
+        &self.reader
+    }
+
+    /// Returns a mutable reference to the underlying reader.
+    #[allow(dead_code)]
+    pub fn get_mut(&mut self) -> &mut T {
+        &mut self.reader
+    }
+
+    /// Unwraps this CSV reader, returning the underlying reader.
+    #[allow(dead_code)]
+    pub fn into_inner(self) -> T {
+        self.reader
+    }
 }
 
 impl<R: io::Read> GEOSoftReader<BufReader<R>> {
@@ -105,27 +123,6 @@ impl<R: io::Read> GEOSoftReader<BufReader<R>> {
     #[allow(dead_code)]
     pub fn capacity(&self) -> usize {
         self.reader.capacity()
-    }
-
-    /// Returns a reference to the underlying reader.
-    #[allow(dead_code)]
-    pub fn get_ref(&self) -> &R {
-        self.reader.get_ref()
-    }
-
-    /// Returns a mutable reference to the underlying reader.
-    #[allow(dead_code)]
-    pub fn get_mut(&mut self) -> &mut R {
-        self.reader.get_mut()
-    }
-
-    /// Unwraps this CSV reader, returning the underlying reader.
-    ///
-    /// Note that any leftover data inside this reader's internal buffer is
-    /// lost.
-    #[allow(dead_code)]
-    pub fn into_inner(self) -> R {
-        self.reader.into_inner()
     }
 }
 
@@ -199,20 +196,20 @@ impl<R: io::BufRead> GEOSoftReader<R> {
         }
     }
 
-    pub fn into_records(self) -> GEOSoftRecordsIntoIter<R> {
-        GEOSoftRecordsIntoIter::new(self)
+    pub fn iter(self) -> GEOSoftRecordIter<R> {
+        GEOSoftRecordIter::new(self)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct GEOSoftRecordsIntoIter<R> {
+pub struct GEOSoftRecordIter<R> {
     reader: GEOSoftReader<R>,
     record: GEOSoftRecord,
 }
 
-impl<R: io::BufRead> GEOSoftRecordsIntoIter<R> {
-    pub fn new(rdr: GEOSoftReader<R>) -> GEOSoftRecordsIntoIter<R> {
-        GEOSoftRecordsIntoIter {
+impl<R: io::BufRead> GEOSoftRecordIter<R> {
+    pub fn new(rdr: GEOSoftReader<R>) -> GEOSoftRecordIter<R> {
+        GEOSoftRecordIter {
             reader: rdr,
             record: GEOSoftRecord::new(),
         }
@@ -232,12 +229,12 @@ impl<R: io::BufRead> GEOSoftRecordsIntoIter<R> {
 
     /// Drop this iterator and return the underlying CSV reader.
     #[allow(dead_code)]
-    pub fn into_reader(self) -> GEOSoftReader<R> {
+    pub fn into_inner(self) -> GEOSoftReader<R> {
         self.reader
     }
 }
 
-impl<R: io::BufRead> Iterator for GEOSoftRecordsIntoIter<R> {
+impl<R: io::BufRead> Iterator for GEOSoftRecordIter<R> {
     type Item = Result<GEOSoftRecord>;
 
     fn next(&mut self) -> Option<Result<GEOSoftRecord>> {

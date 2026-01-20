@@ -268,7 +268,7 @@ fn geo_parse_soft_impl(
         builder.use_lines(uses);
     }
     let records =
-        GEOSoftReader::<BufReader<Box<dyn Read>>>::new(builder.build(), reader).into_records();
+        GEOSoftReader::<BufReader<Box<dyn Read>>>::new(builder.build(), reader).iter();
     records
         .map(|record_res| record_res.map(RGEOSoftRecord::from))
         .collect::<anyhow::Result<Vec<_>>>()
