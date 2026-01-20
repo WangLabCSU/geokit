@@ -7,4 +7,4 @@ pub use entity::{GEOEntity, GEOType};
 pub use error::GEOParseError;
 pub use resolver::adb::{GEOADBFormat, GEOADBResolver, GEOADBResolverBuilder, GEOAmount, GEOScope};
 pub use resolver::ftp::{GEOFTPFormat, GEOFTPResolver, GEOFTPResolverBuilder};
-pub use soft::{GEOSoftConfig, GEOSoftFormat, GEOSoftLine, GEOSoftReader, GEOSoftRecord};
+pub use soft::{GEOSoftFormat, GEOSoftLine, GEOSoftParser, GEOSoftReader, GEOSoftRecord};

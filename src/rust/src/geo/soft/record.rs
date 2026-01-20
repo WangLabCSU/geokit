@@ -1,7 +1,4 @@
 use indexmap::IndexMap;
-use memchr::memchr;
-
-use super::{GEOSoftConfig, GEOSoftFormat, GEOSoftLine};
 
 /// Represents a record in the SOFT (Simple Omnibus Format in Text) file.
 ///
@@ -12,7 +9,7 @@ use super::{GEOSoftConfig, GEOSoftFormat, GEOSoftLine};
 /// - `columns`: A Vector describing the columns of the data table (header name and description).
 /// - `datatable`: A data frame (Vec of Vecs) holding the actual data for the record (rows and columns).
 #[derive(Debug, Clone)]
-pub struct GEOSoftRecord(Box<GEOSoftRecordInner>);
+pub struct GEOSoftRecord(pub(super) Box<GEOSoftRecordInner>);
 
 impl Default for GEOSoftRecord {
     fn default() -> Self {
@@ -21,13 +18,13 @@ impl Default for GEOSoftRecord {
 }
 
 #[derive(Debug, Clone)]
-pub(crate) struct GEOSoftRecordInner {
-    rcd_type: String, // Type of the GEO record (e.g., Series, Platform)
-    rcd_name: String, // Name of the record
-    metadata: IndexMap<String, Vec<Option<String>>>, // Attributes of the record (key-value pairs)
-    columns: Vec<(String, Option<String>)>, // Header names and descriptions
-    header: Vec<Option<String>>, // Header
-    datatable: Vec<Vec<Option<String>>>, // Data table (a data frame)
+pub(super) struct GEOSoftRecordInner {
+    pub(super) rcd_type: String, // Type of the GEO record (e.g., Series, Platform)
+    pub(super) rcd_name: String, // Name of the record
+    pub(super) metadata: IndexMap<String, Vec<Option<String>>>, // Attributes of the record (key-value pairs)
+    pub(super) columns: Vec<(String, Option<String>)>,          // Header names and descriptions
+    pub(super) header: Vec<Option<String>>,                     // Header
+    pub(super) datatable: Vec<Vec<Option<String>>>,             // Data table (a data frame)
 }
 
 // Simple Omnibus Format in Text (SOFT) File
@@ -87,7 +84,7 @@ impl GEOSoftRecord {
     }
 
     #[inline]
-    pub fn empty(&self) -> bool {
+    pub fn is_empty(&self) -> bool {
         self.0.rcd_type.is_empty()
             && self.0.rcd_name.is_empty()
             && self.0.metadata.is_empty()
@@ -96,184 +93,13 @@ impl GEOSoftRecord {
             && self.0.datatable.is_empty()
     }
 
-    pub fn parse_line(&mut self, line: &[u8], config: &GEOSoftConfig) {
-        // ignore empty lines
-        if line.is_empty() || line.iter().all(|byte| byte.is_ascii_whitespace()) {
-            return;
-        }
-        match unsafe { line.get_unchecked(0) } {
-            b'^' => self.parse_caret(line),
-            b'!' => {
-                if config.use_lines().contains(&GEOSoftLine::Metadata) {
-                    match config.format() {
-                        GEOSoftFormat::Standard => self.parse_regular_bang(line),
-                        GEOSoftFormat::Matrix => self.parse_matrix_bang(line),
-                    };
-                }
-            }
-            b'#' => {
-                if config.use_lines().contains(&GEOSoftLine::Datatable) {
-                    self.parse_hash(line);
-                }
-            }
-            _ => {
-                if config.use_lines().contains(&GEOSoftLine::Datatable) {
-                    self.parse_data(line);
-                }
-            }
-        }
-    }
-
-    fn parse_caret(&mut self, line: &[u8]) {
-        let prefix = if let Some(pos) = memchr(b'=', line) {
-            // SAFETY: we have ensure the line starts with '^' and has '='
-            let prefix = unsafe { line.get_unchecked(1..pos) };
-            if pos + 1 < line.len() {
-                let rcd_name =
-                    bytes_to_string(unsafe { line.get_unchecked(pos + 1..) }.trim_ascii());
-                self.0.rcd_name = rcd_name;
-            }
-            prefix
-        } else {
-            unsafe { line.get_unchecked(1..) }
-        };
-        self.0.rcd_type = bytes_to_string(prefix.trim_ascii_end());
-    }
-
-    fn parse_regular_bang(&mut self, line: &[u8]) {
-        // for normal SOFT file, the metadata is seprated with `=`
-        if let Some(pos) = memchr(b'=', line) {
-            if pos + 1 < line.len() {
-                // SAFETY: we have ensure the line starts with '!'
-                let label = bytes_to_string(unsafe { line.get_unchecked(1..pos) }.trim_ascii_end());
-                // SAFETY: we have ensured 'pos + 1' doesn't span the ending
-                let value = bytes_to_string(unsafe { line.get_unchecked(pos + 1..) }.trim_ascii());
-                if let Some(metadata) = self.0.metadata.get_mut(&label) {
-                    metadata.push(Some(value));
-                } else {
-                    self.0.metadata.insert(label, vec![Some(value)]);
-                }
-            }
-        }
-    }
-
-    fn parse_matrix_bang(&mut self, line: &[u8]) {
-        // for GSE matrix, the metadata is seprated with `\t`
-        if let Some(pos) = memchr(b'\t', line) {
-            if pos + 1 < line.len() {
-                // SAFETY: we have ensure the line starts with '!'
-                let label = bytes_to_string(unsafe { line.get_unchecked(1..pos) }.trim_ascii_end());
-                // SAFETY: we have ensured 'pos + 1' doesn't span the ending
-                let fields = unsafe { line.get_unchecked(pos + 1..) }
-                    .split(|byte| *byte == b'\t')
-                    .map(|field| {
-                        let field = strip_quotes(field.trim_ascii());
-                        if field.is_empty()
-                            || field.eq_ignore_ascii_case(b"null")
-                            || field.eq_ignore_ascii_case(b"na")
-                        {
-                            None
-                        } else {
-                            Some(bytes_to_string(field))
-                        }
-                    })
-                    .collect::<Vec<Option<String>>>();
-
-                // Check if the label already exists and add a suffix to ensure uniqueness
-                let mut suffix = 1;
-                let mut label_check = label.clone();
-                while self.0.metadata.contains_key(&label_check) {
-                    label_check = format!("{}_{}", label, suffix);
-                    suffix += 1;
-                }
-                self.0.metadata.insert(label_check, fields);
-            }
-        }
-    }
-
-    fn parse_hash(&mut self, line: &[u8]) {
-        // SAFETY: we have ensure the line starts with '#'
-        if let Some(pos) = memchr(b'=', line) {
-            let label = bytes_to_string(unsafe { line.get_unchecked(1..pos) }.trim_ascii_end());
-            let value = if pos + 1 < line.len() {
-                bytes_to_string(unsafe { line.get_unchecked(pos + 1..) }.trim_ascii())
-            } else {
-                String::new()
-            };
-            if value.is_empty() {
-                self.0.columns.push((label, None));
-            } else {
-                self.0.columns.push((label, Some(value)));
-            }
-        }
-    }
-
-    fn parse_data(&mut self, line: &[u8]) {
-        // data table follows the csv file with a separater of '\t'
-        let fields = line
-            .split(|byte| *byte == b'\t')
-            .map(|field| {
-                let field = strip_quotes(field.trim_ascii());
-                if field.is_empty()
-                    || field.eq_ignore_ascii_case(b"null")
-                    || field.eq_ignore_ascii_case(b"na")
-                {
-                    None
-                } else {
-                    // SOFT File may contain non-UTF8 character
-                    Some(bytes_to_string(field))
-                }
-            })
-            .collect::<Vec<Option<String>>>();
-
-        // the first row is the data table header
-        if self.0.header.is_empty() {
-            self.0.header = fields;
-            return;
-        }
-
-        // ensure `datatable` has the same length of `fields`
-        if let Some(num_added) = fields.len().checked_sub(self.0.datatable.len()) {
-            if num_added > 0 {
-                self.0.datatable.reserve(num_added);
-                let num_fill: usize = self.0.datatable.get(0).map_or(0, |col| col.len());
-                for _ in 0..num_added {
-                    if num_fill > 0 {
-                        // pre-fill with Nones so columns are aligned
-                        self.0.datatable.push(vec![None; num_fill]);
-                    } else {
-                        self.0.datatable.push(Vec::new());
-                    }
-                }
-            }
-        }
-
-        // SAFETY: we have ensured has the same length of fields
-        for (i, field) in fields.into_iter().enumerate() {
-            // SAFETY: datatable.len() >= fields.len()
-            unsafe { self.0.datatable.get_unchecked_mut(i) }.push(field);
-        }
-    }
-}
-
-fn strip_quotes(bytes: &[u8]) -> &[u8] {
-    // strip double quotes or single quotes
-    bytes
-        .strip_prefix(b"\"")
-        .and_then(|f| f.strip_suffix(b"\""))
-        .unwrap_or_else(|| {
-            bytes
-                .strip_prefix(b"'")
-                .and_then(|f| f.strip_suffix(b"'"))
-                .unwrap_or(bytes)
-        })
-}
-
-// Try to produce a String from bytes cheaply for valid UTF-8, fall back to lossless conversion.
-// This avoids the cost of allocating via from_utf8_lossy when bytes are already valid UTF-8.
-fn bytes_to_string(bytes: &[u8]) -> String {
-    match std::str::from_utf8(bytes) {
-        Ok(s) => s.to_owned(),
-        Err(_) => String::from_utf8_lossy(bytes).into_owned(),
+    #[inline]
+    pub fn clear(&mut self) {
+        self.0.rcd_type.clear();
+        self.0.rcd_name.clear();
+        self.0.metadata.clear();
+        self.0.columns.clear();
+        self.0.header.clear();
+        self.0.datatable.clear();
     }
 }

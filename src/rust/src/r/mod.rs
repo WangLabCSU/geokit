@@ -22,7 +22,7 @@ use flate2::bufread::GzDecoder as GzipDecoder;
 #[cfg(feature = "isal-rs")]
 use isal::read::GzipDecoder;
 
-use super::geo::{GEOEntity, GEOSoftConfig, GEOSoftFormat, GEOSoftLine, GEOSoftReader, GEOType};
+use super::geo::{GEOEntity, GEOSoftFormat, GEOSoftLine, GEOSoftParser, GEOSoftReader, GEOType};
 
 mod error;
 mod helper;
@@ -250,7 +250,7 @@ fn geo_parse_soft_impl(
         Box::new(file)
     };
 
-    let mut builder = GEOSoftConfig::builder();
+    let mut builder = GEOSoftReader::<GEOSoftReader<BufReader<Box<dyn Read>>>>::builder();
     builder.format(format);
     if let Some(use_lines) = use_lines {
         let mut uses = HashSet::new();
@@ -267,8 +267,8 @@ fn geo_parse_soft_impl(
         }
         builder.use_lines(uses);
     }
-    let records =
-        GEOSoftReader::<BufReader<Box<dyn Read>>>::new(builder.build(), reader).iter();
+    let reader = builder.build_from_reader(reader);
+    let records = reader.into_records();
     records
         .map(|record_res| record_res.map(RGEOSoftRecord::from))
         .collect::<anyhow::Result<Vec<_>>>()
