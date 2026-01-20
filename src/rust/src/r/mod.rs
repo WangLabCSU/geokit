@@ -1,9 +1,8 @@
 use std::{
     borrow::Cow,
     fs::File,
-    io::{BufReader, Read},
+    io::{self, BufReader, Read},
     path::Path,
-    result::Result,
 };
 
 use anyhow::{anyhow, Context};
@@ -22,7 +21,7 @@ use flate2::bufread::GzDecoder as GzipDecoder;
 #[cfg(feature = "isal-rs")]
 use isal::read::GzipDecoder;
 
-use super::geo::{GEOEntity, GEOSoftFormat, GEOSoftLine, GEOSoftParser, GEOSoftReader, GEOType};
+use super::geo::{GEOEntity, GEOSoftFormat, GEOSoftLine, GEOSoftReader, GEOType};
 
 mod error;
 mod helper;
@@ -269,9 +268,10 @@ fn geo_parse_soft_impl(
     }
     let reader = builder.build_from_reader(reader);
     let records = reader.into_records();
-    records
+    let out = records
         .map(|record_res| record_res.map(RGEOSoftRecord::from))
-        .collect::<anyhow::Result<Vec<_>>>()
+        .collect::<io::Result<Vec<_>>>()?;
+    Ok(out)
 }
 
 #[extendr]

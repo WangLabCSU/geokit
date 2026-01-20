@@ -2,7 +2,6 @@ use std::fs::File;
 use std::io::{self, BufRead, Read};
 use std::path::Path;
 
-use anyhow::Result;
 use hashbrown::HashSet;
 use memchr::memchr;
 
@@ -165,7 +164,7 @@ impl<R: Read> GEOSoftReader<R> {
     /// # Returns
     /// Returns a `Result<usize>`, where `usize` is the number of bytes read. If the reader encounters an
     /// error while reading, the result will be an `Err`.
-    pub fn read_record(&mut self, record: &mut GEOSoftRecord) -> Result<usize> {
+    pub fn read_record(&mut self, record: &mut GEOSoftRecord) -> io::Result<usize> {
         let mut num_reads = 0;
         loop {
             let input_bytes = self.reader.fill_buf()?;
@@ -258,9 +257,9 @@ impl<'r, R: Read> GEOSoftRecordsIter<'r, R> {
 }
 
 impl<'r, R: Read> Iterator for GEOSoftRecordsIter<'r, R> {
-    type Item = Result<GEOSoftRecord>;
+    type Item = io::Result<GEOSoftRecord>;
 
-    fn next(&mut self) -> Option<Result<GEOSoftRecord>> {
+    fn next(&mut self) -> Option<io::Result<GEOSoftRecord>> {
         match self.reader.read_record(&mut self.record) {
             Err(err) => Some(Err(err)),
             Ok(0) => None,
@@ -307,9 +306,9 @@ impl<R: Read> GEOSoftRecords<R> {
 }
 
 impl<R: Read> Iterator for GEOSoftRecords<R> {
-    type Item = Result<GEOSoftRecord>;
+    type Item = io::Result<GEOSoftRecord>;
 
-    fn next(&mut self) -> Option<Result<GEOSoftRecord>> {
+    fn next(&mut self) -> Option<io::Result<GEOSoftRecord>> {
         match self.reader.read_record(&mut self.record) {
             Err(err) => Some(Err(err)),
             Ok(0) => None,
