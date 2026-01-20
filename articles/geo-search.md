@@ -29,11 +29,11 @@ we can get these records by following code, the returned object is a
 diabetes_gse_records <- geo_search(
   "diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"
 )
-#> ■■■■■■■■■                        500/1768 [400/s] | ETA:  3s
-#> ■■■■■■■■■■■■■■■■■■               1000/1768 [378/s] | ETA:  2s
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1769/1768 [363/s] | ETA:  0s
+#> ■■■■■■■■■                        500/1768 [443/s] | ETA:  3s
+#> ■■■■■■■■■■■■■■■■■■               1000/1768 [398/s] | ETA:  2s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1769/1768 [339/s] | ETA:  0s
 #> → Parsing GEO records
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1769/1768 [363/s] | ETA:  0sGet records from NCBI for 1768 queries in 5s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1769/1768 [339/s] | ETA:  0sGet records from NCBI for 1768 queries in 5.3s
 head(diabetes_gse_records[1:5])
 #>                                                                                                                                                                                        Title
 #> 1                                                                                                         Zinc accumulation-induced integrated stress response triggers β-cell identity loss
