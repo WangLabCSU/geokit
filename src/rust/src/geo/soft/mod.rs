@@ -252,7 +252,7 @@ pub struct GEOSoftRecordsIter<'r, R: 'r> {
     record: Box<GEOSoftRecord>,
 }
 
-impl<'r, R: Read> GEOSoftRecordsIter<'r, R> {
+impl<'r, R> GEOSoftRecordsIter<'r, R> {
     fn new(rdr: &'r mut GEOSoftReader<R>) -> GEOSoftRecordsIter<'r, R> {
         GEOSoftRecordsIter {
             reader: rdr,
@@ -297,7 +297,7 @@ pub struct GEOSoftRecords<R> {
     record: GEOSoftRecord,
 }
 
-impl<R: Read> GEOSoftRecords<R> {
+impl<R> GEOSoftRecords<R> {
     fn new(rdr: GEOSoftReader<R>) -> GEOSoftRecords<R> {
         GEOSoftRecords {
             reader: rdr,
