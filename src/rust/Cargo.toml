@@ -12,14 +12,14 @@ name = 'geokit'
 [dependencies]
 extendr-api = { version = "*", default-features = false, features = ['result_list'], git = "https://github.com/Yunuuuu/extendr.git", branch = "from_iterator"  }
 thiserror = { version = "2.0" }
-anyhow = { version = "*" }
+anyhow = { version = "1.0" }
 regex = { version = "1.12" }
 memchr = { version = "2.7" }
 rayon = { version = "1.11" }
 hashbrown = { version = "0.16", default-features = false, features = ['default-hasher'] }
 indexmap = { version = "2.13" }
 # itertools = { version = "0.14", default-features = false, features = ['use_std'] }
-indicatif = {version = "0.18", features = ["rayon"]}
+indicatif = { version = "0.18" }
 flate2 = { version = "1.1" }
 isal-rs = { version = "0.5", optional = true }
 pprof = { version = "0.14", features = ["flamegraph"], optional = true }
@@ -33,7 +33,7 @@ pprof = { version = "0.14", features = ["flamegraph"], optional = true }
 # tokio-stream = "*"
 
 [features]
-isal = ["dep:isal-rs"]
+isal = ["dep:isal-rs"] # rename feature `isal-rs` to `isal`
 
 [profile.release]
 lto = true
