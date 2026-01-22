@@ -29,11 +29,11 @@ we can get these records by following code, the returned object is a
 diabetes_gse_records <- geo_search(
   "diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"
 )
-#> ■■■■■■■■■                        500/1771 [389/s] | ETA:  3s
-#> ■■■■■■■■■■■■■■■■■■               1000/1771 [374/s] | ETA:  2s
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1772/1771 [329/s] | ETA:  0s
+#> ■■■■■■■■■                        500/1771 [497/s] | ETA:  3s
+#> ■■■■■■■■■■■■■■■■■■               1000/1771 [486/s] | ETA:  2s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1772/1771 [350/s] | ETA:  0s
 #> → Parsing GEO records
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1772/1771 [329/s] | ETA:  0sGet records from NCBI for 1771 queries in 5.5s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1772/1771 [350/s] | ETA:  0sGet records from NCBI for 1771 queries in 5.2s
 head(diabetes_gse_records[1:5])
 #>                                                                                                                                                                                        Title
 #> 1                                                                    Extracellular Vesicles from Cytokine-Treated Human Pancreatic Ductal Cells Enhance HLA Class I Expression in Beta Cells
