@@ -252,7 +252,6 @@ fn geo_parse_soft_impl(
     let mut builder = GEOSoftReader::<GEOSoftReader<BufReader<Box<dyn Read>>>>::builder();
     builder.format(format);
     if let Some(use_lines) = use_lines {
-        let mut uses = HashSet::new();
         for line in *use_lines {
             let line = match *line {
                 "datatable" => GEOSoftLine::Datatable,
@@ -262,12 +261,11 @@ fn geo_parse_soft_impl(
                         .with_context(|| "Invalid 'use_lines'".to_string())
                 }
             };
-            uses.insert(line);
+            builder.line(line);
         }
-        builder.use_lines(uses);
     }
-    let reader = builder.build_from_reader(reader);
-    let records = reader.into_records();
+    let mut reader = builder.build_from_reader(reader);
+    let records = reader.records();
     let out = records
         .map(|record_res| record_res.map(RGEOSoftRecord::from))
         .collect::<io::Result<Vec<_>>>()?;

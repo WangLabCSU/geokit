@@ -1,5 +1,5 @@
 use std::fs::File;
-use std::io::{self, BufRead, Read};
+use std::io::{self, BufRead, BufReader, Read};
 use std::path::Path;
 
 use hashbrown::HashSet;
@@ -11,12 +11,13 @@ mod record;
 pub use parser::{GEOSoftFormat, GEOSoftLine};
 pub use record::GEOSoftRecord;
 
-use parser::{GEOSoftParser, GEOSoftParserBuilder};
+use parser::GEOSoftParser;
 
 #[derive(Debug, Clone, Default)]
 pub struct GEOSoftReaderBuilder {
     capacity: Option<usize>,
-    parser: GEOSoftParserBuilder,
+    format: Option<GEOSoftFormat>,
+    lines: Option<HashSet<GEOSoftLine>>,
 }
 
 impl GEOSoftReaderBuilder {
@@ -33,13 +34,26 @@ impl GEOSoftReaderBuilder {
 
     #[inline]
     pub fn format(&mut self, format: GEOSoftFormat) -> &mut Self {
-        self.parser.format(format);
+        self.format = Some(format);
         self
     }
 
     #[inline]
-    pub fn use_lines(&mut self, lines: HashSet<GEOSoftLine>) -> &mut Self {
-        self.parser.use_lines(lines);
+    pub fn line(&mut self, line: GEOSoftLine) -> &mut Self {
+        let set = self.lines.get_or_insert_with(|| HashSet::new());
+        set.insert(line);
+        self
+    }
+
+    #[inline]
+    #[allow(dead_code)]
+    pub fn lines<I: IntoIterator<Item = GEOSoftLine>>(&mut self, lines: I) -> &mut Self {
+        let mut uses = HashSet::with_capacity(2);
+        for line in lines {
+            uses.insert(line);
+        }
+        uses.shrink_to_fit();
+        self.lines = Some(uses);
         self
     }
 
@@ -55,10 +69,23 @@ impl GEOSoftReaderBuilder {
     #[inline]
     #[allow(dead_code)]
     pub fn build_from_reader<R: Read>(&self, reader: R) -> GEOSoftReader<R> {
+        let format = self
+            .format
+            .as_ref()
+            .map_or_else(|| GEOSoftFormat::Standard, |f| f.clone());
+        let lines = self.lines.as_ref().map_or_else(
+            || {
+                let mut uses = HashSet::with_capacity(2);
+                uses.insert(GEOSoftLine::Metadata);
+                uses.insert(GEOSoftLine::Datatable);
+                uses
+            },
+            |u| u.clone(),
+        );
+        let parser = GEOSoftParser { format, lines };
         let capacity = self.capacity.unwrap_or(4 * (1 << 20));
-        let parser = self.parser.build();
         GEOSoftReader {
-            reader: io::BufReader::with_capacity(capacity, reader),
+            reader: BufReader::with_capacity(capacity, reader),
             parser,
             leftover: Vec::new(),
             cur_pos: 1,
@@ -90,16 +117,11 @@ pub struct GEOSoftReader<R: ?Sized> {
     /// Note that this position is only observable by callers at the start
     /// of a record. More granular positions are not supported.
     cur_pos: usize,
-    reader: io::BufReader<R>, // Underlying buffered reader
+    reader: BufReader<R>, // Underlying buffered reader
 }
 
 // Methods for all instances of GEOSoftReader<T>
 impl<T> GEOSoftReader<T> {
-    #[inline]
-    pub fn builder() -> GEOSoftReaderBuilder {
-        GEOSoftReaderBuilder::new()
-    }
-
     /// Creates a new `GEOSoftReader` with a specified configuration and an underlying reader.
     ///
     /// This method initializes the reader with a default buffer capacity of 4MB.
@@ -114,6 +136,11 @@ impl<T> GEOSoftReader<T> {
     pub fn new<R: Read>(reader: R) -> GEOSoftReader<R> {
         let builder = Self::builder();
         builder.build_from_reader(reader)
+    }
+
+    #[inline]
+    pub fn builder() -> GEOSoftReaderBuilder {
+        GEOSoftReaderBuilder::new()
     }
 
     /// Creates a new `GEOSoftReader` with a specific buffer capacity.
@@ -157,6 +184,18 @@ impl<T> GEOSoftReader<T> {
     #[allow(dead_code)]
     pub fn capacity(&self) -> usize {
         self.reader.capacity()
+    }
+
+    #[inline]
+    #[allow(dead_code)]
+    pub fn format(&self) -> &GEOSoftFormat {
+        self.parser.format()
+    }
+
+    #[inline]
+    #[allow(dead_code)]
+    pub fn lines(&self) -> &HashSet<GEOSoftLine> {
+        self.parser.lines()
     }
 }
 
@@ -232,14 +271,14 @@ impl<R: Read> GEOSoftReader<R> {
 
     #[inline]
     #[allow(dead_code)]
-    pub fn records(&mut self) -> GEOSoftRecordsIter<'_, R> {
-        GEOSoftRecordsIter::new(self)
+    pub fn records(&mut self) -> GEOSoftRecords<'_, R> {
+        GEOSoftRecords::new(self)
     }
 
     #[inline]
     #[allow(dead_code)]
-    pub fn into_records(self) -> GEOSoftRecords<R> {
-        GEOSoftRecords::new(self)
+    pub fn into_records(self) -> GEOSoftIntoRecords<R> {
+        GEOSoftIntoRecords::new(self)
     }
 }
 
@@ -247,16 +286,16 @@ impl<R: Read> GEOSoftReader<R> {
 ///
 /// The lifetime parameter `'r` refers to the lifetime of the underlying `GEOSoftReader`.
 #[derive(Debug)]
-pub struct GEOSoftRecordsIter<'r, R: 'r> {
+pub struct GEOSoftRecords<'r, R: 'r> {
     reader: &'r mut GEOSoftReader<R>,
-    record: Box<GEOSoftRecord>,
+    record: GEOSoftRecord,
 }
 
-impl<'r, R> GEOSoftRecordsIter<'r, R> {
-    fn new(rdr: &'r mut GEOSoftReader<R>) -> GEOSoftRecordsIter<'r, R> {
-        GEOSoftRecordsIter {
-            reader: rdr,
-            record: Box::new(GEOSoftRecord::new()),
+impl<'r, R> GEOSoftRecords<'r, R> {
+    fn new(reader: &'r mut GEOSoftReader<R>) -> GEOSoftRecords<'r, R> {
+        GEOSoftRecords {
+            reader,
+            record: GEOSoftRecord::new(),
         }
     }
 
@@ -275,10 +314,10 @@ impl<'r, R> GEOSoftRecordsIter<'r, R> {
     }
 }
 
-impl<'r, R: Read> Iterator for GEOSoftRecordsIter<'r, R> {
-    type Item = io::Result<Box<GEOSoftRecord>>;
+impl<'r, R: Read> Iterator for GEOSoftRecords<'r, R> {
+    type Item = io::Result<GEOSoftRecord>;
 
-    fn next(&mut self) -> Option<io::Result<Box<GEOSoftRecord>>> {
+    fn next(&mut self) -> Option<io::Result<GEOSoftRecord>> {
         match self.reader.read_record(&mut self.record) {
             Err(err) => Some(Err(err)),
             Ok(0) => None,
@@ -292,15 +331,15 @@ impl<'r, R: Read> Iterator for GEOSoftRecordsIter<'r, R> {
 
 /// An owned iterator over records.
 #[derive(Debug)]
-pub struct GEOSoftRecords<R> {
+pub struct GEOSoftIntoRecords<R> {
     reader: GEOSoftReader<R>,
     record: GEOSoftRecord,
 }
 
-impl<R> GEOSoftRecords<R> {
-    fn new(rdr: GEOSoftReader<R>) -> GEOSoftRecords<R> {
-        GEOSoftRecords {
-            reader: rdr,
+impl<R> GEOSoftIntoRecords<R> {
+    fn new(reader: GEOSoftReader<R>) -> GEOSoftIntoRecords<R> {
+        GEOSoftIntoRecords {
+            reader,
             record: GEOSoftRecord::new(),
         }
     }
@@ -327,7 +366,7 @@ impl<R> GEOSoftRecords<R> {
     }
 }
 
-impl<R: Read> Iterator for GEOSoftRecords<R> {
+impl<R: Read> Iterator for GEOSoftIntoRecords<R> {
     type Item = io::Result<GEOSoftRecord>;
 
     fn next(&mut self) -> Option<io::Result<GEOSoftRecord>> {

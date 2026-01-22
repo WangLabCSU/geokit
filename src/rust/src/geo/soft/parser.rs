@@ -5,14 +5,8 @@ use super::record::GEOSoftRecord;
 
 #[derive(Debug, Clone)]
 pub(super) struct GEOSoftParser {
-    format: GEOSoftFormat,
-    use_lines: HashSet<GEOSoftLine>,
-}
-
-impl Default for GEOSoftParser {
-    fn default() -> Self {
-        Self::new()
-    }
+    pub(super) format: GEOSoftFormat,
+    pub(super) lines: HashSet<GEOSoftLine>,
 }
 
 // Simple Omnibus Format in Text (SOFT) File
@@ -30,32 +24,16 @@ impl Default for GEOSoftParser {
 // |  n/a   | data lines  |           data table row           |
 impl GEOSoftParser {
     #[inline]
-    #[allow(dead_code)]
-    pub(super) fn new() -> Self {
-        let builder = GEOSoftParserBuilder::new();
-        builder.build()
-    }
-
-    #[inline]
-    #[allow(dead_code)]
-    pub(super) fn builder() -> GEOSoftParserBuilder {
-        GEOSoftParserBuilder::new()
-    }
-
-    #[inline]
-    #[allow(dead_code)]
     pub(super) fn format(&self) -> &GEOSoftFormat {
         &self.format
     }
 
     #[inline]
-    #[allow(dead_code)]
-    pub(super) fn use_lines(&self) -> &HashSet<GEOSoftLine> {
-        &self.use_lines
+    pub(super) fn lines(&self) -> &HashSet<GEOSoftLine> {
+        &self.lines
     }
 
     #[inline]
-    #[allow(dead_code)]
     pub(super) fn parse_line(&self, line: &[u8], record: &mut GEOSoftRecord) {
         // ignore empty lines
         if line.is_empty() || line.iter().all(|byte| byte.is_ascii_whitespace()) {
@@ -64,7 +42,7 @@ impl GEOSoftParser {
         match unsafe { line.get_unchecked(0) } {
             b'^' => self.parse_caret(line, record),
             b'!' => {
-                if self.use_lines.contains(&GEOSoftLine::Metadata) {
+                if self.lines.contains(&GEOSoftLine::Metadata) {
                     match self.format() {
                         GEOSoftFormat::Standard => self.parse_regular_bang(line, record),
                         GEOSoftFormat::Matrix => self.parse_matrix_bang(line, record),
@@ -72,12 +50,12 @@ impl GEOSoftParser {
                 }
             }
             b'#' => {
-                if self.use_lines.contains(&GEOSoftLine::Datatable) {
+                if self.lines.contains(&GEOSoftLine::Datatable) {
                     self.parse_hash(line, record);
                 }
             }
             _ => {
-                if self.use_lines.contains(&GEOSoftLine::Datatable) {
+                if self.lines.contains(&GEOSoftLine::Datatable) {
                     self.parse_data(line, record);
                 }
             }
@@ -213,52 +191,6 @@ impl GEOSoftParser {
             // SAFETY: datatable.len() >= fields.len()
             unsafe { record.0.datatable.get_unchecked_mut(i) }.push(field);
         }
-    }
-}
-
-#[derive(Debug, Clone, Default)]
-pub(super) struct GEOSoftParserBuilder {
-    format: Option<GEOSoftFormat>,
-    use_lines: Option<HashSet<GEOSoftLine>>,
-}
-
-impl GEOSoftParserBuilder {
-    #[inline]
-    pub(super) fn new() -> Self {
-        Self {
-            format: None,
-            use_lines: None,
-        }
-    }
-
-    #[inline]
-    pub(super) fn format(&mut self, format: GEOSoftFormat) -> &mut Self {
-        self.format = Some(format);
-        self
-    }
-
-    #[inline]
-    pub(super) fn use_lines(&mut self, lines: HashSet<GEOSoftLine>) -> &mut Self {
-        self.use_lines = Some(lines);
-        self
-    }
-
-    #[inline]
-    pub(super) fn build(&self) -> GEOSoftParser {
-        let format = self
-            .format
-            .as_ref()
-            .map_or_else(|| GEOSoftFormat::Standard, |f| f.clone());
-        let use_lines = self.use_lines.as_ref().map_or_else(
-            || {
-                let mut uses = HashSet::with_capacity(2);
-                uses.insert(GEOSoftLine::Metadata);
-                uses.insert(GEOSoftLine::Datatable);
-                uses
-            },
-            |u| u.clone(),
-        );
-        GEOSoftParser { format, use_lines }
     }
 }
 
