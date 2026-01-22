@@ -16,9 +16,9 @@ use rayon::{
     ThreadPoolBuilder,
 };
 
-#[cfg(not(feature = "isal-rs"))]
+#[cfg(not(feature = "isal"))]
 use flate2::bufread::GzDecoder as GzipDecoder;
-#[cfg(feature = "isal-rs")]
+#[cfg(feature = "isal")]
 use isal::read::GzipDecoder;
 
 use super::geo::{GEOEntity, GEOSoftFormat, GEOSoftLine, GEOSoftReader, GEOType};

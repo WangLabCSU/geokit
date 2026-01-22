@@ -11,17 +11,17 @@ name = 'geokit'
 
 [dependencies]
 extendr-api = { version = "*", default-features = false, features = ['result_list'], git = "https://github.com/Yunuuuu/extendr.git", branch = "from_iterator"  }
-thiserror = { version = "*" }
+thiserror = { version = "2.0" }
 anyhow = { version = "*" }
-regex = { version = "*" }
-memchr = { version = "*" }
-rayon = { version = "*" }
+regex = { version = "1.12" }
+memchr = { version = "2.7" }
+rayon = { version = "1.11" }
 hashbrown = { version = "0.16", default-features = false, features = ['default-hasher'] }
-indexmap = { version = "*" }
+indexmap = { version = "2.13" }
 # itertools = { version = "0.14", default-features = false, features = ['use_std'] }
-indicatif = {version = "*", features = ["rayon"]}
-flate2 = { version = "*" }
-isal-rs = { version = "*", optional = true }
+indicatif = {version = "0.18", features = ["rayon"]}
+flate2 = { version = "1.1" }
+isal-rs = { version = "0.5", optional = true }
 pprof = { version = "0.14", features = ["flamegraph"], optional = true }
 
 # remove openssl dependency due to error when loading R package: undefined symbol: EVP_bf_ecb
@@ -31,6 +31,9 @@ pprof = { version = "0.14", features = ["flamegraph"], optional = true }
 # use tokio stream to download files
 # tokio = "*"
 # tokio-stream = "*"
+
+[features]
+isal = ["dep:isal-rs"]
 
 [profile.release]
 lto = true
