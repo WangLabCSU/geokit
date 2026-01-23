@@ -7,6 +7,22 @@ use super::record::GEOSoftRecord;
 pub(super) struct GEOSoftParser {
     pub(super) format: GEOSoftFormat,
     pub(super) lines: HashSet<GEOSoftLine>,
+    pub(super) leftover: Vec<u8>,
+}
+
+/// The state of parsing at most one record from SOFT data.
+#[derive(Clone, Debug)]
+pub(super) enum RecordParseState {
+    /// The caller provided input was exhausted before the end of a record was
+    /// found.
+    InputEmpty,
+    /// The end of a record was found.
+    Record,
+    /// All SOFT data has been read.
+    ///
+    /// This state can only be returned when an empty input buffer is provided
+    /// by the caller.
+    End,
 }
 
 // Simple Omnibus Format in Text (SOFT) File
@@ -24,6 +40,15 @@ pub(super) struct GEOSoftParser {
 // |  n/a   | data lines  |           data table row           |
 impl GEOSoftParser {
     #[inline]
+    pub(super) fn new(format: GEOSoftFormat, lines: HashSet<GEOSoftLine>) -> Self {
+        Self {
+            format,
+            lines,
+            leftover: Vec::new(),
+        }
+    }
+
+    #[inline]
     pub(super) fn format(&self) -> &GEOSoftFormat {
         &self.format
     }
@@ -34,9 +59,75 @@ impl GEOSoftParser {
     }
 
     #[inline]
-    pub(super) fn parse_line(&self, line: &[u8], record: &mut GEOSoftRecord) {
-        // ignore empty lines
-        if line.is_empty() || line.iter().all(|byte| byte.is_ascii_whitespace()) {
+    pub(super) fn read_record(
+        &mut self,
+        input: &[u8],
+        record: &mut GEOSoftRecord,
+    ) -> (RecordParseState, usize, usize) {
+        let mut nline = 0;
+        // If input is empty, we only parse the leftover buffer
+        if input.is_empty() {
+            if !self.leftover.is_empty() {
+                let line = &self.leftover;
+                self.parse_line(line, record);
+                nline += 1;
+                self.leftover.clear();
+            }
+            return (RecordParseState::End, 0, nline);
+        }
+        let mut input = input;
+        let mut nin = 0;
+        loop {
+            // check if we need step into next record
+            // SAFETY: input is not empty
+            if unsafe { input.get_unchecked(0) } == &b'^' && !record.is_empty() {
+                return (RecordParseState::Record, nin, nline);
+            }
+
+            // Try to find a newline to separate lines
+            if let Some(pos) = memchr(b'\n', input) {
+                // Move past the newline
+                nin += pos + 1;
+
+                // Don't include the final '\n' in the line
+                let line_end = if let Some(r) = pos.checked_sub(1) {
+                    // SAFETY: `r` is guaranteed to be less than `pos`
+                    if unsafe { *input.get_unchecked(r) } == b'\r' {
+                        r // Handle CRLF line endings
+                    } else {
+                        pos
+                    }
+                } else {
+                    pos
+                };
+
+                // Prepare the line to parse
+                let line = if self.leftover.is_empty() {
+                    &input[..line_end]
+                } else {
+                    self.leftover.extend_from_slice(&input[..line_end]);
+                    &self.leftover
+                };
+                self.parse_line(line, record);
+                nline += 1;
+                self.leftover.clear();
+
+                // Move to the next part of input
+                input = unsafe { input.get_unchecked(pos + 1..) };
+                if input.is_empty() {
+                    return (RecordParseState::InputEmpty, nin, nline);
+                }
+            } else {
+                // No newline found, append the remaining input to leftover
+                self.leftover.extend_from_slice(input);
+                return (RecordParseState::InputEmpty, nin + input.len(), nline);
+            };
+        }
+    }
+
+    fn parse_line(&self, line: &[u8], record: &mut GEOSoftRecord) {
+        // Skip lines that are entirely empty or contain only whitespace characters
+        if line.iter().all(|byte| byte.is_ascii_whitespace()) {
             return;
         }
         match unsafe { line.get_unchecked(0) } {

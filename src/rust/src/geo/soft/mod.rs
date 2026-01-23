@@ -3,7 +3,6 @@ use std::io::{self, BufRead, BufReader, Read};
 use std::path::Path;
 
 use hashbrown::HashSet;
-use memchr::memchr;
 
 mod parser;
 mod record;
@@ -11,7 +10,7 @@ mod record;
 pub use parser::{GEOSoftFormat, GEOSoftLine};
 pub use record::GEOSoftRecord;
 
-use parser::GEOSoftParser;
+use parser::{GEOSoftParser, RecordParseState};
 
 #[derive(Debug, Clone, Default)]
 pub struct GEOSoftReaderBuilder {
@@ -82,13 +81,12 @@ impl GEOSoftReaderBuilder {
             },
             |u| u.clone(),
         );
-        let parser = GEOSoftParser { format, lines };
+        let parser = GEOSoftParser::new(format, lines);
         let capacity = self.capacity.unwrap_or(4 * (1 << 20));
         GEOSoftReader {
             reader: BufReader::with_capacity(capacity, reader),
             parser,
-            leftover: Vec::new(),
-            cur_pos: 1,
+            line: 1,
         }
     }
 
@@ -110,14 +108,9 @@ impl GEOSoftReaderBuilder {
 /// A reader for parsing SOFT (Simple Omnibus Format in Text) files.
 #[derive(Debug)]
 pub struct GEOSoftReader<R: ?Sized> {
+    line: usize,           // The current line number.
     parser: GEOSoftParser, // The parser that interprets the SOFT data
-    leftover: Vec<u8>,
-    /// The current position of the reader.
-    ///
-    /// Note that this position is only observable by callers at the start
-    /// of a record. More granular positions are not supported.
-    cur_pos: usize,
-    reader: BufReader<R>, // Underlying buffered reader
+    reader: BufReader<R>,  // Underlying buffered reader
 }
 
 // Methods for all instances of GEOSoftReader<T>
@@ -218,54 +211,18 @@ impl<R: Read> GEOSoftReader<R> {
         let mut num_reads = 0;
         loop {
             let input_bytes = self.reader.fill_buf()?;
-            if input_bytes.is_empty() {
-                if self.leftover.is_empty() {
-                    return Ok(num_reads);
-                } else {
-                    let line = &self.leftover;
-                    self.parser.parse_line(line, record);
-                    self.cur_pos += 1;
-                    num_reads += line.len();
-                    self.leftover.clear();
+            let (state, nin, nline) = self.parser.read_record(input_bytes, record);
+            self.reader.consume(nin);
+            num_reads += nin;
+            self.line += nline;
+            match state {
+                RecordParseState::Record | RecordParseState::End => {
                     return Ok(num_reads);
                 }
+                RecordParseState::InputEmpty => {
+                    continue;
+                }
             }
-
-            // check if we need step into next record
-            // SAFETY: input_bytes is not empty
-            if unsafe { input_bytes.get_unchecked(0) } == &b'^' && !record.is_empty() {
-                return Ok(num_reads);
-            }
-
-            // get a single line and parse it
-            if let Some(pos) = memchr(b'\n', input_bytes) {
-                // Don't include the final '\n'
-                let end = if let Some(r) = pos.checked_sub(1) {
-                    // SAFETY: r < pos
-                    if unsafe { *input_bytes.get_unchecked(r) } == b'\r' {
-                        r // Handle CRLF line endings
-                    } else {
-                        pos
-                    }
-                } else {
-                    pos
-                };
-                let line = if self.leftover.is_empty() {
-                    &input_bytes[..end]
-                } else {
-                    self.leftover.extend_from_slice(&input_bytes[..end]);
-                    &self.leftover
-                };
-                self.parser.parse_line(line, record);
-                self.cur_pos += 1;
-                num_reads += pos + 1;
-                self.leftover.clear();
-                self.reader.consume(pos + 1);
-            } else {
-                self.leftover.extend_from_slice(input_bytes);
-                let consume = input_bytes.len();
-                self.reader.consume(consume);
-            };
         }
     }
 
