@@ -97,13 +97,13 @@ sessionInfo()
 #> loaded via a namespace (and not attached):
 #>  [1] cli_3.6.5           knitr_1.51          rlang_1.1.7        
 #>  [4] xfun_0.56           generics_0.1.4      textshaping_1.0.4  
-#>  [7] jsonlite_2.0.0      data.table_1.18.0   htmltools_0.5.9    
-#> [10] ragg_1.5.0          sass_0.4.10         rmarkdown_2.30     
-#> [13] Biobase_2.70.0      evaluate_1.0.5      jquerylib_0.1.4    
-#> [16] fastmap_1.2.0       yaml_2.3.12         lifecycle_1.0.5    
-#> [19] compiler_4.5.2      codetools_0.2-20    fs_1.6.6           
-#> [22] systemfonts_1.3.1   digest_0.6.39       R6_2.6.1           
-#> [25] curl_7.0.0          bslib_0.9.0         tools_4.5.2        
-#> [28] xml2_1.5.2          pkgdown_2.2.0       BiocGenerics_0.56.0
-#> [31] cachem_1.1.0        desc_1.4.3
+#>  [7] jsonlite_2.0.0      htmltools_0.5.9     ragg_1.5.0         
+#> [10] sass_0.4.10         rmarkdown_2.30      Biobase_2.70.0     
+#> [13] evaluate_1.0.5      jquerylib_0.1.4     fastmap_1.2.0      
+#> [16] yaml_2.3.12         lifecycle_1.0.5     compiler_4.5.2     
+#> [19] codetools_0.2-20    fs_1.6.6            systemfonts_1.3.1  
+#> [22] digest_0.6.39       R6_2.6.1            curl_7.0.0         
+#> [25] bslib_0.9.0         tools_4.5.2         pkgdown_2.2.0      
+#> [28] xml2_1.5.2          BiocGenerics_0.56.0 cachem_1.1.0       
+#> [31] desc_1.4.3
 ```

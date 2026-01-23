@@ -29,26 +29,25 @@ we can get these records by following code, the returned object is a
 diabetes_gse_records <- geo_search(
   "diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"
 )
-#> ■■■■■■■■■                        500/1771 [497/s] | ETA:  3s
-#> ■■■■■■■■■■■■■■■■■■               1000/1771 [486/s] | ETA:  2s
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1772/1771 [350/s] | ETA:  0s
+#> ■■■■■■■■■                        500/1772 [379/s] | ETA:  3s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■■       1500/1772 [343/s] | ETA:  1s
 #> → Parsing GEO records
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1772/1771 [350/s] | ETA:  0sGet records from NCBI for 1771 queries in 5.2s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■■       1500/1772 [343/s] | ETA:  1sGet records from NCBI for 1772 queries in 5.4s
 head(diabetes_gse_records[1:5])
 #>                                                                                                                                                                                        Title
-#> 1                                                                    Extracellular Vesicles from Cytokine-Treated Human Pancreatic Ductal Cells Enhance HLA Class I Expression in Beta Cells
-#> 2                                          N-acetyl-L-cysteine ethyl ester (NACET) induces the transcription factor NRF2 in the retina and prevents its aging and diabetic retinopathy. [II]
-#> 3                                           N-acetyl-L-cysteine ethyl ester (NACET) induces the transcription factor NRF2 in the retina and prevents its aging and diabetic retinopathy. [I]
-#> 4                                                                                                         Zinc accumulation-induced integrated stress response triggers β-cell identity loss
-#> 5 Multi-omics profiling reveals microbiota, metabolite, lipid, and immunological heterogeneity underlying distinct pathophysiological mechanisms of age-related endotypes in type 1 diabetes
-#> 6                                                                      Cutaneous adipose tissue has a strong inflammatory signature in psoriasis patients, and it is partly IL-17 dependent.
-#>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       Summary
-#> 1                               Introduction/Objective: Type 1 diabetes (T1D) is an autoimmune disease characterized by the loss of insulin-producing beta cells and has no cure. The role of cell-cell interactions in immune recognition of beta cells remains poorly understood. Beta cells develop adjacent to ductal cells, which undergo changes during T1D progression, suggesting crosstalk between the two cell types. Extracellular vesicles (EVs) mediate intercellular communication through their cargo, but whether human ductal cells secrete EVs that modulate beta cells is unknown. more...
-#> 2                                                                                      Age-related macular degeneration (AMD) and diabetic retinopathy (DR) are leading causes of visual impairment in older people, with oxidative stress playing a central role in the development of these diseases. In fact, the cells of the retina are particularly susceptible to oxidative damage due to high metabolic activity and exposure to light. Glutathione (GSH), a key intracellular antioxidant, is essential for retinal protection but it becomes limited during aging and in diabetes patients. more...
-#> 3                                                                                      Age-related macular degeneration (AMD) and diabetic retinopathy (DR) are leading causes of visual impairment in older people, with oxidative stress playing a central role in the development of these diseases. In fact, the cells of the retina are particularly susceptible to oxidative damage due to high metabolic activity and exposure to light. Glutathione (GSH), a key intracellular antioxidant, is essential for retinal protection but it becomes limited during aging and in diabetes patients. more...
-#> 4                                         Pancreatic β cell identity loss is increasingly recognized as a critical pathogenic contributor to β cell failure in type 2 diabetes (T2D), but the specific mechanism remains to be elucidated. In this study, we demonstrate that zinc accumulation contributes to the β cell identity loss during diabetes progression in both human and mouse islets. Using a model of human embryonic stem cell-derived islets (SC-islets), we reveal that accumulated zinc triggers the integrated stress response (ISR) with elevated ATF4 expression in SC-β cells. more...
-#> 5 Type 1 diabetes (T1D) is an autoimmune disease characterized by marked heterogeneity in age at diagnosis, clinical progression, and immune pathology. Increasing evidence suggests that age-related T1D endotypes may reflect distinct underlying molecular mechanisms; however, these mechanisms remain incompletely characterized at the cellular and transcriptional levels. To investigate age-associated immune heterogeneity in T1D, peripheral blood mononuclear cells (PBMCs) were collected from a selected cohort of newly diagnosed pediatric individuals with T1D and healthy controls. more...
-#> 6                                                     Background: Psoriasis is an inflammatory skin disease associated with systemic inflammation and comorbidities such as diabetes and cardiovascular disease. Although the association between psoriasis and obesity has been studied extensively, the role of cutaneous adipose tissue (CAT) in pathogenesis of psoriasis remains unclear. Objectives This study aimed to provide a comprehensive evaluation of the CAT transcriptome in psoriasis patients and investigate the effects of IL-17 pathway blockade on adipose tissue inflammation. more...
+#> 1                                                                    Energy-sensing molecule RORγ regulates Cholesterol Metabolism and Immune Signaling in Diabetic Kidney Disease and Aging
+#> 2                                                                    Extracellular Vesicles from Cytokine-Treated Human Pancreatic Ductal Cells Enhance HLA Class I Expression in Beta Cells
+#> 3                                          N-acetyl-L-cysteine ethyl ester (NACET) induces the transcription factor NRF2 in the retina and prevents its aging and diabetic retinopathy. [II]
+#> 4                                           N-acetyl-L-cysteine ethyl ester (NACET) induces the transcription factor NRF2 in the retina and prevents its aging and diabetic retinopathy. [I]
+#> 5                                                                                                         Zinc accumulation-induced integrated stress response triggers β-cell identity loss
+#> 6 Multi-omics profiling reveals microbiota, metabolite, lipid, and immunological heterogeneity underlying distinct pathophysiological mechanisms of age-related endotypes in type 1 diabetes
+#>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            Summary
+#> 1 Aging is a major risk factor for diabetic kidney disease (DKD), with both conditions exhibiting similar renal pathology. We identify the energy-sensing molecule Retinoic acid-related orphan receptor γ (RORγ) as significantly downregulated in diabetic and aged kidneys. Tubule-specific RORγ deficiency exacerbates kidney injury, whereas its overexpression protects. Mechanistically, RORγ stabilizes insulin-induced gene 1 (INSIG1) by upregulating the deubiquitinase YOD1 and enhancing AMPK activity via CAB39, which together promote INSIG1 phosphorylation and subsequent stabilization. more...
+#> 2                                    Introduction/Objective: Type 1 diabetes (T1D) is an autoimmune disease characterized by the loss of insulin-producing beta cells and has no cure. The role of cell-cell interactions in immune recognition of beta cells remains poorly understood. Beta cells develop adjacent to ductal cells, which undergo changes during T1D progression, suggesting crosstalk between the two cell types. Extracellular vesicles (EVs) mediate intercellular communication through their cargo, but whether human ductal cells secrete EVs that modulate beta cells is unknown. more...
+#> 3                                                                                           Age-related macular degeneration (AMD) and diabetic retinopathy (DR) are leading causes of visual impairment in older people, with oxidative stress playing a central role in the development of these diseases. In fact, the cells of the retina are particularly susceptible to oxidative damage due to high metabolic activity and exposure to light. Glutathione (GSH), a key intracellular antioxidant, is essential for retinal protection but it becomes limited during aging and in diabetes patients. more...
+#> 4                                                                                           Age-related macular degeneration (AMD) and diabetic retinopathy (DR) are leading causes of visual impairment in older people, with oxidative stress playing a central role in the development of these diseases. In fact, the cells of the retina are particularly susceptible to oxidative damage due to high metabolic activity and exposure to light. Glutathione (GSH), a key intracellular antioxidant, is essential for retinal protection but it becomes limited during aging and in diabetes patients. more...
+#> 5                                              Pancreatic β cell identity loss is increasingly recognized as a critical pathogenic contributor to β cell failure in type 2 diabetes (T2D), but the specific mechanism remains to be elucidated. In this study, we demonstrate that zinc accumulation contributes to the β cell identity loss during diabetes progression in both human and mouse islets. Using a model of human embryonic stem cell-derived islets (SC-islets), we reveal that accumulated zinc triggers the integrated stress response (ISR) with elevated ATF4 expression in SC-β cells. more...
+#> 6      Type 1 diabetes (T1D) is an autoimmune disease characterized by marked heterogeneity in age at diagnosis, clinical progression, and immune pathology. Increasing evidence suggests that age-related T1D endotypes may reflect distinct underlying molecular mechanisms; however, these mechanisms remain incompletely characterized at the cellular and transcriptional levels. To investigate age-associated immune heterogeneity in T1D, peripheral blood mononuclear cells (PBMCs) were collected from a selected cohort of newly diagnosed pediatric individuals with T1D and healthy controls. more...
 #>       Organism                                               Type
 #> 1 Homo sapiens Expression profiling by high throughput sequencing
 #> 2 Homo sapiens Expression profiling by high throughput sequencing
@@ -57,12 +56,12 @@ head(diabetes_gse_records[1:5])
 #> 5 Homo sapiens Expression profiling by high throughput sequencing
 #> 6 Homo sapiens Expression profiling by high throughput sequencing
 #>                                                                FTP download
-#> 1      GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE316nnn/GSE316823/
-#> 2      GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE299nnn/GSE299876/
-#> 3      GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE299nnn/GSE299875/
-#> 4 GEO (MTX, TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE236nnn/GSE236316/
-#> 5 GEO (MTX, TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE316nnn/GSE316337/
-#> 6      GEO (CSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE287nnn/GSE287022/
+#> 1      GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE317nnn/GSE317266/
+#> 2      GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE316nnn/GSE316823/
+#> 3      GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE299nnn/GSE299876/
+#> 4      GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE299nnn/GSE299875/
+#> 5 GEO (MTX, TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE236nnn/GSE236316/
+#> 6 GEO (MTX, TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE316nnn/GSE316337/
 ```
 
 Once you have the search results, you can filter them based on specific
@@ -158,13 +157,13 @@ sessionInfo()
 #> loaded via a namespace (and not attached):
 #>  [1] vctrs_0.7.0       httr_1.4.7        cli_3.6.5         knitr_1.51       
 #>  [5] rlang_1.1.7       xfun_0.56         stringi_1.8.7     generics_0.1.4   
-#>  [9] textshaping_1.0.4 jsonlite_2.0.0    data.table_1.18.0 glue_1.8.0       
-#> [13] htmltools_0.5.9   XML_3.99-0.20     ragg_1.5.0        sass_0.4.10      
-#> [17] rmarkdown_2.30    tibble_3.3.1      evaluate_1.0.5    jquerylib_0.1.4  
-#> [21] fastmap_1.2.0     yaml_2.3.12       lifecycle_1.0.5   stringr_1.6.0    
-#> [25] compiler_4.5.2    dplyr_1.1.4       codetools_0.2-20  rentrez_1.2.4    
-#> [29] fs_1.6.6          pkgconfig_2.0.3   systemfonts_1.3.1 digest_0.6.39    
-#> [33] R6_2.6.1          tidyselect_1.2.1  pillar_1.11.1     curl_7.0.0       
-#> [37] magrittr_2.0.4    bslib_0.9.0       withr_3.0.2       tools_4.5.2      
-#> [41] pkgdown_2.2.0     cachem_1.1.0      desc_1.4.3
+#>  [9] textshaping_1.0.4 jsonlite_2.0.0    glue_1.8.0        htmltools_0.5.9  
+#> [13] XML_3.99-0.20     ragg_1.5.0        sass_0.4.10       rmarkdown_2.30   
+#> [17] tibble_3.3.1      evaluate_1.0.5    jquerylib_0.1.4   fastmap_1.2.0    
+#> [21] yaml_2.3.12       lifecycle_1.0.5   stringr_1.6.0     compiler_4.5.2   
+#> [25] dplyr_1.1.4       rentrez_1.2.4     codetools_0.2-20  fs_1.6.6         
+#> [29] pkgconfig_2.0.3   systemfonts_1.3.1 digest_0.6.39     R6_2.6.1         
+#> [33] tidyselect_1.2.1  pillar_1.11.1     curl_7.0.0        magrittr_2.0.4   
+#> [37] bslib_0.9.0       withr_3.0.2       tools_4.5.2       pkgdown_2.2.0    
+#> [41] cachem_1.1.0      desc_1.4.3
 ```

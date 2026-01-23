@@ -24,8 +24,8 @@ gse160724 <- geo_suppl(
   odir = tempdir()
 )
 #> Downloading 1 file
-gse160724_dt <- data.table::fread(gse160724)
-head(gse160724_dt[1:5])
+gse160724_suppl_data <- data.table::fread(gse160724)
+head(gse160724_suppl_data[1:5])
 #>    gene_id  NC_1  NC_2 shSRSF1_1 shSRSF1_2
 #>     <char> <int> <int>     <int>     <int>
 #> 1:    A1BG   189   179       299       310

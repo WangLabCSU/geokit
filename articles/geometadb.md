@@ -59,9 +59,9 @@ uc_gse <- list(
         "urothelial cancer[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"
     )
 )
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  627/626 [274/s] | ETA:  0s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  627/626 [269/s] | ETA:  0s
 #> → Parsing GEO records
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  627/626 [274/s] | ETA:  0sGet records from NCBI for 626 queries in 2.3s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  627/626 [269/s] | ETA:  0sGet records from NCBI for 626 queries in 2.4s
 #> 
 #> → Parsing GEO records
 uc_gse <- unique(dplyr::bind_rows(uc_gse))
@@ -145,13 +145,12 @@ sessionInfo()
 #> loaded via a namespace (and not attached):
 #>  [1] vctrs_0.7.0       httr_1.4.7        cli_3.6.5         knitr_1.51       
 #>  [5] rlang_1.1.7       xfun_0.56         stringi_1.8.7     generics_0.1.4   
-#>  [9] textshaping_1.0.4 jsonlite_2.0.0    data.table_1.18.0 glue_1.8.0       
-#> [13] htmltools_0.5.9   XML_3.99-0.20     ragg_1.5.0        sass_0.4.10      
-#> [17] rmarkdown_2.30    tibble_3.3.1      evaluate_1.0.5    jquerylib_0.1.4  
-#> [21] fastmap_1.2.0     yaml_2.3.12       lifecycle_1.0.5   stringr_1.6.0    
-#> [25] compiler_4.5.2    dplyr_1.1.4       rentrez_1.2.4     fs_1.6.6         
-#> [29] pkgconfig_2.0.3   systemfonts_1.3.1 digest_0.6.39     R6_2.6.1         
-#> [33] tidyselect_1.2.1  pillar_1.11.1     curl_7.0.0        magrittr_2.0.4   
-#> [37] bslib_0.9.0       tools_4.5.2       pkgdown_2.2.0     cachem_1.1.0     
-#> [41] desc_1.4.3
+#>  [9] textshaping_1.0.4 jsonlite_2.0.0    glue_1.8.0        htmltools_0.5.9  
+#> [13] XML_3.99-0.20     ragg_1.5.0        sass_0.4.10       rmarkdown_2.30   
+#> [17] tibble_3.3.1      evaluate_1.0.5    jquerylib_0.1.4   fastmap_1.2.0    
+#> [21] yaml_2.3.12       lifecycle_1.0.5   stringr_1.6.0     compiler_4.5.2   
+#> [25] rentrez_1.2.4     dplyr_1.1.4       fs_1.6.6          pkgconfig_2.0.3  
+#> [29] systemfonts_1.3.1 digest_0.6.39     R6_2.6.1          tidyselect_1.2.1 
+#> [33] pillar_1.11.1     curl_7.0.0        magrittr_2.0.4    bslib_0.9.0      
+#> [37] tools_4.5.2       pkgdown_2.2.0     cachem_1.1.0      desc_1.4.3
 ```

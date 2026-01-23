@@ -1,10 +1,6 @@
 # Virtual class for holding GEO series, samples, platforms, and datasets.
 
-`GEOSoft` class, which contains two slots `meta` and `accession`, is the
-basic class (super class) of `GEOSeries` class and `GEOData` class.
-`GEOSeries` class contains extra two slots `gsm` and `gpl` special for
-`GSE` entity soft file and `GEOData` contains extra two slots `columns`
-and `datatable` special for GEO samples, platforms, and datasets.
+Virtual class for holding GEO series, samples, platforms, and datasets.
 
 ## Usage
 
@@ -72,9 +68,6 @@ datatable(object)
 # S4 method for class 'GEOSoft'
 datatable(object) <- value
 
-# S4 method for class 'GEOPlatform'
-show(object)
-
 gsm(object)
 
 gsm(object) <- value
@@ -94,9 +87,6 @@ gse(object)
 
 # S4 method for class 'GEOPlatform'
 gse(object) <- value
-
-# S4 method for class 'GEOSeries'
-show(object)
 
 # S4 method for class 'GEOSeries'
 gsm(object)
