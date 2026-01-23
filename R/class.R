@@ -1,11 +1,5 @@
 #' Virtual class for holding GEO series, samples, platforms, and datasets.
 #'
-#' `GEOSoft` class, which contains two slots `meta` and `accession`, is the
-#' basic class (super class) of `GEOSeries` class and `GEOData` class.
-#' `GEOSeries` class contains extra two slots `gsm` and `gpl` special for `GSE`
-#' entity soft file and `GEOData` contains extra two slots `columns` and
-#' `datatable` special for GEO samples, platforms, and datasets.
-#'
 #' @param object A [GEOSoft][GEOSoft-class] Class Object.
 #' @param value A R object with the same class of corresponding slots.
 #' @name GEOSoft-class
@@ -59,39 +53,79 @@ methods::setClass(
 )
 
 methods::setValidity("GEOSoft", function(object) {
-    if (!all(rownames(object@columns) == colnames(object@datatable))) {
-        "the rownames of slot @columns should be the same with the colnames of slot @datatable."
-    } else {
-        TRUE
+    if (length(object@rcd_type) != 1L) {
+        return("@rcd_type must be a single string")
     }
+    if (length(object@rcd_name) != 1L) {
+        return("@rcd_name must be a single string")
+    }
+    if (length(object@accession) != 1L) {
+        return("@accession must be a single string")
+    }
+    if (!all(rownames(object@columns) == colnames(object@datatable))) {
+        return("the rownames of slot @columns should be the same with the colnames of slot @datatable.")
+    }
+    TRUE
 })
 
 #' @importFrom methods show
 #' @method show GEOSoft
 #' @export
 #' @rdname GEOSoft-class
-methods::setMethod("show", "GEOSoft", function(object) {
-    cat("<", methods::is(object)[[1L]], "> ", "\n", sep = "")
-    datatable_dim <- dim(object@datatable)
+methods::setMethod("show", "GEOSoft", function(object) print(object))
+
+#' @export
+print.GEOSoft <- function(x, ...) {
+    soft_print_header(x, ...)
+    soft_print_data(x, ...)
+    soft_print_footer(x, ...)
+    invisible(x)
+}
+
+soft_print_header <- function(x, ...) {
+    UseMethod("soft_print_header")
+}
+
+soft_print_data <- function(x, ...) {
+    UseMethod("soft_print_data")
+}
+
+soft_print_footer <- function(x, ...) {
+    UseMethod("soft_print_footer")
+}
+
+#' @export
+soft_print_header.GEOSoft <- function(x, ...) {
+    cat("<", .subset(methods::is(x), 1L), "> ", "\n", sep = "")
+}
+
+#' @export
+soft_print_data.GEOSoft <- function(x, ...) {
+    datatable_dim <- dim(x@datatable)
     cat(
         strwrap(paste0("datatable: a ", datatable_dim[[1L]], " * ", datatable_dim[[2L]], " data.frame"), exdent = 2L),
         sep = "\n"
     )
     if (datatable_dim[2L]) {
-        wrap_cat("datatable vars", names = names(object@datatable), 2L, 4L)
+        wrap_cat("datatable vars", names = names(x@datatable), 2L, 4L)
     }
 
-    columns_dim <- dim(object@columns)
+    columns_dim <- dim(x@columns)
     cat(
         strwrap(paste0("columns: a ", columns_dim[[1L]], " * ", columns_dim[[2L]], " data.frame"), exdent = 2L),
         sep = "\n"
     )
     if (columns_dim[2L]) {
-        wrap_cat("columns vars", names = names(object@columns), 2L, 4L)
+        wrap_cat("columns vars", names = names(x@columns), 2L, 4L)
     }
-    wrap_cat("metadata", names = names(object@metadata))
-    wrap_cat("accession", names = object@accession)
-})
+}
+
+#' @export
+soft_print_footer.GEOSoft <- function(x, ...) {
+    wrap_cat("metadata", names = names(x@metadata))
+    wrap_cat("accession", names = x@accession)
+}
+
 
 #' @export
 #' @rdname GEOSoft-class
@@ -282,44 +316,28 @@ methods::setValidity("GEOPlatform", function(object) {
     if (!all(vapply(object@gsm, function(x) {
         methods::is(x, "GEOSoft")
     }, logical(1L), USE.NAMES = FALSE))) {
-        "the element of slot @gsm list should only contain Class `GEOSoft` object."
-    } else if (!all(vapply(object@gse, function(x) {
+        return("the element of slot @gsm list should only contain Class `GEOSoft` object.")
+    }
+    if (!all(vapply(object@gse, function(x) {
         methods::is(x, "GEOSoft")
     }, logical(1L), USE.NAMES = FALSE))) {
-        "the element of slot @gpl list should only contain Class `GEOSoft` object."
-    } else {
-        TRUE
+        return("the element of slot @gpl list should only contain Class `GEOSoft` object.")
     }
+    TRUE
 })
 
-#' @method show GEOPlatform
 #' @export
-#' @rdname GEOSoft-class
-methods::setMethod("show", "GEOPlatform", function(object) {
-    cat("<", methods::is(object)[[1L]], "> ", "\n", sep = "")
-    wrap_cat("gse", names = vapply(object@gse, rcd_name, character(1L)))
-    wrap_cat("gsm", names = vapply(object@gsm, rcd_name, character(1L)))
-    datatable_dim <- dim(object@datatable)
-    cat(
-        strwrap(paste0("datatable: a ", datatable_dim[[1L]], " * ", datatable_dim[[2L]], " data.frame"), exdent = 2L),
-        sep = "\n"
-    )
-    if (datatable_dim[2L]) {
-        wrap_cat("datatable vars", names = names(object@datatable), 2L, 4L)
-    }
-
-    columns_dim <- dim(object@columns)
-    cat(
-        strwrap(paste0("columns: a ", columns_dim[[1L]], " * ", columns_dim[[2L]], " data.frame"), exdent = 2L),
-        sep = "\n"
-    )
-    if (columns_dim[2L]) {
-        wrap_cat("columns vars", names = names(object@columns), 2L, 4L)
-    }
-    wrap_cat("columns", names = names(object@columns), 2L, 4L)
-    wrap_cat("metadata", names = names(object@metadata))
-    wrap_cat("accession", names = object@accession)
-})
+soft_print_data.GEOPlatform <- function(x, ...) {
+    wrap_cat("gse", names = vapply(
+        x@gse, rcd_name, character(1L),
+        USE.NAMES = FALSE
+    ))
+    wrap_cat("gsm", names = vapply(
+        x@gsm, rcd_name, character(1L),
+        USE.NAMES = FALSE
+    ))
+    NextMethod()
+}
 
 ## Accessors -----
 ### Accessors `gsm` ----
@@ -401,43 +419,28 @@ methods::setValidity("GEOSeries", function(object) {
     if (!all(vapply(object@gsm, function(x) {
         methods::is(x, "GEOSoft")
     }, logical(1L), USE.NAMES = FALSE))) {
-        "the element of slot @gsm list should only contain Class `GEOSoft` object."
-    } else if (!all(vapply(object@gpl, function(x) {
+        return("the element of slot @gsm list should only contain Class `GEOSoft` object.")
+    }
+    if (!all(vapply(object@gpl, function(x) {
         methods::is(x, "GEOSoft")
     }, logical(1L), USE.NAMES = FALSE))) {
-        "the element of slot @gpl list should only contain Class `GEOSoft` object."
-    } else {
-        TRUE
+        return("the element of slot @gpl list should only contain Class `GEOSoft` object.")
     }
+    TRUE
 })
 
-#' @method show GEOSeries
 #' @export
-#' @rdname GEOSoft-class
-methods::setMethod("show", "GEOSeries", function(object) {
-    cat("<", methods::is(object)[[1L]], "> ", "\n", sep = "")
-    wrap_cat("gsm", names = vapply(object@gsm, rcd_name, character(1L)))
-    wrap_cat("gpl", names = vapply(object@gpl, rcd_name, character(1L)))
-    datatable_dim <- dim(object@datatable)
-    cat(
-        strwrap(paste0("datatable: a ", datatable_dim[[1L]], " * ", datatable_dim[[2L]], " data.frame"), exdent = 2L),
-        sep = "\n"
-    )
-    if (datatable_dim[2L]) {
-        wrap_cat("datatable vars", names = names(object@datatable), 2L, 4L)
-    }
-
-    columns_dim <- dim(object@columns)
-    cat(
-        strwrap(paste0("columns: a ", columns_dim[[1L]], " * ", columns_dim[[2L]], " data.frame"), exdent = 2L),
-        sep = "\n"
-    )
-    if (columns_dim[2L]) {
-        wrap_cat("columns vars", names = names(object@columns), 2L, 4L)
-    }
-    wrap_cat("metadata", names = names(object@metadata))
-    wrap_cat("accession", names = object@accession)
-})
+soft_print_data.GEOSeries <- function(x, ...) {
+    wrap_cat("gsm", names = vapply(
+        x@gsm, rcd_name, character(1L),
+        USE.NAMES = FALSE
+    ))
+    wrap_cat("gpl", names = vapply(
+        x@gpl, rcd_name, character(1L),
+        USE.NAMES = FALSE
+    ))
+    NextMethod()
+}
 
 ## Accessors -----
 ### Accessors `gsm` ----

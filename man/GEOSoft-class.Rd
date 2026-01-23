@@ -29,7 +29,6 @@
 \alias{datatable,GEOSoft-method}
 \alias{datatable<-,GEOSoft-method}
 \alias{GEOPlatform-class}
-\alias{show,GEOPlatform-method}
 \alias{gsm}
 \alias{gsm<-}
 \alias{gsm,GEOPlatform-method}
@@ -39,7 +38,6 @@
 \alias{gse,GEOPlatform-method}
 \alias{gse<-,GEOPlatform-method}
 \alias{GEOSeries-class}
-\alias{show,GEOSeries-method}
 \alias{gsm,GEOSeries-method}
 \alias{gsm<-,GEOSeries-method}
 \alias{gpl}
@@ -98,8 +96,6 @@ datatable(object) <- value
 
 \S4method{datatable}{GEOSoft}(object) <- value
 
-\S4method{show}{GEOPlatform}(object)
-
 gsm(object)
 
 gsm(object) <- value
@@ -115,8 +111,6 @@ gse(object) <- value
 \S4method{gse}{GEOPlatform}(object)
 
 \S4method{gse}{GEOPlatform}(object) <- value
-
-\S4method{show}{GEOSeries}(object)
 
 \S4method{gsm}{GEOSeries}(object)
 
@@ -136,11 +130,7 @@ gpl(object) <- value
 \item{value}{A R object with the same class of corresponding slots.}
 }
 \description{
-\code{GEOSoft} class, which contains two slots \code{meta} and \code{accession}, is the
-basic class (super class) of \code{GEOSeries} class and \code{GEOData} class.
-\code{GEOSeries} class contains extra two slots \code{gsm} and \code{gpl} special for \code{GSE}
-entity soft file and \code{GEOData} contains extra two slots \code{columns} and
-\code{datatable} special for GEO samples, platforms, and datasets.
+Virtual class for holding GEO series, samples, platforms, and datasets.
 }
 \section{Slots}{
 

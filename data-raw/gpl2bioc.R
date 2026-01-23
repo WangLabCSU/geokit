@@ -4,6 +4,7 @@ if (!dir.exists(odir <- file.path("inst/extdata"))) {
 }
 
 old_gpl2bioc <- readRDS(file.path(odir, "gpl2bioc.rds"))
+data.table::setDT(old_gpl2bioc)
 new_gpl2bioc <- structure("hgu95av2.db", names = c("GPL8300"))
 new_gpl2bioc <- new_gpl2bioc[
     setdiff(names(new_gpl2bioc), old_gpl2bioc$Platform_geo_accession)
@@ -53,6 +54,7 @@ if (length(new_gpl2bioc)) {
         after = "Platform_geo_accession"
     )
     gpl2bioc_dt[, Platform_data_row_count]
+    data.table::setDF(gpl2bioc_dt)
     saveRDS(gpl2bioc_dt, file.path(odir, "gpl2bioc.rds"))
 }
 

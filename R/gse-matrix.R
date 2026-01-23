@@ -263,6 +263,5 @@ download_annot <- function(accession, ftp_over_https = TRUE,
 #' @noRd
 gpl_map <- function(gpl) {
     mapping <- read_internal("gpl2bioc.rds")
-    data.table::setDF(mapping)
     mapping[match(gpl, mapping$Platform_geo_accession), , drop = FALSE]
 }

@@ -30,8 +30,8 @@ gse160724 <- geo_suppl(
   pattern = "counts_anno",
   odir = tempdir()
 )
-gse160724_dt <- data.table::fread(gse160724)
-head(gse160724_dt[1:5])
+gse160724_suppl_data <- data.table::fread(gse160724)
+head(gse160724_suppl_data[1:5])
 ```
 
 
