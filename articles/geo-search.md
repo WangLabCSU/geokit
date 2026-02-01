@@ -29,39 +29,47 @@ we can get these records by following code, the returned object is a
 diabetes_gse_records <- geo_search(
   "diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"
 )
-#> ■■■■■■■■■                        500/1772 [392/s] | ETA:  3s
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■■       1500/1772 [330/s] | ETA:  1s
+#> ■■■■■■■■■                        500/1776 [368/s] | ETA:  3s
+#> ■■■■■■■■■■■■■■■■■■               1000/1776 [392/s] | ETA:  2s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1777/1776 [343/s] | ETA:  0s
 #> → Parsing GEO records
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■■       1500/1772 [330/s] | ETA:  1sGet records from NCBI for 1772 queries in 5.6s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1777/1776 [343/s] | ETA:  0sGet records from NCBI for 1776 queries in 5.3s
 head(diabetes_gse_records[1:5])
-#>                                                                                                                                                                                        Title
-#> 1                                                                    Energy-sensing molecule RORγ regulates Cholesterol Metabolism and Immune Signaling in Diabetic Kidney Disease and Aging
-#> 2                                                                    Extracellular Vesicles from Cytokine-Treated Human Pancreatic Ductal Cells Enhance HLA Class I Expression in Beta Cells
-#> 3                                          N-acetyl-L-cysteine ethyl ester (NACET) induces the transcription factor NRF2 in the retina and prevents its aging and diabetic retinopathy. [II]
-#> 4                                           N-acetyl-L-cysteine ethyl ester (NACET) induces the transcription factor NRF2 in the retina and prevents its aging and diabetic retinopathy. [I]
-#> 5                                                                                                         Zinc accumulation-induced integrated stress response triggers β-cell identity loss
-#> 6 Multi-omics profiling reveals microbiota, metabolite, lipid, and immunological heterogeneity underlying distinct pathophysiological mechanisms of age-related endotypes in type 1 diabetes
-#>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            Summary
-#> 1 Aging is a major risk factor for diabetic kidney disease (DKD), with both conditions exhibiting similar renal pathology. We identify the energy-sensing molecule Retinoic acid-related orphan receptor γ (RORγ) as significantly downregulated in diabetic and aged kidneys. Tubule-specific RORγ deficiency exacerbates kidney injury, whereas its overexpression protects. Mechanistically, RORγ stabilizes insulin-induced gene 1 (INSIG1) by upregulating the deubiquitinase YOD1 and enhancing AMPK activity via CAB39, which together promote INSIG1 phosphorylation and subsequent stabilization. more...
-#> 2                                    Introduction/Objective: Type 1 diabetes (T1D) is an autoimmune disease characterized by the loss of insulin-producing beta cells and has no cure. The role of cell-cell interactions in immune recognition of beta cells remains poorly understood. Beta cells develop adjacent to ductal cells, which undergo changes during T1D progression, suggesting crosstalk between the two cell types. Extracellular vesicles (EVs) mediate intercellular communication through their cargo, but whether human ductal cells secrete EVs that modulate beta cells is unknown. more...
-#> 3                                                                                           Age-related macular degeneration (AMD) and diabetic retinopathy (DR) are leading causes of visual impairment in older people, with oxidative stress playing a central role in the development of these diseases. In fact, the cells of the retina are particularly susceptible to oxidative damage due to high metabolic activity and exposure to light. Glutathione (GSH), a key intracellular antioxidant, is essential for retinal protection but it becomes limited during aging and in diabetes patients. more...
-#> 4                                                                                           Age-related macular degeneration (AMD) and diabetic retinopathy (DR) are leading causes of visual impairment in older people, with oxidative stress playing a central role in the development of these diseases. In fact, the cells of the retina are particularly susceptible to oxidative damage due to high metabolic activity and exposure to light. Glutathione (GSH), a key intracellular antioxidant, is essential for retinal protection but it becomes limited during aging and in diabetes patients. more...
-#> 5                                              Pancreatic β cell identity loss is increasingly recognized as a critical pathogenic contributor to β cell failure in type 2 diabetes (T2D), but the specific mechanism remains to be elucidated. In this study, we demonstrate that zinc accumulation contributes to the β cell identity loss during diabetes progression in both human and mouse islets. Using a model of human embryonic stem cell-derived islets (SC-islets), we reveal that accumulated zinc triggers the integrated stress response (ISR) with elevated ATF4 expression in SC-β cells. more...
-#> 6      Type 1 diabetes (T1D) is an autoimmune disease characterized by marked heterogeneity in age at diagnosis, clinical progression, and immune pathology. Increasing evidence suggests that age-related T1D endotypes may reflect distinct underlying molecular mechanisms; however, these mechanisms remain incompletely characterized at the cellular and transcriptional levels. To investigate age-associated immune heterogeneity in T1D, peripheral blood mononuclear cells (PBMCs) were collected from a selected cohort of newly diagnosed pediatric individuals with T1D and healthy controls. more...
-#>       Organism                                               Type
-#> 1 Homo sapiens Expression profiling by high throughput sequencing
-#> 2 Homo sapiens Expression profiling by high throughput sequencing
-#> 3 Homo sapiens Expression profiling by high throughput sequencing
-#> 4 Homo sapiens Expression profiling by high throughput sequencing
-#> 5 Homo sapiens Expression profiling by high throughput sequencing
-#> 6 Homo sapiens Expression profiling by high throughput sequencing
-#>                                                                FTP download
-#> 1      GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE317nnn/GSE317266/
-#> 2      GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE316nnn/GSE316823/
-#> 3      GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE299nnn/GSE299876/
-#> 4      GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE299nnn/GSE299875/
-#> 5 GEO (MTX, TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE236nnn/GSE236316/
-#> 6 GEO (MTX, TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE316nnn/GSE316337/
+#>                                                                                                                     Title
+#> 1                                         Stratifying High-Risk Prediabetes Clusters Using Blood-Based Epigenetic Markers
+#> 2                                                        DNA methylation-based classification of hematolymphoid neoplasms
+#> 3                                   Placental Remodeling in Gestational Diabetes Mellitus (GDM) Disrupts Lipid Metabolism
+#> 4 Energy-sensing molecule RORγ regulates Cholesterol Metabolism and Immune Signaling in Diabetic Kidney Disease and Aging
+#> 5                                                         iCLIP analysis of full-length and deletion mutants of myc-LARP6
+#> 6 Extracellular Vesicles from Cytokine-Treated Human Pancreatic Ductal Cells Enhance HLA Class I Expression in Beta Cells
+#>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            Summary
+#> 1                                                                                                                                                                                                                                                                                                                                                                                        Previously, we identified six prediabetes clusters, three at moderate and three at high-risk for type 2 diabetes and/or complications. While this novel classification could enable earlier and improved disease prevention, it relies on intensive clinical phenotyping.
+#> 2                                                                                                                     Accurate pathological diagnosis is crucial for optimal management of cancer patients. For a number of hematolymphoid tumor entities, standardization of the diagnostic process has been shown to be particularly challenging - with substantial inter-observer variability in the histopathological diagnosis of many tumor types. Genome-wide DNA methylation profiling has been shown to contribute to accurate and precise tumor classification and diagnosis in several tumor types, including central nervous system neoplasms. more...
+#> 3                                                                                                                                                                                                                                      Gestational diabetes mellitus (GDM) is a pregnancy-specific metabolic disorder associated with adverse maternal and fetal outcomes, with epigenetic dysregulation increasingly implicated in fetal programming. As the placenta plays a central role in maternal–fetal nutrient and hormonal exchange, this study investigated structural, epigenetic, and metabolic alterations in placentas from GDM pregnancies. more...
+#> 4                                                 Aging is a major risk factor for diabetic kidney disease (DKD), with both conditions exhibiting similar renal pathology. We identify the energy-sensing molecule Retinoic acid-related orphan receptor γ (RORγ) as significantly downregulated in diabetic and aged kidneys. Tubule-specific RORγ deficiency exacerbates kidney injury, whereas its overexpression protects. Mechanistically, RORγ stabilizes insulin-induced gene 1 (INSIG1) by upregulating the deubiquitinase YOD1 and enhancing AMPK activity via CAB39, which together promote INSIG1 phosphorylation and subsequent stabilization. more...
+#> 5 Intrinsically disordered regions (IDRs) are prevalent in RNA-binding proteins (RBPs), yet their roles in RNA interactions remain poorly defined. We examined the structured and disordered RNA-binding activities of LARP6, an RBP with a diverse RNA-binding repertoire. U87 glioblastoma cells stably expressing myc-tagged full-length or various deletion mutants of LARP6 under a doxycycline switch were induced to express myc-LARP6 variants at near endogenous levels, before individual-nucleotide resolution UV-crosslinking and immunoprecipitation (iCLIP) was performed to assess each variants' RNA-binding targets on the transcriptome. more...
+#> 6                                                                                    Introduction/Objective: Type 1 diabetes (T1D) is an autoimmune disease characterized by the loss of insulin-producing beta cells and has no cure. The role of cell-cell interactions in immune recognition of beta cells remains poorly understood. Beta cells develop adjacent to ductal cells, which undergo changes during T1D progression, suggesting crosstalk between the two cell types. Extracellular vesicles (EVs) mediate intercellular communication through their cargo, but whether human ductal cells secrete EVs that modulate beta cells is unknown. more...
+#>       Organism
+#> 1 Homo sapiens
+#> 2 Homo sapiens
+#> 3 Homo sapiens
+#> 4 Homo sapiens
+#> 5 Homo sapiens
+#> 6 Homo sapiens
+#>                                                                   Type
+#> 1                         Methylation profiling by genome tiling array
+#> 2 Methylation profiling by genome tiling array; Third-party reanalysis
+#> 3                         Methylation profiling by genome tiling array
+#> 4                   Expression profiling by high throughput sequencing
+#> 5            Other; Expression profiling by high throughput sequencing
+#> 6                   Expression profiling by high throughput sequencing
+#>                                                                      FTP download
+#> 1      GEO (CSV, IDAT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE315nnn/GSE315764/
+#> 2 GEO (CSV, IDAT, TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE237nnn/GSE237299/
+#> 3      GEO (IDAT, TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE317nnn/GSE317191/
+#> 4            GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE317nnn/GSE317266/
+#> 5       GEO (BED, TAB) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE297nnn/GSE297587/
+#> 6            GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE316nnn/GSE316823/
 ```
 
 Once you have the search results, you can filter them based on specific
@@ -155,7 +163,7 @@ sessionInfo()
 #> [1] geokit_0.0.1.9000
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] vctrs_0.7.0       httr_1.4.7        cli_3.6.5         knitr_1.51       
+#>  [1] vctrs_0.7.1       httr_1.4.7        cli_3.6.5         knitr_1.51       
 #>  [5] rlang_1.1.7       xfun_0.56         stringi_1.8.7     generics_0.1.4   
 #>  [9] textshaping_1.0.4 jsonlite_2.0.0    glue_1.8.0        htmltools_0.5.9  
 #> [13] XML_3.99-0.20     ragg_1.5.0        sass_0.4.10       rmarkdown_2.30   
@@ -164,6 +172,6 @@ sessionInfo()
 #> [25] dplyr_1.1.4       rentrez_1.2.4     codetools_0.2-20  fs_1.6.6         
 #> [29] pkgconfig_2.0.3   systemfonts_1.3.1 digest_0.6.39     R6_2.6.1         
 #> [33] tidyselect_1.2.1  pillar_1.11.1     curl_7.0.0        magrittr_2.0.4   
-#> [37] bslib_0.9.0       withr_3.0.2       tools_4.5.2       pkgdown_2.2.0    
+#> [37] bslib_0.10.0      withr_3.0.2       tools_4.5.2       pkgdown_2.2.0    
 #> [41] cachem_1.1.0      desc_1.4.3
 ```

@@ -191,6 +191,6 @@ sessionInfo()
 #>  [9] htmltools_0.5.9   rmarkdown_2.30    lifecycle_1.0.5   cli_3.6.5        
 #> [13] sass_0.4.10       pkgdown_2.2.0     textshaping_1.0.4 jquerylib_0.1.4  
 #> [17] systemfonts_1.3.1 compiler_4.5.2    tools_4.5.2       ragg_1.5.0       
-#> [21] curl_7.0.0        evaluate_1.0.5    bslib_0.9.0       yaml_2.3.12      
+#> [21] curl_7.0.0        evaluate_1.0.5    bslib_0.10.0      yaml_2.3.12      
 #> [25] jsonlite_2.0.0    rlang_1.1.7       fs_1.6.6
 ```

@@ -98,12 +98,15 @@ sessionInfo()
 #> [1] geokit_0.0.1.9000
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] cli_3.6.5         knitr_1.51        rlang_1.1.7       xfun_0.56        
-#>  [5] textshaping_1.0.4 jsonlite_2.0.0    data.table_1.18.0 htmltools_0.5.9  
-#>  [9] ragg_1.5.0        sass_0.4.10       rmarkdown_2.30    evaluate_1.0.5   
-#> [13] jquerylib_0.1.4   fastmap_1.2.0     yaml_2.3.12       lifecycle_1.0.5  
-#> [17] compiler_4.5.2    codetools_0.2-20  fs_1.6.6          R.oo_1.27.1      
-#> [21] systemfonts_1.3.1 R.utils_2.13.0    digest_0.6.39     R6_2.6.1         
-#> [25] curl_7.0.0        bslib_0.9.0       R.methodsS3_1.8.2 tools_4.5.2      
-#> [29] pkgdown_2.2.0     xml2_1.5.2        cachem_1.1.0      desc_1.4.3
+#>  [1] cli_3.6.5           knitr_1.51          rlang_1.1.7        
+#>  [4] xfun_0.56           textshaping_1.0.4   jsonlite_2.0.0     
+#>  [7] data.table_1.18.2.1 htmltools_0.5.9     ragg_1.5.0         
+#> [10] sass_0.4.10         rmarkdown_2.30      evaluate_1.0.5     
+#> [13] jquerylib_0.1.4     fastmap_1.2.0       yaml_2.3.12        
+#> [16] lifecycle_1.0.5     compiler_4.5.2      codetools_0.2-20   
+#> [19] fs_1.6.6            R.oo_1.27.1         systemfonts_1.3.1  
+#> [22] R.utils_2.13.0      digest_0.6.39       R6_2.6.1           
+#> [25] curl_7.0.0          bslib_0.10.0        R.methodsS3_1.8.2  
+#> [28] tools_4.5.2         pkgdown_2.2.0       xml2_1.5.2         
+#> [31] cachem_1.1.0        desc_1.4.3
 ```
