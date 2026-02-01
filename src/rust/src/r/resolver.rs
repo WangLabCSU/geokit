@@ -21,7 +21,7 @@ use super::helper::*;
 // - [`FTP`](GEOResolver::FTP): For direct FTP/HTTPS file retrieval from GEO FTP servers.
 // - [`ADB`](GEOResolver::ADB): For file retrieval from Accession Display Bar of GEO database.
 #[allow(clippy::upper_case_acronyms)]
-pub(crate) enum GEOResolver {
+pub(super) enum GEOResolver {
     /// Resolver for Accession Display Bar (ADB).
     ADB(GEOADBResolver),
 
@@ -31,19 +31,19 @@ pub(crate) enum GEOResolver {
 
 impl GEOResolver {
     #[allow(dead_code)]
-    pub(crate) fn new(entity: GEOEntity) -> Self {
+    pub(super) fn new(entity: GEOEntity) -> Self {
         Self::ADB(GEOADBResolver::new(entity))
     }
 
     #[allow(dead_code)]
-    pub(crate) fn builder() -> GEOResolverBuilder {
+    pub(super) fn builder() -> GEOResolverBuilder {
         GEOResolverBuilder::default()
     }
 
     /// Returns the GEO accession string (e.g., "GSE12345" or "GSM67890")
     /// associated with this resolver.
     #[allow(dead_code)]
-    pub(crate) fn accession(&self) -> &str {
+    pub(super) fn accession(&self) -> &str {
         match self {
             Self::ADB(resolver) => resolver.accession(),
             Self::FTP(resolver) => resolver.accession(),
@@ -53,7 +53,7 @@ impl GEOResolver {
     /// Returns the [`GEOType`] (such as `Datasets`, `Series`, or `Samples`)
     /// associated with this resolver.
     #[allow(dead_code)]
-    pub(crate) fn gtype(&self) -> &GEOType {
+    pub(super) fn gtype(&self) -> &GEOType {
         match self {
             Self::ADB(resolver) => resolver.gtype(),
             Self::FTP(resolver) => resolver.gtype(),
@@ -64,7 +64,7 @@ impl GEOResolver {
     ///
     /// The returned URL points directly to the GEO record and is suitable
     /// for opening in a web browser.
-    pub(crate) fn landing_page(&self) -> String {
+    pub(super) fn landing_page(&self) -> String {
         match self {
             Self::ADB(resolver) => resolver.landing_page(),
             Self::FTP(resolver) => resolver.landing_page(),
@@ -76,14 +76,14 @@ impl GEOResolver {
     /// The returned string is the complete download or access URL,
     /// built according to the resolver type (`ADB` or `FTP`) and
     /// associated options.
-    pub(crate) fn url(&self) -> String {
+    pub(super) fn url(&self) -> String {
         match self {
             Self::ADB(resolver) => resolver.url(),
             Self::FTP(resolver) => resolver.url(),
         }
     }
 
-    pub(crate) fn fname(&self) -> Option<String> {
+    pub(super) fn fname(&self) -> Option<String> {
         match self {
             Self::ADB(resolver) => Some(resolver.fname()),
             Self::FTP(resolver) => resolver.fname(),
@@ -92,7 +92,7 @@ impl GEOResolver {
 }
 
 #[derive(Default)]
-pub(crate) struct GEOResolverBuilder {
+pub(super) struct GEOResolverBuilder {
     entity: Option<GEOEntity>,
     format: Option<GEOFormat>,
     scope: Option<GEOScope>,
@@ -101,36 +101,36 @@ pub(crate) struct GEOResolverBuilder {
 }
 
 impl GEOResolverBuilder {
-    pub(crate) fn new() -> Self {
+    pub(super) fn new() -> Self {
         Self::default()
     }
 
-    pub(crate) fn entity(&mut self, entity: GEOEntity) -> &mut Self {
+    pub(super) fn entity(&mut self, entity: GEOEntity) -> &mut Self {
         self.entity = Some(entity);
         self
     }
 
-    pub(crate) fn format(&mut self, format: GEOFormat) -> &mut Self {
+    pub(super) fn format(&mut self, format: GEOFormat) -> &mut Self {
         self.format = Some(format);
         self
     }
 
-    pub(crate) fn scope(&mut self, scope: GEOScope) -> &mut Self {
+    pub(super) fn scope(&mut self, scope: GEOScope) -> &mut Self {
         self.scope = Some(scope);
         self
     }
 
-    pub(crate) fn amount(&mut self, amount: GEOAmount) -> &mut Self {
+    pub(super) fn amount(&mut self, amount: GEOAmount) -> &mut Self {
         self.amount = Some(amount);
         self
     }
 
-    pub(crate) fn over_https(&mut self, over_https: bool) -> &mut Self {
+    pub(super) fn over_https(&mut self, over_https: bool) -> &mut Self {
         self.over_https = Some(over_https);
         self
     }
 
-    pub(crate) fn build(&mut self) -> std::result::Result<GEOResolver, RGEOParseError> {
+    pub(super) fn build(&mut self) -> std::result::Result<GEOResolver, RGEOParseError> {
         // since all entity have the `GEOADBFormat::Html` format, we use it as the default
         let entity = self
             .entity
@@ -181,7 +181,7 @@ impl GEOResolverBuilder {
 /// Each parameter is an R object (character/logical vector) that may be
 /// scalar-recycled or NULL (optional). Lengths must match `accession`
 /// unless recycling is possible.
-pub(crate) fn resolvers_from_format<F: Fn(&GEOType) -> &str>(
+pub(super) fn resolvers_from_format<F: Fn(&GEOType) -> &str>(
     accession: &Robj,
     format: &Robj,
     amount: &Robj,
@@ -216,7 +216,7 @@ pub(crate) fn resolvers_from_format<F: Fn(&GEOType) -> &str>(
     build_resolvers(entity_vec, format, amount, scope, ftp_over_https)
 }
 
-pub(crate) fn resolvers_from_famount<F: Fn(&GEOType) -> &str>(
+pub(super) fn resolvers_from_famount<F: Fn(&GEOType) -> &str>(
     accession: &Robj,
     famount: &Robj,
     scope: &Robj,
@@ -271,8 +271,8 @@ pub(crate) fn resolvers_from_famount<F: Fn(&GEOType) -> &str>(
 fn build_resolvers(
     entity: Vec<GEOEntity>,
     format: Vec<GEOFormat>,
-    amount: Option<Vec<RGEOAmount>>,
-    scope: Option<Vec<RGEOScope>>,
+    amount: Option<Vec<Option<GEOAmount>>>,
+    scope: Option<Vec<Option<GEOScope>>>,
     ftp_over_https: Option<Vec<bool>>,
 ) -> Result<Vec<GEOResolver>> {
     let mut resolvers = Vec::with_capacity(entity.len());
@@ -284,14 +284,12 @@ fn build_resolvers(
             amount
                 .unwrap_or_default()
                 .into_iter()
-                .map(Some)
                 .chain(std::iter::repeat(None)),
         )
         .zip(
             scope
                 .unwrap_or_default()
                 .into_iter()
-                .map(Some)
                 .chain(std::iter::repeat(None)),
         )
         .zip(
@@ -306,10 +304,10 @@ fn build_resolvers(
         builder.format(format);
 
         // amount and scope are optional
-        if let Some(RGEOAmount::Amount(a)) = amount {
+        if let Some(a) = amount {
             builder.amount(a);
         }
-        if let Some(RGEOScope::Scope(s)) = scope {
+        if let Some(s) = scope {
             builder.scope(s);
         }
         if let Some(o) = over_https {
@@ -343,21 +341,23 @@ fn build_format(format: &[&str]) -> Result<Vec<GEOFormat>> {
         .collect()
 }
 
-fn build_amount(amount: &[&str]) -> Result<Vec<RGEOAmount>> {
+fn build_amount(amount: &[&str]) -> Result<Vec<Option<GEOAmount>>> {
     amount
         .iter()
         .map(|&s| {
-            s.try_into()
+            RGEOAmount::try_from(s)
+                .map(|ra| -> Option<GEOAmount> { ra.into() })
                 .with_context(|| format!("Invalid 'amount': {}", s))
         })
         .collect()
 }
 
-fn build_scope(scope: &[&str]) -> Result<Vec<RGEOScope>> {
+fn build_scope(scope: &[&str]) -> Result<Vec<Option<GEOScope>>> {
     scope
         .iter()
         .map(|&s| {
-            s.try_into()
+            RGEOScope::try_from(s)
+                .map(|rs| -> Option<GEOScope> { rs.into() })
                 .with_context(|| format!("Invalid 'scope': {}", s))
         })
         .collect()
@@ -371,7 +371,7 @@ fn build_scope(scope: &[&str]) -> Result<Vec<RGEOScope>> {
 // format. SOFT stands for "simple omnibus format in text".
 #[derive(Debug, Clone)]
 #[allow(clippy::upper_case_acronyms)]
-pub(crate) enum GEOFormat {
+pub(super) enum GEOFormat {
     // Accession Display Bar
     ADB(GEOADBFormat),
 
@@ -439,7 +439,7 @@ impl TryFrom<&str> for GEOFormat {
 // ("Family") of the accessions related to the accession number typed into the
 // text box.
 #[derive(Debug, Clone)]
-pub(crate) enum RGEOScope {
+pub(super) enum RGEOScope {
     /// No value.
     None,
     /// Some value of type `T`.
@@ -471,6 +471,16 @@ impl TryFrom<&str> for RGEOScope {
     }
 }
 
+impl From<RGEOScope> for Option<GEOScope> {
+    fn from(value: RGEOScope) -> Self {
+        if let RGEOScope::Scope(scope) = value {
+            Some(scope)
+        } else {
+            None
+        }
+    }
+}
+
 // @param amount A character string in one of "brief", "quick", "data" or
 // "full". Allows you to control the amount of data that you will see displayed.
 // "Brief" displays the accession's attributes only. "Quick" displays the
@@ -479,7 +489,7 @@ impl TryFrom<&str> for RGEOScope {
 // the accession's attributes, showing only the links to other accessions as
 // well as the full data table
 #[derive(Debug, Clone)]
-pub(crate) enum RGEOAmount {
+pub(super) enum RGEOAmount {
     /// No value.
     None,
     /// Some value of type `GEOAmount`.
@@ -507,5 +517,15 @@ impl TryFrom<&str> for RGEOAmount {
     type Error = RGEOParseError;
     fn try_from(value: &str) -> Result<Self, Self::Error> {
         Self::from_str(value)
+    }
+}
+
+impl From<RGEOAmount> for Option<GEOAmount> {
+    fn from(value: RGEOAmount) -> Self {
+        if let RGEOAmount::Amount(amount) = value {
+            Some(amount)
+        } else {
+            None
+        }
     }
 }

@@ -4,7 +4,7 @@ use extendr_api::{Rinternals, Robj};
 /// Convert an R object to a string vector of length `len`.
 /// - If the R object has length 1, its value is recycled.
 /// - Otherwise, its length must match `len`.
-pub(in crate::r) fn robj_to_vec_str(value: &Robj, len: usize) -> Result<Vec<&str>> {
+pub(super) fn robj_to_vec_str(value: &Robj, len: usize) -> Result<Vec<&str>> {
     let value = value
         .as_str_vector()
         .ok_or_else(|| anyhow!("Expected a character vector"))?;
@@ -22,7 +22,7 @@ pub(in crate::r) fn robj_to_vec_str(value: &Robj, len: usize) -> Result<Vec<&str
 
 /// Convert an R object to an optional string vector (with recycling).
 /// Returns `None` if the R object is NULL.
-pub(in crate::r) fn robj_to_option_vec_str(value: &Robj, len: usize) -> Result<Option<Vec<&str>>> {
+pub(super) fn robj_to_option_vec_str(value: &Robj, len: usize) -> Result<Option<Vec<&str>>> {
     if value.is_null() {
         return Ok(None);
     }
@@ -32,7 +32,7 @@ pub(in crate::r) fn robj_to_option_vec_str(value: &Robj, len: usize) -> Result<O
 /// Convert an R object to an optional boolean vector (with recycling).
 /// Returns `None` if the R object is NULL.
 /// Fails if the R object contains `NA`.
-pub(in crate::r) fn robj_to_option_vec_bool(value: &Robj, len: usize) -> Result<Option<Vec<bool>>> {
+pub(super) fn robj_to_option_vec_bool(value: &Robj, len: usize) -> Result<Option<Vec<bool>>> {
     if value.is_null() {
         return Ok(None);
     }
@@ -66,7 +66,7 @@ pub(in crate::r) fn robj_to_option_vec_bool(value: &Robj, len: usize) -> Result<
 /// column can be parsed as i32, f64, or bool. If so, parse the whole column
 /// once and return an R vector of that type. Otherwise, return an R character
 /// vector created directly from the input `value` (no cloning).
-pub(in crate::r) fn robj_from_parsing_str<T>(value: &[Option<T>]) -> Robj
+pub(super) fn robj_from_parsing_str<T>(value: &[Option<T>]) -> Robj
 where
     T: AsRef<str>,
 {
