@@ -1,7 +1,5 @@
-testthat::skip_if_offline()
-
 testthat::test_that("generic GPL parsing works as expected", {
-    gpl <- skip_if_fail(geo_soft("GPL96", "full", odir = tempdir()))
+    gpl <- skip_if_download_fail(geo_soft("GPL96", "full", odir = tempdir()))
 
     testthat::expect_s4_class(gpl, "GEOSoft")
     testthat::expect_equal(nrow(datatable(gpl)), 22283L)
@@ -13,7 +11,7 @@ testthat::test_that("generic GPL parsing works as expected", {
 })
 
 testthat::test_that("quoted GPL works", {
-    gpl <- skip_if_fail(geo_soft("GPL4133", "full", odir = tempdir()))
+    gpl <- skip_if_download_fail(geo_soft("GPL4133", "full", odir = tempdir()))
 
     testthat::expect_s4_class(gpl, "GEOSoft")
     testthat::expect_equal(nrow(columns(gpl)), 22L)
@@ -21,14 +19,14 @@ testthat::test_that("quoted GPL works", {
 })
 
 testthat::test_that("short GPL works", {
-    gpl <- skip_if_fail(geo_soft("GPL15505", "full", odir = tempdir()))
+    gpl <- skip_if_download_fail(geo_soft("GPL15505", "full", odir = tempdir()))
 
     testthat::expect_s4_class(gpl, "GEOSoft")
     testthat::expect_equal(nrow(datatable(gpl)), 52L)
 })
 
 testthat::test_that("GPL with no data table works", {
-    gpl <- skip_if_fail(geo_soft("GPL5082", "full", odir = tempdir()))
+    gpl <- skip_if_download_fail(geo_soft("GPL5082", "full", odir = tempdir()))
 
     testthat::expect_s4_class(gpl, "GEOSoft")
     testthat::expect_equal(nrow(datatable(gpl)), 0L)

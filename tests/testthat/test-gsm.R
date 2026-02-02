@@ -1,6 +1,5 @@
-testthat::skip_if_offline()
 testthat::test_that("basic GSM works", {
-    gsm <- skip_if_fail(geo_soft("GSM11805", odir = tempdir()))
+    gsm <- skip_if_download_fail(geo_soft("GSM11805", odir = tempdir()))
 
     testthat::expect_s4_class(gsm, "GEOSoft")
     testthat::expect_type(metadata(gsm), "list")

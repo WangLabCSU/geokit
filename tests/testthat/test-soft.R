@@ -1,7 +1,5 @@
-testthat::skip_if_offline()
-
 testthat::test_that("generic SOFT format GSE handled correctly", {
-    gse <- skip_if_fail(geo_soft("GSE1563", odir = tempdir()))
+    gse <- skip_if_download_fail(geo_soft("GSE1563", odir = tempdir()))
 
     testthat::expect_equal(length(gsm(gse)), 62L)
     testthat::expect_equal(length(gpl(gse)), 1L)
