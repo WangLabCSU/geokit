@@ -62,22 +62,19 @@ impl GEOADBResolver {
     }
 
     fn url_with_format(&self, format: &GEOADBFormat) -> String {
-        match self.gtype() {
-            GEOType::Datasets => format!(
+        match (self.gtype(), format, &self.scope, &self.amount) {
+            (GEOType::Datasets, GEOADBFormat::Html, None, None) => format!(
                 "https://www.ncbi.nlm.nih.gov/sites/GDSbrowser?acc={}",
                 self.accession()
             ),
-            // SAFETY: At this point, `self.gtype()` is guaranteed to be a value other than `Datasets`.
-            // The usage of `unsafe` here is safe because we have ensured that the scope and amount are not `None`.
-            _ => unsafe {
-                format!(
-                    "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc={}&targ={}&view={}&form={}",
-                    self.accession(),
-                    self.scope.as_ref().unwrap_unchecked(),
-                    self.amount.as_ref().unwrap_unchecked(),
-                    format
-                )
-            },
+            (_, format, Some(scope), Some(amount)) => format!(
+                "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc={}&targ={}&view={}&form={}",
+                self.accession(),
+                scope,
+                amount,
+                format
+            ),
+            _ => unreachable!(),
         }
     }
 
@@ -109,7 +106,6 @@ pub struct GEOADBResolverBuilder {
     scope: Option<GEOScope>,
     amount: Option<GEOAmount>,
 }
-
 
 // Rust insists that all fields in a struct must be filled in when a new
 // instance of that struct is created. This keeps the code safe by ensuring that
@@ -162,9 +158,7 @@ impl GEOADBResolverBuilder {
             .entity
             .as_ref()
             .map_or_else(|| Err(GEOParseError::RequireEntity), |v| Ok(v.clone()))?;
-        let format = self
-            .format.clone()
-            .unwrap_or_default();
+        let format = self.format.clone().unwrap_or_default();
 
         // check format is valid
         if let (GEOType::Datasets, GEOADBFormat::Text | GEOADBFormat::Xml) =
