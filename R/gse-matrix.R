@@ -175,43 +175,51 @@ parse_gse_matrix <- function(path, gse_soft = NULL, add_gpl = NULL,
             annotation <- bioc_pkg
         }
     }
-
+    feature_data <- NULL
     if (isTRUE(add_gpl)) {
-        annot_file <- download_annot(
+        annot_downloaded <- download_annot(
             annotation,
             handle_opts = handle_opts,
             ftp_over_https = ftp_over_https,
             odir = odir
         )
-        entity_list <- parse_soft_rust(annot_file)
-        gpl <- parse_entity_list(.subset2(entity_list, 1L))
-        if (nrow(feature_data <- datatable(gpl))) {
-            feature_data <- set_rownames(feature_data)
-            # NCBI GEO uses case-insensitive matching between platform
-            # IDs and series ID Refs
-            feature_data <- feature_data[
-                match(
-                    tolower(rownames(assay)),
-                    tolower(rownames(feature_data))
-                ), ,
-                drop = FALSE
-            ]
-            rownames(feature_data) <- rownames(assay)
-            feature_data <- Biobase::AnnotatedDataFrame(
-                feature_data,
-                varMetadata = columns(gpl)
-            )
+        if (annot_downloaded$success) {
+            annot_file <- .subset2(annot_downloaded, "paths")
+            entity_list <- parse_soft_rust(annot_file)
+            gpl <- parse_entity_list(.subset2(entity_list, 1L))
+            if (nrow(feature_data <- datatable(gpl))) {
+                feature_data <- set_rownames(feature_data)
+                # NCBI GEO uses case-insensitive matching between platform
+                # IDs and series ID Refs
+                feature_data <- feature_data[
+                    match(
+                        tolower(rownames(assay)),
+                        tolower(rownames(feature_data))
+                    ), ,
+                    drop = FALSE
+                ]
+                rownames(feature_data) <- rownames(assay)
+                feature_data <- Biobase::AnnotatedDataFrame(
+                    feature_data,
+                    varMetadata = columns(gpl)
+                )
+            } else {
+                feature_data <- Biobase::AnnotatedDataFrame(
+                    data.frame(row.names = rownames(assay)),
+                    varMetadata = columns(gpl)
+                )
+            }
         } else {
-            feature_data <- Biobase::AnnotatedDataFrame(
-                data.frame(row.names = rownames(assay)),
-                varMetadata = columns(gpl)
-            )
+            cli::cli_alert_info(paste(
+                "Failed to download annotation file for {.val {accession[!downloaded$success]}},",
+                "Platform information will not be added."
+            ))
         }
-    } else {
-        feature_data <- Biobase::AnnotatedDataFrame(
-            data.frame(row.names = rownames(assay))
-        )
     }
+    feature_data <- feature_data %||% Biobase::AnnotatedDataFrame(
+        data.frame(row.names = rownames(assay))
+    )
+
     # contructing ExpressionSet object
     Biobase::ExpressionSet(
         assayData = assay,
@@ -241,9 +249,8 @@ download_annot <- function(accession, ftp_over_https = TRUE,
     )
     if (!downloaded$success) {
         cli::cli_alert_info(paste(
-            "{.field annot} file in FTP site for",
-            "{.val {accession[!downloaded$success]}} is not available,",
-            "will use {.field data} amount file from GEO Accession Site instead"
+            "{.field annot} file for {.val {accession[!downloaded$success]}} is not available on the FTP site. ",
+            "Attempting to use the {.field data} amount file from the GEO Accession Site instead."
         ))
         url_and_fname <- file_url_and_fname(
             accession, "data",
@@ -252,10 +259,11 @@ download_annot <- function(accession, ftp_over_https = TRUE,
         downloaded <- download_inform(
             .subset2(url_and_fname, "urls"),
             file.path(odir, .subset2(url_and_fname, "fnames"), fsep = "/"),
-            handle_opts = handle_opts
+            handle_opts = handle_opts,
+            error = FALSE
         )
     }
-    .subset2(downloaded, "paths")
+    downloaded
 }
 
 #' @param gpl a character string
