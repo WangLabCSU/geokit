@@ -249,7 +249,7 @@ fn geo_parse_soft_impl(
         Box::new(file)
     };
 
-    let mut builder = GEOSoftReader::<GEOSoftReader<BufReader<Box<dyn Read>>>>::builder();
+    let mut builder = GEOSoftReader::<Box<dyn Read>>::builder();
     builder.format(format);
     if let Some(use_lines) = use_lines {
         for line in *use_lines {
