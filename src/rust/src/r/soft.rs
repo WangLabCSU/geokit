@@ -39,7 +39,7 @@ impl TryFrom<&RGEOSoftRecord> for List {
         let datatable = value
             .0
             .datatable()
-            .into_iter()
+            .iter()
             .map(|vec| robj_from_parsing_str(vec))
             .collect::<List>();
 

@@ -265,7 +265,7 @@ impl GEOSoftParser {
         if let Some(num_added) = fields.len().checked_sub(record.0.datatable.len()) {
             if num_added > 0 {
                 record.0.datatable.reserve(num_added);
-                let num_fill: usize = record.0.datatable.get(0).map_or(0, |col| col.len());
+                let num_fill: usize = record.0.datatable.first().map_or(0, |col| col.len());
                 for _ in 0..num_added {
                     if num_fill > 0 {
                         // pre-fill with Nones so columns are aligned

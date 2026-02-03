@@ -94,9 +94,7 @@ where
 
     // the intervals between two sampling
     // Divide into 100 parts for beginning, middle, and end
-    let sampling_interval = (input_str.len() / SAMPLE_TIMES)
-        .checked_sub(sampling_size)
-        .unwrap_or(0);
+    let sampling_interval = (input_str.len() / SAMPLE_TIMES).saturating_sub(sampling_size);
     let mut sampling_numbers = 0;
     let mut index = 0;
     while index < input_str.len() {

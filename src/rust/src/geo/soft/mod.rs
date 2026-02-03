@@ -39,7 +39,7 @@ impl GEOSoftReaderBuilder {
 
     #[inline]
     pub fn line(&mut self, line: GEOSoftLine) -> &mut Self {
-        let set = self.lines.get_or_insert_with(|| HashSet::new());
+        let set = self.lines.get_or_insert_with(HashSet::new);
         set.insert(line);
         self
     }

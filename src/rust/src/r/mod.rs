@@ -393,7 +393,7 @@ fn is_all_same(x: Robj) -> Result<bool, String> {
     let x = x
         .as_str_vector()
         .ok_or_else(|| "Expected a character vector".to_string())?;
-    if let Some(&reference) = x.get(0) {
+    if let Some(&reference) = x.first() {
         for item in x {
             if item != reference {
                 return Ok(false); // Return false as soon as a different value is found
