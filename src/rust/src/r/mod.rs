@@ -394,19 +394,13 @@ fn is_all_same(x: Robj) -> Result<bool, String> {
     let x = x
         .as_str_vector()
         .ok_or_else(|| "Expected a character vector".to_string())?;
-    if x.is_empty() {
-        return Ok(true); // Empty collection is considered "uniform"
-    }
-
-    // SAFETY, x is not empty
-    let reference = *unsafe { x.get_unchecked(0) };
-
-    for item in x {
-        if item != reference {
-            return Ok(true); // Return false as soon as a different value is found
+    if let Some(&reference) = x.get(0) {
+        for item in x {
+            if item != reference {
+                return Ok(false); // Return false as soon as a different value is found
+            }
         }
     }
-
     Ok(true) // All values are the same
 }
 
