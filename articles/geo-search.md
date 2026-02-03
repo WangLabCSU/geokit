@@ -29,11 +29,10 @@ we can get these records by following code, the returned object is a
 diabetes_gse_records <- geo_search(
   "diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"
 )
-#> ■■■■■■■■■                        500/1776 [371/s] | ETA:  3s
-#> ■■■■■■■■■■■■■■■■■■               1000/1776 [359/s] | ETA:  2s
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1777/1776 [357/s] | ETA:  0s
+#> ■■■■■■■■■                        500/1776 [301/s] | ETA:  4s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1777/1776 [356/s] | ETA:  0s
 #> → Parsing GEO records
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1777/1776 [357/s] | ETA:  0sGet records from NCBI for 1776 queries in 5.1s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1777/1776 [356/s] | ETA:  0sGet records from NCBI for 1776 queries in 5.1s
 head(diabetes_gse_records[1:5])
 #>                                                                                                                     Title
 #> 1                                         Stratifying High-Risk Prediabetes Clusters Using Blood-Based Epigenetic Markers
