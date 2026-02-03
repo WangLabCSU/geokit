@@ -15,7 +15,7 @@ gse_matix <- geo_matrix("GSE180383", odir = tempdir())
 #> Warning: Multiple occurrences of ":" found in metadata characteristics
 #> ℹ See column "characteristics_ch1" for details.
 #> ℹ No Bioconductor annotation package available for platform "GPL21359".
-#> Downloading 1 fileℹ annot file in FTP site for "GPL21359" is not available, will use data amount file from GEO Accession Site instead
+#> Downloading 1 fileℹ annot file for "GPL21359" is not available on the FTP site.  Attempting to use the data amount file from the GEO Accession Site instead.
 #> Downloading 1 file✔ Parsing 1 Series matrix successfully!
 gse_matix
 #> ExpressionSet (storageMode: lockedEnvironment)

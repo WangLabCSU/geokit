@@ -55,10 +55,12 @@ for details.
 # restrictions and limited bandwidth usage for large queries.
 # \donttest{
 out <- geo_search("diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]")
-#> ■■■■■■■■■■■■■■■■■■               1000/1776 [492/s] | ETA:  2s
+#> ■■■■■■■■■                        500/1776 [273/s] | ETA:  5s
+#> ■■■■■■■■■■■■■■■■■■               1000/1776 [278/s] | ETA:  3s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■■       1500/1776 [294/s] | ETA:  1s
 #> → Parsing GEO records
-#> ■■■■■■■■■■■■■■■■■■               1000/1776 [492/s] | ETA:  2s
-#> Get records from NCBI for 1776 queries in 4.2s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■■       1500/1776 [294/s] | ETA:  1s
+#> Get records from NCBI for 1776 queries in 6.3s
 #> 
 head(out)
 #>                                                                                                                     Title
@@ -98,7 +100,7 @@ head(out)
 #> 6            GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE316nnn/GSE316823/
 #>          ID SRA Run Selector Project    Contains Datasets         Platforms
 #> 1 200315764             <NA>    <NA> 333 Samples     <NA> GPL33022 GPL21145
-#> 2 200237299             <NA>    <NA> 989 Samples     <NA> GPL13534 GPL23976
+#> 2 200237299             <NA>    <NA> 989 Samples     <NA> GPL23976 GPL13534
 #> 3 200317191             <NA>    <NA>  11 Samples     <NA>          GPL33022
 #> 4 200317266             <NA>    <NA>   6 Samples     <NA>          GPL28352
 #> 5 200297587             <NA>    <NA>  30 Samples     <NA> GPL18573 GPL34284

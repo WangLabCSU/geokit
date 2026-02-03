@@ -107,7 +107,7 @@ if (require("Biobase")) {
 #> Downloading 1 file
 #> ℹ No Bioconductor annotation package available for platform "GPL4".
 #> Downloading 1 file
-#> ℹ annot file in FTP site for "GPL4" is not available, will use data amount file from GEO Accession Site instead
+#> ℹ annot file for "GPL4" is not available on the FTP site.  Attempting to use the data amount file from the GEO Accession Site instead.
 #> Downloading 1 file
 #> ✔ Parsing 1 Series matrix successfully!
 # }

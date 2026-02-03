@@ -106,10 +106,12 @@ for details.</p>
 <span class="r-in"><span><span class="co"># restrictions and limited bandwidth usage for large queries.</span></span></span>
 <span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu">geo_search</span><span class="op">(</span><span class="st">"diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■              </span> 1000/1776 [492/s] | ETA:  2s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">■■■■■■■■■                       </span> 500/1776 [273/s] | ETA:  5s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■              </span> 1000/1776 [278/s] | ETA:  3s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■■■■■■      </span> 1500/1776 [294/s] | ETA:  1s</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → Parsing GEO records</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■              </span> 1000/1776 [492/s] | ETA:  2s</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Get records from NCBI for <span style="color: #0000BB;">1776</span> queries in 4.2s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■■■■■■      </span> 1500/1776 [294/s] | ETA:  1s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Get records from NCBI for <span style="color: #0000BB;">1776</span> queries in 6.3s</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                     Title</span>
@@ -149,7 +151,7 @@ for details.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6            GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE316nnn/GSE316823/</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          ID SRA Run Selector Project    Contains Datasets         Platforms</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 200315764             &lt;NA&gt;    &lt;NA&gt; 333 Samples     &lt;NA&gt; GPL33022 GPL21145</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 200237299             &lt;NA&gt;    &lt;NA&gt; 989 Samples     &lt;NA&gt; GPL13534 GPL23976</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 200237299             &lt;NA&gt;    &lt;NA&gt; 989 Samples     &lt;NA&gt; GPL23976 GPL13534</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3 200317191             &lt;NA&gt;    &lt;NA&gt;  11 Samples     &lt;NA&gt;          GPL33022</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4 200317266             &lt;NA&gt;    &lt;NA&gt;   6 Samples     &lt;NA&gt;          GPL28352</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5 200297587             &lt;NA&gt;    &lt;NA&gt;  30 Samples     &lt;NA&gt; GPL18573 GPL34284</span>
