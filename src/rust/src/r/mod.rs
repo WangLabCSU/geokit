@@ -352,12 +352,12 @@ fn parse_key_value_elements(elements: List, separator: u8) -> Result<extendr_api
                         if remaining.contains(label) {
                             entry.push(Some(Cow::Borrowed(value)));
                             remaining.remove(label);
-                        } else if let Some(last) = entry.pop() {
-                            if let Some(last_str) = last {
-                                let new = format!("{}; {}", last_str, value);
-                                entry.push(Some(Cow::Owned(new)));
+                        } else if let Some(last) = entry.last_mut() {
+                            if let Some(last_cow) = last {
+                                let new = format!("{}; {}", last_cow, value);
+                                *last_cow = Cow::Owned(new);
                             } else {
-                                entry.push(Some(Cow::Borrowed(value)));
+                                *last = Some(Cow::Borrowed(value));
                             }
                         }
                     } else {
