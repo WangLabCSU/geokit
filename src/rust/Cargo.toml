@@ -38,3 +38,4 @@ isal = ["dep:isal-rs"] # rename feature `isal-rs` to `isal`
 [profile.release]
 lto = true
 codegen-units = 1
+strip = "debuginfo" # Automatically strip symbols from the binary.
