@@ -340,14 +340,13 @@ fn parse_key_value_elements(elements: List, separator: u8) -> Result<extendr_api
             // for each paired element in the format of  'key: value'
             let element_bytes = element.as_bytes();
             if let Some(pos) = memchr(separator, element_bytes) {
-                if pos + 1 < element_bytes.len() {
+                if let Some(value) = element_bytes.get(pos + 1..) {
                     // SAFETY: bytes is coming from string
                     let label =
                         unsafe { str::from_utf8_unchecked(element_bytes.get_unchecked(..pos)) }
                             .trim_ascii();
-                    let value =
-                        unsafe { str::from_utf8_unchecked(element_bytes.get_unchecked(pos + 1..)) }
-                            .trim_ascii();
+                    let value = unsafe { str::from_utf8_unchecked(value) }.trim_ascii();
+
                     if let Some(entry) = out.get_mut(label) {
                         // add it or append it to the exist one
                         if remaining.contains(label) {
@@ -368,7 +367,7 @@ fn parse_key_value_elements(elements: List, separator: u8) -> Result<extendr_api
                         out.insert(label, entry);
                         keys.insert(label);
                     }
-                }
+                };
             }
         }
 
