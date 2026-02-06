@@ -328,51 +328,63 @@ fn parse_key_value_elements(elements: List, separator: u8) -> Result<extendr_api
         .collect::<Result<Vec<Vec<&str>>, String>>()?;
 
     let mut out: IndexMap<&str, Vec<Option<Cow<str>>>> = IndexMap::new();
+    // A set to track which keys we've added so far.
     let mut keys = HashSet::new();
-    let mut remaining;
+    // Placeholder for remaining keys that still need to be added.
+    let mut remaining_keys;
+    // Get the total number of elements for size optimization.
     let total = element_vec.capacity();
+
+    // Iterate over each list of elements (e.g., rows of key-value pairs).
     for (num_added, elements) in element_vec.into_iter().enumerate() {
+        // reserve the spaces to be added
         if let Some(num_elements) = elements.len().checked_sub(out.len()) {
             out.reserve(num_elements);
         }
-        remaining = keys.clone(); // used to follow the added elements
+        // Create a copy of the set of keys to track remaining ones.
+        remaining_keys = keys.clone();
         for element in elements {
             // for each paired element in the format of  'key: value'
             let element_bytes = element.as_bytes();
             if let Some(pos) = memchr(separator, element_bytes) {
+                // Split the element into key and value based on the separator.
                 if let (Some(label), Some(value)) =
                     (element_bytes.get(..pos), element_bytes.get((pos + 1)..))
                 {
-                    // SAFETY: bytes is coming from string
+                    // SAFETY: The bytes are guaranteed to be valid UTF-8 because they are from a string.
                     let label = unsafe { str::from_utf8_unchecked(label) }.trim_ascii();
                     let value = unsafe { str::from_utf8_unchecked(value) }.trim_ascii();
 
+                    // Check if the key already exists in the map.
                     if let Some(entry) = out.get_mut(label) {
-                        // add it or append it to the exist one
-                        if remaining.contains(label) {
+                        // If key exists, append the value or concatenate it with existing ones.
+                        if remaining_keys.remove(label) {
+                            // we have not added it, just append it to the entry
                             entry.push(Some(Cow::Borrowed(value)));
-                            remaining.remove(label);
-                        } else if let Some(last) = entry.last_mut() {
-                            if let Some(last_cow) = last {
+                        } else if let Some(last_opt) = entry.last_mut() {
+                            if let Some(last_cow) = last_opt {
+                                // Concatenate values if there are multiple for the same key.
                                 let new = format!("{}; {}", last_cow, value);
                                 *last_cow = Cow::Owned(new);
                             } else {
-                                *last = Some(Cow::Borrowed(value));
+                                *last_opt = Some(Cow::Borrowed(value));
                             }
                         }
                     } else {
+                        // If the key doesn't exist, create a new entry.
                         let mut entry = Vec::with_capacity(total);
+                        // Reserve space for previously added elements.
                         entry.resize(num_added, None);
                         entry.push(Some(Cow::Borrowed(value)));
                         out.insert(label, entry);
-                        keys.insert(label);
+                        keys.insert(label); // Mark this key as added.
                     }
                 };
             }
         }
 
         // For entry not added in this elements, we add None
-        let remaining_keys = remaining.iter();
+        let remaining_keys = remaining_keys.iter();
         for key in remaining_keys {
             if let Some(entry) = out.get_mut(key) {
                 entry.push(None);
