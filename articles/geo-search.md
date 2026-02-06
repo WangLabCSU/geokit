@@ -29,26 +29,25 @@ we can get these records by following code, the returned object is a
 diabetes_gse_records <- geo_search(
   "diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"
 )
-#> ■■■■■■■■■                        500/1776 [376/s] | ETA:  3s
-#> ■■■■■■■■■■■■■■■■■■               1000/1776 [351/s] | ETA:  2s
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1777/1776 [346/s] | ETA:  0s
+#> ■■■■■■■■■                        500/1777 [389/s] | ETA:  3s
+#> ■■■■■■■■■■■■■■■■■■               1000/1777 [445/s] | ETA:  2s
 #> → Parsing GEO records
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1777/1776 [346/s] | ETA:  0sGet records from NCBI for 1776 queries in 5.3s
+#> ■■■■■■■■■■■■■■■■■■               1000/1777 [445/s] | ETA:  2sGet records from NCBI for 1777 queries in 4.5s
 head(diabetes_gse_records[1:5])
 #>                                                                                                                     Title
-#> 1                                         Stratifying High-Risk Prediabetes Clusters Using Blood-Based Epigenetic Markers
-#> 2                                                        DNA methylation-based classification of hematolymphoid neoplasms
-#> 3                                   Placental Remodeling in Gestational Diabetes Mellitus (GDM) Disrupts Lipid Metabolism
-#> 4 Energy-sensing molecule RORγ regulates Cholesterol Metabolism and Immune Signaling in Diabetic Kidney Disease and Aging
-#> 5                                                         iCLIP analysis of full-length and deletion mutants of myc-LARP6
-#> 6 Extracellular Vesicles from Cytokine-Treated Human Pancreatic Ductal Cells Enhance HLA Class I Expression in Beta Cells
-#>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            Summary
-#> 1                                                                                                                                                                                                                                                                                                                                                                                        Previously, we identified six prediabetes clusters, three at moderate and three at high-risk for type 2 diabetes and/or complications. While this novel classification could enable earlier and improved disease prevention, it relies on intensive clinical phenotyping.
-#> 2                                                                                                                     Accurate pathological diagnosis is crucial for optimal management of cancer patients. For a number of hematolymphoid tumor entities, standardization of the diagnostic process has been shown to be particularly challenging - with substantial inter-observer variability in the histopathological diagnosis of many tumor types. Genome-wide DNA methylation profiling has been shown to contribute to accurate and precise tumor classification and diagnosis in several tumor types, including central nervous system neoplasms. more...
-#> 3                                                                                                                                                                                                                                      Gestational diabetes mellitus (GDM) is a pregnancy-specific metabolic disorder associated with adverse maternal and fetal outcomes, with epigenetic dysregulation increasingly implicated in fetal programming. As the placenta plays a central role in maternal–fetal nutrient and hormonal exchange, this study investigated structural, epigenetic, and metabolic alterations in placentas from GDM pregnancies. more...
-#> 4                                                 Aging is a major risk factor for diabetic kidney disease (DKD), with both conditions exhibiting similar renal pathology. We identify the energy-sensing molecule Retinoic acid-related orphan receptor γ (RORγ) as significantly downregulated in diabetic and aged kidneys. Tubule-specific RORγ deficiency exacerbates kidney injury, whereas its overexpression protects. Mechanistically, RORγ stabilizes insulin-induced gene 1 (INSIG1) by upregulating the deubiquitinase YOD1 and enhancing AMPK activity via CAB39, which together promote INSIG1 phosphorylation and subsequent stabilization. more...
-#> 5 Intrinsically disordered regions (IDRs) are prevalent in RNA-binding proteins (RBPs), yet their roles in RNA interactions remain poorly defined. We examined the structured and disordered RNA-binding activities of LARP6, an RBP with a diverse RNA-binding repertoire. U87 glioblastoma cells stably expressing myc-tagged full-length or various deletion mutants of LARP6 under a doxycycline switch were induced to express myc-LARP6 variants at near endogenous levels, before individual-nucleotide resolution UV-crosslinking and immunoprecipitation (iCLIP) was performed to assess each variants' RNA-binding targets on the transcriptome. more...
-#> 6                                                                                    Introduction/Objective: Type 1 diabetes (T1D) is an autoimmune disease characterized by the loss of insulin-producing beta cells and has no cure. The role of cell-cell interactions in immune recognition of beta cells remains poorly understood. Beta cells develop adjacent to ductal cells, which undergo changes during T1D progression, suggesting crosstalk between the two cell types. Extracellular vesicles (EVs) mediate intercellular communication through their cargo, but whether human ductal cells secrete EVs that modulate beta cells is unknown. more...
+#> 1               HIF regulatory network reflects kidney disease progression in diabetes and reversal with SGLT2 inhibition
+#> 2                                         Stratifying High-Risk Prediabetes Clusters Using Blood-Based Epigenetic Markers
+#> 3                                                        DNA methylation-based classification of hematolymphoid neoplasms
+#> 4                                   Placental Remodeling in Gestational Diabetes Mellitus (GDM) Disrupts Lipid Metabolism
+#> 5 Energy-sensing molecule RORγ regulates Cholesterol Metabolism and Immune Signaling in Diabetic Kidney Disease and Aging
+#> 6                                                         iCLIP analysis of full-length and deletion mutants of myc-LARP6
+#>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        Summary
+#> 1 Hypoxia drives diabetic kidney disease (DKD) progression through Hypoxia Inducible Factor (HIF) signaling. The kidney’s cellular heterogeneity and complex architecture pose challenges for directly assessing the pharmacologic effects on kidney oxygenation and hypoxia responsive pathways in vivo, such as treatment with SGLT2 inhibitors (SGLT2i), presumed to impact kidney oxygenation. Using single-cell transcriptional profiling of kidney tissue from youth with type 2 diabetes (T2D) who showed minimal clinical evidence of DKD, we identified cell type enrichment of HIF regulated genes, findings that replicated in people with later stage DKD in the Kidney Precision Medicine Project (KPMP). more...
+#> 2                                                                                                                                                                                                                                                                                                                                                                                                                                                    Previously, we identified six prediabetes clusters, three at moderate and three at high-risk for type 2 diabetes and/or complications. While this novel classification could enable earlier and improved disease prevention, it relies on intensive clinical phenotyping.
+#> 3                                                                                                                                                                                 Accurate pathological diagnosis is crucial for optimal management of cancer patients. For a number of hematolymphoid tumor entities, standardization of the diagnostic process has been shown to be particularly challenging - with substantial inter-observer variability in the histopathological diagnosis of many tumor types. Genome-wide DNA methylation profiling has been shown to contribute to accurate and precise tumor classification and diagnosis in several tumor types, including central nervous system neoplasms. more...
+#> 4                                                                                                                                                                                                                                                                                                  Gestational diabetes mellitus (GDM) is a pregnancy-specific metabolic disorder associated with adverse maternal and fetal outcomes, with epigenetic dysregulation increasingly implicated in fetal programming. As the placenta plays a central role in maternal–fetal nutrient and hormonal exchange, this study investigated structural, epigenetic, and metabolic alterations in placentas from GDM pregnancies. more...
+#> 5                                                                                                             Aging is a major risk factor for diabetic kidney disease (DKD), with both conditions exhibiting similar renal pathology. We identify the energy-sensing molecule Retinoic acid-related orphan receptor γ (RORγ) as significantly downregulated in diabetic and aged kidneys. Tubule-specific RORγ deficiency exacerbates kidney injury, whereas its overexpression protects. Mechanistically, RORγ stabilizes insulin-induced gene 1 (INSIG1) by upregulating the deubiquitinase YOD1 and enhancing AMPK activity via CAB39, which together promote INSIG1 phosphorylation and subsequent stabilization. more...
+#> 6                                                             Intrinsically disordered regions (IDRs) are prevalent in RNA-binding proteins (RBPs), yet their roles in RNA interactions remain poorly defined. We examined the structured and disordered RNA-binding activities of LARP6, an RBP with a diverse RNA-binding repertoire. U87 glioblastoma cells stably expressing myc-tagged full-length or various deletion mutants of LARP6 under a doxycycline switch were induced to express myc-LARP6 variants at near endogenous levels, before individual-nucleotide resolution UV-crosslinking and immunoprecipitation (iCLIP) was performed to assess each variants' RNA-binding targets on the transcriptome. more...
 #>       Organism
 #> 1 Homo sapiens
 #> 2 Homo sapiens
@@ -57,19 +56,19 @@ head(diabetes_gse_records[1:5])
 #> 5 Homo sapiens
 #> 6 Homo sapiens
 #>                                                                   Type
-#> 1                         Methylation profiling by genome tiling array
-#> 2 Methylation profiling by genome tiling array; Third-party reanalysis
-#> 3                         Methylation profiling by genome tiling array
-#> 4                   Expression profiling by high throughput sequencing
-#> 5            Other; Expression profiling by high throughput sequencing
-#> 6                   Expression profiling by high throughput sequencing
-#>                                                                      FTP download
-#> 1      GEO (CSV, IDAT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE315nnn/GSE315764/
-#> 2 GEO (CSV, IDAT, TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE237nnn/GSE237299/
-#> 3      GEO (IDAT, TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE317nnn/GSE317191/
-#> 4            GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE317nnn/GSE317266/
-#> 5       GEO (BED, TAB) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE297nnn/GSE297587/
-#> 6            GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE316nnn/GSE316823/
+#> 1                                                                Other
+#> 2                         Methylation profiling by genome tiling array
+#> 3 Methylation profiling by genome tiling array; Third-party reanalysis
+#> 4                         Methylation profiling by genome tiling array
+#> 5                   Expression profiling by high throughput sequencing
+#> 6            Other; Expression profiling by high throughput sequencing
+#>                                                                                                            FTP download
+#> 1 GEO (CLOUPE, JPG, JSON, MTX, PARQUET, PNG, RDS, TIFF, TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE317nnn/GSE317226/
+#> 2                                            GEO (CSV, IDAT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE315nnn/GSE315764/
+#> 3                                       GEO (CSV, IDAT, TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE237nnn/GSE237299/
+#> 4                                            GEO (IDAT, TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE317nnn/GSE317191/
+#> 5                                                  GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE317nnn/GSE317266/
+#> 6                                             GEO (BED, TAB) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE297nnn/GSE297587/
 ```
 
 Once you have the search results, you can filter them based on specific
@@ -169,7 +168,7 @@ sessionInfo()
 #> [13] XML_3.99-0.20     ragg_1.5.0        sass_0.4.10       rmarkdown_2.30   
 #> [17] tibble_3.3.1      evaluate_1.0.5    jquerylib_0.1.4   fastmap_1.2.0    
 #> [21] yaml_2.3.12       lifecycle_1.0.5   stringr_1.6.0     compiler_4.5.2   
-#> [25] dplyr_1.1.4       rentrez_1.2.4     codetools_0.2-20  fs_1.6.6         
+#> [25] dplyr_1.2.0       rentrez_1.2.4     codetools_0.2-20  fs_1.6.6         
 #> [29] pkgconfig_2.0.3   systemfonts_1.3.1 digest_0.6.39     R6_2.6.1         
 #> [33] tidyselect_1.2.1  pillar_1.11.1     curl_7.0.0        magrittr_2.0.4   
 #> [37] bslib_0.10.0      withr_3.0.2       tools_4.5.2       pkgdown_2.2.0    

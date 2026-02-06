@@ -59,7 +59,10 @@ uc_gse <- list(
         "urothelial cancer[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"
     )
 )
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■        500/628 [192/s] | ETA:  1s
 #> → Parsing GEO records
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■        500/628 [192/s] | ETA:  1sGet records from NCBI for 628 queries in 3.9s
+#> 
 #> → Parsing GEO records
 uc_gse <- unique(dplyr::bind_rows(uc_gse))
 ```
@@ -146,7 +149,7 @@ sessionInfo()
 #> [13] XML_3.99-0.20     ragg_1.5.0        sass_0.4.10       rmarkdown_2.30   
 #> [17] tibble_3.3.1      evaluate_1.0.5    jquerylib_0.1.4   fastmap_1.2.0    
 #> [21] yaml_2.3.12       lifecycle_1.0.5   stringr_1.6.0     compiler_4.5.2   
-#> [25] rentrez_1.2.4     dplyr_1.1.4       fs_1.6.6          pkgconfig_2.0.3  
+#> [25] rentrez_1.2.4     dplyr_1.2.0       fs_1.6.6          pkgconfig_2.0.3  
 #> [29] systemfonts_1.3.1 digest_0.6.39     R6_2.6.1          tidyselect_1.2.1 
 #> [33] pillar_1.11.1     curl_7.0.0        magrittr_2.0.4    bslib_0.10.0     
 #> [37] tools_4.5.2       pkgdown_2.2.0     cachem_1.1.0      desc_1.4.3
