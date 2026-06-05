@@ -21,13 +21,16 @@ Imports:
     rentrez,
     xml2,
     utils
-Suggests: 
+Suggests:
     BiocGenerics,
     Biobase,
     stats,
     dplyr,
     stringr,
     R.utils,
+    ellmer,
+    duckdb,
+    querychat,
     testthat (>= 3.0.0),
     knitr,
     rmarkdown

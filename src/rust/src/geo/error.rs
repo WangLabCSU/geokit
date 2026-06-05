@@ -12,6 +12,9 @@ pub enum GEOParseError {
     #[error("'entity' must be provided before building")]
     RequireEntity,
 
+    #[error("'format' must be provided before building")]
+    RequireFormat,
+
     #[error("{gtype} never own {format} file.")]
     UnavailableFTPFormat {
         gtype: GEOType,

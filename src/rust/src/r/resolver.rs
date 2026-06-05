@@ -143,19 +143,14 @@ impl GEOResolverBuilder {
         match format {
             GEOFormat::ADB(format) => {
                 let mut builder = GEOADBResolverBuilder::new();
-                match entity.gtype() {
-                    GEOType::Datasets => {}
-                    _ => {
-                        if let Some(amount) = &self.amount {
-                            builder.amount(amount.clone());
-                        }
-                        if let Some(scope) = &self.scope {
-                            builder.scope(scope.clone());
-                        }
-                    }
-                }
                 builder.entity(entity);
                 builder.format(format);
+                if let Some(amount) = &self.amount {
+                    builder.amount(amount.clone());
+                }
+                if let Some(scope) = &self.scope {
+                    builder.scope(scope.clone());
+                }
                 builder
                     .build()
                     .map(GEOResolver::ADB)
@@ -341,24 +336,41 @@ fn build_format(format: &[&str]) -> Result<Vec<GEOFormat>> {
         .collect()
 }
 
-fn build_amount(amount: &[&str]) -> Result<Vec<Option<GEOAmount>>> {
+fn build_amount(amount: &[&str]) -> Result<Vec<Option<GEOAmount>>, RGEOParseError> {
     amount
         .iter()
         .map(|&s| {
-            RGEOAmount::try_from(s)
-                .map(|ra| -> Option<GEOAmount> { ra.into() })
-                .with_context(|| format!("Invalid 'amount': {}", s))
+            let amount = match s {
+                "none" => None,
+                "brief" => Some(GEOAmount::Brief),
+                "quick" => Some(GEOAmount::Quick),
+                "data" => Some(GEOAmount::Data),
+                "full" => Some(GEOAmount::Full),
+                _ => {
+                    return Err(RGEOParseError::InvalidAmount);
+                }
+            };
+            Ok(amount)
         })
         .collect()
 }
 
-fn build_scope(scope: &[&str]) -> Result<Vec<Option<GEOScope>>> {
+fn build_scope(scope: &[&str]) -> Result<Vec<Option<GEOScope>>, RGEOParseError> {
     scope
         .iter()
         .map(|&s| {
-            RGEOScope::try_from(s)
-                .map(|rs| -> Option<GEOScope> { rs.into() })
-                .with_context(|| format!("Invalid 'scope': {}", s))
+            let scope = match s {
+                "none" => None,
+                "self" => Some(GEOScope::Itself),
+                "gsm" => Some(GEOScope::GSM),
+                "gpl" => Some(GEOScope::GPL),
+                "gse" => Some(GEOScope::GSE),
+                "all" => Some(GEOScope::All),
+                _ => {
+                    return Err(RGEOParseError::InvalidScope);
+                }
+            };
+            Ok(scope)
         })
         .collect()
 }
@@ -429,103 +441,5 @@ impl TryFrom<&str> for GEOFormat {
     type Error = RGEOParseError;
     fn try_from(value: &str) -> Result<Self, Self::Error> {
         Self::from_str(value)
-    }
-}
-
-// @param scope A character string in one of "self", "gsm", "gpl", "gse" or
-// "all". allows you to display the GEO accession(s) which you wish to target
-// for display. You may display the GEO accession which is typed into the text
-// box itself ("Self"), or any ("Platform", "Samples", or "Series") or all
-// ("Family") of the accessions related to the accession number typed into the
-// text box.
-#[derive(Debug, Clone)]
-pub(super) enum RGEOScope {
-    /// No value.
-    None,
-    /// Some value of type `T`.
-    Scope(GEOScope),
-}
-
-impl FromStr for RGEOScope {
-    type Err = RGEOParseError;
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let scope = match s {
-            "none" => RGEOScope::None,
-            "self" => RGEOScope::Scope(GEOScope::Itself),
-            "gsm" => RGEOScope::Scope(GEOScope::GSM),
-            "gpl" => RGEOScope::Scope(GEOScope::GPL),
-            "gse" => RGEOScope::Scope(GEOScope::GSE),
-            "all" => RGEOScope::Scope(GEOScope::All),
-            _ => {
-                return Err(RGEOParseError::InvalidScope);
-            }
-        };
-        Ok(scope)
-    }
-}
-
-impl TryFrom<&str> for RGEOScope {
-    type Error = RGEOParseError;
-    fn try_from(value: &str) -> Result<Self, Self::Error> {
-        Self::from_str(value)
-    }
-}
-
-impl From<RGEOScope> for Option<GEOScope> {
-    fn from(value: RGEOScope) -> Self {
-        if let RGEOScope::Scope(scope) = value {
-            Some(scope)
-        } else {
-            None
-        }
-    }
-}
-
-// @param amount A character string in one of "brief", "quick", "data" or
-// "full". Allows you to control the amount of data that you will see displayed.
-// "Brief" displays the accession's attributes only. "Quick" displays the
-// accession's attributes and the first twenty rows of its data table. "Full"
-// displays the accessions's attributes and the full data table. "Data" omits
-// the accession's attributes, showing only the links to other accessions as
-// well as the full data table
-#[derive(Debug, Clone)]
-pub(super) enum RGEOAmount {
-    /// No value.
-    None,
-    /// Some value of type `GEOAmount`.
-    Amount(GEOAmount),
-}
-
-impl FromStr for RGEOAmount {
-    type Err = RGEOParseError;
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let amount = match s {
-            "none" => RGEOAmount::None,
-            "brief" => RGEOAmount::Amount(GEOAmount::Brief),
-            "quick" => RGEOAmount::Amount(GEOAmount::Quick),
-            "data" => RGEOAmount::Amount(GEOAmount::Data),
-            "full" => RGEOAmount::Amount(GEOAmount::Full),
-            _ => {
-                return Err(RGEOParseError::InvalidAmount);
-            }
-        };
-        Ok(amount)
-    }
-}
-
-impl TryFrom<&str> for RGEOAmount {
-    type Error = RGEOParseError;
-    fn try_from(value: &str) -> Result<Self, Self::Error> {
-        Self::from_str(value)
-    }
-}
-
-impl From<RGEOAmount> for Option<GEOAmount> {
-    fn from(value: RGEOAmount) -> Self {
-        if let RGEOAmount::Amount(amount) = value {
-            Some(amount)
-        } else {
-            None
-        }
     }
 }

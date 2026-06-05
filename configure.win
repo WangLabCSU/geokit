@@ -1,3 +1,5 @@
+#!/bin/sh
+
 # Even when `cargo` is on `PATH`, `rustc` might not in some cases. This adds
 # ~/.cargo/bin to PATH to address such cases. Note that is not always available
 # (e.g. or on Ubuntu with Rust installed via APT).

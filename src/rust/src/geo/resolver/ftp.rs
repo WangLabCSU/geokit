@@ -16,8 +16,11 @@ pub struct GEOFTPResolver {
 impl GEOFTPResolver {
     #[allow(dead_code)]
     #[inline]
-    pub fn new(entity: GEOEntity) -> Self {
-        Self::builder().entity(entity).build().unwrap()
+    pub fn new(entity: GEOEntity, format: GEOFTPFormat) -> Result<Self, GEOParseError> {
+        let mut builder = Self::builder();
+        builder.entity(entity);
+        builder.format(format);
+        builder.build()
     }
 
     #[allow(dead_code)]
@@ -175,14 +178,10 @@ impl GEOFTPResolverBuilder {
             .as_ref()
             .map_or_else(|| Err(GEOParseError::RequireEntity), |v| Ok(v.clone()))?;
 
-        // Default to SOFT files for all GEO types except GSM, which only provides SUPPL files.
         let format = if let Some(ref f) = self.format {
             f.clone()
         } else {
-            match entity.gtype() {
-                GEOType::Samples => GEOFTPFormat::Suppl,
-                _ => GEOFTPFormat::SOFT,
-            }
+            return Err(GEOParseError::RequireFormat);
         };
 
         // check format is valid
@@ -203,9 +202,9 @@ impl GEOFTPResolverBuilder {
                 | GEOFTPFormat::Suppl,
             )
             | (GEOType::Samples, GEOFTPFormat::Suppl) => {}
-            _ => {
+            (gtype, _) => {
                 return Err(GEOParseError::UnavailableFTPFormat {
-                    gtype: entity.gtype().clone(),
+                    gtype: gtype.clone(),
                     format,
                 });
             }

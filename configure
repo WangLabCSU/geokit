@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/sh
 
 # ~/.cargo/bin to PATH to address such cases. Note that is not always available
 # (e.g. or on Ubuntu with Rust installed via APT).
