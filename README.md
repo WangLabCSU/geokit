@@ -8,6 +8,8 @@
 [![R-CMD-check](https://github.com/WangLabCSU/geokit/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/WangLabCSU/geokit/actions/workflows/R-CMD-check.yaml)
 [![Codecov test
 coverage](https://codecov.io/gh/WangLabCSU/geokit/graph/badge.svg)](https://app.codecov.io/gh/WangLabCSU/geokit)
+[![Ask
+DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/WangLabCSU/geokit)
 <!-- badges: end -->
 
 The goal of `geokit` is to provide a comprehensive interface for most
