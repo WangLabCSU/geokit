@@ -2,7 +2,7 @@ Package: geokit
 Title: Tools for Accessing and Working with the Gene Expression Omnibus (GEO)
 Version: 0.0.1.9000
 Authors@R: 
-    person("Yun", "Peng", , "yunyunpp96@outlook.com", role = c("aut", "cre"))
+    person("Yun", "Peng", , "pengyun.me@outlook.com", role = c("aut", "cre"))
 Description: Provides a tidy and fast R interface to the NCBI Gene
     Expression Omnibus (GEO) database. Functions are included to query,
     download, and parse GEO metadata and expression data, making it easier to
@@ -35,7 +35,7 @@ ByteCompile: true
 Config/testthat/edition: 3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 8.0.0
 Config/rextendr/version: 0.4.2.9000
 SystemRequirements: Cargo (Rust's package manager), rustc >= 1.87.0
 VignetteBuilder: knitr

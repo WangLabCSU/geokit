@@ -2,6 +2,14 @@
 
 is_all_same <- function(x) rust_call("is_all_same", x)
 
+allow_lambda <- function(x) {
+    if (rlang::is_formula(x)) {
+        rlang::as_function(x)
+    } else {
+        x
+    }
+}
+
 parse_soft_rust <- function(path, format = "standard",
                             use_lines = NULL, threads = NULL, pprof_file = NULL) {
     if (is.null(pprof_file)) {

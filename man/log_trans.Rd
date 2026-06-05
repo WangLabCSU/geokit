@@ -21,7 +21,7 @@ taking log of zero. For example, \code{log2(exprs + pseudo)}.}
 \item{...}{Additional arguments passed to methods.}
 }
 \value{
-A \code{matrix} or an \link[Biobase:class.ExpressionSet]{ExpressionSet} with
+A \code{matrix} or an \link[Biobase:ExpressionSet]{ExpressionSet} with
 log2-transformed expression values.
 }
 \description{

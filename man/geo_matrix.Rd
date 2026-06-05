@@ -25,7 +25,7 @@ geo_matrix(
 \item{add_gpl}{Logical or \code{NULL}. Whether to include platform information
 (the \code{\link[Biobase:featureData]{featureData}} slot). If \code{NULL} (default), the
 function attempts to map the GPL accession to a Bioconductor annotation
-package. If successful, the \code{\link[Biobase:class.eSet]{annotation}} slot is updated
+package. If successful, the \code{\link[Biobase:eSet]{annotation}} slot is updated
 and \code{add_gpl} is set to \code{FALSE}; otherwise, \code{add_gpl} is set to \code{TRUE}.}
 
 \item{pdata_from_soft}{Logical. Specifies whether to derive \code{phenoData} from
@@ -46,7 +46,7 @@ access.}
 working directory.}
 }
 \value{
-An \code{\link[Biobase:class.ExpressionSet]{ExpressionSet}} or a list of
+An \code{\link[Biobase:ExpressionSet]{ExpressionSet}} or a list of
 \code{ExpressionSet}s, one per Series Matrix file.
 }
 \description{

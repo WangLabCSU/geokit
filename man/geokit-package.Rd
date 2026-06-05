@@ -18,7 +18,12 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Yun Peng \email{yunyunpp96@outlook.com}
+\strong{Maintainer}: Yun Peng \email{pengyun.me@outlook.com}
+
+Authors:
+\itemize{
+  \item Yun Peng \email{pengyun.me@outlook.com}
+}
 
 }
 \keyword{internal}

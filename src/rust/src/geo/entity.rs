@@ -82,11 +82,7 @@ impl FromStr for GEOEntity {
         };
 
         // SAFETY: `accession` must be >= 3 characters if it passed the prefix check above.
-        if accession.len() == 3
-            || !unsafe { accession.get_unchecked(3..) }
-                .chars()
-                .all(|c| c.is_ascii_digit())
-        {
+        if !accession.chars().skip(3).all(|c| c.is_ascii_digit()) {
             return Err(GEOParseError::InvalidAccession);
         }
 
