@@ -61,9 +61,9 @@ uc_gse <- list(
         "urothelial cancer[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"
     )
 )
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  664/663 [322/s] | ETA:  0s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  664/663 [310/s] | ETA:  0s
 #> → Parsing GEO records
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  664/663 [322/s] | ETA:  0sGet records from NCBI for 663 queries in 2.1s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  664/663 [310/s] | ETA:  0sGet records from NCBI for 663 queries in 2.2s
 #> 
 #> → Parsing GEO records
 uc_gse <- unique(dplyr::bind_rows(uc_gse))
