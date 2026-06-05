@@ -33,7 +33,9 @@ log_trans(data, pseudo = 1, ...)
 
 ## Value
 
-A `matrix` or an ExpressionSet with log2-transformed expression values.
+A `matrix` or an
+[ExpressionSet](https://rdrr.io/pkg/Biobase/man/class.ExpressionSet.html)
+with log2-transformed expression values.
 
 ## Details
 
@@ -59,11 +61,11 @@ data <- matrix(
 log_trans(data)
 #> Applying log2 transformation with a pseudo count of 1 to the data.
 #>          [,1]     [,2]
-#> [1,] 5.321928 0.000000
-#> [2,] 3.584963 8.864186
+#> [1,] 0.000000 3.169925
+#> [2,] 7.924813 6.149747
 log_trans(log2(data))
 #> The data is already log-transformed. No transformation applied.
 #>          [,1]     [,2]
-#> [1,] 5.285402     -Inf
-#> [2,] 3.459432 8.861087
+#> [1,]     -Inf 3.000000
+#> [2,] 7.918863 6.129283
 ```

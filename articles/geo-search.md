@@ -1,6 +1,7 @@
 # Search GEO
 
 ``` r
+
 library(geokit)
 ```
 
@@ -26,49 +27,43 @@ we can get these records by following code, the returned object is a
 `data.frame`:
 
 ``` r
+
 diabetes_gse_records <- geo_search(
   "diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"
 )
-#> ■■■■■■■■■                        500/1777 [389/s] | ETA:  3s
-#> ■■■■■■■■■■■■■■■■■■               1000/1777 [445/s] | ETA:  2s
+#> ■■■■■■■■■                        500/1854 [408/s] | ETA:  3s
+#> ■■■■■■■■■■■■■■■■■                1000/1854 [435/s] | ETA:  2s
 #> → Parsing GEO records
-#> ■■■■■■■■■■■■■■■■■■               1000/1777 [445/s] | ETA:  2sGet records from NCBI for 1777 queries in 4.5s
+#> ■■■■■■■■■■■■■■■■■                1000/1854 [435/s] | ETA:  2sGet records from NCBI for 1854 queries in 4.4s
 head(diabetes_gse_records[1:5])
-#>                                                                                                                     Title
-#> 1               HIF regulatory network reflects kidney disease progression in diabetes and reversal with SGLT2 inhibition
-#> 2                                         Stratifying High-Risk Prediabetes Clusters Using Blood-Based Epigenetic Markers
-#> 3                                                        DNA methylation-based classification of hematolymphoid neoplasms
-#> 4                                   Placental Remodeling in Gestational Diabetes Mellitus (GDM) Disrupts Lipid Metabolism
-#> 5 Energy-sensing molecule RORγ regulates Cholesterol Metabolism and Immune Signaling in Diabetic Kidney Disease and Aging
-#> 6                                                         iCLIP analysis of full-length and deletion mutants of myc-LARP6
-#>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        Summary
-#> 1 Hypoxia drives diabetic kidney disease (DKD) progression through Hypoxia Inducible Factor (HIF) signaling. The kidney’s cellular heterogeneity and complex architecture pose challenges for directly assessing the pharmacologic effects on kidney oxygenation and hypoxia responsive pathways in vivo, such as treatment with SGLT2 inhibitors (SGLT2i), presumed to impact kidney oxygenation. Using single-cell transcriptional profiling of kidney tissue from youth with type 2 diabetes (T2D) who showed minimal clinical evidence of DKD, we identified cell type enrichment of HIF regulated genes, findings that replicated in people with later stage DKD in the Kidney Precision Medicine Project (KPMP). more...
-#> 2                                                                                                                                                                                                                                                                                                                                                                                                                                                    Previously, we identified six prediabetes clusters, three at moderate and three at high-risk for type 2 diabetes and/or complications. While this novel classification could enable earlier and improved disease prevention, it relies on intensive clinical phenotyping.
-#> 3                                                                                                                                                                                 Accurate pathological diagnosis is crucial for optimal management of cancer patients. For a number of hematolymphoid tumor entities, standardization of the diagnostic process has been shown to be particularly challenging - with substantial inter-observer variability in the histopathological diagnosis of many tumor types. Genome-wide DNA methylation profiling has been shown to contribute to accurate and precise tumor classification and diagnosis in several tumor types, including central nervous system neoplasms. more...
-#> 4                                                                                                                                                                                                                                                                                                  Gestational diabetes mellitus (GDM) is a pregnancy-specific metabolic disorder associated with adverse maternal and fetal outcomes, with epigenetic dysregulation increasingly implicated in fetal programming. As the placenta plays a central role in maternal–fetal nutrient and hormonal exchange, this study investigated structural, epigenetic, and metabolic alterations in placentas from GDM pregnancies. more...
-#> 5                                                                                                             Aging is a major risk factor for diabetic kidney disease (DKD), with both conditions exhibiting similar renal pathology. We identify the energy-sensing molecule Retinoic acid-related orphan receptor γ (RORγ) as significantly downregulated in diabetic and aged kidneys. Tubule-specific RORγ deficiency exacerbates kidney injury, whereas its overexpression protects. Mechanistically, RORγ stabilizes insulin-induced gene 1 (INSIG1) by upregulating the deubiquitinase YOD1 and enhancing AMPK activity via CAB39, which together promote INSIG1 phosphorylation and subsequent stabilization. more...
-#> 6                                                             Intrinsically disordered regions (IDRs) are prevalent in RNA-binding proteins (RBPs), yet their roles in RNA interactions remain poorly defined. We examined the structured and disordered RNA-binding activities of LARP6, an RBP with a diverse RNA-binding repertoire. U87 glioblastoma cells stably expressing myc-tagged full-length or various deletion mutants of LARP6 under a doxycycline switch were induced to express myc-LARP6 variants at near endogenous levels, before individual-nucleotide resolution UV-crosslinking and immunoprecipitation (iCLIP) was performed to assess each variants' RNA-binding targets on the transcriptome. more...
-#>       Organism
-#> 1 Homo sapiens
-#> 2 Homo sapiens
-#> 3 Homo sapiens
-#> 4 Homo sapiens
-#> 5 Homo sapiens
-#> 6 Homo sapiens
-#>                                                                   Type
-#> 1                                                                Other
-#> 2                         Methylation profiling by genome tiling array
-#> 3 Methylation profiling by genome tiling array; Third-party reanalysis
-#> 4                         Methylation profiling by genome tiling array
-#> 5                   Expression profiling by high throughput sequencing
-#> 6            Other; Expression profiling by high throughput sequencing
-#>                                                                                                            FTP download
-#> 1 GEO (CLOUPE, JPG, JSON, MTX, PARQUET, PNG, RDS, TIFF, TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE317nnn/GSE317226/
-#> 2                                            GEO (CSV, IDAT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE315nnn/GSE315764/
-#> 3                                       GEO (CSV, IDAT, TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE237nnn/GSE237299/
-#> 4                                            GEO (IDAT, TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE317nnn/GSE317191/
-#> 5                                                  GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE317nnn/GSE317266/
-#> 6                                             GEO (BED, TAB) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE297nnn/GSE297587/
+#>                                                                                                               Title
+#> 1                  Transcriptomic Profiling of HRMVPC and HRMEC Co-culture Under Normal and High Glucose Conditions
+#> 2 EZH2 inhibition via GSK-126 mitigates EndMT and atherosclerosis in diabetes: A translational epigenetic approach.
+#> 3                                       Transcriptomic profiling of human placenta in gestational diabetes mellitus
+#> 4                                     Dynamic remodeling of the pancreas immune landscape in obesity [bulk RNA-seq]
+#> 5                                        Dynamic remodeling of the pancreas immune landscape in obesity. [CITE-Seq]
+#> 6                                                   Dynamic remodeling of the pancreas immune landscape in obesity.
+#>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   Summary
+#> 1                                                                          We investigated the transcriptomic alterations in human retinal microvascular pericytes (HRMVPC-Immortalized) exposed to normal and high glucose conditions, with or without co-culture with human retinal microvascular endothelial cells (HRMEC-Immortalized). The study aimed to elucidate how glucose levels and endothelial interaction influence pericyte gene expression, providing insights into the cellular mechanisms potentially involved in diabetic retinopathy.
+#> 2  Atherosclerosis drives cardiovascular morbidity in diabetes, with endothelial-to-mesenchymal transition (EndMT) as a key contributor. While epigenetic regulators are increasingly implicated in atherosclerotic progression, the specific role of Enhancer of Zeste Homolog 2 (EZH2), a histone methyltransferase, in EndMT in diabetes-associated atherosclerosis remains unclear. We show that EZH2-mediated H3K27 trimethylation is elevated in carotid plaques from diabetic patients and in aortic endothelium of diabetic Apoe-/- mice. more...
+#> 3                                                                                                                                                                                                                                                                                                                                                                                                      We performed transcriptomics analysis on the placental tissues from gestational diabetes mellitus (GDM) patients and normal pregnant participants.
+#> 4 Obesity is a known risk factor for diseases of the pancreas, including diabetes, pancreatic cancer and pancreatitis, but mechanisms remain unclear. To elucidate how obesity impacts pancreatic immune homeostasis, we performed spatial, transcriptomic and functional profiling of human pancreatic immune cells from obese and non-obese organ donors. Obesity was associated with higher density of tissue resident memory T-cells (TRM) in the exocrine pancreas which display high cytotoxic functions and aggregated around macrophages. more...
+#> 5 Obesity is a known risk factor for diseases of the pancreas, including diabetes, pancreatic cancer and pancreatitis, but mechanisms remain unclear. To elucidate how obesity impacts pancreatic immune homeostasis, we performed spatial, transcriptomic and functional profiling of human pancreatic immune cells from obese and non-obese organ donors. Obesity was associated with higher density of tissue resident memory T-cells (TRM) in the exocrine pancreas which display high cytotoxic functions and aggregated around macrophages. more...
+#> 6 Obesity is a known risk factor for diseases of the pancreas, including diabetes, pancreatic cancer and pancreatitis, but mechanisms remain unclear. To elucidate how obesity impacts pancreatic immune homeostasis, we performed spatial, transcriptomic and functional profiling of human pancreatic immune cells from obese and non-obese organ donors. Obesity was associated with higher density of tissue resident memory T-cells (TRM) in the exocrine pancreas which display high cytotoxic functions and aggregated around macrophages. more...
+#>       Organism                                                      Type
+#> 1 Homo sapiens        Expression profiling by high throughput sequencing
+#> 2 Homo sapiens        Expression profiling by high throughput sequencing
+#> 3 Homo sapiens        Expression profiling by high throughput sequencing
+#> 4 Homo sapiens        Expression profiling by high throughput sequencing
+#> 5 Homo sapiens Expression profiling by high throughput sequencing; Other
+#> 6 Homo sapiens Expression profiling by high throughput sequencing; Other
+#>                                                                     FTP download
+#> 1           GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE298nnn/GSE298973/
+#> 2           GEO (TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE316nnn/GSE316326/
+#> 3          GEO (XLSX) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE237nnn/GSE237061/
+#> 4           GEO (CSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE306nnn/GSE306366/
+#> 5 GEO (CSV, MTX, TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE306nnn/GSE306178/
+#> 6 GEO (CSV, MTX, TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE305nnn/GSE305278/
 ```
 
 Once you have the search results, you can filter them based on specific
@@ -77,6 +72,7 @@ criteria. For instance, to filter for GSE datasets that contain at least
 following code:
 
 ``` r
+
 diabetes_nephropathy_gse_records <- diabetes_gse_records |>
   dplyr::mutate(
     number_of_samples = stringr::str_match(
@@ -98,32 +94,38 @@ diabetes_nephropathy_gse_records <- diabetes_gse_records |>
   )
 head(diabetes_nephropathy_gse_records[1:5, 1:5])
 #>                                                                                                                             Title
-#> 1      Integrative RNA-seq and CLIP-seq analysis reveals hnRNP-F regulation of the TNFα/NFκB signaling in high glucose conditions
-#> 2                                                  Effect of FGF9 on human renal tubular epithelial cells in high glucose culture
-#> 3 Endothelial Kallikrein-Related Peptidase 8 Promotes Diabetic Nephropathy via Reducing SDC4 Expression and Enhancing LIF Release
-#> 4       Upregulation of FGF13 promotes type 2 diabetic nephropathy by modulating glomerular endothelial mitochondrial homeostasis
-#> 5                 Sodium Butyrate Ameliorates Renal Tubular Lipid Accumulation Through the PP2A-TFEB axis in Diabetic Nephropathy
-#>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           Summary
-#> 1                                                                                                                                                                                                                                             Using RNA-seq and ChIP-seq we found that we found that hnRNP-F may bind to lncRNA SNHG1 to negatively regulate the transcription of genes involved in the TNFα/NFκB signaling pathway in diabetic nephropathy. Our study suggests that hnRNP-F may play a role in diabetic nephropathy by regulating the differential expression and variable splicing of diabetic nephropathy-associated genes, especially those related to inflammatory response.
-#> 2                                                                                                                                                                                                                                                                 Diabetic nephropathy is characterised by the accumulation of extracellular matrix in the glomerular tunica and tubular interstitium, which ultimately leads to excessive renal scarring and decreased excretory function. The main pathological changes of renal fibrosis are: glomerulosclerosis, tubulointerstitial fibrosis, infiltration of inflammatory mediators and activation of α-SMA-positive myofibroblasts. more...
-#> 3                                                                                                                                                                                                                                                             The molecular mechanisms underlying diabetic nephropathy (DN) are poorly defined. We sought to investigate the roles of kallikrein-related peptidases (KLKs) in DN pathogenesis. Screening of renal tissue from diabetic mice revealed KLK8 as the most highly induced gene in KLK family. KLK8 expression was greater in glomerular endothelial cells (GECs) than other glomerular cells in DN patients and diabetic mice. more...
-#> 4 Studies of diabetic glomerular injury raise the possibility of developing useful early biomarkers and therapeutic approaches for the treatment of type 2 diabetic nephropathy (T2DN). In this study, it is found that FGF13 expression is induced in glomerular endothelial cells (GECs) during T2DN progression, and endothelial-specific deletion of Fgf13 potentially alleviates T2DN damage. Fgf13 deficiency restores the expression of Parkin both in the cytosolic, mitochondrial, and nuclear fractions under diabetic conditions, resulting in improved mitochondrial homeostasis and endothelial barrier integrity due to promotion of mitophagy and inhibition of apoptosis. more...
-#> 5                                                                                                                                                                                                                               Background: Diabetic kidney disease (DKD) is the leading cause of end-stage renal disease worldwide with limited treatment options. The intricate pathogenesis of dysregulated lipid metabolism leading to the development of DKD remains obscure. Lipophagy, which refers to the autophagic degradation of intracellular lipid droplets, has been found to be impaired in DKD, resulting in renal tubule dysfunction and ectopic lipid deposition (ELD). more...
-#>       Organism                                               Type
-#> 1 Homo sapiens Expression profiling by high throughput sequencing
-#> 2 Homo sapiens Expression profiling by high throughput sequencing
-#> 3 Homo sapiens Expression profiling by high throughput sequencing
-#> 4 Homo sapiens Expression profiling by high throughput sequencing
-#> 5 Homo sapiens Expression profiling by high throughput sequencing
-#>                                                           FTP download
-#> 1 GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE273nnn/GSE273001/
-#> 2 GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE265nnn/GSE265918/
-#> 3 GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE255nnn/GSE255028/
-#> 4 GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE192nnn/GSE192889/
-#> 5 GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE266nnn/GSE266108/
+#> 1                                            DJ-1 alleviates high glucose-induced podocyte injury via activating ERK1/2 signaling
+#> 2                               RBBP6 orchestrates diabetic endothelial dysfunction viadisrupting JUNB-centric chromatin topology
+#> 3      Integrative RNA-seq and CLIP-seq analysis reveals hnRNP-F regulation of the TNFα/NFκB signaling in high glucose conditions
+#> 4                                                  Effect of FGF9 on human renal tubular epithelial cells in high glucose culture
+#> 5 Endothelial Kallikrein-Related Peptidase 8 Promotes Diabetic Nephropathy via Reducing SDC4 Expression and Enhancing LIF Release
+#>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          Summary
+#> 1 Diabetic nephropathy (DN) is one of the most common complications of diabetes. DJ-1 has been reported to participate in the response to renal ischemia/reperfusion (I/R) injury. However, the underlying mechanisms of DJ-1 in the regulation of high glucose-induced renal injury remain obscure. In this study, we performed RNA-seq to explore the function of high glucose on human podocyte cells (HPC), and found that high glucose widely regulated a variety of signaling pathways, including cell growth and death, signal transduction, etc. more...
+#> 2  Diabetes mellitus, a chronic metabolic disease affecting over 536.6 million people globally, is closely associated with vascular endothelial dysfunction, an early hallmark of diabetic cardiovascular complications. This dysfunction is characterized by impaired endothelial nitric oxide synthase (eNOS) activity, reduced nitric oxide (NO) production, and diminished angiogenic capacity, ultimately contributing to tissue ischemia and complications such as diabetic nephropathy, coronary artery disease, and peripheral arterial disease. more...
+#> 3                                                                                                            Using RNA-seq and ChIP-seq we found that we found that hnRNP-F may bind to lncRNA SNHG1 to negatively regulate the transcription of genes involved in the TNFα/NFκB signaling pathway in diabetic nephropathy. Our study suggests that hnRNP-F may play a role in diabetic nephropathy by regulating the differential expression and variable splicing of diabetic nephropathy-associated genes, especially those related to inflammatory response.
+#> 4                                                                                                                                Diabetic nephropathy is characterised by the accumulation of extracellular matrix in the glomerular tunica and tubular interstitium, which ultimately leads to excessive renal scarring and decreased excretory function. The main pathological changes of renal fibrosis are: glomerulosclerosis, tubulointerstitial fibrosis, infiltration of inflammatory mediators and activation of α-SMA-positive myofibroblasts. more...
+#> 5                                                                                                                            The molecular mechanisms underlying diabetic nephropathy (DN) are poorly defined. We sought to investigate the roles of kallikrein-related peptidases (KLKs) in DN pathogenesis. Screening of renal tissue from diabetic mice revealed KLK8 as the most highly induced gene in KLK family. KLK8 expression was greater in glomerular endothelial cells (GECs) than other glomerular cells in DN patients and diabetic mice. more...
+#>                     Organism
+#> 1               Homo sapiens
+#> 2 Mus musculus; Homo sapiens
+#> 3               Homo sapiens
+#> 4               Homo sapiens
+#> 5               Homo sapiens
+#>                                                                                                                          Type
+#> 1                                                                          Expression profiling by high throughput sequencing
+#> 2 Expression profiling by high throughput sequencing; Genome binding/occupancy profiling by high throughput sequencing; Other
+#> 3                                                                          Expression profiling by high throughput sequencing
+#> 4                                                                          Expression profiling by high throughput sequencing
+#> 5                                                                          Expression profiling by high throughput sequencing
+#>                                                                       FTP download
+#> 1             GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE307nnn/GSE307956/
+#> 2 GEO (BIGWIG, BW, TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE291nnn/GSE291636/
+#> 3             GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE273nnn/GSE273001/
+#> 4             GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE265nnn/GSE265918/
+#> 5             GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE255nnn/GSE255028/
 ```
 
-After applying the filter, we obtain 38 candidate datasets. This
+After applying the filter, we obtain 40 candidate datasets. This
 filtering step significantly reduces the time spent manually reviewing
 summary records.
 
@@ -137,10 +139,11 @@ for details.
 ## Session Information
 
 ``` r
+
 sessionInfo()
-#> R version 4.5.2 (2025-10-31)
+#> R version 4.6.0 (2026-04-24)
 #> Platform: x86_64-pc-linux-gnu
-#> Running under: Ubuntu 24.04.3 LTS
+#> Running under: Ubuntu 24.04.4 LTS
 #> 
 #> Matrix products: default
 #> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -162,15 +165,15 @@ sessionInfo()
 #> [1] geokit_0.0.1.9000
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] vctrs_0.7.1       httr_1.4.7        cli_3.6.5         knitr_1.51       
-#>  [5] rlang_1.1.7       xfun_0.56         stringi_1.8.7     generics_0.1.4   
-#>  [9] textshaping_1.0.4 jsonlite_2.0.0    glue_1.8.0        htmltools_0.5.9  
-#> [13] XML_3.99-0.20     ragg_1.5.0        sass_0.4.10       rmarkdown_2.30   
-#> [17] tibble_3.3.1      evaluate_1.0.5    jquerylib_0.1.4   fastmap_1.2.0    
-#> [21] yaml_2.3.12       lifecycle_1.0.5   stringr_1.6.0     compiler_4.5.2   
-#> [25] dplyr_1.2.0       rentrez_1.2.4     codetools_0.2-20  fs_1.6.6         
-#> [29] pkgconfig_2.0.3   systemfonts_1.3.1 digest_0.6.39     R6_2.6.1         
-#> [33] tidyselect_1.2.1  pillar_1.11.1     curl_7.0.0        magrittr_2.0.4   
-#> [37] bslib_0.10.0      withr_3.0.2       tools_4.5.2       pkgdown_2.2.0    
-#> [41] cachem_1.1.0      desc_1.4.3
+#>  [1] vctrs_0.7.3       httr_1.4.8        cli_3.6.6         knitr_1.51       
+#>  [5] rlang_1.2.0       xfun_0.58         stringi_1.8.7     otel_0.2.0       
+#>  [9] generics_0.1.4    textshaping_1.0.5 jsonlite_2.0.0    glue_1.8.1       
+#> [13] htmltools_0.5.9   XML_3.99-0.23     ragg_1.5.2        sass_0.4.10      
+#> [17] rmarkdown_2.31    tibble_3.3.1      evaluate_1.0.5    jquerylib_0.1.4  
+#> [21] fastmap_1.2.0     yaml_2.3.12       lifecycle_1.0.5   stringr_1.6.0    
+#> [25] compiler_4.6.0    dplyr_1.2.1       codetools_0.2-20  rentrez_1.2.4    
+#> [29] fs_2.1.0          pkgconfig_2.0.3   systemfonts_1.3.2 digest_0.6.39    
+#> [33] R6_2.6.1          tidyselect_1.2.1  pillar_1.11.1     curl_7.1.0       
+#> [37] magrittr_2.0.5    bslib_0.11.0      withr_3.0.2       tools_4.6.0      
+#> [41] pkgdown_2.2.0     cachem_1.1.0      desc_1.4.3
 ```

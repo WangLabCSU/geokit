@@ -1,6 +1,7 @@
 # Download Supplementary File from GEO database
 
 ``` r
+
 library(geokit)
 ```
 
@@ -18,6 +19,7 @@ download it directly use `geo_suppl`, which will return a character
 vector containing the path of downloaded files.
 
 ``` r
+
 gse160724 <- geo_suppl(
   "GSE160724",
   pattern = "counts_anno",
@@ -73,10 +75,11 @@ head(gse160724_suppl_data[1:5])
 ## sessionInfo
 
 ``` r
+
 sessionInfo()
-#> R version 4.5.2 (2025-10-31)
+#> R version 4.6.0 (2026-04-24)
 #> Platform: x86_64-pc-linux-gnu
-#> Running under: Ubuntu 24.04.3 LTS
+#> Running under: Ubuntu 24.04.4 LTS
 #> 
 #> Matrix products: default
 #> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -98,15 +101,13 @@ sessionInfo()
 #> [1] geokit_0.0.1.9000
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] cli_3.6.5           knitr_1.51          rlang_1.1.7        
-#>  [4] xfun_0.56           textshaping_1.0.4   jsonlite_2.0.0     
-#>  [7] data.table_1.18.2.1 htmltools_0.5.9     ragg_1.5.0         
-#> [10] sass_0.4.10         rmarkdown_2.30      evaluate_1.0.5     
-#> [13] jquerylib_0.1.4     fastmap_1.2.0       yaml_2.3.12        
-#> [16] lifecycle_1.0.5     compiler_4.5.2      codetools_0.2-20   
-#> [19] fs_1.6.6            R.oo_1.27.1         systemfonts_1.3.1  
-#> [22] R.utils_2.13.0      digest_0.6.39       R6_2.6.1           
-#> [25] curl_7.0.0          bslib_0.10.0        R.methodsS3_1.8.2  
-#> [28] tools_4.5.2         pkgdown_2.2.0       xml2_1.5.2         
-#> [31] cachem_1.1.0        desc_1.4.3
+#>  [1] cli_3.6.6         knitr_1.51        rlang_1.2.0       xfun_0.58        
+#>  [5] otel_0.2.0        textshaping_1.0.5 jsonlite_2.0.0    data.table_1.18.4
+#>  [9] htmltools_0.5.9   ragg_1.5.2        sass_0.4.10       rmarkdown_2.31   
+#> [13] evaluate_1.0.5    jquerylib_0.1.4   fastmap_1.2.0     yaml_2.3.12      
+#> [17] lifecycle_1.0.5   compiler_4.6.0    codetools_0.2-20  fs_2.1.0         
+#> [21] R.oo_1.27.1       R.utils_2.13.0    systemfonts_1.3.2 digest_0.6.39    
+#> [25] R6_2.6.1          curl_7.1.0        R.methodsS3_1.8.2 bslib_0.11.0     
+#> [29] tools_4.6.0       pkgdown_2.2.0     xml2_1.5.2        cachem_1.1.0     
+#> [33] desc_1.4.3
 ```

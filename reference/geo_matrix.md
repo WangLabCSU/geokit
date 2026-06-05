@@ -37,8 +37,9 @@ geo_matrix(
   [`featureData`](https://rdrr.io/pkg/Biobase/man/featureData.html)
   slot). If `NULL` (default), the function attempts to map the GPL
   accession to a Bioconductor annotation package. If successful, the
-  `annotation` slot is updated and `add_gpl` is set to `FALSE`;
-  otherwise, `add_gpl` is set to `TRUE`.
+  [`annotation`](https://rdrr.io/pkg/Biobase/man/class.eSet.html) slot
+  is updated and `add_gpl` is set to `FALSE`; otherwise, `add_gpl` is
+  set to `TRUE`.
 
 - pdata_from_soft:
 
@@ -67,8 +68,9 @@ geo_matrix(
 
 ## Value
 
-An `ExpressionSet` or a list of `ExpressionSet`s, one per Series Matrix
-file.
+An
+[`ExpressionSet`](https://rdrr.io/pkg/Biobase/man/class.ExpressionSet.html)
+or a list of `ExpressionSet`s, one per Series Matrix file.
 
 ## Examples
 

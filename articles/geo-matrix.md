@@ -1,6 +1,7 @@
 # Download and Parse Seires matrix File from GEO database
 
 ``` r
+
 library(geokit)
 ```
 
@@ -10,6 +11,7 @@ function. The `gse_matrix()` function returns an `ExpressionSet` object,
 which is compatible with many Bioconductor packages.
 
 ``` r
+
 gse_matix <- geo_matrix("GSE180383", odir = tempdir())
 #> Downloading 1 file
 #> Warning: Multiple occurrences of ":" found in metadata characteristics
@@ -38,6 +40,7 @@ multiple traits from them. Each trait is named with the prefix `ch*`,
 corresponding to the column name.
 
 ``` r
+
 Biobase::pData(gse_matix)[c("ch1_cultivar", "ch1_genotypes")]
 #>                                                              ch1_cultivar
 #> GSM5461787 Charantais type: Cucumis melo L. subsp. melo var cantalupensis
@@ -63,6 +66,7 @@ Bioconductor annotation package. You can control this behavior using the
 - Set `add_gpl = TRUE` to include platform information from GEO.
 
 ``` r
+
 Biobase::annotation(gse_matix)
 #> [1] "GPL21359"
 ```
@@ -70,10 +74,11 @@ Biobase::annotation(gse_matix)
 ## Session Information
 
 ``` r
+
 sessionInfo()
-#> R version 4.5.2 (2025-10-31)
+#> R version 4.6.0 (2026-04-24)
 #> Platform: x86_64-pc-linux-gnu
-#> Running under: Ubuntu 24.04.3 LTS
+#> Running under: Ubuntu 24.04.4 LTS
 #> 
 #> Matrix products: default
 #> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -95,15 +100,15 @@ sessionInfo()
 #> [1] geokit_0.0.1.9000
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] cli_3.6.5           knitr_1.51          rlang_1.1.7        
-#>  [4] xfun_0.56           generics_0.1.4      textshaping_1.0.4  
-#>  [7] jsonlite_2.0.0      htmltools_0.5.9     ragg_1.5.0         
-#> [10] sass_0.4.10         rmarkdown_2.30      Biobase_2.70.0     
-#> [13] evaluate_1.0.5      jquerylib_0.1.4     fastmap_1.2.0      
-#> [16] yaml_2.3.12         lifecycle_1.0.5     compiler_4.5.2     
-#> [19] codetools_0.2-20    fs_1.6.6            systemfonts_1.3.1  
-#> [22] digest_0.6.39       R6_2.6.1            curl_7.0.0         
-#> [25] bslib_0.10.0        tools_4.5.2         pkgdown_2.2.0      
-#> [28] xml2_1.5.2          BiocGenerics_0.56.0 cachem_1.1.0       
-#> [31] desc_1.4.3
+#>  [1] cli_3.6.6           knitr_1.51          rlang_1.2.0        
+#>  [4] xfun_0.58           otel_0.2.0          generics_0.1.4     
+#>  [7] textshaping_1.0.5   jsonlite_2.0.0      htmltools_0.5.9    
+#> [10] ragg_1.5.2          sass_0.4.10         rmarkdown_2.31     
+#> [13] Biobase_2.72.0      evaluate_1.0.5      jquerylib_0.1.4    
+#> [16] fastmap_1.2.0       yaml_2.3.12         lifecycle_1.0.5    
+#> [19] compiler_4.6.0      codetools_0.2-20    fs_2.1.0           
+#> [22] systemfonts_1.3.2   digest_0.6.39       R6_2.6.1           
+#> [25] curl_7.1.0          bslib_0.11.0        tools_4.6.0        
+#> [28] xml2_1.5.2          pkgdown_2.2.0       BiocGenerics_0.58.1
+#> [31] cachem_1.1.0        desc_1.4.3
 ```

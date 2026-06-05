@@ -41,6 +41,7 @@ records takes around **30.5 seconds** if the data is already downloaded.
 ## Search and Filter Single-Cell Studies of Urothelial Carcinoma
 
 ``` r
+
 library(geokit)
 ```
 
@@ -51,6 +52,7 @@ Based on the **NCBI Eutils** query, more details can be found here:
 DataSets](https://www.ncbi.nlm.nih.gov/geo/info/qqtutorial.html)
 
 ``` r
+
 uc_gse <- list(
     geo_search(
         "bladder cancer[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"
@@ -59,9 +61,9 @@ uc_gse <- list(
         "urothelial cancer[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"
     )
 )
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■        500/628 [192/s] | ETA:  1s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  664/663 [322/s] | ETA:  0s
 #> → Parsing GEO records
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■        500/628 [192/s] | ETA:  1sGet records from NCBI for 628 queries in 3.9s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  664/663 [322/s] | ETA:  0sGet records from NCBI for 663 queries in 2.1s
 #> 
 #> → Parsing GEO records
 uc_gse <- unique(dplyr::bind_rows(uc_gse))
@@ -70,6 +72,7 @@ uc_gse <- unique(dplyr::bind_rows(uc_gse))
 ### 2. Extract Sample Count from the “Contains” Field
 
 ``` r
+
 uc_gse$number_of_samples <- stringr::str_match(
   uc_gse$Contains, "(\\d+) Samples?"
 )[, 2L, drop = TRUE]
@@ -83,6 +86,7 @@ top_series <- dplyr::slice_max(uc_gse, as.numeric(number_of_samples))
 ### 3. Fetch Series Metadata (Parallel Processing and Batch Saving to Local Directory)
 
 ``` r
+
 uc_gse_meta <- geo_meta(uc_gse[["Series Accession"]],
   odir = "gse_urothelial_cancer"
 )
@@ -91,6 +95,7 @@ uc_gse_meta <- geo_meta(uc_gse[["Series Accession"]],
 ### 4. Filter Possible Single-Cell Studies (Search for Keywords in Summary/Title/Design)
 
 ``` r
+
 uc_gse_sc <- dplyr::filter(
   uc_gse_meta,
   dplyr::if_any(
@@ -118,10 +123,11 @@ By following these steps, you have successfully created your own
 ## Session Information
 
 ``` r
+
 sessionInfo()
-#> R version 4.5.2 (2025-10-31)
+#> R version 4.6.0 (2026-04-24)
 #> Platform: x86_64-pc-linux-gnu
-#> Running under: Ubuntu 24.04.3 LTS
+#> Running under: Ubuntu 24.04.4 LTS
 #> 
 #> Matrix products: default
 #> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -143,14 +149,15 @@ sessionInfo()
 #> [1] geokit_0.0.1.9000
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] vctrs_0.7.1       httr_1.4.7        cli_3.6.5         knitr_1.51       
-#>  [5] rlang_1.1.7       xfun_0.56         stringi_1.8.7     generics_0.1.4   
-#>  [9] textshaping_1.0.4 jsonlite_2.0.0    glue_1.8.0        htmltools_0.5.9  
-#> [13] XML_3.99-0.20     ragg_1.5.0        sass_0.4.10       rmarkdown_2.30   
-#> [17] tibble_3.3.1      evaluate_1.0.5    jquerylib_0.1.4   fastmap_1.2.0    
-#> [21] yaml_2.3.12       lifecycle_1.0.5   stringr_1.6.0     compiler_4.5.2   
-#> [25] rentrez_1.2.4     dplyr_1.2.0       fs_1.6.6          pkgconfig_2.0.3  
-#> [29] systemfonts_1.3.1 digest_0.6.39     R6_2.6.1          tidyselect_1.2.1 
-#> [33] pillar_1.11.1     curl_7.0.0        magrittr_2.0.4    bslib_0.10.0     
-#> [37] tools_4.5.2       pkgdown_2.2.0     cachem_1.1.0      desc_1.4.3
+#>  [1] vctrs_0.7.3       httr_1.4.8        cli_3.6.6         knitr_1.51       
+#>  [5] rlang_1.2.0       xfun_0.58         stringi_1.8.7     otel_0.2.0       
+#>  [9] generics_0.1.4    textshaping_1.0.5 jsonlite_2.0.0    glue_1.8.1       
+#> [13] htmltools_0.5.9   XML_3.99-0.23     ragg_1.5.2        sass_0.4.10      
+#> [17] rmarkdown_2.31    tibble_3.3.1      evaluate_1.0.5    jquerylib_0.1.4  
+#> [21] fastmap_1.2.0     yaml_2.3.12       lifecycle_1.0.5   stringr_1.6.0    
+#> [25] compiler_4.6.0    dplyr_1.2.1       rentrez_1.2.4     fs_2.1.0         
+#> [29] pkgconfig_2.0.3   systemfonts_1.3.2 digest_0.6.39     R6_2.6.1         
+#> [33] tidyselect_1.2.1  pillar_1.11.1     curl_7.1.0        magrittr_2.0.5   
+#> [37] bslib_0.11.0      tools_4.6.0       pkgdown_2.2.0     cachem_1.1.0     
+#> [41] desc_1.4.3
 ```

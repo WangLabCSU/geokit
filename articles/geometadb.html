@@ -7,8 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Build Your Own GEOmetadb • geokit</title>
 <script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Build Your Own GEOmetadb">
 </head>
@@ -35,6 +35,7 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/geo-search.html">Searching</a></li>
     <li><a class="dropdown-item" href="../articles/geometadb.html">GEO metadata</a></li>
+    <li><a class="dropdown-item" href="../articles/geo-querychat.html">Chat with GEO metadata</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../articles/geo-soft.html">GEO SOFT FIle</a></li>
     <li><a class="dropdown-item" href="../articles/geo-matrix.html">GSE Matrix FIle</a></li>
@@ -142,9 +143,9 @@ GEO DataSets</a></p>
 <span>        <span class="st">"urothelial cancer[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"</span></span>
 <span>    <span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■■■■■       </span> 500/628 [192/s] | ETA:  1s</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■ </span> 664/663 [322/s] | ETA:  0s</span></span>
 <span><span class="co">#&gt; → Parsing GEO records</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■■■■■       </span> 500/628 [192/s] | ETA:  1sGet records from NCBI for <span style="color: #0000BB;">628</span> queries in 3.9s</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■ </span> 664/663 [322/s] | ETA:  0sGet records from NCBI for <span style="color: #0000BB;">663</span> queries in 2.1s</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; → Parsing GEO records</span></span>
 <span><span class="va">uc_gse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">uc_gse</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
@@ -204,9 +205,9 @@ Summary/Title/Design)<a class="anchor" aria-label="anchor" href="#filter-possibl
 </h2>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; R version 4.5.2 (2025-10-31)</span></span>
+<span><span class="co">#&gt; R version 4.6.0 (2026-04-24)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu</span></span>
-<span><span class="co">#&gt; Running under: Ubuntu 24.04.3 LTS</span></span>
+<span><span class="co">#&gt; Running under: Ubuntu 24.04.4 LTS</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Matrix products: default</span></span>
 <span><span class="co">#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 </span></span>
@@ -228,16 +229,17 @@ Summary/Title/Design)<a class="anchor" aria-label="anchor" href="#filter-possibl
 <span><span class="co">#&gt; [1] geokit_0.0.1.9000</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
-<span><span class="co">#&gt;  [1] vctrs_0.7.1       httr_1.4.7        cli_3.6.5         knitr_1.51       </span></span>
-<span><span class="co">#&gt;  [5] rlang_1.1.7       xfun_0.56         stringi_1.8.7     generics_0.1.4   </span></span>
-<span><span class="co">#&gt;  [9] textshaping_1.0.4 jsonlite_2.0.0    glue_1.8.0        htmltools_0.5.9  </span></span>
-<span><span class="co">#&gt; [13] XML_3.99-0.20     ragg_1.5.0        sass_0.4.10       rmarkdown_2.30   </span></span>
-<span><span class="co">#&gt; [17] tibble_3.3.1      evaluate_1.0.5    jquerylib_0.1.4   fastmap_1.2.0    </span></span>
-<span><span class="co">#&gt; [21] yaml_2.3.12       lifecycle_1.0.5   stringr_1.6.0     compiler_4.5.2   </span></span>
-<span><span class="co">#&gt; [25] rentrez_1.2.4     dplyr_1.2.0       fs_1.6.6          pkgconfig_2.0.3  </span></span>
-<span><span class="co">#&gt; [29] systemfonts_1.3.1 digest_0.6.39     R6_2.6.1          tidyselect_1.2.1 </span></span>
-<span><span class="co">#&gt; [33] pillar_1.11.1     curl_7.0.0        magrittr_2.0.4    bslib_0.10.0     </span></span>
-<span><span class="co">#&gt; [37] tools_4.5.2       pkgdown_2.2.0     cachem_1.1.0      desc_1.4.3</span></span></code></pre></div>
+<span><span class="co">#&gt;  [1] vctrs_0.7.3       httr_1.4.8        cli_3.6.6         knitr_1.51       </span></span>
+<span><span class="co">#&gt;  [5] rlang_1.2.0       xfun_0.58         stringi_1.8.7     otel_0.2.0       </span></span>
+<span><span class="co">#&gt;  [9] generics_0.1.4    textshaping_1.0.5 jsonlite_2.0.0    glue_1.8.1       </span></span>
+<span><span class="co">#&gt; [13] htmltools_0.5.9   XML_3.99-0.23     ragg_1.5.2        sass_0.4.10      </span></span>
+<span><span class="co">#&gt; [17] rmarkdown_2.31    tibble_3.3.1      evaluate_1.0.5    jquerylib_0.1.4  </span></span>
+<span><span class="co">#&gt; [21] fastmap_1.2.0     yaml_2.3.12       lifecycle_1.0.5   stringr_1.6.0    </span></span>
+<span><span class="co">#&gt; [25] compiler_4.6.0    dplyr_1.2.1       rentrez_1.2.4     fs_2.1.0         </span></span>
+<span><span class="co">#&gt; [29] pkgconfig_2.0.3   systemfonts_1.3.2 digest_0.6.39     R6_2.6.1         </span></span>
+<span><span class="co">#&gt; [33] tidyselect_1.2.1  pillar_1.11.1     curl_7.1.0        magrittr_2.0.5   </span></span>
+<span><span class="co">#&gt; [37] bslib_0.11.0      tools_4.6.0       pkgdown_2.2.0     cachem_1.1.0     </span></span>
+<span><span class="co">#&gt; [41] desc_1.4.3</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

@@ -1,6 +1,7 @@
 # Download and Parse SOFT File from GEO database
 
 ``` r
+
 library(geokit)
 ```
 
@@ -15,6 +16,7 @@ files. Here are some example codes to download SOFT files for the GSM,
 and GDS entities:
 
 ``` r
+
 gsm <- geo_soft("GSM1", odir = tempdir())
 #> Downloading 1 file
 gsm
@@ -29,6 +31,7 @@ gsm
 ```
 
 ``` r
+
 gds <- geo_soft("GDS10", odir = tempdir())
 #> Downloading 1 file
 gds
@@ -70,6 +73,7 @@ You can use functions with the same names as the slots to extract the
 data.
 
 ``` r
+
 head(datatable(gsm))
 #>          TAG COUNT     TPM
 #> 1 AAAAAAAAAA    17 1741.98
@@ -86,6 +90,7 @@ head(columns(gsm))
 ```
 
 ``` r
+
 head(datatable(gds))
 #>   ID_REF    IDENTIFIER GSM582 GSM589 GSM583 GSM590 GSM584 GSM591 GSM585 GSM592
 #> 1      1 1200011I18Rik    101     54    111     55     87     30     99     43
@@ -126,6 +131,7 @@ Therefore, the `GEOPlatform` class contains both `gse` and `gsm` slots,
 each being a list of GEOSoft objects.
 
 ``` r
+
 gpl <- geo_soft("gpl98", odir = tempdir())
 #> Downloading 1 file
 gpl
@@ -145,6 +151,7 @@ Similarly, the GSE entity contains subset entities of GPL and GSM. The
 GEOSoft objects.
 
 ``` r
+
 gse <- geo_soft("GSE10", odir = tempdir())
 #> Downloading 1 file
 gse
@@ -161,10 +168,11 @@ gse
 ## Session Information
 
 ``` r
+
 sessionInfo()
-#> R version 4.5.2 (2025-10-31)
+#> R version 4.6.0 (2026-04-24)
 #> Platform: x86_64-pc-linux-gnu
-#> Running under: Ubuntu 24.04.3 LTS
+#> Running under: Ubuntu 24.04.4 LTS
 #> 
 #> Matrix products: default
 #> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -187,10 +195,10 @@ sessionInfo()
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] digest_0.6.39     desc_1.4.3        R6_2.6.1          codetools_0.2-20 
-#>  [5] fastmap_1.2.0     xfun_0.56         cachem_1.1.0      knitr_1.51       
-#>  [9] htmltools_0.5.9   rmarkdown_2.30    lifecycle_1.0.5   cli_3.6.5        
-#> [13] sass_0.4.10       pkgdown_2.2.0     textshaping_1.0.4 jquerylib_0.1.4  
-#> [17] systemfonts_1.3.1 compiler_4.5.2    tools_4.5.2       ragg_1.5.0       
-#> [21] curl_7.0.0        evaluate_1.0.5    bslib_0.10.0      yaml_2.3.12      
-#> [25] jsonlite_2.0.0    rlang_1.1.7       fs_1.6.6
+#>  [5] fastmap_1.2.0     xfun_0.58         cachem_1.1.0      knitr_1.51       
+#>  [9] htmltools_0.5.9   rmarkdown_2.31    lifecycle_1.0.5   cli_3.6.6        
+#> [13] sass_0.4.10       pkgdown_2.2.0     textshaping_1.0.5 jquerylib_0.1.4  
+#> [17] systemfonts_1.3.2 compiler_4.6.0    tools_4.6.0       ragg_1.5.2       
+#> [21] curl_7.1.0        bslib_0.11.0      evaluate_1.0.5    yaml_2.3.12      
+#> [25] otel_0.2.0        jsonlite_2.0.0    rlang_1.2.0       fs_2.1.0
 ```

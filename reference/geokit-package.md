@@ -17,4 +17,8 @@ Useful links:
 
 ## Author
 
-**Maintainer**: Yun Peng <yunyunpp96@outlook.com>
+**Maintainer**: Yun Peng <pengyun.me@outlook.com>
+
+Authors:
+
+- Yun Peng <pengyun.me@outlook.com>

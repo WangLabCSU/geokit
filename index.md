@@ -10,6 +10,7 @@ You can install the development version of `geokit` from
 [R-universe](https://wanglabcsu.r-universe.dev) (Recommended):
 
 ``` r
+
 install.packages("geokit",
     repos = c(
         "https://wanglabcsu.r-universe.dev",
@@ -22,6 +23,7 @@ or from [GitHub](https://github.com/WangLabCSU/geokit) (Require `rust`
 to compile) with:
 
 ``` r
+
 if (!requireNamespace("pak")) {
     install.packages("pak",
         repos = sprintf(
