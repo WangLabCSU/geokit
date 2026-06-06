@@ -31,10 +31,10 @@ we can get these records by following code, the returned object is a
 diabetes_gse_records <- geo_search(
   "diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"
 )
-#> ■■■■■■■■■                        500/1854 [352/s] | ETA:  4s
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■        1500/1854 [354/s] | ETA:  1s
+#> ■■■■■■■■■                        500/1854 [436/s] | ETA:  3s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1855/1854 [355/s] | ETA:  0s
 #> → Parsing GEO records
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■        1500/1854 [354/s] | ETA:  1sGet records from NCBI for 1854 queries in 5.5s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1855/1854 [355/s] | ETA:  0sGet records from NCBI for 1854 queries in 5.4s
 head(diabetes_gse_records[1:5])
 #>                                                                                                               Title
 #> 1                  Transcriptomic Profiling of HRMVPC and HRMEC Co-culture Under Normal and High Glucose Conditions
