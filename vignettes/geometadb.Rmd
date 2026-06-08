@@ -53,6 +53,7 @@ if the data is already downloaded.
 
 ```{r setup}
 library(geokit)
+library(stringr)
 ```
 
 ## 1. Search for Related Series by Keywords (e.g., Bladder/Urothelial Cancer)
@@ -62,12 +63,8 @@ GEO DataSets](https://www.ncbi.nlm.nih.gov/geo/info/qqtutorial.html)
 
 ```{r}
 uc_gse <- list(
-    geo_search(
-        "bladder cancer[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"
-    ),
-    geo_search(
-        "urothelial cancer[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"
-    )
+  geo_search("bladder cancer[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"),
+  geo_search("urothelial cancer[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]")
 )
 uc_gse <- unique(dplyr::bind_rows(uc_gse))
 ```
@@ -75,20 +72,26 @@ uc_gse <- unique(dplyr::bind_rows(uc_gse))
 ## 2. Extract Sample Count from the "Contains" Field
 
 ```{r}
-uc_gse$number_of_samples <- stringr::str_match(
-  uc_gse$Contains, "(\\d+) Samples?"
-)[, 2L, drop = TRUE]
+uc_gse <- uc_gse |>
+  dplyr::mutate(
+    number_of_samples = str_match(Contains, "(\\d+) Samples?")[
+      , 2L,
+      drop = TRUE
+    ],
+    number_of_samples = as.integer(number_of_samples)
+  )
 
 # Quick Statistics
-max_samples <- max(as.numeric(uc_gse$number_of_samples), na.rm = TRUE)
-median_samples <- median(as.numeric(uc_gse$number_of_samples), na.rm = TRUE)
-top_series <- dplyr::slice_max(uc_gse, as.numeric(number_of_samples))
+max_samples <- max(uc_gse$number_of_samples, na.rm = TRUE)
+median_samples <- median(uc_gse$number_of_samples, na.rm = TRUE)
+dplyr::slice_max(uc_gse, number_of_samples)
 ```
 
 ## 3. Fetch Series Metadata (Parallel Processing and Batch Saving to Local Directory)
 
 ```{r, eval=FALSE}
-uc_gse_meta <- geo_meta(uc_gse[["Series Accession"]],
+uc_gse_meta <- geo_meta(
+  uc_gse[["Series Accession"]],
   odir = "gse_urothelial_cancer"
 )
 ```
@@ -100,8 +103,8 @@ uc_gse_sc <- dplyr::filter(
   uc_gse_meta,
   dplyr::if_any(
     c(Series_summary, Series_title, Series_overall_design),
-    grepl,
-    pattern = "single[- ]cell|scRNA", ignore.case = TRUE
+    str_detect,
+    pattern = regex("single[- ]cell|scRNA", ignore_case = TRUE)
   )
 ) |>
   dplyr::mutate(

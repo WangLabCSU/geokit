@@ -16,6 +16,7 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(geokit)
+library(stringr)
 ```
 
 The NCBI uses a search term syntax which can be associated with a specific
@@ -46,21 +47,22 @@ diabetic nephropathy samples with expression profiling, use the following code:
 ```{r filtered_diabetes_gse_records}
 diabetes_nephropathy_gse_records <- diabetes_gse_records |>
   dplyr::mutate(
-    number_of_samples = stringr::str_match(
-      Contains, "(\\d+) Samples?"
-    )[, 2L, drop = TRUE],
+    number_of_samples = str_match(Contains, "(\\d+) Samples?")[
+      , 2L,
+      drop = TRUE
+    ],
     number_of_samples = as.integer(number_of_samples)
   ) |>
   dplyr::filter(
     dplyr::if_any(
       c(Title, Summary),
-      ~ stringr::str_detect(.x, "(?i)diabetes|diabetic")
+      ~ str_detect(.x, regex("diabetes|diabetic", ignore_case = TRUE))
     ),
     dplyr::if_any(
       c(Title, Summary),
-      ~ stringr::str_detect(.x, "(?i)nephropathy")
+      ~ str_detect(.x, regex("nephropathy", ignore_case = TRUE))
     ),
-    stringr::str_detect(Type, "(?i)expression profiling"),
+    str_detect(Type, regex("expression profiling", ignore_case = TRUE)),
     number_of_samples >= 6L
   )
 head(diabetes_nephropathy_gse_records[1:5, 1:5])
