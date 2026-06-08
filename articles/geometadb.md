@@ -43,6 +43,7 @@ records takes around **30.5 seconds** if the data is already downloaded.
 ``` r
 
 library(geokit)
+library(stringr)
 ```
 
 ### 1. Search for Related Series by Keywords (e.g., Bladder/Urothelial Cancer)
@@ -54,17 +55,10 @@ DataSets](https://www.ncbi.nlm.nih.gov/geo/info/qqtutorial.html)
 ``` r
 
 uc_gse <- list(
-    geo_search(
-        "bladder cancer[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"
-    ),
-    geo_search(
-        "urothelial cancer[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"
-    )
+  geo_search("bladder cancer[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"),
+  geo_search("urothelial cancer[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]")
 )
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  664/663 [240/s] | ETA:  0s
 #> → Parsing GEO records
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  664/663 [240/s] | ETA:  0sGet records from NCBI for 663 queries in 2.8s
-#> 
 #> → Parsing GEO records
 uc_gse <- unique(dplyr::bind_rows(uc_gse))
 ```
@@ -73,21 +67,39 @@ uc_gse <- unique(dplyr::bind_rows(uc_gse))
 
 ``` r
 
-uc_gse$number_of_samples <- stringr::str_match(
-  uc_gse$Contains, "(\\d+) Samples?"
-)[, 2L, drop = TRUE]
+uc_gse <- uc_gse |>
+  dplyr::mutate(
+    number_of_samples = str_match(Contains, "(\\d+) Samples?")[
+      , 2L,
+      drop = TRUE
+    ],
+    number_of_samples = as.integer(number_of_samples)
+  )
 
 # Quick Statistics
-max_samples <- max(as.numeric(uc_gse$number_of_samples), na.rm = TRUE)
-median_samples <- median(as.numeric(uc_gse$number_of_samples), na.rm = TRUE)
-top_series <- dplyr::slice_max(uc_gse, as.numeric(number_of_samples))
+max_samples <- max(uc_gse$number_of_samples, na.rm = TRUE)
+median_samples <- median(uc_gse$number_of_samples, na.rm = TRUE)
+dplyr::slice_max(uc_gse, number_of_samples)
+#>                                                                        Title
+#> 1 Prediction of tissue-of-origin of early-stage cancers using serum miRNomes
+#>                                                                                                                                         Summary
+#> 1 Large-scale serum miRNomics in combination with machine learning could lead to the development of a blood-based cancer classification system.
+#>       Organism                              Type
+#> 1 Homo sapiens Non-coding RNA profiling by array
+#>                                                           FTP download
+#> 1 GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE211nnn/GSE211692/
+#>          ID SRA Run Selector      Contains Datasets Platforms Series Accession
+#> 1 200211692             <NA> 16190 Samples     <NA>  GPL21263        GSE211692
+#>   number_of_samples
+#> 1             16190
 ```
 
 ### 3. Fetch Series Metadata (Parallel Processing and Batch Saving to Local Directory)
 
 ``` r
 
-uc_gse_meta <- geo_meta(uc_gse[["Series Accession"]],
+uc_gse_meta <- geo_meta(
+  uc_gse[["Series Accession"]],
   odir = "gse_urothelial_cancer"
 )
 ```
@@ -100,8 +112,8 @@ uc_gse_sc <- dplyr::filter(
   uc_gse_meta,
   dplyr::if_any(
     c(Series_summary, Series_title, Series_overall_design),
-    grepl,
-    pattern = "single[- ]cell|scRNA", ignore.case = TRUE
+    str_detect,
+    pattern = regex("single[- ]cell|scRNA", ignore_case = TRUE)
   )
 ) |>
   dplyr::mutate(
@@ -146,7 +158,7 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] geokit_0.0.1.9000
+#> [1] stringr_1.6.0     geokit_0.0.1.9000
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] vctrs_0.7.3       httr_1.4.8        cli_3.6.6         knitr_1.51       
@@ -154,10 +166,9 @@ sessionInfo()
 #>  [9] generics_0.1.4    textshaping_1.0.5 jsonlite_2.0.0    glue_1.8.1       
 #> [13] htmltools_0.5.9   XML_3.99-0.23     ragg_1.5.2        sass_0.4.10      
 #> [17] rmarkdown_2.31    tibble_3.3.1      evaluate_1.0.5    jquerylib_0.1.4  
-#> [21] fastmap_1.2.0     yaml_2.3.12       lifecycle_1.0.5   stringr_1.6.0    
-#> [25] compiler_4.6.0    dplyr_1.2.1       rentrez_1.2.4     fs_2.1.0         
-#> [29] pkgconfig_2.0.3   systemfonts_1.3.2 digest_0.6.39     R6_2.6.1         
-#> [33] tidyselect_1.2.1  pillar_1.11.1     curl_7.1.0        magrittr_2.0.5   
-#> [37] bslib_0.11.0      tools_4.6.0       pkgdown_2.2.0     cachem_1.1.0     
-#> [41] desc_1.4.3
+#> [21] fastmap_1.2.0     yaml_2.3.12       lifecycle_1.0.5   compiler_4.6.0   
+#> [25] dplyr_1.2.1       rentrez_1.2.4     fs_2.1.0          pkgconfig_2.0.3  
+#> [29] systemfonts_1.3.2 digest_0.6.39     R6_2.6.1          tidyselect_1.2.1 
+#> [33] pillar_1.11.1     curl_7.1.0        magrittr_2.0.5    bslib_0.11.0     
+#> [37] tools_4.6.0       pkgdown_2.2.0     cachem_1.1.0      desc_1.4.3
 ```

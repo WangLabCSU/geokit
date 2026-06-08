@@ -3,6 +3,7 @@
 ``` r
 
 library(geokit)
+library(stringr)
 ```
 
 The NCBI uses a search term syntax which can be associated with a
@@ -31,10 +32,10 @@ we can get these records by following code, the returned object is a
 diabetes_gse_records <- geo_search(
   "diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"
 )
-#> ■■■■■■■■■                        500/1854 [347/s] | ETA:  4s
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■        1500/1854 [321/s] | ETA:  1s
+#> ■■■■■■■■■                        500/1854 [366/s] | ETA:  4s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1855/1854 [347/s] | ETA:  0s
 #> → Parsing GEO records
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■        1500/1854 [321/s] | ETA:  1sGet records from NCBI for 1854 queries in 6.1s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1855/1854 [347/s] | ETA:  0sGet records from NCBI for 1854 queries in 5.5s
 head(diabetes_gse_records[1:5])
 #>                                                                                                               Title
 #> 1                  Transcriptomic Profiling of HRMVPC and HRMEC Co-culture Under Normal and High Glucose Conditions
@@ -75,21 +76,22 @@ following code:
 
 diabetes_nephropathy_gse_records <- diabetes_gse_records |>
   dplyr::mutate(
-    number_of_samples = stringr::str_match(
-      Contains, "(\\d+) Samples?"
-    )[, 2L, drop = TRUE],
+    number_of_samples = str_match(Contains, "(\\d+) Samples?")[
+      , 2L,
+      drop = TRUE
+    ],
     number_of_samples = as.integer(number_of_samples)
   ) |>
   dplyr::filter(
     dplyr::if_any(
       c(Title, Summary),
-      ~ stringr::str_detect(.x, "(?i)diabetes|diabetic")
+      ~ str_detect(.x, regex("diabetes|diabetic", ignore_case = TRUE))
     ),
     dplyr::if_any(
       c(Title, Summary),
-      ~ stringr::str_detect(.x, "(?i)nephropathy")
+      ~ str_detect(.x, regex("nephropathy", ignore_case = TRUE))
     ),
-    stringr::str_detect(Type, "(?i)expression profiling"),
+    str_detect(Type, regex("expression profiling", ignore_case = TRUE)),
     number_of_samples >= 6L
   )
 head(diabetes_nephropathy_gse_records[1:5, 1:5])
@@ -162,7 +164,7 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] geokit_0.0.1.9000
+#> [1] stringr_1.6.0     geokit_0.0.1.9000
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] vctrs_0.7.3       httr_1.4.8        cli_3.6.6         knitr_1.51       
@@ -170,10 +172,10 @@ sessionInfo()
 #>  [9] generics_0.1.4    textshaping_1.0.5 jsonlite_2.0.0    glue_1.8.1       
 #> [13] htmltools_0.5.9   XML_3.99-0.23     ragg_1.5.2        sass_0.4.10      
 #> [17] rmarkdown_2.31    tibble_3.3.1      evaluate_1.0.5    jquerylib_0.1.4  
-#> [21] fastmap_1.2.0     yaml_2.3.12       lifecycle_1.0.5   stringr_1.6.0    
-#> [25] compiler_4.6.0    dplyr_1.2.1       codetools_0.2-20  rentrez_1.2.4    
-#> [29] fs_2.1.0          pkgconfig_2.0.3   systemfonts_1.3.2 digest_0.6.39    
-#> [33] R6_2.6.1          tidyselect_1.2.1  pillar_1.11.1     curl_7.1.0       
-#> [37] magrittr_2.0.5    bslib_0.11.0      withr_3.0.2       tools_4.6.0      
-#> [41] pkgdown_2.2.0     cachem_1.1.0      desc_1.4.3
+#> [21] fastmap_1.2.0     yaml_2.3.12       lifecycle_1.0.5   compiler_4.6.0   
+#> [25] dplyr_1.2.1       codetools_0.2-20  rentrez_1.2.4     fs_2.1.0         
+#> [29] pkgconfig_2.0.3   systemfonts_1.3.2 digest_0.6.39     R6_2.6.1         
+#> [33] tidyselect_1.2.1  pillar_1.11.1     curl_7.1.0        magrittr_2.0.5   
+#> [37] bslib_0.11.0      withr_3.0.2       tools_4.6.0       pkgdown_2.2.0    
+#> [41] cachem_1.1.0      desc_1.4.3
 ```

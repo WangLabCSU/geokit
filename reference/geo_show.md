@@ -76,7 +76,7 @@ geo_show(
 
 ## Details
 
-See [`utils::browseURL()`](https://rdrr.io/r/utils/browseURL.html)
+See [`browseURL()`](https://rdrr.io/r/utils/browseURL.html)
 
 ## References
 

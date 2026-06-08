@@ -126,7 +126,8 @@ information.</li>
 <h2 id="search-and-filter-single-cell-studies-of-urothelial-carcinoma">Search and Filter Single-Cell Studies of Urothelial Carcinoma<a class="anchor" aria-label="anchor" href="#search-and-filter-single-cell-studies-of-urothelial-carcinoma"></a>
 </h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/WangLabCSU/geokit" class="external-link">geokit</a></span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/WangLabCSU/geokit" class="external-link">geokit</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://stringr.tidyverse.org" class="external-link">stringr</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="search-for-related-series-by-keywords-e-g--bladderurothelial-cancer">1. Search for Related Series by Keywords (e.g., Bladder/Urothelial
 Cancer)<a class="anchor" aria-label="anchor" href="#search-for-related-series-by-keywords-e-g--bladderurothelial-cancer"></a>
@@ -136,17 +137,10 @@ found here: <a href="https://www.ncbi.nlm.nih.gov/geo/info/qqtutorial.html" clas
 GEO DataSets</a></p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">uc_gse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>    <span class="fu"><a href="../reference/geo_search.html">geo_search</a></span><span class="op">(</span></span>
-<span>        <span class="st">"bladder cancer[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"</span></span>
-<span>    <span class="op">)</span>,</span>
-<span>    <span class="fu"><a href="../reference/geo_search.html">geo_search</a></span><span class="op">(</span></span>
-<span>        <span class="st">"urothelial cancer[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"</span></span>
-<span>    <span class="op">)</span></span>
+<span>  <span class="fu"><a href="../reference/geo_search.html">geo_search</a></span><span class="op">(</span><span class="st">"bladder cancer[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="../reference/geo_search.html">geo_search</a></span><span class="op">(</span><span class="st">"urothelial cancer[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■ </span> 664/663 [240/s] | ETA:  0s</span></span>
 <span><span class="co">#&gt; → Parsing GEO records</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■ </span> 664/663 [240/s] | ETA:  0sGet records from NCBI for <span style="color: #0000BB;">663</span> queries in 2.8s</span></span>
-<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; → Parsing GEO records</span></span>
 <span><span class="va">uc_gse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">uc_gse</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -154,21 +148,39 @@ GEO DataSets</a></p>
 <h3 id="extract-sample-count-from-the-contains-field">2. Extract Sample Count from the “Contains” Field<a class="anchor" aria-label="anchor" href="#extract-sample-count-from-the-contains-field"></a>
 </h3>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">uc_gse</span><span class="op">$</span><span class="va">number_of_samples</span> <span class="op">&lt;-</span> <span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_match.html" class="external-link">str_match</a></span><span class="op">(</span></span>
-<span>  <span class="va">uc_gse</span><span class="op">$</span><span class="va">Contains</span>, <span class="st">"(\\d+) Samples?"</span></span>
-<span><span class="op">)</span><span class="op">[</span>, <span class="fl">2L</span>, drop <span class="op">=</span> <span class="cn">TRUE</span><span class="op">]</span></span>
+<code class="sourceCode R"><span><span class="va">uc_gse</span> <span class="op">&lt;-</span> <span class="va">uc_gse</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
+<span>    number_of_samples <span class="op">=</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_match.html" class="external-link">str_match</a></span><span class="op">(</span><span class="va">Contains</span>, <span class="st">"(\\d+) Samples?"</span><span class="op">)</span><span class="op">[</span></span>
+<span>      , <span class="fl">2L</span>,</span>
+<span>      drop <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>    <span class="op">]</span>,</span>
+<span>    number_of_samples <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="va">number_of_samples</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Quick Statistics</span></span>
-<span><span class="va">max_samples</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">uc_gse</span><span class="op">$</span><span class="va">number_of_samples</span><span class="op">)</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="va">median_samples</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/median.html" class="external-link">median</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">uc_gse</span><span class="op">$</span><span class="va">number_of_samples</span><span class="op">)</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="va">top_series</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_max</a></span><span class="op">(</span><span class="va">uc_gse</span>, <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">number_of_samples</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">max_samples</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">uc_gse</span><span class="op">$</span><span class="va">number_of_samples</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">median_samples</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/median.html" class="external-link">median</a></span><span class="op">(</span><span class="va">uc_gse</span><span class="op">$</span><span class="va">number_of_samples</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_max</a></span><span class="op">(</span><span class="va">uc_gse</span>, <span class="va">number_of_samples</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                                                                        Title</span></span>
+<span><span class="co">#&gt; 1 Prediction of tissue-of-origin of early-stage cancers using serum miRNomes</span></span>
+<span><span class="co">#&gt;                                                                                                                                         Summary</span></span>
+<span><span class="co">#&gt; 1 Large-scale serum miRNomics in combination with machine learning could lead to the development of a blood-based cancer classification system.</span></span>
+<span><span class="co">#&gt;       Organism                              Type</span></span>
+<span><span class="co">#&gt; 1 Homo sapiens Non-coding RNA profiling by array</span></span>
+<span><span class="co">#&gt;                                                           FTP download</span></span>
+<span><span class="co">#&gt; 1 GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE211nnn/GSE211692/</span></span>
+<span><span class="co">#&gt;          ID SRA Run Selector      Contains Datasets Platforms Series Accession</span></span>
+<span><span class="co">#&gt; 1 200211692             &lt;NA&gt; 16190 Samples     &lt;NA&gt;  GPL21263        GSE211692</span></span>
+<span><span class="co">#&gt;   number_of_samples</span></span>
+<span><span class="co">#&gt; 1             16190</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="fetch-series-metadata-parallel-processing-and-batch-saving-to-local-directory">3. Fetch Series Metadata (Parallel Processing and Batch Saving to
 Local Directory)<a class="anchor" aria-label="anchor" href="#fetch-series-metadata-parallel-processing-and-batch-saving-to-local-directory"></a>
 </h3>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">uc_gse_meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/geo_meta.html">geo_meta</a></span><span class="op">(</span><span class="va">uc_gse</span><span class="op">[[</span><span class="st">"Series Accession"</span><span class="op">]</span><span class="op">]</span>,</span>
+<code class="sourceCode R"><span><span class="va">uc_gse_meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/geo_meta.html">geo_meta</a></span><span class="op">(</span></span>
+<span>  <span class="va">uc_gse</span><span class="op">[[</span><span class="st">"Series Accession"</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>  odir <span class="op">=</span> <span class="st">"gse_urothelial_cancer"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -181,8 +193,8 @@ Summary/Title/Design)<a class="anchor" aria-label="anchor" href="#filter-possibl
 <span>  <span class="va">uc_gse_meta</span>,</span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/across.html" class="external-link">if_any</a></span><span class="op">(</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">Series_summary</span>, <span class="va">Series_title</span>, <span class="va">Series_overall_design</span><span class="op">)</span>,</span>
-<span>    <span class="va">grepl</span>,</span>
-<span>    pattern <span class="op">=</span> <span class="st">"single[- ]cell|scRNA"</span>, ignore.case <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>    <span class="va">str_detect</span>,</span>
+<span>    pattern <span class="op">=</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/modifiers.html" class="external-link">regex</a></span><span class="op">(</span><span class="st">"single[- ]cell|scRNA"</span>, ignore_case <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
@@ -226,7 +238,7 @@ Summary/Title/Design)<a class="anchor" aria-label="anchor" href="#filter-possibl
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] geokit_0.0.1.9000</span></span>
+<span><span class="co">#&gt; [1] stringr_1.6.0     geokit_0.0.1.9000</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
 <span><span class="co">#&gt;  [1] vctrs_0.7.3       httr_1.4.8        cli_3.6.6         knitr_1.51       </span></span>
@@ -234,12 +246,11 @@ Summary/Title/Design)<a class="anchor" aria-label="anchor" href="#filter-possibl
 <span><span class="co">#&gt;  [9] generics_0.1.4    textshaping_1.0.5 jsonlite_2.0.0    glue_1.8.1       </span></span>
 <span><span class="co">#&gt; [13] htmltools_0.5.9   XML_3.99-0.23     ragg_1.5.2        sass_0.4.10      </span></span>
 <span><span class="co">#&gt; [17] rmarkdown_2.31    tibble_3.3.1      evaluate_1.0.5    jquerylib_0.1.4  </span></span>
-<span><span class="co">#&gt; [21] fastmap_1.2.0     yaml_2.3.12       lifecycle_1.0.5   stringr_1.6.0    </span></span>
-<span><span class="co">#&gt; [25] compiler_4.6.0    dplyr_1.2.1       rentrez_1.2.4     fs_2.1.0         </span></span>
-<span><span class="co">#&gt; [29] pkgconfig_2.0.3   systemfonts_1.3.2 digest_0.6.39     R6_2.6.1         </span></span>
-<span><span class="co">#&gt; [33] tidyselect_1.2.1  pillar_1.11.1     curl_7.1.0        magrittr_2.0.5   </span></span>
-<span><span class="co">#&gt; [37] bslib_0.11.0      tools_4.6.0       pkgdown_2.2.0     cachem_1.1.0     </span></span>
-<span><span class="co">#&gt; [41] desc_1.4.3</span></span></code></pre></div>
+<span><span class="co">#&gt; [21] fastmap_1.2.0     yaml_2.3.12       lifecycle_1.0.5   compiler_4.6.0   </span></span>
+<span><span class="co">#&gt; [25] dplyr_1.2.1       rentrez_1.2.4     fs_2.1.0          pkgconfig_2.0.3  </span></span>
+<span><span class="co">#&gt; [29] systemfonts_1.3.2 digest_0.6.39     R6_2.6.1          tidyselect_1.2.1 </span></span>
+<span><span class="co">#&gt; [33] pillar_1.11.1     curl_7.1.0        magrittr_2.0.5    bslib_0.11.0     </span></span>
+<span><span class="co">#&gt; [37] tools_4.6.0       pkgdown_2.2.0     cachem_1.1.0      desc_1.4.3</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
