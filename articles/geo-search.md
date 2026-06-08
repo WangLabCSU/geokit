@@ -31,10 +31,10 @@ we can get these records by following code, the returned object is a
 diabetes_gse_records <- geo_search(
   "diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"
 )
-#> ■■■■■■■■■                        500/1854 [436/s] | ETA:  3s
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1855/1854 [355/s] | ETA:  0s
+#> ■■■■■■■■■                        500/1854 [347/s] | ETA:  4s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■        1500/1854 [321/s] | ETA:  1s
 #> → Parsing GEO records
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1855/1854 [355/s] | ETA:  0sGet records from NCBI for 1854 queries in 5.4s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■        1500/1854 [321/s] | ETA:  1sGet records from NCBI for 1854 queries in 6.1s
 head(diabetes_gse_records[1:5])
 #>                                                                                                               Title
 #> 1                  Transcriptomic Profiling of HRMVPC and HRMEC Co-culture Under Normal and High Glucose Conditions
@@ -107,7 +107,7 @@ head(diabetes_nephropathy_gse_records[1:5, 1:5])
 #> 5                                                                                                                            The molecular mechanisms underlying diabetic nephropathy (DN) are poorly defined. We sought to investigate the roles of kallikrein-related peptidases (KLKs) in DN pathogenesis. Screening of renal tissue from diabetic mice revealed KLK8 as the most highly induced gene in KLK family. KLK8 expression was greater in glomerular endothelial cells (GECs) than other glomerular cells in DN patients and diabetic mice. more...
 #>                     Organism
 #> 1               Homo sapiens
-#> 2 Mus musculus; Homo sapiens
+#> 2 Homo sapiens; Mus musculus
 #> 3               Homo sapiens
 #> 4               Homo sapiens
 #> 5               Homo sapiens
