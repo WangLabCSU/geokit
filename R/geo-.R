@@ -134,7 +134,7 @@ geo_url <- function(accession, format = NULL, amount = NULL, scope = NULL,
 #' @inheritParams geo_url
 #' @inheritParams utils::browseURL
 #' @inherit geo_url references
-#' @details See [utils::browseURL()]
+#' @details See [`browseURL()`][utils::browseURL()]
 #' @examples
 #' if (interactive()) {
 #'     geo_show("gpl96")

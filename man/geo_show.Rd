@@ -59,7 +59,7 @@ browser (or a user-specified browser). By default, this function uses the
 \code{brief} amount of \code{html} format data for all entities.
 }
 \details{
-See \code{\link[utils:browseURL]{utils::browseURL()}}
+See \code{\link[utils:browseURL]{browseURL()}}
 }
 \examples{
 if (interactive()) {
