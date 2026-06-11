@@ -32,39 +32,39 @@ we can get these records by following code, the returned object is a
 diabetes_gse_records <- geo_search(
   "diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"
 )
-#> ■■■■■■■■■                        500/1854 [366/s] | ETA:  4s
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1855/1854 [347/s] | ETA:  0s
+#> ■■■■■■■■■■■■■■■■■                1000/1858 [351/s] | ETA:  2s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1859/1858 [341/s] | ETA:  0s
 #> → Parsing GEO records
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1855/1854 [347/s] | ETA:  0sGet records from NCBI for 1854 queries in 5.5s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1859/1858 [341/s] | ETA:  0sGet records from NCBI for 1858 queries in 5.6s
 head(diabetes_gse_records[1:5])
-#>                                                                                                               Title
-#> 1                  Transcriptomic Profiling of HRMVPC and HRMEC Co-culture Under Normal and High Glucose Conditions
-#> 2 EZH2 inhibition via GSK-126 mitigates EndMT and atherosclerosis in diabetes: A translational epigenetic approach.
-#> 3                                       Transcriptomic profiling of human placenta in gestational diabetes mellitus
-#> 4                                     Dynamic remodeling of the pancreas immune landscape in obesity [bulk RNA-seq]
-#> 5                                        Dynamic remodeling of the pancreas immune landscape in obesity. [CITE-Seq]
-#> 6                                                   Dynamic remodeling of the pancreas immune landscape in obesity.
-#>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   Summary
-#> 1                                                                          We investigated the transcriptomic alterations in human retinal microvascular pericytes (HRMVPC-Immortalized) exposed to normal and high glucose conditions, with or without co-culture with human retinal microvascular endothelial cells (HRMEC-Immortalized). The study aimed to elucidate how glucose levels and endothelial interaction influence pericyte gene expression, providing insights into the cellular mechanisms potentially involved in diabetic retinopathy.
-#> 2  Atherosclerosis drives cardiovascular morbidity in diabetes, with endothelial-to-mesenchymal transition (EndMT) as a key contributor. While epigenetic regulators are increasingly implicated in atherosclerotic progression, the specific role of Enhancer of Zeste Homolog 2 (EZH2), a histone methyltransferase, in EndMT in diabetes-associated atherosclerosis remains unclear. We show that EZH2-mediated H3K27 trimethylation is elevated in carotid plaques from diabetic patients and in aortic endothelium of diabetic Apoe-/- mice. more...
-#> 3                                                                                                                                                                                                                                                                                                                                                                                                      We performed transcriptomics analysis on the placental tissues from gestational diabetes mellitus (GDM) patients and normal pregnant participants.
-#> 4 Obesity is a known risk factor for diseases of the pancreas, including diabetes, pancreatic cancer and pancreatitis, but mechanisms remain unclear. To elucidate how obesity impacts pancreatic immune homeostasis, we performed spatial, transcriptomic and functional profiling of human pancreatic immune cells from obese and non-obese organ donors. Obesity was associated with higher density of tissue resident memory T-cells (TRM) in the exocrine pancreas which display high cytotoxic functions and aggregated around macrophages. more...
-#> 5 Obesity is a known risk factor for diseases of the pancreas, including diabetes, pancreatic cancer and pancreatitis, but mechanisms remain unclear. To elucidate how obesity impacts pancreatic immune homeostasis, we performed spatial, transcriptomic and functional profiling of human pancreatic immune cells from obese and non-obese organ donors. Obesity was associated with higher density of tissue resident memory T-cells (TRM) in the exocrine pancreas which display high cytotoxic functions and aggregated around macrophages. more...
-#> 6 Obesity is a known risk factor for diseases of the pancreas, including diabetes, pancreatic cancer and pancreatitis, but mechanisms remain unclear. To elucidate how obesity impacts pancreatic immune homeostasis, we performed spatial, transcriptomic and functional profiling of human pancreatic immune cells from obese and non-obese organ donors. Obesity was associated with higher density of tissue resident memory T-cells (TRM) in the exocrine pancreas which display high cytotoxic functions and aggregated around macrophages. more...
+#>                                                                                                                    Title
+#> 1                                                                               Effect of HNF1A-MODY on stem cell islets
+#> 2                                                                       Effect of HNF1A-MODY on stem cell islets [PGP-1]
+#> 3          Single-cell transcriptomics reveals markers of regulatory T cell dysfunction in Gestational Diabetes Mellitus
+#> 4 EIF1 coordinates transcriptomic and splicing networks associated with cell cycle dysregulation in diabetic retinopathy
+#> 5                       Transcriptomic Profiling of HRMVPC and HRMEC Co-culture Under Normal and High Glucose Conditions
+#> 6      EZH2 inhibition via GSK-126 mitigates EndMT and atherosclerosis in diabetes: A translational epigenetic approach.
+#>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  Summary
+#> 1              This project investigates the impact of the hotspot mutation P291fsinsC in HNF1A-MODY (Maturity-Onset Diabetes of the Young) on stem cell-derived islets. RNA sequencing (RNA-seq) was performed on islets differentiated from mutant and control HNF1A-MODY stem cells to study the mutation's effect on gene expression. By comparing the transcriptomic profiles of these islets, the study aims to uncover molecular mechanisms underlying the dysfunction caused by the P291fsinsC mutation during islet development and maturation.
+#> 2              This project investigates the impact of the hotspot mutation P291fsinsC in HNF1A-MODY (Maturity-Onset Diabetes of the Young) on stem cell-derived islets. RNA sequencing (RNA-seq) was performed on islets differentiated from mutant and control HNF1A-MODY stem cells to study the mutation's effect on gene expression. By comparing the transcriptomic profiles of these islets, the study aims to uncover molecular mechanisms underlying the dysfunction caused by the P291fsinsC mutation during islet development and maturation.
+#> 3                                                                                                                                                                 Gestational Diabetes Mellitus (GDM) is a common pregnancy complication and the role of regulatory T cells (Tregs) in this disease is ambiguous. This study aims to determine the aberrant transcriptional landscape in Tregs from GDM patients and controls. We identify gene expression programmes dysregulated in GDM Tregs and assess their utlilty as GDM biomarkers in bulk mRNA.
+#> 4                                                                              EIF1, an RNA-binding protein implicated in multiple diseases, remains poorly characterized in diabetic retinopathy (DR). To investigate its role in DR, human retinal pigment epithelial cells (ARPE-19) were exposed to 50 mM glucose to model the condition. Under hyperglycemic conditions, EIF1 was knocked down using siRNA, followed by transcriptome sequencing (RNA-seq) to profile differentially expressed genes (DEGs) and alternative splicing events (ASEs).
+#> 5                                                                         We investigated the transcriptomic alterations in human retinal microvascular pericytes (HRMVPC-Immortalized) exposed to normal and high glucose conditions, with or without co-culture with human retinal microvascular endothelial cells (HRMEC-Immortalized). The study aimed to elucidate how glucose levels and endothelial interaction influence pericyte gene expression, providing insights into the cellular mechanisms potentially involved in diabetic retinopathy.
+#> 6 Atherosclerosis drives cardiovascular morbidity in diabetes, with endothelial-to-mesenchymal transition (EndMT) as a key contributor. While epigenetic regulators are increasingly implicated in atherosclerotic progression, the specific role of Enhancer of Zeste Homolog 2 (EZH2), a histone methyltransferase, in EndMT in diabetes-associated atherosclerosis remains unclear. We show that EZH2-mediated H3K27 trimethylation is elevated in carotid plaques from diabetic patients and in aortic endothelium of diabetic Apoe-/- mice. more...
 #>       Organism                                                      Type
 #> 1 Homo sapiens        Expression profiling by high throughput sequencing
 #> 2 Homo sapiens        Expression profiling by high throughput sequencing
-#> 3 Homo sapiens        Expression profiling by high throughput sequencing
+#> 3 Homo sapiens Expression profiling by high throughput sequencing; Other
 #> 4 Homo sapiens        Expression profiling by high throughput sequencing
-#> 5 Homo sapiens Expression profiling by high throughput sequencing; Other
-#> 6 Homo sapiens Expression profiling by high throughput sequencing; Other
+#> 5 Homo sapiens        Expression profiling by high throughput sequencing
+#> 6 Homo sapiens        Expression profiling by high throughput sequencing
 #>                                                                     FTP download
-#> 1           GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE298nnn/GSE298973/
-#> 2           GEO (TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE316nnn/GSE316326/
-#> 3          GEO (XLSX) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE237nnn/GSE237061/
-#> 4           GEO (CSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE306nnn/GSE306366/
-#> 5 GEO (CSV, MTX, TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE306nnn/GSE306178/
-#> 6 GEO (CSV, MTX, TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE305nnn/GSE305278/
+#> 1           GEO (CSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE312nnn/GSE312607/
+#> 2          GEO (XLSX) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE285nnn/GSE285253/
+#> 3 GEO (CSV, MTX, TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE280nnn/GSE280975/
+#> 4           GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE334nnn/GSE334496/
+#> 5           GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE298nnn/GSE298973/
+#> 6           GEO (TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE316nnn/GSE316326/
 ```
 
 Once you have the search results, you can filter them based on specific

@@ -111,6 +111,8 @@ if (require("Biobase")) {
 #> Downloading 1 file
 #> ℹ annot file for "GPL4" is not available on the FTP site.  Attempting to use the data amount file from the GEO Accession Site instead.
 #> Downloading 1 file
-#> ✔ Parsing 1 Series matrix successfully!
+#> Error in c("cli::cli_alert_info(paste(\"Failed to download annotation file for {.val {accession[!downloaded$success]}},\", ", "    \"Platform information will not be added.\"))"): ! Could not evaluate cli `{}` expression: `accession[!download…`.
+#> Caused by error in `eval(expr, envir = envir)`:
+#> ! object 'downloaded' not found
 # }
 ```

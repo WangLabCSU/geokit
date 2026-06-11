@@ -22,7 +22,6 @@ optionally mapping platform IDs to Bioconductor annotation packages."></head><bo
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/geo-search.html">Searching</a></li>
     <li><a class="dropdown-item" href="../articles/geometadb.html">GEO metadata</a></li>
-    <li><a class="dropdown-item" href="../articles/geo-querychat.html">Chat with GEO metadata</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../articles/geo-soft.html">GEO SOFT FIle</a></li>
     <li><a class="dropdown-item" href="../articles/geo-matrix.html">GSE Matrix FIle</a></li>
@@ -157,7 +156,9 @@ working directory.</p></dd>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Downloading <span style="color: #0000BB;">1</span> file</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> <span style="color: #00BB00;">annot</span> file for <span style="color: #0000BB;">"GPL4"</span> is not available on the FTP site.  Attempting to use the <span style="color: #00BB00;">data</span> amount file from the GEO Accession Site instead.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Downloading <span style="color: #0000BB;">1</span> file</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Parsing <span style="color: #0000BB;">1</span> <span style="color: #00BB00;">Series</span> matrix successfully!</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in c("cli::cli_alert_info(paste(\"Failed to download annotation file for {.val {accession[!downloaded$success]}},\", ", "    \"Platform information will not be added.\"))"):</span> <span style="color: #BBBB00;">!</span> Could not evaluate cli `{}` expression: `accession[!download…`.</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Caused by error</span> in `eval(expr, envir = envir)`:</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> object 'downloaded' not found</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>

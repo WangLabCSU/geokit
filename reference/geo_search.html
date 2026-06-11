@@ -22,7 +22,6 @@ search results as a data frame."></head><body>
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/geo-search.html">Searching</a></li>
     <li><a class="dropdown-item" href="../articles/geometadb.html">GEO metadata</a></li>
-    <li><a class="dropdown-item" href="../articles/geo-querychat.html">Chat with GEO metadata</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../articles/geo-soft.html">GEO SOFT FIle</a></li>
     <li><a class="dropdown-item" href="../articles/geo-matrix.html">GSE Matrix FIle</a></li>
@@ -107,54 +106,55 @@ for details.</p>
 <span class="r-in"><span><span class="co"># restrictions and limited bandwidth usage for large queries.</span></span></span>
 <span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu">geo_search</span><span class="op">(</span><span class="st">"diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■■■■■       </span> 1500/1854 [442/s] | ETA:  1s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">■■■■■■■■■                       </span> 500/1858 [395/s] | ETA:  3s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■■■■■       </span> 1500/1858 [387/s] | ETA:  1s</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → Parsing GEO records</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■■■■■       </span> 1500/1854 [442/s] | ETA:  1s</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Get records from NCBI for <span style="color: #0000BB;">1854</span> queries in 4.4s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■■■■■       </span> 1500/1858 [387/s] | ETA:  1s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Get records from NCBI for <span style="color: #0000BB;">1858</span> queries in 4.9s</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                               Title</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                  Transcriptomic Profiling of HRMVPC and HRMEC Co-culture Under Normal and High Glucose Conditions</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 EZH2 inhibition via GSK-126 mitigates EndMT and atherosclerosis in diabetes: A translational epigenetic approach.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                       Transcriptomic profiling of human placenta in gestational diabetes mellitus</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4                                     Dynamic remodeling of the pancreas immune landscape in obesity [bulk RNA-seq]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5                                        Dynamic remodeling of the pancreas immune landscape in obesity. [CITE-Seq]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6                                                   Dynamic remodeling of the pancreas immune landscape in obesity.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   Summary</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                                                          We investigated the transcriptomic alterations in human retinal microvascular pericytes (HRMVPC-Immortalized) exposed to normal and high glucose conditions, with or without co-culture with human retinal microvascular endothelial cells (HRMEC-Immortalized). The study aimed to elucidate how glucose levels and endothelial interaction influence pericyte gene expression, providing insights into the cellular mechanisms potentially involved in diabetic retinopathy.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  Atherosclerosis drives cardiovascular morbidity in diabetes, with endothelial-to-mesenchymal transition (EndMT) as a key contributor. While epigenetic regulators are increasingly implicated in atherosclerotic progression, the specific role of Enhancer of Zeste Homolog 2 (EZH2), a histone methyltransferase, in EndMT in diabetes-associated atherosclerosis remains unclear. We show that EZH2-mediated H3K27 trimethylation is elevated in carotid plaques from diabetic patients and in aortic endothelium of diabetic Apoe-/- mice. more...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                                                                                                                                                                                                                                                                                                                                                                                      We performed transcriptomics analysis on the placental tissues from gestational diabetes mellitus (GDM) patients and normal pregnant participants.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 Obesity is a known risk factor for diseases of the pancreas, including diabetes, pancreatic cancer and pancreatitis, but mechanisms remain unclear. To elucidate how obesity impacts pancreatic immune homeostasis, we performed spatial, transcriptomic and functional profiling of human pancreatic immune cells from obese and non-obese organ donors. Obesity was associated with higher density of tissue resident memory T-cells (TRM) in the exocrine pancreas which display high cytotoxic functions and aggregated around macrophages. more...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 Obesity is a known risk factor for diseases of the pancreas, including diabetes, pancreatic cancer and pancreatitis, but mechanisms remain unclear. To elucidate how obesity impacts pancreatic immune homeostasis, we performed spatial, transcriptomic and functional profiling of human pancreatic immune cells from obese and non-obese organ donors. Obesity was associated with higher density of tissue resident memory T-cells (TRM) in the exocrine pancreas which display high cytotoxic functions and aggregated around macrophages. more...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 Obesity is a known risk factor for diseases of the pancreas, including diabetes, pancreatic cancer and pancreatitis, but mechanisms remain unclear. To elucidate how obesity impacts pancreatic immune homeostasis, we performed spatial, transcriptomic and functional profiling of human pancreatic immune cells from obese and non-obese organ donors. Obesity was associated with higher density of tissue resident memory T-cells (TRM) in the exocrine pancreas which display high cytotoxic functions and aggregated around macrophages. more...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                    Title</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                                                               Effect of HNF1A-MODY on stem cell islets</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                                                       Effect of HNF1A-MODY on stem cell islets [PGP-1]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3          Single-cell transcriptomics reveals markers of regulatory T cell dysfunction in Gestational Diabetes Mellitus</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 EIF1 coordinates transcriptomic and splicing networks associated with cell cycle dysregulation in diabetic retinopathy</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5                       Transcriptomic Profiling of HRMVPC and HRMEC Co-culture Under Normal and High Glucose Conditions</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6      EZH2 inhibition via GSK-126 mitigates EndMT and atherosclerosis in diabetes: A translational epigenetic approach.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  Summary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1              This project investigates the impact of the hotspot mutation P291fsinsC in HNF1A-MODY (Maturity-Onset Diabetes of the Young) on stem cell-derived islets. RNA sequencing (RNA-seq) was performed on islets differentiated from mutant and control HNF1A-MODY stem cells to study the mutation's effect on gene expression. By comparing the transcriptomic profiles of these islets, the study aims to uncover molecular mechanisms underlying the dysfunction caused by the P291fsinsC mutation during islet development and maturation.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2              This project investigates the impact of the hotspot mutation P291fsinsC in HNF1A-MODY (Maturity-Onset Diabetes of the Young) on stem cell-derived islets. RNA sequencing (RNA-seq) was performed on islets differentiated from mutant and control HNF1A-MODY stem cells to study the mutation's effect on gene expression. By comparing the transcriptomic profiles of these islets, the study aims to uncover molecular mechanisms underlying the dysfunction caused by the P291fsinsC mutation during islet development and maturation.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                                                                                                                                                 Gestational Diabetes Mellitus (GDM) is a common pregnancy complication and the role of regulatory T cells (Tregs) in this disease is ambiguous. This study aims to determine the aberrant transcriptional landscape in Tregs from GDM patients and controls. We identify gene expression programmes dysregulated in GDM Tregs and assess their utlilty as GDM biomarkers in bulk mRNA.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4                                                                              EIF1, an RNA-binding protein implicated in multiple diseases, remains poorly characterized in diabetic retinopathy (DR). To investigate its role in DR, human retinal pigment epithelial cells (ARPE-19) were exposed to 50 mM glucose to model the condition. Under hyperglycemic conditions, EIF1 was knocked down using siRNA, followed by transcriptome sequencing (RNA-seq) to profile differentially expressed genes (DEGs) and alternative splicing events (ASEs).</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5                                                                         We investigated the transcriptomic alterations in human retinal microvascular pericytes (HRMVPC-Immortalized) exposed to normal and high glucose conditions, with or without co-culture with human retinal microvascular endothelial cells (HRMEC-Immortalized). The study aimed to elucidate how glucose levels and endothelial interaction influence pericyte gene expression, providing insights into the cellular mechanisms potentially involved in diabetic retinopathy.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 Atherosclerosis drives cardiovascular morbidity in diabetes, with endothelial-to-mesenchymal transition (EndMT) as a key contributor. While epigenetic regulators are increasingly implicated in atherosclerotic progression, the specific role of Enhancer of Zeste Homolog 2 (EZH2), a histone methyltransferase, in EndMT in diabetes-associated atherosclerosis remains unclear. We show that EZH2-mediated H3K27 trimethylation is elevated in carotid plaques from diabetic patients and in aortic endothelium of diabetic Apoe-/- mice. more...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       Organism                                                      Type</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 Homo sapiens        Expression profiling by high throughput sequencing</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2 Homo sapiens        Expression profiling by high throughput sequencing</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 Homo sapiens        Expression profiling by high throughput sequencing</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 Homo sapiens Expression profiling by high throughput sequencing; Other</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4 Homo sapiens        Expression profiling by high throughput sequencing</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 Homo sapiens Expression profiling by high throughput sequencing; Other</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 Homo sapiens Expression profiling by high throughput sequencing; Other</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 Homo sapiens        Expression profiling by high throughput sequencing</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 Homo sapiens        Expression profiling by high throughput sequencing</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                     FTP download</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1           GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE298nnn/GSE298973/</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2           GEO (TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE316nnn/GSE316326/</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3          GEO (XLSX) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE237nnn/GSE237061/</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4           GEO (CSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE306nnn/GSE306366/</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 GEO (CSV, MTX, TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE306nnn/GSE306178/</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 GEO (CSV, MTX, TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE305nnn/GSE305278/</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1           GEO (CSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE312nnn/GSE312607/</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2          GEO (XLSX) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE285nnn/GSE285253/</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 GEO (CSV, MTX, TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE280nnn/GSE280975/</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4           GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE334nnn/GSE334496/</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5           GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE298nnn/GSE298973/</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6           GEO (TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE316nnn/GSE316326/</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          ID Project SRA Run Selector   Contains Datasets Platforms</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 200298973    &lt;NA&gt;             &lt;NA&gt;  9 Samples     &lt;NA&gt;  GPL24676</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 200316326    &lt;NA&gt;             &lt;NA&gt;  7 Samples     &lt;NA&gt;  GPL24676</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 200237061    &lt;NA&gt;             &lt;NA&gt; 22 Samples     &lt;NA&gt;  GPL24676</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 200306366    &lt;NA&gt;             &lt;NA&gt; 24 Samples     &lt;NA&gt;  GPL16791</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 200306178    &lt;NA&gt;             &lt;NA&gt; 10 Samples     &lt;NA&gt;  GPL24676</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 200305278    &lt;NA&gt;             &lt;NA&gt;  6 Samples     &lt;NA&gt;  GPL34281</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 200312607    &lt;NA&gt;             &lt;NA&gt; 12 Samples     &lt;NA&gt;  GPL34284</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 200285253    &lt;NA&gt;             &lt;NA&gt; 12 Samples     &lt;NA&gt;  GPL34284</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 200280975    &lt;NA&gt;             &lt;NA&gt; 33 Samples     &lt;NA&gt;  GPL24676</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 200334496    &lt;NA&gt;             &lt;NA&gt;  6 Samples     &lt;NA&gt;  GPL24676</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 200298973    &lt;NA&gt;             &lt;NA&gt;  9 Samples     &lt;NA&gt;  GPL24676</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 200316326    &lt;NA&gt;             &lt;NA&gt;  7 Samples     &lt;NA&gt;  GPL24676</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Series Accession</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1        GSE298973</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2        GSE316326</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3        GSE237061</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4        GSE306366</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5        GSE306178</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6        GSE305278</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1        GSE312607</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2        GSE285253</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3        GSE280975</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4        GSE334496</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5        GSE298973</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6        GSE316326</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
