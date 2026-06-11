@@ -13,8 +13,6 @@ navbar:
       href: articles/geo-search.html
     - text: GEO metadata
       href: articles/geometadb.html
-    - text: Chat with GEO metadata
-      href: articles/geo-querychat.html
     - text: -------
     - text: GEO SOFT FIle
       href: articles/geo-soft.html
