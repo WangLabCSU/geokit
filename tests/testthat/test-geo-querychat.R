@@ -1,4 +1,4 @@
-testthat::test_that("geo_qc adds GEO context to querychat", {
+testthat::test_that("geo_chat adds GEO context to querychat", {
     testthat::skip_if_not_installed("querychat")
     testthat::skip_if_not_installed("duckdb")
 
@@ -9,7 +9,7 @@ testthat::test_that("geo_qc adds GEO context to querychat", {
         Samples = c(12L, 1L)
     )
 
-    qc <- geo_qc(
+    chat <- geo_chat(
         NULL,
         records,
         table_name = "geo_records",
@@ -17,16 +17,16 @@ testthat::test_that("geo_qc adds GEO context to querychat", {
         instructions = "Prefer human-readable accession summaries.",
         cleanup = TRUE
     )
-    on.exit(qc$cleanup(), add = TRUE)
+    on.exit(chat$cleanup(), add = TRUE)
 
-    testthat::expect_s3_class(qc, "QueryChat")
-    testthat::expect_match(qc$system_prompt, "Gene Expression Omnibus")
-    testthat::expect_match(qc$system_prompt, "GSE for series")
-    testthat::expect_match(qc$system_prompt, "Rows are prefiltered")
-    testthat::expect_match(qc$system_prompt, "Prefer human-readable")
+    testthat::expect_s3_class(chat, "QueryChat")
+    testthat::expect_match(chat$system_prompt, "Gene Expression Omnibus")
+    testthat::expect_match(chat$system_prompt, "GSE for series")
+    testthat::expect_match(chat$system_prompt, "Rows are prefiltered")
+    testthat::expect_match(chat$system_prompt, "Prefer human-readable")
 })
 
-testthat::test_that("geo_qc forwards table name and querychat arguments", {
+testthat::test_that("geo_chat forwards table name and querychat arguments", {
     testthat::skip_if_not_installed("querychat")
     testthat::skip_if_not_installed("duckdb")
 
@@ -35,15 +35,15 @@ testthat::test_that("geo_qc forwards table name and querychat arguments", {
         Title = "human diabetes study"
     )
 
-    qc <- geo_qc(
+    chat <- geo_chat(
         NULL,
         records,
         table_name = "geo_records",
         cleanup = TRUE
     )
-    on.exit(qc$cleanup(), add = TRUE)
+    on.exit(chat$cleanup(), add = TRUE)
 
-    testthat::expect_s3_class(qc, "QueryChat")
-    testthat::expect_match(qc$system_prompt, "Gene Expression Omnibus")
-    testthat::expect_match(qc$system_prompt, "geo_records")
+    testthat::expect_s3_class(chat, "QueryChat")
+    testthat::expect_match(chat$system_prompt, "Gene Expression Omnibus")
+    testthat::expect_match(chat$system_prompt, "geo_records")
 })

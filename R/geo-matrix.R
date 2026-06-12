@@ -270,6 +270,6 @@ download_annot <- function(accession, ftp_over_https = TRUE,
 #' @return A data frame of the mapping Bioconductor annotation package
 #' @noRd
 gpl_map <- function(gpl) {
-    mapping <- read_internal("gpl2bioc.rds")
+    mapping <- read_extdata("gpl2bioc.rds")
     mapping[match(gpl, mapping$Platform_geo_accession), , drop = FALSE]
 }

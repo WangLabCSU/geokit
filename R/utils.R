@@ -54,12 +54,16 @@ return_object_or_list <- function(x, names = NULL) {
     }
 }
 
-read_internal <- function(file = NULL) {
+read_extdata <- function(file = NULL) {
     if (is.null(file)) {
         dir(pkg_extdata())
     } else {
         readRDS(pkg_extdata(file, mustWork = TRUE))
     }
+}
+
+pkg_prompt <- function(..., mustWork = TRUE) {
+    system.file("prompts", ..., package = pkg_nm(), mustWork = mustWork)
 }
 
 set_rownames <- function(x, var = 1L) {
