@@ -58,7 +58,10 @@ uc_gse <- list(
   geo_search("bladder cancer[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"),
   geo_search("urothelial cancer[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]")
 )
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  669/668 [327/s] | ETA:  0s
 #> → Parsing GEO records
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  669/668 [327/s] | ETA:  0sGet records from NCBI for 668 queries in 2.1s
+#> 
 #> → Parsing GEO records
 uc_gse <- unique(dplyr::bind_rows(uc_gse))
 ```

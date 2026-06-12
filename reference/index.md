@@ -11,9 +11,9 @@ supplementary data, to support further analysis.
   : Search GEO database
 - [`geo_meta()`](https://WangLabCSU.github.io/geokit/reference/geo_meta.md)
   : Get the metadata of multiple GEO identities
-- [`geo_qc()`](https://WangLabCSU.github.io/geokit/reference/geo_qc.md)
-  [`geo_shiny()`](https://WangLabCSU.github.io/geokit/reference/geo_qc.md)
-  [`geo_chat()`](https://WangLabCSU.github.io/geokit/reference/geo_qc.md)
+- [`geo_chat()`](https://WangLabCSU.github.io/geokit/reference/geo_chat.md)
+  [`geo_shiny()`](https://WangLabCSU.github.io/geokit/reference/geo_chat.md)
+  [`geo_console()`](https://WangLabCSU.github.io/geokit/reference/geo_chat.md)
   : Chat with GEO metadata using natural language
 - [`geo_soft()`](https://WangLabCSU.github.io/geokit/reference/geo_soft.md)
   : Retrieve GEO SOFT file from NCBI GEO

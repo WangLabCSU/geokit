@@ -32,10 +32,11 @@ we can get these records by following code, the returned object is a
 diabetes_gse_records <- geo_search(
   "diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"
 )
-#> ■■■■■■■■■■■■■■■■■                1000/1858 [351/s] | ETA:  2s
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1859/1858 [341/s] | ETA:  0s
+#> ■■■■■■■■■                        500/1858 [381/s] | ETA:  4s
+#> ■■■■■■■■■■■■■■■■■                1000/1858 [364/s] | ETA:  2s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1859/1858 [367/s] | ETA:  0s
 #> → Parsing GEO records
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1859/1858 [341/s] | ETA:  0sGet records from NCBI for 1858 queries in 5.6s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1859/1858 [367/s] | ETA:  0sGet records from NCBI for 1858 queries in 5.2s
 head(diabetes_gse_records[1:5])
 #>                                                                                                                    Title
 #> 1                                                                               Effect of HNF1A-MODY on stem cell islets
