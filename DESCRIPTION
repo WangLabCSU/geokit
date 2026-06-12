@@ -28,9 +28,8 @@ Suggests:
     dplyr,
     stringr,
     R.utils,
-    ellmer,
     duckdb,
-    querychat,
+    querychat (>= 0.3.0),
     knitr,
     rmarkdown,
     testthat (>= 3.0.0)

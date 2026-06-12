@@ -32,16 +32,8 @@
 #'   its console chat. Use it for command-line exploration without opening a
 #'   Shiny app.
 #'
-#' The default instructions guide the assistant to query and filter GEO
-#' metadata, identify relevant studies, generate reproducible R code when
-#' asked, preserve explicit accession IDs, and explain GEO accession types
-#' (`GSE`, `GSM`, `GPL`, and `GDS`) when useful.
-#'
-#' The first argument is the LLM client. Use `client = NULL` or pass `NULL` as
-#' the first positional argument to let `querychat` choose a client from its
-#' options or environment variables. `prompt_template` is intentionally not
-#' forwarded because `geo_chat()` supplies GEO-specific instructions through
-#' `extra_instructions`.
+#' The default instructions guide the assistant to query, and filter GEO
+#' metadata, identify relevant studies.
 #'
 #' @examples
 #' if (requireNamespace("querychat", quietly = TRUE) &&
@@ -55,8 +47,7 @@
 #'     chat <- geo_chat(NULL, records, cleanup = TRUE)
 #'     chat$cleanup()
 #' }
-#' @seealso [geo_meta()], [geo_search()], [QueryChat][querychat::QueryChat],
-#' [ellmer::chat_openai()]
+#' @seealso [geo_meta()], [geo_search()], [QueryChat][querychat::QueryChat]
 #' @export
 geo_chat <- function(client, data_source, table_name = NULL, ...) {
     rlang::check_installed("querychat")

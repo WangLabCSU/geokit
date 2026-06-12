@@ -98,16 +98,8 @@ its console chat. Use it for command-line exploration without opening a
 Shiny app.
 }
 
-The default instructions guide the assistant to query and filter GEO
-metadata, identify relevant studies, generate reproducible R code when
-asked, preserve explicit accession IDs, and explain GEO accession types
-(\code{GSE}, \code{GSM}, \code{GPL}, and \code{GDS}) when useful.
-
-The first argument is the LLM client. Use \code{client = NULL} or pass \code{NULL} as
-the first positional argument to let \code{querychat} choose a client from its
-options or environment variables. \code{prompt_template} is intentionally not
-forwarded because \code{geo_chat()} supplies GEO-specific instructions through
-\code{extra_instructions}.
+The default instructions guide the assistant to query, and filter GEO
+metadata, identify relevant studies.
 }
 \examples{
 if (requireNamespace("querychat", quietly = TRUE) &&
@@ -123,6 +115,5 @@ if (requireNamespace("querychat", quietly = TRUE) &&
 }
 }
 \seealso{
-\code{\link[=geo_meta]{geo_meta()}}, \code{\link[=geo_search]{geo_search()}}, \link[querychat:QueryChat]{QueryChat},
-\code{\link[ellmer:chat_openai]{ellmer::chat_openai()}}
+\code{\link[=geo_meta]{geo_meta()}}, \code{\link[=geo_search]{geo_search()}}, \link[querychat:QueryChat]{QueryChat}
 }
