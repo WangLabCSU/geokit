@@ -73,9 +73,7 @@ geo_chat <- function(client, data_source, table_name = NULL, ...) {
 #' @rdname geo_chat
 geo_shiny <- function(...) {
     chat <- geo_chat(...)
-    if (is.null(chat$greeting)) {
-        chat$greeting <- chat$generate_greeting("none")
-    }
+    chat_greeting(chat)
     chat$app()
 }
 
@@ -83,8 +81,12 @@ geo_shiny <- function(...) {
 #' @rdname geo_chat
 geo_console <- function(...) {
     chat <- geo_chat(...)
+    chat_greeting(chat)
+    chat$console()
+}
+
+chat_greeting <- function(chat) {
     if (is.null(chat$greeting)) {
         chat$greeting <- chat$generate_greeting("none")
     }
-    chat$console()
 }
