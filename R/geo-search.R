@@ -37,7 +37,10 @@ geo_search <- function(query, step = 500L, interval = NULL) {
     assert_number_decimal(interval, min = 0, allow_null = TRUE)
     interval <- interval %||% 0
     records_num <- rentrez::entrez_search("gds", query, retmax = 0L)$count
-    retstarts <- seq(0L, records_num, step)
+    if (records_num == 0L) {
+        cli::cli_abort("No items found.")
+    }
+    retstarts <- seq.int(0L, records_num - 1L, by = step)
     records <- character(length(retstarts))
     search_res <- rentrez::entrez_search(
         "gds", query,
@@ -57,7 +60,7 @@ geo_search <- function(query, step = 500L, interval = NULL) {
             retmax = step, retstart = retstarts[[i]]
         )
         if (i == length(retstarts)) {
-            n_records <- records_num - retstarts[[i]] + 1L
+            n_records <- records_num - retstarts[[i]]
         } else {
             n_records <- retstarts[[i + 1L]] - retstarts[[i]]
         }
