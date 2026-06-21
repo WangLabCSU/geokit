@@ -58,9 +58,9 @@ uc_gse <- list(
   geo_search("bladder cancer[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"),
   geo_search("urothelial cancer[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]")
 )
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  669/668 [327/s] | ETA:  0s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  672/671 [235/s] | ETA:  0s
 #> → Parsing GEO records
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  669/668 [327/s] | ETA:  0sGet records from NCBI for 668 queries in 2.1s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  672/671 [235/s] | ETA:  0sGet records from NCBI for 671 queries in 2.9s
 #> 
 #> → Parsing GEO records
 uc_gse <- unique(dplyr::bind_rows(uc_gse))
@@ -165,7 +165,7 @@ sessionInfo()
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] vctrs_0.7.3       httr_1.4.8        cli_3.6.6         knitr_1.51       
-#>  [5] rlang_1.2.0       xfun_0.58         stringi_1.8.7     otel_0.2.0       
+#>  [5] rlang_1.2.0       xfun_0.59         stringi_1.8.7     otel_0.2.0       
 #>  [9] generics_0.1.4    textshaping_1.0.5 jsonlite_2.0.0    glue_1.8.1       
 #> [13] htmltools_0.5.9   XML_3.99-0.23     ragg_1.5.2        sass_0.4.10      
 #> [17] rmarkdown_2.31    tibble_3.3.1      evaluate_1.0.5    jquerylib_0.1.4  
