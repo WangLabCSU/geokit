@@ -1,6 +1,6 @@
 Package: geokit
 Title: Tools for Accessing and Working with the Gene Expression Omnibus (GEO)
-Version: 0.0.1.9000
+Version: 0.0.2
 Authors@R: 
     person("Yun", "Peng", , "pengyun.me@outlook.com", role = c("aut", "cre"))
 Description: Provides a tidy and fast R interface to the NCBI Gene
