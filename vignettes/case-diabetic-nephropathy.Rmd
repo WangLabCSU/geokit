@@ -1,0 +1,307 @@
+---
+title: "Case Study: Diabetic Nephropathy Meta-Analysis"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Case Study: Diabetic Nephropathy Meta-Analysis}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+This vignette demonstrates a comprehensive meta-analysis workflow for diabetic nephropathy (DN) gene expression datasets. We'll show how to systematically search, filter, annotate, and visualize relevant GEO datasets to prepare for downstream meta-analysis.
+
+## Introduction
+
+Diabetic nephropathy is a major complication of diabetes and a leading cause of chronic kidney disease. Conducting a meta-analysis of gene expression studies can help identify robust molecular signatures. This workflow demonstrates how to use `geokit` to:
+
+- Search GEO using multiple query strategies
+- Build a customized metadata database
+- Filter datasets by quality criteria
+- Visualize dataset characteristics
+- Prepare a curated list for downstream analysis
+
+```{r setup}
+library(geokit)
+library(dplyr)
+library(stringr)
+library(ggplot2)
+```
+
+## 1. Multi-Strategy Dataset Discovery
+
+We'll use multiple search terms to comprehensively identify diabetic nephropathy datasets. Different researchers may use varying terminology, so we query for both "diabetic nephropathy" and "diabetic kidney disease".
+
+```{r search_dn, cache = TRUE}
+# Define multiple search strategies
+dn_search_terms <- c(
+  "diabetic nephropathy[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]",
+  "diabetic kidney disease[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"
+)
+
+# Execute searches and combine results
+dn_gse_list <- lapply(dn_search_terms, geo_search)
+dn_gse <- unique(dplyr::bind_rows(dn_gse_list))
+
+# Display summary
+cat(sprintf("Found %d unique GSE datasets\n", nrow(dn_gse)))
+head(dn_gse[, 1:3])
+```
+
+## 2. Extract Sample Information
+
+Extract the number of samples from the "Contains" field to enable filtering by sample size.
+
+```{r extract_samples}
+dn_gse <- dn_gse |>
+  dplyr::mutate(
+    number_of_samples = stringr::str_match(
+      Contains, "(\\d+) Samples?"
+    )[, 2L, drop = TRUE],
+    number_of_samples = as.integer(number_of_samples)
+  )
+
+# Quick statistics
+summary(dn_gse$number_of_samples)
+```
+
+## 3. Filter by Quality Criteria
+
+Apply filters for sample size, platform type, and study type to focus on high-quality expression profiling studies.
+
+```{r filter_datasets}
+dn_gse_filtered <- dn_gse |>
+  dplyr::filter(
+    # At least 6 samples for meaningful analysis
+    number_of_samples >= 6,
+    # Focus on expression profiling studies
+    stringr::str_detect(Type, "(?i)expression profiling"),
+    # Exclude certain platform types if needed
+    !stringr::str_detect(Type, "(?i)methylation")
+  )
+
+cat(sprintf("After filtering: %d datasets (%.1f%% of original)\n",
+            nrow(dn_gse_filtered),
+            100 * nrow(dn_gse_filtered) / nrow(dn_gse)))
+```
+
+## 4. Build Metadata Database
+
+Fetch detailed metadata for filtered datasets using `geo_meta()`. This creates a local database for offline analysis and detailed inspection.
+
+```{r build_metadb, eval = FALSE}
+# Create output directory for metadata
+dn_metadb_dir <- "dn_metadb"
+dir.create(dn_metadb_dir, showWarnings = FALSE, recursive = TRUE)
+
+# Fetch metadata (this may take several minutes)
+dn_metadb <- geo_meta(
+  dn_gse_filtered[["Series Accession"]],
+  odir = dn_metadb_dir
+)
+
+# Save for future use
+saveRDS(dn_metadb, file.path(dn_metadb_dir, "dn_metadb.rds"))
+```
+
+```{r load_metadb, eval = FALSE}
+# Load previously saved metadb
+dn_metadb <- readRDS(file.path(dn_metadb_dir, "dn_metadb.rds"))
+
+# Calculate actual sample counts from metadb
+dn_metadb <- dn_metadb |>
+  dplyr::mutate(
+    number_of_samples = lengths(
+      strsplit(Series_sample_id, "; ", fixed = TRUE)
+    )
+  )
+```
+
+## 5. Further Categorization
+
+Categorize datasets by specific criteria relevant to diabetic nephropathy research.
+
+```{r categorize, eval = FALSE}
+# Identify datasets with specific DN-related keywords
+dn_metadb <- dn_metadb |>
+  dplyr::mutate(
+    # Check for nephropathy mentions
+    has_nephropathy = grepl(
+      "(?i)nephropath",
+      paste(Series_title, Series_summary, Series_overall_design)
+    ),
+    # Check for kidney mentions
+    has_kidney = grepl(
+      "(?i)kidney|renal",
+      paste(Series_title, Series_summary, Series_overall_design)
+    ),
+    # Check for biopsy samples
+    has_biopsy = grepl(
+      "(?i)biopsy|biopsies",
+      paste(Series_title, Series_summary, Series_overall_design)
+    ),
+    # Extract tissue type mentions
+    tissue_type = dplyr::case_when(
+      stringr::str_detect(Series_title, "(?i)glomerul") ~ "glomerular",
+      stringr::str_detect(Series_title, "(?i)tubul") ~ "tubular",
+      stringr::str_detect(Series_title, "(?i)kidney|renal") ~ "kidney",
+      TRUE ~ "other"
+    )
+  )
+
+# Summary by tissue type
+table(dn_metadb$tissue_type)
+```
+
+## 6. Visualization: Dataset Characteristics
+
+### Timeline of Dataset Submissions
+
+**Note**: This visualization requires date information from the metadata. The actual implementation depends on the available date fields in the GEO metadata structure. If submission dates are not available in the metadata, consider alternative visualizations such as chronological ordering by GEO accession number ranges.
+
+```{r timeline, eval = FALSE, fig.width = 8, fig.height = 4}
+# Alternative: Create a proxy year from GEO accession number
+# GSE numbers are assigned chronologically, so they can serve as a time proxy
+# This is a workaround when actual submission dates are not available
+dn_metadb <- dn_metadb |>
+  dplyr::mutate(
+    gse_number = as.integer(
+      stringr::str_extract(Series_geo_accession, "\\d+")
+    )
+  )
+
+# Create distribution plot by GSE number (proxy for time)
+ggplot(dn_metadb, aes(x = gse_number)) +
+  geom_histogram(bins = 30, fill = "steelblue", color = "white") +
+  labs(
+    title = "Distribution of DN Datasets by GEO Accession Number",
+    subtitle = "GSE numbers are assigned chronologically (lower = older)",
+    x = "GSE Number",
+    y = "Number of Datasets"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5, size = 9),
+    panel.grid.minor = element_blank()
+  )
+```
+
+### Sample Size Distribution
+
+```{r sample_distribution, eval = FALSE, fig.width = 8, fig.height = 4}
+ggplot(dn_metadb, aes(x = number_of_samples)) +
+  geom_histogram(binwidth = 5, fill = "coral", color = "white") +
+  geom_vline(
+    xintercept = median(dn_metadb$number_of_samples, na.rm = TRUE),
+    linetype = "dashed", color = "red", size = 1
+  ) +
+  labs(
+    title = "Distribution of Sample Sizes in DN Datasets",
+    subtitle = sprintf(
+      "Median: %d samples",
+      median(dn_metadb$number_of_samples, na.rm = TRUE)
+    ),
+    x = "Number of Samples",
+    y = "Number of Datasets"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5),
+    panel.grid.minor = element_blank()
+  )
+```
+
+### Platform Usage Trends
+
+```{r platform_trends, eval = FALSE, fig.width = 10, fig.height = 5}
+# Extract platform information
+platform_summary <- dn_metadb |>
+  dplyr::count(Series_platform_id, sort = TRUE) |>
+  dplyr::slice_max(n, n = 10)
+
+ggplot(platform_summary, aes(x = reorder(Series_platform_id, n), y = n)) +
+  geom_col(fill = "darkgreen", alpha = 0.7) +
+  geom_text(aes(label = n), hjust = -0.2, size = 3.5) +
+  coord_flip() +
+  labs(
+    title = "Top 10 Platforms Used in DN Studies",
+    x = "Platform ID",
+    y = "Number of Studies"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    panel.grid.major.y = element_blank()
+  )
+```
+
+## 7. Prepare Curated Dataset List
+
+Create a final curated list of datasets suitable for meta-analysis.
+
+```{r curate_list, eval = FALSE}
+# Select high-quality datasets with sufficient samples
+dn_curated <- dn_metadb |>
+  dplyr::filter(
+    number_of_samples >= 10,
+    has_nephropathy | has_kidney
+  ) |>
+  dplyr::arrange(desc(number_of_samples)) |>
+  dplyr::select(
+    Series_geo_accession,
+    Series_title,
+    number_of_samples,
+    Series_platform_id,
+    tissue_type
+  )
+
+# Display top candidates
+head(dn_curated, 10)
+
+# Export for downstream analysis
+write.csv(dn_curated, "dn_curated_datasets.csv", row.names = FALSE)
+```
+
+## 8. Next Steps for Meta-Analysis
+
+With this curated list, you can proceed to:
+
+1. **Download expression data**: Use `geo_matrix()` to download series matrix files
+2. **Quality control**: Examine sample annotations and expression distributions
+3. **Data integration**: Normalize and batch-correct across studies
+4. **Differential expression**: Identify genes consistently dysregulated in DN
+5. **Pathway analysis**: Investigate enriched biological processes
+
+```{r download_example, eval = FALSE}
+# Example: Download top dataset
+top_gse <- dn_curated$Series_geo_accession[1]
+eset <- geo_matrix(top_gse, odir = tempdir())
+
+# Quick inspection
+print(eset)
+dim(Biobase::exprs(eset))
+```
+
+## Summary
+
+This workflow demonstrated how to:
+
+- Use multiple search strategies to comprehensively identify relevant datasets
+- Build a customized metadata database with `geo_meta()`
+- Apply quality filters for sample size and study type
+- Visualize dataset characteristics over time
+- Prepare a curated list for downstream meta-analysis
+
+The systematic approach ensures reproducibility and helps identify the most suitable datasets for gene expression meta-analysis in diabetic nephropathy research.
+
+## Session Information
+```{r}
+sessionInfo()
+```

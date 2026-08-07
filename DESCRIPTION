@@ -27,6 +27,8 @@ Suggests:
     stats,
     dplyr,
     stringr,
+    tidyr,
+    ggplot2,
     R.utils,
     duckdb,
     querychat (>= 0.3.0),
