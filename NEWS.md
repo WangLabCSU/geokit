@@ -1,3 +1,9 @@
+# geokit (development version)
+
+* Added a public Agent Skills file for AI agents, published once with the
+  pkgdown site at
+  <https://WangLabCSU.github.io/geokit/skills/geokit/SKILL.md>.
+
 # geokit 0.0.2
 
 This is the first release of geokit on CRAN.
