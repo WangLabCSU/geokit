@@ -32,46 +32,40 @@ we can get these records by following code, the returned object is a
 diabetes_gse_records <- geo_search(
   "diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"
 )
-#> ■■■■■■■■■                        500/1863 [440/s] | ETA:  3s
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1864/1863 [348/s] | ETA:  0s
+#> ■■■■■■■■■                        500/1893 [323/s] | ETA:  4s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■        1500/1893 [341/s] | ETA:  1s
+#> Get records from NCBI for 1893 queries in 5.7s
+#> 
 #> → Parsing GEO records
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  1864/1863 [348/s] | ETA:  0sGet records from NCBI for 1863 queries in 5.5s
 head(diabetes_gse_records[1:5])
-#>                                                                                                                                            Title
-#> 1                Chromatin accessibility and transcriptomic changes underlying progression from islet autoantibody positivity to type 1 diabetes
-#> 2                                            Transcriptomic changes underlying progression from islet autoantibody positivity to type 1 diabetes
-#> 3                                   Chromatin accessibility changes underlying progression from islet autoantibody positivity to type 1 diabetes
-#> 4 Integrative single-cell multi-omics profiling of human pancreatic islets identifies T1D-associated genes and regulatory signals  [single cell]
-#> 5                                                          Regenerative macrophages enhance stem cell-derived beta-cell function and engraftment
-#> 6                                                                                                       Effect of HNF1A-MODY on stem cell islets
-#>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             Summary
-#> 1                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       This SuperSeries is composed of the SubSeries listed below.
-#> 2                                                                                                                                                                                                                                                                                                                                In this study, we we collected RNA-seq data from four different human immune cells (CD4+ T cells, CD8+ T cells,  B cells, NK ) to  assess gene expression changes during type 1 diabetes (T1D) disease progression
-#> 3                                                                                        Type 1 diabetes (T1D) usually has a preclinical phase identified by the presence of circulating autoantibodies to pancreatic islet antigens, and most young children who have multiple autoantibodies progress to diabetes within 10 years. While autoantibodies denote underlying islet autoimmunity, how this process is initiated and then progresses to clinical diabetes on a background of genetic susceptibility is not clearly understood. more...
-#> 4 Genome-wide association studies (GWAS) have identified over 100 signals associated with type 1 diabetes (T1D). However, it has been challenging to translate any given T1D GWAS signal into mechanistic insights, such as causal variants, their target genes, and the specific cell types involved. Here, we present a comprehensive multi-omic integrative analysis of single-cell/nucleus resolution profiles of gene expression and chromatin accessibility in human pancreatic islets under baseline and T1D-stimulating conditions. more...
-#> 5                                                                                   The generation of insulin-producing beta cells from human embryonic stem cells (SC-β cells) holds promise for treating type 1 diabetes. Transplantation of SC-β cells is already in clinical testing, but generating mature cells with insulin-secreting properties similar to endogenous cells has been challenging. Since macrophages are essential for islet development, we hypothesized they could enhance SC-β-cell differentiation and function. more...
-#> 6         This project investigates the impact of the hotspot mutation P291fsinsC in HNF1A-MODY (Maturity-Onset Diabetes of the Young) on stem cell-derived islets. RNA sequencing (RNA-seq) was performed on islets differentiated from mutant and control HNF1A-MODY stem cells to study the mutation's effect on gene expression. By comparing the transcriptomic profiles of these islets, the study aims to uncover molecular mechanisms underlying the dysfunction caused by the P291fsinsC mutation during islet development and maturation.
-#>       Organism
-#> 1 Homo sapiens
-#> 2 Homo sapiens
-#> 3 Homo sapiens
-#> 4 Homo sapiens
-#> 5 Homo sapiens
-#> 6 Homo sapiens
-#>                                                                                                                   Type
-#> 1 Expression profiling by high throughput sequencing; Genome binding/occupancy profiling by high throughput sequencing
-#> 2                                                                   Expression profiling by high throughput sequencing
-#> 3                                                     Genome binding/occupancy profiling by high throughput sequencing
-#> 4 Expression profiling by high throughput sequencing; Genome binding/occupancy profiling by high throughput sequencing
-#> 5                                                                   Expression profiling by high throughput sequencing
-#> 6                                                                   Expression profiling by high throughput sequencing
-#>                                                           FTP download
-#> 1 GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE178nnn/GSE178494/
-#> 2 GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE178nnn/GSE178493/
-#> 3 GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE178nnn/GSE178492/
-#> 4 GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE335nnn/GSE335464/
-#> 5 GEO (RDS) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE308nnn/GSE308718/
-#> 6 GEO (CSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE312nnn/GSE312607/
+#>                                                                                                                                                                        Title
+#> 1 Calpain inhibition prevents high-glucose-induced autophagy blockade and mitochondrial fragmentation in endothelial cells and preserves vascular functions in diabetic mice
+#> 2                                                                                                   Nonviral delivery of chemically modified tRNA rescues nonsense mutations
+#> 3                               Micro RNA expression profiling using NanoString technology from IgA Nephropathy patients and Non-IgA nephropathy patients from Indian cohort
+#> 4                                                                      Protective IFIH1 variant reduces islet stress and dysfunction in a type 1 diabetes genetic background
+#> 5              Single-nucleus and bulk transcriptomic atlas of human visceral adipose tissue across metabolic disease states identifies THBS1 as a fibro-inflammatory driver
+#> 6                                                                  Engineering the insulin signal peptide to protect human pancreatic beta cells from autoimmune destruction
+#>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             Summary
+#> 1 Endothelial dysfunction is a major contributor to diabetic vascular complications, yet the mechanisms linking hyperglycemia to impaired endothelial homeostasis remain insufficiently defined. This study identifies calpains as key regulators of endothelial autophagy and mitophagy under diabetic conditions. In HUVECs and primary lung endothelial cells, hyperglycemia activated calpains and induced autophagic flux blockade, characterized by SQSTM1 accumulation, reduced LC3B expression, and impaired mitophagy associated with mitochondrial fragmentation. more...
+#> 2                                                                                                                                              Suppressor transfer RNAs (sup-tRNAs) can rescue disease-causing nonsense mutations by promoting readthrough of premature termination codons (PTCs). Their clinical translation is limited by suboptimal activity and inefficient in vivo delivery. In this work, we combined site-specific chemical modification of sup-tRNAs with cargo-tailored pulmonary lipid nanoparticle (LNP) engineering to overcome these barriers. more...
+#> 3                                                                                                   The current study makes use of NanoString targeted technology to profile urinary exosomal miRNAs from IgA nephropathy affected patients and corresponding healthy controls. In addition to IgA nephropathy, disease controls belonging to the condition of Lupus nephritis, Focal segmental glomerulosclerosis, Diabetic nephropathy, Minimal change disease, Membranous nephropathy and Hypertensive nephropathy were also assayed for their miRNA expression profile. more...
+#> 4                                          Genome-wide association studies have identified IFIH1, which encodes the double-stranded RNA sensor MDA5, as a type 1 diabetes (T1D) risk locus. The IFIH1 E627* variant is associated with protection from T1D, whereas A946T is associated with increased risk. To examine how these variants influence islet responses to inflamattory and viral stress, we used CRISPR-Cas9 to engineer E627* or A946T into human pluripotent stem cells from a T1D donor and differentiated them into stem cell-derived islets (SC-islets). more...
+#> 5                                                                                                                          The cellular complexity of adipose tissue plays a critical role in the pathogenesis of metabolic disease; however, mechanisms underlying adipose dysfunction remain poorly understood. Here, we constructed a single-nucleus and bulk transcriptomic atlas of human visceral adipose tissues from an ethnically homogeneous cohort with defined metabolic states: lean with normal glucose tolerance, obesity, and obesity with type 2 diabetes. more...
+#> 6                                                                                                                              The autoreactive T cells that destroy beta cells in type 1 diabetes are largely targeting insulin signal peptide fragments. HLA knockout beta-cells have been proposed to create hypo-immune cells, but this strategy poses significant tumorigenic risks. As an alternative, we hypothesized that insulin signal peptide modification would give rise to beta-cells evading autoimmune recognition while maintaining insulin functionality. more...
+#>       Organism                                               Type
+#> 1 Homo sapiens Expression profiling by high throughput sequencing
+#> 2 Homo sapiens                                              Other
+#> 3 Homo sapiens                                              Other
+#> 4 Homo sapiens Expression profiling by high throughput sequencing
+#> 5 Homo sapiens Expression profiling by high throughput sequencing
+#> 6 Homo sapiens Expression profiling by high throughput sequencing
+#>                                                                          FTP download
+#> 1       GEO (RESULTS, TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE339nnn/GSE339355/
+#> 2                GEO (CSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE326nnn/GSE326462/
+#> 3                GEO (RCC) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE263nnn/GSE263198/
+#> 4      GEO (CSV, MTX, TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE318nnn/GSE318038/
+#> 5 GEO (CSV, MTX, TSV, TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE342nnn/GSE342773/
+#> 6                GEO (TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE324nnn/GSE324575/
 ```
 
 Once you have the search results, you can filter them based on specific
@@ -116,7 +110,7 @@ head(diabetes_nephropathy_gse_records[1:5, 1:5])
 #> 5                                                                                                                            The molecular mechanisms underlying diabetic nephropathy (DN) are poorly defined. We sought to investigate the roles of kallikrein-related peptidases (KLKs) in DN pathogenesis. Screening of renal tissue from diabetic mice revealed KLK8 as the most highly induced gene in KLK family. KLK8 expression was greater in glomerular endothelial cells (GECs) than other glomerular cells in DN patients and diabetic mice. more...
 #>                     Organism
 #> 1               Homo sapiens
-#> 2 Mus musculus; Homo sapiens
+#> 2 Homo sapiens; Mus musculus
 #> 3               Homo sapiens
 #> 4               Homo sapiens
 #> 5               Homo sapiens
@@ -150,7 +144,7 @@ for details.
 ``` r
 
 sessionInfo()
-#> R version 4.6.0 (2026-04-24)
+#> R version 4.6.1 (2026-06-24)
 #> Platform: x86_64-pc-linux-gnu
 #> Running under: Ubuntu 24.04.4 LTS
 #> 
@@ -171,18 +165,18 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] stringr_1.6.0     geokit_0.0.1.9000
+#> [1] stringr_1.6.0 geokit_0.0.2 
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] vctrs_0.7.3       httr_1.4.8        cli_3.6.6         knitr_1.51       
-#>  [5] rlang_1.2.0       xfun_0.59         stringi_1.8.7     otel_0.2.0       
+#>  [1] vctrs_0.7.3       httr_1.4.9        cli_3.6.6         knitr_1.51       
+#>  [5] rlang_1.3.0       xfun_0.60         stringi_1.8.9     otel_0.2.0       
 #>  [9] generics_0.1.4    textshaping_1.0.5 jsonlite_2.0.0    glue_1.8.1       
-#> [13] htmltools_0.5.9   XML_3.99-0.23     ragg_1.5.2        sass_0.4.10      
-#> [17] rmarkdown_2.31    tibble_3.3.1      evaluate_1.0.5    jquerylib_0.1.4  
-#> [21] fastmap_1.2.0     yaml_2.3.12       lifecycle_1.0.5   compiler_4.6.0   
+#> [13] htmltools_0.5.9   XML_3.99-0.24     ragg_1.5.2        sass_0.4.10      
+#> [17] rmarkdown_2.32    tibble_3.3.1      evaluate_1.0.5    jquerylib_0.1.4  
+#> [21] fastmap_1.2.0     yaml_2.3.12       lifecycle_1.0.5   compiler_4.6.1   
 #> [25] dplyr_1.2.1       codetools_0.2-20  rentrez_1.2.4     fs_2.1.0         
 #> [29] pkgconfig_2.0.3   systemfonts_1.3.2 digest_0.6.39     R6_2.6.1         
-#> [33] tidyselect_1.2.1  pillar_1.11.1     curl_7.1.0        magrittr_2.0.5   
-#> [37] bslib_0.11.0      withr_3.0.3       tools_4.6.0       pkgdown_2.2.0    
+#> [33] tidyselect_1.2.1  pillar_1.11.1     curl_8.0.0        magrittr_2.0.5   
+#> [37] bslib_0.12.0      withr_3.0.3       tools_4.6.1       pkgdown_2.2.1    
 #> [41] cachem_1.1.0      desc_1.4.3
 ```

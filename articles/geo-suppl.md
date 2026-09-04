@@ -77,7 +77,7 @@ head(gse160724_suppl_data[1:5])
 ``` r
 
 sessionInfo()
-#> R version 4.6.0 (2026-04-24)
+#> R version 4.6.1 (2026-06-24)
 #> Platform: x86_64-pc-linux-gnu
 #> Running under: Ubuntu 24.04.4 LTS
 #> 
@@ -98,16 +98,18 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] geokit_0.0.1.9000
+#> [1] geokit_0.0.2
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] cli_3.6.6         knitr_1.51        rlang_1.2.0       xfun_0.59        
-#>  [5] otel_0.2.0        textshaping_1.0.5 jsonlite_2.0.0    data.table_1.18.4
-#>  [9] htmltools_0.5.9   ragg_1.5.2        sass_0.4.10       rmarkdown_2.31   
-#> [13] evaluate_1.0.5    jquerylib_0.1.4   fastmap_1.2.0     yaml_2.3.12      
-#> [17] lifecycle_1.0.5   compiler_4.6.0    codetools_0.2-20  fs_2.1.0         
-#> [21] R.oo_1.27.1       R.utils_2.13.0    systemfonts_1.3.2 digest_0.6.39    
-#> [25] R6_2.6.1          curl_7.1.0        R.methodsS3_1.8.2 bslib_0.11.0     
-#> [29] tools_4.6.0       pkgdown_2.2.0     xml2_1.5.2        cachem_1.1.0     
-#> [33] desc_1.4.3
+#>  [1] cli_3.6.6           knitr_1.51          rlang_1.3.0        
+#>  [4] xfun_0.60           otel_0.2.0          textshaping_1.0.5  
+#>  [7] jsonlite_2.0.0      data.table_1.18.6.1 htmltools_0.5.9    
+#> [10] ragg_1.5.2          sass_0.4.10         rmarkdown_2.32     
+#> [13] evaluate_1.0.5      jquerylib_0.1.4     fastmap_1.2.0      
+#> [16] yaml_2.3.12         lifecycle_1.0.5     compiler_4.6.1     
+#> [19] codetools_0.2-20    fs_2.1.0            R.oo_1.27.1        
+#> [22] R.utils_2.13.0      systemfonts_1.3.2   digest_0.6.39      
+#> [25] R6_2.6.1            curl_8.0.0          R.methodsS3_1.8.2  
+#> [28] bslib_0.12.0        tools_4.6.1         pkgdown_2.2.1      
+#> [31] xml2_1.6.0          cachem_1.1.0        desc_1.4.3
 ```

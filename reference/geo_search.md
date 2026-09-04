@@ -55,61 +55,53 @@ for details.
 # restrictions and limited bandwidth usage for large queries.
 # \donttest{
 out <- geo_search("diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]")
-#> ■■■■■■■■■                        500/1863 [353/s] | ETA:  4s
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■        1500/1863 [360/s] | ETA:  1s
-#> → Parsing GEO records
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■        1500/1863 [360/s] | ETA:  1s
-#> Get records from NCBI for 1863 queries in 6.3s
+#> ■■■■■■■■■                        500/1893 [444/s] | ETA:  3s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■        1500/1893 [345/s] | ETA:  1s
+#> Get records from NCBI for 1893 queries in 5.5s
 #> 
+#> → Parsing GEO records
 head(out)
-#>                                                                                                                                            Title
-#> 1                Chromatin accessibility and transcriptomic changes underlying progression from islet autoantibody positivity to type 1 diabetes
-#> 2                                            Transcriptomic changes underlying progression from islet autoantibody positivity to type 1 diabetes
-#> 3                                   Chromatin accessibility changes underlying progression from islet autoantibody positivity to type 1 diabetes
-#> 4 Integrative single-cell multi-omics profiling of human pancreatic islets identifies T1D-associated genes and regulatory signals  [single cell]
-#> 5                                                          Regenerative macrophages enhance stem cell-derived beta-cell function and engraftment
-#> 6                                                                                                       Effect of HNF1A-MODY on stem cell islets
-#>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             Summary
-#> 1                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       This SuperSeries is composed of the SubSeries listed below.
-#> 2                                                                                                                                                                                                                                                                                                                                In this study, we we collected RNA-seq data from four different human immune cells (CD4+ T cells, CD8+ T cells,  B cells, NK ) to  assess gene expression changes during type 1 diabetes (T1D) disease progression
-#> 3                                                                                        Type 1 diabetes (T1D) usually has a preclinical phase identified by the presence of circulating autoantibodies to pancreatic islet antigens, and most young children who have multiple autoantibodies progress to diabetes within 10 years. While autoantibodies denote underlying islet autoimmunity, how this process is initiated and then progresses to clinical diabetes on a background of genetic susceptibility is not clearly understood. more...
-#> 4 Genome-wide association studies (GWAS) have identified over 100 signals associated with type 1 diabetes (T1D). However, it has been challenging to translate any given T1D GWAS signal into mechanistic insights, such as causal variants, their target genes, and the specific cell types involved. Here, we present a comprehensive multi-omic integrative analysis of single-cell/nucleus resolution profiles of gene expression and chromatin accessibility in human pancreatic islets under baseline and T1D-stimulating conditions. more...
-#> 5                                                                                   The generation of insulin-producing beta cells from human embryonic stem cells (SC-β cells) holds promise for treating type 1 diabetes. Transplantation of SC-β cells is already in clinical testing, but generating mature cells with insulin-secreting properties similar to endogenous cells has been challenging. Since macrophages are essential for islet development, we hypothesized they could enhance SC-β-cell differentiation and function. more...
-#> 6         This project investigates the impact of the hotspot mutation P291fsinsC in HNF1A-MODY (Maturity-Onset Diabetes of the Young) on stem cell-derived islets. RNA sequencing (RNA-seq) was performed on islets differentiated from mutant and control HNF1A-MODY stem cells to study the mutation's effect on gene expression. By comparing the transcriptomic profiles of these islets, the study aims to uncover molecular mechanisms underlying the dysfunction caused by the P291fsinsC mutation during islet development and maturation.
-#>       Organism
-#> 1 Homo sapiens
-#> 2 Homo sapiens
-#> 3 Homo sapiens
-#> 4 Homo sapiens
-#> 5 Homo sapiens
-#> 6 Homo sapiens
-#>                                                                                                                   Type
-#> 1 Expression profiling by high throughput sequencing; Genome binding/occupancy profiling by high throughput sequencing
-#> 2                                                                   Expression profiling by high throughput sequencing
-#> 3                                                     Genome binding/occupancy profiling by high throughput sequencing
-#> 4 Expression profiling by high throughput sequencing; Genome binding/occupancy profiling by high throughput sequencing
-#> 5                                                                   Expression profiling by high throughput sequencing
-#> 6                                                                   Expression profiling by high throughput sequencing
-#>                                                           FTP download
-#> 1 GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE178nnn/GSE178494/
-#> 2 GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE178nnn/GSE178493/
-#> 3 GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE178nnn/GSE178492/
-#> 4 GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE335nnn/GSE335464/
-#> 5 GEO (RDS) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE308nnn/GSE308718/
-#> 6 GEO (CSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE312nnn/GSE312607/
+#>                                                                                                                                                                        Title
+#> 1 Calpain inhibition prevents high-glucose-induced autophagy blockade and mitochondrial fragmentation in endothelial cells and preserves vascular functions in diabetic mice
+#> 2                                                                                                   Nonviral delivery of chemically modified tRNA rescues nonsense mutations
+#> 3                               Micro RNA expression profiling using NanoString technology from IgA Nephropathy patients and Non-IgA nephropathy patients from Indian cohort
+#> 4                                                                      Protective IFIH1 variant reduces islet stress and dysfunction in a type 1 diabetes genetic background
+#> 5              Single-nucleus and bulk transcriptomic atlas of human visceral adipose tissue across metabolic disease states identifies THBS1 as a fibro-inflammatory driver
+#> 6                                                                  Engineering the insulin signal peptide to protect human pancreatic beta cells from autoimmune destruction
+#>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             Summary
+#> 1 Endothelial dysfunction is a major contributor to diabetic vascular complications, yet the mechanisms linking hyperglycemia to impaired endothelial homeostasis remain insufficiently defined. This study identifies calpains as key regulators of endothelial autophagy and mitophagy under diabetic conditions. In HUVECs and primary lung endothelial cells, hyperglycemia activated calpains and induced autophagic flux blockade, characterized by SQSTM1 accumulation, reduced LC3B expression, and impaired mitophagy associated with mitochondrial fragmentation. more...
+#> 2                                                                                                                                              Suppressor transfer RNAs (sup-tRNAs) can rescue disease-causing nonsense mutations by promoting readthrough of premature termination codons (PTCs). Their clinical translation is limited by suboptimal activity and inefficient in vivo delivery. In this work, we combined site-specific chemical modification of sup-tRNAs with cargo-tailored pulmonary lipid nanoparticle (LNP) engineering to overcome these barriers. more...
+#> 3                                                                                                   The current study makes use of NanoString targeted technology to profile urinary exosomal miRNAs from IgA nephropathy affected patients and corresponding healthy controls. In addition to IgA nephropathy, disease controls belonging to the condition of Lupus nephritis, Focal segmental glomerulosclerosis, Diabetic nephropathy, Minimal change disease, Membranous nephropathy and Hypertensive nephropathy were also assayed for their miRNA expression profile. more...
+#> 4                                          Genome-wide association studies have identified IFIH1, which encodes the double-stranded RNA sensor MDA5, as a type 1 diabetes (T1D) risk locus. The IFIH1 E627* variant is associated with protection from T1D, whereas A946T is associated with increased risk. To examine how these variants influence islet responses to inflamattory and viral stress, we used CRISPR-Cas9 to engineer E627* or A946T into human pluripotent stem cells from a T1D donor and differentiated them into stem cell-derived islets (SC-islets). more...
+#> 5                                                                                                                          The cellular complexity of adipose tissue plays a critical role in the pathogenesis of metabolic disease; however, mechanisms underlying adipose dysfunction remain poorly understood. Here, we constructed a single-nucleus and bulk transcriptomic atlas of human visceral adipose tissues from an ethnically homogeneous cohort with defined metabolic states: lean with normal glucose tolerance, obesity, and obesity with type 2 diabetes. more...
+#> 6                                                                                                                              The autoreactive T cells that destroy beta cells in type 1 diabetes are largely targeting insulin signal peptide fragments. HLA knockout beta-cells have been proposed to create hypo-immune cells, but this strategy poses significant tumorigenic risks. As an alternative, we hypothesized that insulin signal peptide modification would give rise to beta-cells evading autoimmune recognition while maintaining insulin functionality. more...
+#>       Organism                                               Type
+#> 1 Homo sapiens Expression profiling by high throughput sequencing
+#> 2 Homo sapiens                                              Other
+#> 3 Homo sapiens                                              Other
+#> 4 Homo sapiens Expression profiling by high throughput sequencing
+#> 5 Homo sapiens Expression profiling by high throughput sequencing
+#> 6 Homo sapiens Expression profiling by high throughput sequencing
+#>                                                                          FTP download
+#> 1       GEO (RESULTS, TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE339nnn/GSE339355/
+#> 2                GEO (CSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE326nnn/GSE326462/
+#> 3                GEO (RCC) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE263nnn/GSE263198/
+#> 4      GEO (CSV, MTX, TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE318nnn/GSE318038/
+#> 5 GEO (CSV, MTX, TSV, TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE342nnn/GSE342773/
+#> 6                GEO (TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE324nnn/GSE324575/
 #>          ID Project SRA Run Selector   Contains Datasets Platforms
-#> 1 200178494    <NA>             <NA> 89 Samples     <NA>  GPL18573
-#> 2 200178493    <NA>             <NA> 80 Samples     <NA>  GPL18573
-#> 3 200178492    <NA>             <NA>  9 Samples     <NA>  GPL18573
-#> 4 200335464    <NA>             <NA> 28 Samples     <NA>  GPL24676
-#> 5 200308718    <NA>             <NA>  6 Samples     <NA>  GPL24676
-#> 6 200312607    <NA>             <NA> 12 Samples     <NA>  GPL34284
+#> 1 200339355    <NA>             <NA> 12 Samples     <NA>  GPL18573
+#> 2 200326462    <NA>             <NA> 27 Samples     <NA>  GPL34281
+#> 3 200263198    <NA>             <NA> 41 Samples     <NA>  GPL33820
+#> 4 200318038    <NA>             <NA>  2 Samples     <NA>  GPL24676
+#> 5 200342773    <NA>             <NA> 39 Samples     <NA>  GPL24676
+#> 6 200324575    <NA>             <NA>  6 Samples     <NA>  GPL18573
 #>   Series Accession
-#> 1        GSE178494
-#> 2        GSE178493
-#> 3        GSE178492
-#> 4        GSE335464
-#> 5        GSE308718
-#> 6        GSE312607
+#> 1        GSE339355
+#> 2        GSE326462
+#> 3        GSE263198
+#> 4        GSE318038
+#> 5        GSE342773
+#> 6        GSE324575
 # }
 ```
