@@ -52,14 +52,11 @@ learning everything, there is to know about all the different features.
 
 ## Agent skill (remote)
 
-A scientific Agent Skills file for AI agents and automation is published with
-the documentation site and can be fetched with `curl`:
+A scientific Agent Skills file for AI agents is published once with the
+documentation site:
 
 ```bash
 curl -fsSL https://WangLabCSU.github.io/geokit/skills/geokit/SKILL.md -o SKILL.md
-# short alias:
-curl -fsSL https://WangLabCSU.github.io/geokit/SKILL.md -o SKILL.md
 ```
 
-- Canonical: <https://WangLabCSU.github.io/geokit/skills/geokit/SKILL.md>
-- Alias: <https://WangLabCSU.github.io/geokit/SKILL.md>
+<https://WangLabCSU.github.io/geokit/skills/geokit/SKILL.md>

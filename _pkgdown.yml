@@ -25,11 +25,7 @@ navbar:
         href: articles/geo-suppl.html
     skill:
       text: Agent skill
-      menu:
-      - text: geokit SKILL.md
-        href: skills/geokit/SKILL.md
-      - text: SKILL.md (site root alias)
-        href: SKILL.md
+      href: skills/geokit/SKILL.md
 
 reference:
 - title: GEO Database operations

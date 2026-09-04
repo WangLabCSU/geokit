@@ -19,7 +19,6 @@ metadata:
   homepage: https://WangLabCSU.github.io/geokit/
   repository: https://github.com/WangLabCSU/geokit
   skill-url: https://WangLabCSU.github.io/geokit/skills/geokit/SKILL.md
-  skill-raw: https://WangLabCSU.github.io/geokit/SKILL.md
   docs: https://WangLabCSU.github.io/geokit/reference/
 ---
 
@@ -55,14 +54,10 @@ Do **not** invent GEO accessions or pretend downloads succeeded without network 
 
 ## Remote skill access
 
-Agents and users can fetch this skill directly:
+Single canonical file (Agent Skills layout under the pkgdown site):
 
 ```bash
-# Canonical skill path (Agent Skills layout)
 curl -fsSL https://WangLabCSU.github.io/geokit/skills/geokit/SKILL.md -o SKILL.md
-
-# Short alias at site root
-curl -fsSL https://WangLabCSU.github.io/geokit/SKILL.md -o SKILL.md
 ```
 
 Package documentation site: <https://WangLabCSU.github.io/geokit/>
@@ -449,7 +444,6 @@ Always parameterize `odir`, record accessions + date + geokit version in analysi
 |----------|-----|
 | Home | https://WangLabCSU.github.io/geokit/ |
 | This skill | https://WangLabCSU.github.io/geokit/skills/geokit/SKILL.md |
-| Skill alias | https://WangLabCSU.github.io/geokit/SKILL.md |
 | Reference | https://WangLabCSU.github.io/geokit/reference/ |
 | Search vignette | https://WangLabCSU.github.io/geokit/articles/geo-search.html |
 | Metadata DB vignette | https://WangLabCSU.github.io/geokit/articles/geometadb.html |
