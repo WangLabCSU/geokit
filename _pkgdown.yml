@@ -5,21 +5,31 @@ template:
   light-switch: true
 
 navbar:
- components:
-   articles:
-    text: Articles
-    menu:
-    - text: Searching
-      href: articles/geo-search.html
-    - text: GEO metadata
-      href: articles/geometadb.html
-    - text: -------
-    - text: GEO SOFT FIle
-      href: articles/geo-soft.html
-    - text: GSE Matrix FIle
-      href: articles/geo-matrix.html
-    - text: GSE Supplemental File
-      href: articles/geo-suppl.html
+  structure:
+    left: [reference, articles, news, skill]
+    right: [search, github, lightswitch]
+  components:
+    articles:
+      text: Articles
+      menu:
+      - text: Searching
+        href: articles/geo-search.html
+      - text: GEO metadata
+        href: articles/geometadb.html
+      - text: -------
+      - text: GEO SOFT FIle
+        href: articles/geo-soft.html
+      - text: GSE Matrix FIle
+        href: articles/geo-matrix.html
+      - text: GSE Supplemental File
+        href: articles/geo-suppl.html
+    skill:
+      text: Agent skill
+      menu:
+      - text: geokit SKILL.md
+        href: skills/geokit/SKILL.md
+      - text: SKILL.md (site root alias)
+        href: SKILL.md
 
 reference:
 - title: GEO Database operations

@@ -49,3 +49,17 @@ pak::pak("WangLabCSU/geokit")
 
 Check out the [guides](https://wanglabcsu.github.io/geokit/) for
 learning everything, there is to know about all the different features.
+
+## Agent skill (remote)
+
+A scientific Agent Skills file for AI agents and automation is published with
+the documentation site and can be fetched with `curl`:
+
+```bash
+curl -fsSL https://WangLabCSU.github.io/geokit/skills/geokit/SKILL.md -o SKILL.md
+# short alias:
+curl -fsSL https://WangLabCSU.github.io/geokit/SKILL.md -o SKILL.md
+```
+
+- Canonical: <https://WangLabCSU.github.io/geokit/skills/geokit/SKILL.md>
+- Alias: <https://WangLabCSU.github.io/geokit/SKILL.md>
