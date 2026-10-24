@@ -36,11 +36,14 @@ library(geokit)
 ## Prerequisites
 
 1. Install [querychat](https://posit-dev.github.io/querychat/r/) if it is not
-   already on your system (`geo_chat()` will offer to install it on first
-   use):
+   already on your system. It is currently archived on CRAN, so install it
+   from the posit-dev R-universe:
 
    ```r
-   install.packages("querychat")
+   install.packages(
+     "querychat",
+     repos = c("https://posit-dev.r-universe.dev", getOption("repos"))
+   )
    ```
 
 2. To chat with a plain data frame, querychat needs a local SQL engine:

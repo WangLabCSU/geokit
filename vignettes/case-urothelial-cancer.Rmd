@@ -391,7 +391,8 @@ colnames(pdata)
 This workflow demonstrated:
 
 - Comprehensive dataset discovery using multiple search terms
-- Filtering by sample size (>= 20), platform type (microarray), and relevance
+- Filtering by sample size (>= 20) and assay type (microarray expression
+  profiling, excluding methylation studies and compound SuperSeries)
 - Downloading expression matrices with `geo_matrix()`
 - Log transformation using `log_trans()`
 - Exploratory analysis including expression distributions, PCA, sample

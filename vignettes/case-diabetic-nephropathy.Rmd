@@ -149,9 +149,6 @@ dn_metadb <- dn_metadb |>
     has_kidney = str_detect(
       search_text, regex("kidney|renal", ignore_case = TRUE)
     ),
-    has_biopsy = str_detect(
-      search_text, regex("biops(y|ies)", ignore_case = TRUE)
-    ),
     tissue_type = dplyr::case_when(
       str_detect(search_text, regex("glomerul", ignore_case = TRUE)) ~
         "glomerular",
@@ -294,7 +291,7 @@ print(eset)
 dim(Biobase::exprs(eset))
 ```
 
-Instead of manually inspecting the metadata table, you can also hand it to an
+Instead of manually inspecting the curated list, you can also hand it to an
 LLM for interactive exploration with `geo_chat()`; see
 `vignette("geo-chat")` for details.
 
