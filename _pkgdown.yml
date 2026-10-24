@@ -16,6 +16,13 @@ navbar:
         href: articles/geo-search.html
       - text: GEO metadata
         href: articles/geometadb.html
+      - text: Chat with GEO metadata
+        href: articles/geo-chat.html
+      - text: -------
+      - text: "Case study: diabetic nephropathy"
+        href: articles/case-diabetic-nephropathy.html
+      - text: "Case study: urothelial cancer"
+        href: articles/case-urothelial-cancer.html
       - text: -------
       - text: GEO SOFT FIle
         href: articles/geo-soft.html
