@@ -46,6 +46,9 @@ jobs:
           r-version: ${{ matrix.config.r }}
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
+          # querychat was archived on CRAN (2026-10-22) but is still required
+          # in Suggests; resolve it from the posit-dev R-universe.
+          extra-repositories: https://posit-dev.r-universe.dev
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
