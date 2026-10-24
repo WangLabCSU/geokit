@@ -6,5 +6,6 @@
 Scratch.RConsole
 .radian_history
 README_cache
+vignettes/*_cache
 docs
 inst/doc
