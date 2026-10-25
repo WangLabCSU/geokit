@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>geokit &middot; Agent Skill</title>
+<style>
+  :root { color-scheme: light dark; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+      "Helvetica Neue", Arial, sans-serif;
+    max-width: 46rem;
+    margin: 0 auto;
+    padding: 2.5rem 1.25rem 4rem;
+    line-height: 1.6;
+  }
+  h1 { font-size: 1.6rem; margin-bottom: 0.25rem; }
+  .subtitle { opacity: 0.75; margin-top: 0; }
+  code, pre {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.9em;
+  }
+  pre {
+    padding: 0.9rem 1rem;
+    border-radius: 6px;
+    overflow-x: auto;
+    border: 1px solid rgba(128, 128, 128, 0.35);
+  }
+  .card {
+    border: 1px solid rgba(128, 128, 128, 0.35);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    margin: 1.25rem 0;
+  }
+  a.button {
+    display: inline-block;
+    padding: 0.45rem 0.9rem;
+    margin-right: 0.5rem;
+    border-radius: 6px;
+    border: 1px solid rgba(128, 128, 128, 0.5);
+    text-decoration: none;
+  }
+  a.button.primary {
+    background: #375f7b;
+    border-color: #375f7b;
+    color: #fff;
+  }
+</style>
+</head>
+<body>
+<h1>geokit Agent Skill</h1>
+<p class="subtitle">Teach AI coding assistants how to use geokit effectively.</p>
+
+<p>
+  <code>SKILL.md</code> is an <a href="https://agentskills.io">Agent
+  Skills</a> file for geokit, an R interface to the NCBI Gene Expression
+  Omnibus (GEO). It condenses the package's search, download, parsing, and
+  chat helpers into a reference that AI coding assistants can read before
+  writing code. The file is deployed with this documentation site and always
+  matches the released documentation.
+</p>
+
+<div class="card">
+  <p><strong>Fetch it for your agent</strong> &mdash; the canonical URL is
+  the Markdown file below; point your assistant at it or download it
+  directly:</p>
+  <pre>curl -fsSL https://wanglabcsu.github.io/geokit/skills/geokit/SKILL.md -o SKILL.md</pre>
+</div>
+
+<p>
+  <a class="button primary" href="SKILL.md">Open SKILL.md</a>
+  <a class="button" href="https://github.com/WangLabCSU/geokit/blob/main/pkgdown/assets/skills/geokit/SKILL.md">View source</a>
+  <a class="button" href="../../index.html">Documentation home</a>
+</p>
+</body>
+</html>

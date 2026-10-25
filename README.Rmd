@@ -56,16 +56,25 @@ pak::pak("WangLabCSU/geokit")
 
 ## Learning geokit
 
-Check out the [guides](https://wanglabcsu.github.io/geokit/) for learning
-everything, there is to know about all the different features.
+Check out the [guides](https://wanglabcsu.github.io/geokit/) to learn
+everything there is to know about the different features.
 
-## Agent skill (remote)
+## Agent skill
 
-A scientific Agent Skills file for AI agents is published once with the
-documentation site:
+geokit ships an [Agent Skills](https://agentskills.io) file that teaches AI
+coding assistants how to use the package effectively — searching GEO,
+downloading data, parsing metadata, and chatting with LLMs — without reading
+the full documentation first. The file is served as plain Markdown together
+with this website, so your assistant can fetch it directly, no installation
+required:
 
 ```bash
-curl -fsSL https://WangLabCSU.github.io/geokit/skills/geokit/SKILL.md -o SKILL.md
+curl -fsSL https://wanglabcsu.github.io/geokit/skills/geokit/SKILL.md -o SKILL.md
 ```
 
-<https://WangLabCSU.github.io/geokit/skills/geokit/SKILL.md>
+- Skill file: <https://wanglabcsu.github.io/geokit/skills/geokit/SKILL.md>
+- Landing page: <https://wanglabcsu.github.io/geokit/skills/geokit/SKILL.html>
+- Source: [pkgdown/assets/skills/geokit/SKILL.md](https://github.com/WangLabCSU/geokit/blob/main/pkgdown/assets/skills/geokit/SKILL.md)
+
+The file lives in this repository and is deployed with the documentation
+site, so it stays in sync with the released docs.

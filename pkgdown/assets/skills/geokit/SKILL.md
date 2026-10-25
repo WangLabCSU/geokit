@@ -16,10 +16,10 @@ metadata:
   author: WangLabCSU
   package: geokit
   version: "0.0.2"
-  homepage: https://WangLabCSU.github.io/geokit/
+  homepage: https://wanglabcsu.github.io/geokit/
   repository: https://github.com/WangLabCSU/geokit
-  skill-url: https://WangLabCSU.github.io/geokit/skills/geokit/SKILL.md
-  docs: https://WangLabCSU.github.io/geokit/reference/
+  skill-url: https://wanglabcsu.github.io/geokit/skills/geokit/SKILL.md
+  docs: https://wanglabcsu.github.io/geokit/reference/
 ---
 
 # geokit — NCBI GEO toolkit for R
@@ -57,10 +57,10 @@ Do **not** invent GEO accessions or pretend downloads succeeded without network 
 Single canonical file (Agent Skills layout under the pkgdown site):
 
 ```bash
-curl -fsSL https://WangLabCSU.github.io/geokit/skills/geokit/SKILL.md -o SKILL.md
+curl -fsSL https://wanglabcsu.github.io/geokit/skills/geokit/SKILL.md -o SKILL.md
 ```
 
-Package documentation site: <https://WangLabCSU.github.io/geokit/>
+Package documentation site: <https://wanglabcsu.github.io/geokit/>
 
 ## Installation
 
@@ -442,17 +442,17 @@ Always parameterize `odir`, record accessions + date + geokit version in analysi
 
 | Resource | URL |
 |----------|-----|
-| Home | https://WangLabCSU.github.io/geokit/ |
-| This skill | https://WangLabCSU.github.io/geokit/skills/geokit/SKILL.md |
-| Reference | https://WangLabCSU.github.io/geokit/reference/ |
-| Search vignette | https://WangLabCSU.github.io/geokit/articles/geo-search.html |
-| Metadata DB vignette | https://WangLabCSU.github.io/geokit/articles/geometadb.html |
-| Chat vignette | https://WangLabCSU.github.io/geokit/articles/geo-chat.html |
-| Case study: diabetic nephropathy | https://WangLabCSU.github.io/geokit/articles/case-diabetic-nephropathy.html |
-| Case study: urothelial cancer | https://WangLabCSU.github.io/geokit/articles/case-urothelial-cancer.html |
-| SOFT vignette | https://WangLabCSU.github.io/geokit/articles/geo-soft.html |
-| Matrix vignette | https://WangLabCSU.github.io/geokit/articles/geo-matrix.html |
-| Suppl vignette | https://WangLabCSU.github.io/geokit/articles/geo-suppl.html |
+| Home | https://wanglabcsu.github.io/geokit/ |
+| This skill | https://wanglabcsu.github.io/geokit/skills/geokit/SKILL.md |
+| Reference | https://wanglabcsu.github.io/geokit/reference/ |
+| Search vignette | https://wanglabcsu.github.io/geokit/articles/geo-search.html |
+| Metadata DB vignette | https://wanglabcsu.github.io/geokit/articles/geometadb.html |
+| Chat vignette | https://wanglabcsu.github.io/geokit/articles/geo-chat.html |
+| Case study: diabetic nephropathy | https://wanglabcsu.github.io/geokit/articles/case-diabetic-nephropathy.html |
+| Case study: urothelial cancer | https://wanglabcsu.github.io/geokit/articles/case-urothelial-cancer.html |
+| SOFT vignette | https://wanglabcsu.github.io/geokit/articles/geo-soft.html |
+| Matrix vignette | https://wanglabcsu.github.io/geokit/articles/geo-matrix.html |
+| Suppl vignette | https://wanglabcsu.github.io/geokit/articles/geo-suppl.html |
 | Source | https://github.com/WangLabCSU/geokit |
 | Issues | https://github.com/WangLabCSU/geokit/issues |
 | GEO query tutorial | https://www.ncbi.nlm.nih.gov/geo/info/qqtutorial.html |
