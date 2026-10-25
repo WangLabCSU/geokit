@@ -92,6 +92,8 @@ geo_matrix_impl <- function(accession, pdata_from_soft = FALSE,
 parse_gse_matrix <- function(path, gse_soft = NULL, add_gpl = NULL,
                              ftp_over_https = TRUE, handle_opts = list(),
                              odir = getwd()) {
+    # series matrix files are named "<GSEID>_series_matrix.txt[.gz]"
+    accession <- sub("_series_matrix.*$", "", basename(path))
     entity_list <- parse_soft_rust(path, "matrix")
     gse_matrix <- parse_entity_list(.subset2(entity_list, 1L))
 

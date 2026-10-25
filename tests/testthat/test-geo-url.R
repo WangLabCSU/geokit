@@ -8,8 +8,8 @@ testthat::test_that("geo_gtype classifies accessions with and without abbreviati
     testthat::expect_identical(abbre, c("GSE", "GPL", "GSM", "GDS"))
 })
 
-testthat::test_that("geo_gtype rejects malformed input", {
-    testthat::expect_error(geo_gtype(c("GSE10", 1L)))
+testthat::test_that("geo_gtype rejects non-character input", {
+    testthat::expect_error(geo_gtype(list("GSE10")), "character vector")
 })
 
 testthat::test_that("geo_url builds FTP and display URLs", {

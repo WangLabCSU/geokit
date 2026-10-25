@@ -119,8 +119,7 @@ download_inform <- function(urls, ofiles, handle_opts, error = TRUE) {
             urls = urls, destfiles = ofiles, resume = FALSE,
             !!!handle_opts
         ))
-        # FTP: 200L, 206L, 416L, 226L
-        # ADB: 200L, 206L, 416L
+        # success codes: HTTP 200/206/416 and FTP 226 (transfer complete)
         success <- !is.na(status$success) & status$success &
             status$status_code %in% c(200L, 206L, 416L, 226L)
         removed <- !success & file.exists(ofiles)

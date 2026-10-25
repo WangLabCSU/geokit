@@ -103,10 +103,12 @@ soft_print_footer <- function(x, ...) {
     UseMethod("soft_print_footer")
 }
 
+#' @export
 soft_print_header.GEOSoft <- function(x, ...) {
     cat("<", .subset(methods::is(x), 1L), "> ", "\n", sep = "")
 }
 
+#' @export
 soft_print_data.GEOSoft <- function(x, ...) {
     datatable_dim <- dim(x@datatable)
     cat(
@@ -127,6 +129,7 @@ soft_print_data.GEOSoft <- function(x, ...) {
     }
 }
 
+#' @export
 soft_print_footer.GEOSoft <- function(x, ...) {
     wrap_cat("metadata", names = names(x@metadata))
     wrap_cat("accession", names = x@accession)
@@ -435,6 +438,7 @@ methods::setValidity("GEOSeries", function(object) {
     TRUE
 })
 
+#' @export
 soft_print_data.GEOSeries <- function(x, ...) {
     wrap_cat("gsm", names = vapply(
         x@gsm, rcd_name, character(1L),
