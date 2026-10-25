@@ -16,6 +16,15 @@ use rayon::{
     ThreadPoolBuilder,
 };
 
+
+/// Flatten an error chain into a single-line message for R conditions.
+fn fmt_error(err: &anyhow::Error) -> String {
+    err.chain()
+        .map(ToString::to_string)
+        .collect::<Vec<_>>()
+        .join(": ")
+}
+
 #[cfg(not(feature = "isal"))]
 use flate2::bufread::GzDecoder as GzipDecoder;
 #[cfg(feature = "isal")]
@@ -36,7 +45,7 @@ fn geo_gtype(accession: Robj, abbre: bool) -> Result<Vec<String>, String> {
         .as_str_vector()
         .ok_or_else(|| anyhow!("Expected a character vector"))
         .with_context(|| "Invalid 'accession'".to_string())
-        .map_err(|e| format!("{:?}", e))?
+        .map_err(|e| fmt_error(&e))?
         .iter()
         .map(|acc| {
             GEOEntity::try_from(*acc)
@@ -48,7 +57,7 @@ fn geo_gtype(accession: Robj, abbre: bool) -> Result<Vec<String>, String> {
                     }
                 })
                 .with_context(|| format!("Invalid 'accession': {}", acc))
-                .map_err(|e| format!("{:?}", e))
+                .map_err(|e| fmt_error(&e))
         })
         .collect::<Result<Vec<String>, String>>()
 }
@@ -72,7 +81,7 @@ fn geo_url(
             GEOType::Samples => "text",
         },
     )
-    .map_err(|e| format!("{:?}", e))
+    .map_err(|e| fmt_error(&e))
     .map(|resolvers| {
         resolvers
             .into_iter()
@@ -96,7 +105,7 @@ fn geo_landing_page(
         |_| "brief",
         "html",
     )
-    .map_err(|e| format!("{:?}", e))
+    .map_err(|e| fmt_error(&e))
     .map(|resolvers| {
         resolvers
             .into_iter()
@@ -124,7 +133,7 @@ fn geo_file_url_and_fname(
         "text",
     )
     .map_or_else(
-        |e| Err(format!("Failed to initialize the resolvers: {:?}", e)),
+        |e| Err(format!("Failed to initialize the resolvers: {}", fmt_error(&e))),
         |resolvers| {
             resolvers
                 .into_iter()
@@ -158,13 +167,13 @@ fn geo_parse_soft(
         .as_str_vector()
         .ok_or_else(|| anyhow!("Expected a character vector"))
         .with_context(|| "Invalid 'path'".to_string())
-        .map_err(|err| format!("{:?}", err))?;
+        .map_err(|err| fmt_error(&err))?;
     let format = helper::robj_to_vec_str(&format, path.len())
         .with_context(|| "Invalid 'format'".to_string())
-        .map_err(|err| format!("{:?}", err))?;
+        .map_err(|err| fmt_error(&err))?;
     let use_lines = helper::robj_to_option_vec_str(&use_lines, path.len())
         .with_context(|| "Invalid 'use_lines'".to_string())
-        .map_err(|err| format!("{:?}", err))?;
+        .map_err(|err| fmt_error(&err))?;
 
     // use rayon to implement parallel
     let mut pool_builder = ThreadPoolBuilder::new();
@@ -174,7 +183,7 @@ fn geo_parse_soft(
     let record_res = pool_builder
         .build()
         .with_context(|| "Failed to create rayon thread pool".to_string())
-        .map_err(|err| format!("{:?}", err))?
+        .map_err(|err| fmt_error(&err))?
         .install(|| {
             // for each path, we parse the soft file, each file has multiple records
             let style = ProgressStyle::with_template(
@@ -193,12 +202,12 @@ fn geo_parse_soft(
                 })
                 .collect::<Result<Vec<Vec<RGEOSoftRecord>>, _>>()
         })
-        .map_err(|err| format!("{:?}", err))?;
+        .map_err(|err| fmt_error(&err))?;
 
     // Building the result into R object
     let style = ProgressStyle::with_template(
         "{prefix:.bold.cyan/blue} {human_pos}/{human_len} {spinner:.green} [{elapsed_precise}] {per_sec} (ETA {eta})",
-    ).with_context(|| "Invalid progress style".to_string()).map_err(|err| format!("{:?}", err))?;
+    ).with_context(|| "Invalid progress style".to_string()).map_err(|err| fmt_error(&err))?;
     let pb = ProgressBar::new(record_res.len() as u64)
         .with_prefix("Building R object")
         .with_style(style)
@@ -217,7 +226,8 @@ fn geo_parse_soft(
             out
         })
         .collect::<Result<List, _>>()
-        .map_err(|err| format!("{:?}", err))
+        // extendr_api::Error has no chain; its Display is already concise
+        .map_err(|err| err.to_string())
 }
 
 fn geo_parse_soft_impl(
@@ -285,18 +295,18 @@ fn pprof_geo_parse_soft(
         .frequency(2000)
         .build()
         .with_context(|| format!("Failed to create pprof profile guard"))
-        .map_err(|e| format!("{:?}", e))?;
+        .map_err(|e| fmt_error(&e))?;
     let out = geo_parse_soft(path, format, use_lines, threads);
     if let Ok(report) = guard.report().build() {
         let file = std::fs::File::create(pprof_file)
             .with_context(|| format!("Failed to create file {}", pprof_file))
-            .map_err(|e| format!("{:?}", e))?;
+            .map_err(|e| fmt_error(&e))?;
         let mut options = pprof::flamegraph::Options::default();
         options.image_width = Some(2500);
         report
             .flamegraph_with_options(file, &mut options)
             .with_context(|| format!("Failed to write flamegraph to {}", pprof_file))
-            .map_err(|e| format!("{:?}", e))?;
+            .map_err(|e| fmt_error(&e))?;
     };
     out
 }

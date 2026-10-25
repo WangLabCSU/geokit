@@ -19,17 +19,16 @@ Imports:
     data.table (>= 1.14.9),
     curl (>= 6.0.0),
     rentrez,
+    stats,
     xml2,
     utils
 Suggests:
     BiocGenerics,
     Biobase,
-    stats,
     dplyr,
     ggplot2,
     stringr,
     tidyr,
-    R.utils,
     duckdb,
     querychat (>= 0.3.0),
     knitr,
@@ -39,6 +38,6 @@ ByteCompile: true
 Config/testthat/edition: 3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 8.0.0
 SystemRequirements: Cargo (Rust's package manager), rustc >= 1.87.0
 VignetteBuilder: knitr
+Config/roxygen2/version: 8.1.1

@@ -8,7 +8,9 @@
 #'  [`multi_download`][curl::multi_download].
 #' @param odir Destination directory for downloads. Defaults to the current
 #' working directory.
-#' @return A [GEOSoft][GEOSoft-class] object
+#' @return A [GEOSoft][GEOSoft-class] object (or a list of them when
+#' multiple accessions are provided; subclasses `GEOPlatform` and
+#' `GEOSeries` are returned for GPL and GSE accessions respectively).
 #'
 #' @details
 #'

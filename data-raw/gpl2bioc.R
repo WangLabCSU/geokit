@@ -13,7 +13,7 @@ if (length(new_gpl2bioc)) {
     gpl_soft <- geo_soft(names(new_gpl2bioc), odir = tempdir())
     if (is(gpl_soft, "GEOSoft")) gpl_soft <- list(gpl_soft)
     gpl2bioc_list <- lapply(gpl_soft, function(gpl) {
-        res <- meta(gpl)[
+        res <- metadata(gpl)[
             intersect(
                 c(
                     "Platform_geo_accession", "Platform_title",
@@ -22,7 +22,7 @@ if (length(new_gpl2bioc)) {
                     "Platform_submission_date", "Platform_technology",
                     "Platform_web_link"
                 ),
-                names(meta(gpl))
+                names(metadata(gpl))
             )
         ]
         res <- c(res, bioc_pkg = new_gpl2bioc[[res$Platform_geo_accession]])

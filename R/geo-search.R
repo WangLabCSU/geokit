@@ -33,19 +33,22 @@
 #' }
 #' @export
 geo_search <- function(query, step = 500L, interval = NULL) {
+    assert_string(query)
     assert_number_whole(step, min = 1)
     assert_number_decimal(interval, min = 0, allow_null = TRUE)
     interval <- interval %||% 0
-    records_num <- rentrez::entrez_search("gds", query, retmax = 0L)$count
+    # one search call provides both the total count and the web history used
+    # by the paged fetches below
+    search_res <- rentrez::entrez_search(
+        "gds", query,
+        use_history = TRUE, retmax = 0L
+    )
+    records_num <- search_res$count
     if (records_num == 0L) {
         cli::cli_abort("No items found.")
     }
     retstarts <- seq.int(0L, records_num - 1L, by = step)
     records <- character(length(retstarts))
-    search_res <- rentrez::entrez_search(
-        "gds", query,
-        use_history = TRUE, retmax = 0L
-    )
     bar <- cli::cli_progress_bar(
         name = "NCBI",
         format = "{cli::pb_bar} {cli::pb_current}/{cli::pb_total} [{cli::pb_rate}] | {cli::pb_eta_str}",

@@ -52,7 +52,9 @@ access.}
 working directory.}
 }
 \value{
-A \link[=GEOSoft-class]{GEOSoft} object
+A \link[=GEOSoft-class]{GEOSoft} object (or a list of them when
+multiple accessions are provided; subclasses \code{GEOPlatform} and
+\code{GEOSeries} are returned for GPL and GSE accessions respectively).
 }
 \description{
 By default, this function uses the \code{soft} format for GDS and GSE entities,

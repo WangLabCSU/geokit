@@ -2,6 +2,14 @@
 #'
 #' @param object A [GEOSoft][GEOSoft-class] Class Object.
 #' @param value A R object with the same class of corresponding slots.
+#' @return
+#' The accessor generics return the value of the corresponding slot:
+#' `accession()`, `rcd_name()`, `rcd_type()` and `metadata()` return the
+#' record accession, name, type, and header metadata list; `columns()` and
+#' `datatable()` return the column descriptions and the data table as
+#' data.frames; `gsm()`, `gse()` and `gpl()` return lists of related
+#' `GEOSoft` objects where applicable. The replacement forms return the
+#' modified object.
 #' @name GEOSoft-class
 #' @docType class
 #' @keywords internal
@@ -75,6 +83,7 @@ methods::setValidity("GEOSoft", function(object) {
 methods::setMethod("show", "GEOSoft", function(object) print(object))
 
 #' @export
+#' @rdname GEOSoft-class
 print.GEOSoft <- function(x, ...) {
     soft_print_header(x, ...)
     soft_print_data(x, ...)
@@ -94,12 +103,10 @@ soft_print_footer <- function(x, ...) {
     UseMethod("soft_print_footer")
 }
 
-#' @export
 soft_print_header.GEOSoft <- function(x, ...) {
     cat("<", .subset(methods::is(x), 1L), "> ", "\n", sep = "")
 }
 
-#' @export
 soft_print_data.GEOSoft <- function(x, ...) {
     datatable_dim <- dim(x@datatable)
     cat(
@@ -120,7 +127,6 @@ soft_print_data.GEOSoft <- function(x, ...) {
     }
 }
 
-#' @export
 soft_print_footer.GEOSoft <- function(x, ...) {
     wrap_cat("metadata", names = names(x@metadata))
     wrap_cat("accession", names = x@accession)
@@ -321,7 +327,7 @@ methods::setValidity("GEOPlatform", function(object) {
     if (!all(vapply(object@gse, function(x) {
         methods::is(x, "GEOSoft")
     }, logical(1L), USE.NAMES = FALSE))) {
-        return("the element of slot @gpl list should only contain Class `GEOSoft` object.")
+        return("the element of slot @gse list should only contain Class `GEOSoft` object.")
     }
     TRUE
 })
@@ -429,7 +435,6 @@ methods::setValidity("GEOSeries", function(object) {
     TRUE
 })
 
-#' @export
 soft_print_data.GEOSeries <- function(x, ...) {
     wrap_cat("gsm", names = vapply(
         x@gsm, rcd_name, character(1L),
