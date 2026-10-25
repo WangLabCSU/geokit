@@ -29,6 +29,7 @@ Suggests:
     ggplot2,
     stringr,
     tidyr,
+    R.utils,
     duckdb,
     querychat (>= 0.3.0),
     knitr,

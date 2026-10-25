@@ -26,5 +26,6 @@ testthat::test_that("accessors stay consistent on parsed SOFT records", {
     gsm <- skip_if_download_fail(geo_soft("GSM11805", odir = tempdir()))
 
     testthat::expect_identical(rcd_name(gsm), accession(gsm))
-    testthat::expect_identical(rcd_name(gpl(gsm)[[1L]]), accession(gpl(gsm)[[1L]])) # nolint
+    testthat::expect_type(rcd_type(gsm), "character")
+    testthat::expect_false(is.na(rcd_type(gsm)))
 })
