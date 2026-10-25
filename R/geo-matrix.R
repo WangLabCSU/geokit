@@ -45,8 +45,8 @@ geo_matrix <- function(accession, add_gpl = NULL, pdata_from_soft = FALSE,
     return_object_or_list(matrix_list, accession)
 }
 
-geo_matrix_impl <- function(accession, pdata_from_soft = TRUE,
-                            add_gpl = NULL, ftp_over_https = TRUE,
+geo_matrix_impl <- function(accession, pdata_from_soft = FALSE,
+                            add_gpl = NULL, ftp_over_https = NULL,
                             handle_opts = list(), odir = getwd()) {
     collected <- list(
         ftp_over_https = ftp_over_https,
@@ -159,7 +159,17 @@ parse_gse_matrix <- function(path, gse_soft = NULL, add_gpl = NULL,
         "platform_id", colnames(metadata$Sample),
         ignore.case = TRUE
     )
-    annotation <- .subset(.subset2(metadata$Sample, gpl_column[1L]), 1L)
+    annotation <- if (length(gpl_column)) {
+        .subset(.subset2(metadata$Sample, gpl_column[1L]), 1L)
+    } else {
+        NULL
+    }
+    if (is.null(annotation) || all(is.na(annotation))) {
+        cli::cli_abort(c(
+            "No {.field platform_id} found in the sample metadata of {.val {accession}}.",
+            "i" = "Cannot resolve platform annotation for the series matrix."
+        ))
+    }
 
     if (is.null(add_gpl) || !add_gpl) {
         bioc_pkg <- gpl_map(annotation)$bioc_pkg
@@ -210,8 +220,8 @@ parse_gse_matrix <- function(path, gse_soft = NULL, add_gpl = NULL,
                 )
             }
         } else {
-            cli::cli_alert_info(paste(
-                "Failed to download annotation file for {.val {accession[!downloaded$success]}},",
+            cli::cli_alert_info(c(
+                "Failed to download annotation file for {.val {accession}},",
                 "Platform information will not be added."
             ))
         }
