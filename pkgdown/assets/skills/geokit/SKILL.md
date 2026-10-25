@@ -447,6 +447,9 @@ Always parameterize `odir`, record accessions + date + geokit version in analysi
 | Reference | https://WangLabCSU.github.io/geokit/reference/ |
 | Search vignette | https://WangLabCSU.github.io/geokit/articles/geo-search.html |
 | Metadata DB vignette | https://WangLabCSU.github.io/geokit/articles/geometadb.html |
+| Chat vignette | https://WangLabCSU.github.io/geokit/articles/geo-chat.html |
+| Case study: diabetic nephropathy | https://WangLabCSU.github.io/geokit/articles/case-diabetic-nephropathy.html |
+| Case study: urothelial cancer | https://WangLabCSU.github.io/geokit/articles/case-urothelial-cancer.html |
 | SOFT vignette | https://WangLabCSU.github.io/geokit/articles/geo-soft.html |
 | Matrix vignette | https://WangLabCSU.github.io/geokit/articles/geo-matrix.html |
 | Suppl vignette | https://WangLabCSU.github.io/geokit/articles/geo-suppl.html |

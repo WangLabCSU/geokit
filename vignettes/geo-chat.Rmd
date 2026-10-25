@@ -1,0 +1,171 @@
+---
+title: "Chat with GEO Metadata"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Chat with GEO Metadata}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+`geo_chat()` connects GEO metadata tables to a large language model (LLM) so
+that you can explore them with natural language: *find single-cell studies
+with more than 20 samples*, *which platforms dominate these datasets?*, or
+*filter to post-2020 human studies*. Under the hood it delegates schema
+summarization, SQL querying, and dashboard filtering to the
+[querychat](https://posit-dev.github.io/querychat/r/) package, so the model
+never needs the raw table serialized into the prompt — it queries your local
+copy with SQL instead.
+
+Three functions cover the whole workflow:
+
+- `geo_chat()` creates and returns a `QueryChat` object
+- `geo_shiny()` creates it and immediately launches a Shiny app
+- `geo_console()` creates it and immediately starts a console chat
+
+```{r setup}
+library(geokit)
+```
+
+## Prerequisites
+
+1. Install [querychat](https://posit-dev.github.io/querychat/r/) if it is not
+   already on your system. It is currently archived on CRAN, so install it
+   from the posit-dev R-universe:
+
+   ```r
+   install.packages(
+     "querychat",
+     repos = c("https://posit-dev.r-universe.dev", getOption("repos"))
+   )
+   ```
+
+2. To chat with a plain data frame, querychat needs a local SQL engine:
+   install either `duckdb` or `RSQLite`.
+3. Configure an LLM client (see the next section).
+
+> **Note**: LLM answers are generated from your metadata by an external
+> model, so treat them as suggestions and verify important selections
+> yourself.
+
+## Choosing an LLM Client
+
+The first argument of `geo_chat()`, `client`, is passed to querychat and
+accepts:
+
+- `NULL` (default): querychat uses the `querychat.client` option, the
+  `QUERYCHAT_CLIENT` environment variable, or falls back to
+  `ellmer::chat_openai()`.
+- An [ellmer](https://ellmer.tidyverse.org/) `Chat` object, for full control
+  over model, base URL, and system prompt:
+
+  ```r
+  client <- ellmer::chat_openai(model = "gpt-4o-mini")
+  ```
+
+- A provider string understood by `ellmer::chat()`, such as
+  `"anthropic/claude-sonnet-4-5"`.
+- A function returning a `Chat` object — handy for OpenAI-compatible
+  endpoints or custom credentials. querychat calls the function with
+  `system_prompt = NULL`:
+
+  ```r
+  client <- \(system_prompt = NULL) ellmer::chat_openai_compatible(
+    base_url = "https://example.com/v1",
+    model = "my-model",
+    api_key = Sys.getenv("MY_API_KEY"),
+    system_prompt = system_prompt
+  )
+  ```
+
+API keys are read from environment variables by ellmer (e.g.,
+`OPENAI_API_KEY`, `ANTHROPIC_API_KEY`); set them in your `.Renviron`.
+
+## From Search Results to a Chat Session
+
+A typical session starts with `geo_search()`. The returned data frame can be
+handed to `geo_chat()` directly:
+
+```{r chat-from-search, eval = FALSE}
+records <- geo_search(
+  "diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"
+)
+
+chat <- geo_chat(
+  NULL,
+  records,
+  data_description = paste(
+    "GEO DataSets records about diabetes in human, one row per record.",
+    "The Contains column lists related GSM/GSE/GPL accessions."
+  )
+)
+```
+
+`data_description` gives the model background about what the columns mean,
+which noticeably improves query quality. Use `extra_instructions` for
+additional behavioral rules (both are passed through to querychat).
+
+## From a Metadata Database to a Chat Session
+
+For richer series-level metadata, build a local database with `geo_meta()`
+first (see `vignette("geometadb")`) and chat with that table:
+
+```{r chat-from-meta, eval = FALSE}
+meta <- geo_meta(
+  records[["Series Accession"]][1:20],
+  odir = tempdir()
+)
+
+qc <- geo_chat(
+  NULL,
+  meta,
+  data_description = paste(
+    "One row per GEO Series fetched from SOFT metadata.",
+    "Series_title, Series_summary and Series_overall_design describe each",
+    "study; Series_sample_id lists its GSM accessions separated by '; '."
+  )
+)
+```
+
+The object returned by `geo_chat()` is a standard `QueryChat` object, so you
+can launch the interface whenever you are ready:
+
+```{r launch, eval = FALSE}
+qc$app() # or qc$console() for the terminal
+```
+
+The convenience wrappers do both steps at once:
+
+```{r wrappers, eval = FALSE}
+geo_shiny(NULL, records) # build + launch Shiny app
+geo_console(NULL, records) # build + start console chat
+```
+
+## A Self-Contained Example
+
+The following example needs no LLM access — it only builds and destroys the
+chat object, which is useful to verify your installation:
+
+```{r demo-object, eval = rlang::is_installed("querychat") && (rlang::is_installed("duckdb") || rlang::is_installed("RSQLite"))}
+records <- data.frame(
+  `Series Accession` = c("GSE1", "GSE2"),
+  Title = c("human diabetes study", "mouse liver study"),
+  Type = c("Expression profiling by array", "RNA-seq"),
+  Samples = c(12L, 8L),
+  check.names = FALSE
+)
+
+chat <- geo_chat(NULL, records, cleanup = TRUE)
+chat$cleanup()
+```
+
+## Session Information
+```{r}
+sessionInfo()
+```
