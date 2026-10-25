@@ -44,7 +44,7 @@ parse_sample_data.data.frame <- function(x, ..., fields = NULL, sep = ":") {
             }, logical(1L), USE.NAMES = FALSE)
             mean(have_sep, na.rm = TRUE) >= 0.5
         }, logical(1L), USE.NAMES = FALSE)
-        fields <- colnames(x)[cols[column_with_sep]]
+        fields <- colnames(x)[which(cols)[column_with_sep]]
     }
     if (length(fields) == 0L) {
         return(set_rownames(x, "geo_accession"))
@@ -121,7 +121,7 @@ parse_characteristics <- function(data, characteristic_cols, sep = ":") {
         ))
     }
     characteristics <- lapply(characteristic_cols, function(col) {
-        data <- parse_key_value_elements(.subset2(data, col), sep = ":")
+        data <- parse_key_value_elements(.subset2(data, col), sep = sep)
         if (nrow(data) && ncol(data)) {
             # we extract the last "ch\\d*" pattern as the column
             # name, which is the first group defined by parentheses.
