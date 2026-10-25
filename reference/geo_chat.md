@@ -170,7 +170,7 @@ if (requireNamespace("querychat", quietly = TRUE) &&
 #> ℹ Install it with `install.packages("ggsql")`; continuing without the "visualize" tool.
 #> This warning is displayed once per session.
 #> duckdb keeps downloaded extensions and secrets in a temporary directory:
-#> ℹ /tmp/Rtmpk84HSB/duckdb
+#> ℹ /tmp/RtmpLP9jCA/duckdb
 #> This is removed when the R session ends.
 #> • Extensions are re-downloaded each session.
 #> • Secrets are lost.

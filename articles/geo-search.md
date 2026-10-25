@@ -32,8 +32,8 @@ we can get these records by following code, the returned object is a
 diabetes_gse_records <- geo_search(
   "diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"
 )
-#> ■■■■■■■■■                        500/1925 [340/s] | ETA:  4s
-#> Get records from NCBI for 1925 queries in 5s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■         1500/1925 [524/s] | ETA:  1s
+#> Get records from NCBI for 1925 queries in 3.8s
 #> 
 #> → Parsing GEO records
 head(diabetes_gse_records[1:5])

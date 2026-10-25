@@ -178,7 +178,7 @@ chat <- geo_chat(NULL, records, cleanup = TRUE)
 #> ℹ Install it with `install.packages("ggsql")`; continuing without the "visualize" tool.
 #> This warning is displayed once per session.
 #> duckdb keeps downloaded extensions and secrets in a temporary directory:
-#> ℹ /tmp/RtmpawMNnK/duckdb
+#> ℹ /tmp/RtmpZ1tfGv/duckdb
 #> This is removed when the R session ends.
 #> • Extensions are re-downloaded each session.
 #> • Secrets are lost.
