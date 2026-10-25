@@ -2,12 +2,15 @@ pandoc: 3.8.3
 pkgdown: 2.2.1
 pkgdown_sha: ~
 articles:
+  case-diabetic-nephropathy: case-diabetic-nephropathy.html
+  case-urothelial-cancer: case-urothelial-cancer.html
+  geo-chat: geo-chat.html
   geo-matrix: geo-matrix.html
   geo-search: geo-search.html
   geo-soft: geo-soft.html
   geo-suppl: geo-suppl.html
   geometadb: geometadb.html
-last_built: 2026-09-04T03:44Z
+last_built: 2026-10-25T14:11Z
 urls:
   reference: https://WangLabCSU.github.io/geokit/reference
   article: https://WangLabCSU.github.io/geokit/articles

@@ -78,7 +78,7 @@ Biobase::annotation(gse_matix)
 sessionInfo()
 #> R version 4.6.1 (2026-06-24)
 #> Platform: x86_64-pc-linux-gnu
-#> Running under: Ubuntu 24.04.4 LTS
+#> Running under: Ubuntu 24.04.5 LTS
 #> 
 #> Matrix products: default
 #> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -100,15 +100,15 @@ sessionInfo()
 #> [1] geokit_0.0.2
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] cli_3.6.6           knitr_1.51          rlang_1.3.0        
-#>  [4] xfun_0.60           otel_0.2.0          generics_0.1.4     
+#>  [1] cli_3.6.6           knitr_1.52          rlang_1.3.0        
+#>  [4] xfun_0.62           otel_0.2.0          generics_0.1.4     
 #>  [7] textshaping_1.0.5   jsonlite_2.0.0      htmltools_0.5.9    
 #> [10] ragg_1.5.2          sass_0.4.10         rmarkdown_2.32     
 #> [13] Biobase_2.72.0      evaluate_1.0.5      jquerylib_0.1.4    
 #> [16] fastmap_1.2.0       yaml_2.3.12         lifecycle_1.0.5    
 #> [19] compiler_4.6.1      codetools_0.2-20    fs_2.1.0           
 #> [22] systemfonts_1.3.2   digest_0.6.39       R6_2.6.1           
-#> [25] curl_8.0.0          bslib_0.12.0        tools_4.6.1        
+#> [25] curl_8.1.0          bslib_0.12.0        tools_4.6.1        
 #> [28] xml2_1.6.0          pkgdown_2.2.1       BiocGenerics_0.58.1
 #> [31] cachem_1.1.0        desc_1.4.3
 ```

@@ -26,6 +26,10 @@ chat."></head><body>
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/geo-search.html">Searching</a></li>
     <li><a class="dropdown-item" href="../articles/geometadb.html">GEO metadata</a></li>
+    <li><a class="dropdown-item" href="../articles/geo-chat.html">Chat with GEO metadata</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" href="../articles/case-diabetic-nephropathy.html">Case study: diabetic nephropathy</a></li>
+    <li><a class="dropdown-item" href="../articles/case-urothelial-cancer.html">Case study: urothelial cancer</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../articles/geo-soft.html">GEO SOFT FIle</a></li>
     <li><a class="dropdown-item" href="../articles/geo-matrix.html">GSE Matrix FIle</a></li>
@@ -191,8 +195,11 @@ metadata, identify relevant studies.</p>
 <span class="r-in"><span>    <span class="va">chat</span> <span class="op">&lt;-</span> <span class="fu">geo_chat</span><span class="op">(</span><span class="cn">NULL</span>, <span class="va">records</span>, cleanup <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span>    <span class="va">chat</span><span class="op">$</span><span class="fu">cleanup</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The "visualize" tool requires {.pkg ggsql} 0.5.2 or later.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">ℹ</span> Install it with `install.packages("ggsql")`; continuing without the "visualize" tool.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #555555;">This warning is displayed once per session.</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> duckdb keeps downloaded extensions and secrets in a temporary directory:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">ℹ</span> /tmp/RtmpZ0UFTX/duckdb</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">ℹ</span> /tmp/Rtmpk84HSB/duckdb</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> This is removed when the R session ends.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> Extensions are re-downloaded each session.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> Secrets are lost.</span>

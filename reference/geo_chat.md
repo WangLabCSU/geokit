@@ -166,8 +166,11 @@ if (requireNamespace("querychat", quietly = TRUE) &&
     chat <- geo_chat(NULL, records, cleanup = TRUE)
     chat$cleanup()
 }
+#> Warning: The "visualize" tool requires {.pkg ggsql} 0.5.2 or later.
+#> ℹ Install it with `install.packages("ggsql")`; continuing without the "visualize" tool.
+#> This warning is displayed once per session.
 #> duckdb keeps downloaded extensions and secrets in a temporary directory:
-#> ℹ /tmp/RtmpZ0UFTX/duckdb
+#> ℹ /tmp/Rtmpk84HSB/duckdb
 #> This is removed when the R session ends.
 #> • Extensions are re-downloaded each session.
 #> • Secrets are lost.

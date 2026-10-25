@@ -55,53 +55,59 @@ for details.
 # restrictions and limited bandwidth usage for large queries.
 # \donttest{
 out <- geo_search("diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]")
-#> ■■■■■■■■■                        500/1893 [444/s] | ETA:  3s
-#> ■■■■■■■■■■■■■■■■■■■■■■■■■        1500/1893 [345/s] | ETA:  1s
-#> Get records from NCBI for 1893 queries in 5.5s
+#> ■■■■■■■■■■■■■■■■■                1000/1925 [486/s] | ETA:  2s
+#> Get records from NCBI for 1925 queries in 4.5s
 #> 
 #> → Parsing GEO records
 head(out)
-#>                                                                                                                                                                        Title
-#> 1 Calpain inhibition prevents high-glucose-induced autophagy blockade and mitochondrial fragmentation in endothelial cells and preserves vascular functions in diabetic mice
-#> 2                                                                                                   Nonviral delivery of chemically modified tRNA rescues nonsense mutations
-#> 3                               Micro RNA expression profiling using NanoString technology from IgA Nephropathy patients and Non-IgA nephropathy patients from Indian cohort
-#> 4                                                                      Protective IFIH1 variant reduces islet stress and dysfunction in a type 1 diabetes genetic background
-#> 5              Single-nucleus and bulk transcriptomic atlas of human visceral adipose tissue across metabolic disease states identifies THBS1 as a fibro-inflammatory driver
-#> 6                                                                  Engineering the insulin signal peptide to protect human pancreatic beta cells from autoimmune destruction
-#>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             Summary
-#> 1 Endothelial dysfunction is a major contributor to diabetic vascular complications, yet the mechanisms linking hyperglycemia to impaired endothelial homeostasis remain insufficiently defined. This study identifies calpains as key regulators of endothelial autophagy and mitophagy under diabetic conditions. In HUVECs and primary lung endothelial cells, hyperglycemia activated calpains and induced autophagic flux blockade, characterized by SQSTM1 accumulation, reduced LC3B expression, and impaired mitophagy associated with mitochondrial fragmentation. more...
-#> 2                                                                                                                                              Suppressor transfer RNAs (sup-tRNAs) can rescue disease-causing nonsense mutations by promoting readthrough of premature termination codons (PTCs). Their clinical translation is limited by suboptimal activity and inefficient in vivo delivery. In this work, we combined site-specific chemical modification of sup-tRNAs with cargo-tailored pulmonary lipid nanoparticle (LNP) engineering to overcome these barriers. more...
-#> 3                                                                                                   The current study makes use of NanoString targeted technology to profile urinary exosomal miRNAs from IgA nephropathy affected patients and corresponding healthy controls. In addition to IgA nephropathy, disease controls belonging to the condition of Lupus nephritis, Focal segmental glomerulosclerosis, Diabetic nephropathy, Minimal change disease, Membranous nephropathy and Hypertensive nephropathy were also assayed for their miRNA expression profile. more...
-#> 4                                          Genome-wide association studies have identified IFIH1, which encodes the double-stranded RNA sensor MDA5, as a type 1 diabetes (T1D) risk locus. The IFIH1 E627* variant is associated with protection from T1D, whereas A946T is associated with increased risk. To examine how these variants influence islet responses to inflamattory and viral stress, we used CRISPR-Cas9 to engineer E627* or A946T into human pluripotent stem cells from a T1D donor and differentiated them into stem cell-derived islets (SC-islets). more...
-#> 5                                                                                                                          The cellular complexity of adipose tissue plays a critical role in the pathogenesis of metabolic disease; however, mechanisms underlying adipose dysfunction remain poorly understood. Here, we constructed a single-nucleus and bulk transcriptomic atlas of human visceral adipose tissues from an ethnically homogeneous cohort with defined metabolic states: lean with normal glucose tolerance, obesity, and obesity with type 2 diabetes. more...
-#> 6                                                                                                                              The autoreactive T cells that destroy beta cells in type 1 diabetes are largely targeting insulin signal peptide fragments. HLA knockout beta-cells have been proposed to create hypo-immune cells, but this strategy poses significant tumorigenic risks. As an alternative, we hypothesized that insulin signal peptide modification would give rise to beta-cells evading autoimmune recognition while maintaining insulin functionality. more...
-#>       Organism                                               Type
-#> 1 Homo sapiens Expression profiling by high throughput sequencing
-#> 2 Homo sapiens                                              Other
-#> 3 Homo sapiens                                              Other
-#> 4 Homo sapiens Expression profiling by high throughput sequencing
-#> 5 Homo sapiens Expression profiling by high throughput sequencing
-#> 6 Homo sapiens Expression profiling by high throughput sequencing
-#>                                                                          FTP download
-#> 1       GEO (RESULTS, TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE339nnn/GSE339355/
-#> 2                GEO (CSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE326nnn/GSE326462/
-#> 3                GEO (RCC) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE263nnn/GSE263198/
-#> 4      GEO (CSV, MTX, TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE318nnn/GSE318038/
-#> 5 GEO (CSV, MTX, TSV, TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE342nnn/GSE342773/
-#> 6                GEO (TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE324nnn/GSE324575/
-#>          ID Project SRA Run Selector   Contains Datasets Platforms
-#> 1 200339355    <NA>             <NA> 12 Samples     <NA>  GPL18573
-#> 2 200326462    <NA>             <NA> 27 Samples     <NA>  GPL34281
-#> 3 200263198    <NA>             <NA> 41 Samples     <NA>  GPL33820
-#> 4 200318038    <NA>             <NA>  2 Samples     <NA>  GPL24676
-#> 5 200342773    <NA>             <NA> 39 Samples     <NA>  GPL24676
-#> 6 200324575    <NA>             <NA>  6 Samples     <NA>  GPL18573
+#>                                                                                                                                                     Title
+#> 1 Reduction of SIRPα connects podocyte metabolism dysfunction to inflammatory activation via promoting PKM2 nuclear translocation in diabetes nephropathy
+#> 2                            A comprehensive epithelial and immune characterization of autoimmune gastritis reveals novel aspects of disease pathogenesis
+#> 3      Human visceral adipose tissue NK cell subsets link immunometabolic inflammation to liver fibrosis and impaired weight loss after bariatric surgery
+#> 4                                                                       A single-cell atlas of diabetes-associated remodeling in the human corneal limbus
+#> 5                                                                                                    NOTCH3 variants cause familial partial lipodystrophy
+#> 6    Genomic and epigenomic insights into purkinje and granule neurons in Alzheimer’s disease and related dementia using single-nucleus multiome analysis
+#>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       Summary
+#> 1                                                                                                                                                                                A central cause of diabetic nephropathy (DN) is podocyte injury. There are many factors causing podocyte injury in DN, such as hyperglycemia, oxidative stress and inflammation. In this study, a signal regulator protein α (SIRPα) was found to play a critical role in regulating podocyte metabolism, oxidative stress and inflammatory.
+#> 2 Autoimmune gastritis (AIG) is an understudied, adaptive immune-mediated disease characterized by chronic gastric inflammation and autoreactive T and B cells. The epithelial-immune crosstalk leading to a pre-neoplastic environment in AIG is largely unexplored. We profiled the AIG milieu using single cell RNA sequencing (scRNA-seq), T cell receptor sequencing (TCR-seq), and flow cytometry from gastric corpus biopsies and peripheral blood of 5 healthy patients and 15 patients with established AIG. more...
+#> 3                                                                                                         Obesity is associated with chronic inflammation in visceral adipose tissue (VAT), but the molecular mechanisms remain incompletely understood. We analyzed gene expression profiles of VAT obtained from individuals with obesity undergoing sleeve gastrectomy and non-obese controls using the Affymetrix Clariom S Human Array. Raw and processed microarray data are provided together with sample annotations.
+#> 4                                                                 The limbus at the corneo-conjunctival junction is a complex niche of cell populations whose interactions and regulation affect the overall health of the cornea. Diabetes Mellitus (DM) is a systemic disease that can affect these functions of the limbus and lead to complications including epithelial defects and fragility, abnormal wound repair, and the dysfunction of limbal epithelial stem cells (LESC), known as diabetic keratopathy. more...
+#> 5                                       Molecular defects in some ultra-rare subtypes of familial lipodystrophies remain unidentified. We identified novel NOTCH3 heterozygous variants in familial partial lipodystrophy (FPL) pedigrees. All variants were clustered in the heterodimerization domain of the negative regulatory region of NOTCH3. RNA-Seq of skin fibroblasts revealed significantly higher RNA expression of NOTCH3 and activation of widespread senescence pathways in the FPL patients versus controls.
+#> 6                                     Although the human cerebellum is known to be neuropathologically impaired in Alzheimer’s disease (AD) and AD-related dementias (ADRD), the cell type-specific transcriptional and epigenomic changes that contribute to this pathology are not well understood. Here, we report single-nucleus multiome (snRNA-seq and snATAC-seq) analysis of 103,861 nuclei isolated from both cerebellum (n = 9) and frontal cortex (n = 6) of AD/ADRD patients and normal controls (n = 8). more...
+#>       Organism
+#> 1 Homo sapiens
+#> 2 Homo sapiens
+#> 3 Homo sapiens
+#> 4 Homo sapiens
+#> 5 Homo sapiens
+#> 6 Homo sapiens
+#>                                                                                                                   Type
+#> 1                                                                   Expression profiling by high throughput sequencing
+#> 2                                                            Other; Expression profiling by high throughput sequencing
+#> 3                                                                                        Expression profiling by array
+#> 4                                                                   Expression profiling by high throughput sequencing
+#> 5                                                                   Expression profiling by high throughput sequencing
+#> 6 Expression profiling by high throughput sequencing; Genome binding/occupancy profiling by high throughput sequencing
+#>                                                                               FTP download
+#> 1                     GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE246nnn/GSE246105/
+#> 2      GEO (CSV, MTX, TSV, TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE350nnn/GSE350856/
+#> 3                     GEO (CEL) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE339nnn/GSE339099/
+#> 4                GEO (MTX, TSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE326nnn/GSE326016/
+#> 5                     GEO (TAB) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE280nnn/GSE280409/
+#> 6 GEO (H5, MTX, TAR, TSV, XLSX) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE331nnn/GSE331288/
+#>          ID Project SRA Run Selector   Contains Datasets         Platforms
+#> 1 200246105    <NA>             <NA>  4 Samples     <NA>          GPL16791
+#> 2 200350856    <NA>             <NA> 55 Samples     <NA> GPL24676 GPL34284
+#> 3 200339099    <NA>             <NA> 10 Samples     <NA>          GPL23159
+#> 4 200326016    <NA>             <NA>  6 Samples     <NA>          GPL24676
+#> 5 200280409    <NA>             <NA>  8 Samples     <NA>          GPL18573
+#> 6 200331288    <NA>             <NA> 52 Samples     <NA>          GPL24676
 #>   Series Accession
-#> 1        GSE339355
-#> 2        GSE326462
-#> 3        GSE263198
-#> 4        GSE318038
-#> 5        GSE342773
-#> 6        GSE324575
+#> 1        GSE246105
+#> 2        GSE350856
+#> 3        GSE339099
+#> 4        GSE326016
+#> 5        GSE280409
+#> 6        GSE331288
 # }
 ```
