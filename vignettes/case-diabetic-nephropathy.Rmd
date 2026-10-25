@@ -60,7 +60,10 @@ head(dn_gse[, 1:3])
 ## 2. Extract Sample Information
 
 Extract the number of samples from the `Contains` field to enable filtering
-by sample size.
+by sample size. This count covers every sample in a series regardless of
+group — cases, controls, and technical replicates — so treat it as an upper
+bound; group sizes and balance must be verified from sample annotations
+before a dataset is included in a meta-analysis.
 
 ```{r extract_samples}
 dn_gse <- dn_gse |>
@@ -76,8 +79,12 @@ summary(dn_gse$number_of_samples)
 
 ## 3. Filter by Quality Criteria
 
-Apply filters for sample size and study type to focus on high-quality
-expression profiling studies.
+Apply filters for sample size and study type to focus on candidate
+expression profiling studies. Note that this filter admits both microarray
+and RNA-seq records ("expression profiling by high throughput sequencing");
+intensity- and count-based studies cannot be pooled directly, so process
+them separately or tighten the filter to arrays for a single integrated
+analysis.
 
 ```{r filter_datasets}
 dn_gse_filtered <- dn_gse |>
@@ -86,7 +93,8 @@ dn_gse_filtered <- dn_gse |>
     number_of_samples >= 6,
     # Focus on expression profiling studies
     str_detect(Type, regex("expression profiling", ignore_case = TRUE)),
-    # Exclude methylation studies
+    # Exclude methylation studies (defensive: no current GEO Type string
+    # passes the filters above, but this guards against future variants)
     !str_detect(Type, regex("methylation", ignore_case = TRUE)),
     # Exclude compound SuperSeries so each study has a single assay type
     !str_detect(Type, ";")
@@ -138,6 +146,10 @@ dn_metadb <- dn_metadb |>
 
 Categorize datasets by criteria relevant to diabetic nephropathy research,
 searching the title, summary, and overall design fields of each series.
+These keyword assignments are screening heuristics only — inspect each
+candidate's design and sample annotations (tissue, cell type, group
+definitions) before final inclusion, as keyword matches can also pick up
+cell-line or animal studies.
 
 ```{r categorize, eval = FALSE}
 dn_metadb <- dn_metadb |>
@@ -318,7 +330,7 @@ This workflow demonstrated how to:
 - Visualize dataset characteristics over time
 - Prepare a curated list for downstream meta-analysis
 
-The systematic approach ensures reproducibility and helps identify the most
+The systematic approach supports reproducibility and helps identify the most
 suitable datasets for gene expression meta-analysis in diabetic nephropathy
 research.
 

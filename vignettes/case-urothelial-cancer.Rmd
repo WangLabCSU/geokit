@@ -21,8 +21,9 @@ exploratory analysis with publication-quality visualizations.
 
 ## Introduction
 
-Urothelial carcinoma (bladder cancer) is one of the most common urological
-malignancies. Meta-analysis of gene expression studies can reveal consistent
+Urothelial carcinoma, the most common histological subtype of bladder
+cancer, is one of the most common urological malignancies. Meta-analysis of
+gene expression studies can reveal consistent
 molecular alterations across patient cohorts. This workflow shows how to:
 
 - Search and combine results for bladder/urothelial cancer datasets
@@ -43,7 +44,8 @@ library(ggplot2)
 ## 1. Dataset Discovery
 
 Search for bladder and urothelial cancer datasets using multiple related
-terms to maximize coverage.
+terms to maximize coverage. Note that "urothelial carcinoma" is the standard
+histopathological term and matches records the other two terms miss.
 
 ```{r search_uc, cache = TRUE}
 uc_searches <- list(
@@ -52,6 +54,9 @@ uc_searches <- list(
   ),
   urothelial = geo_search(
     "urothelial cancer[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"
+  ),
+  carcinoma = geo_search(
+    "urothelial carcinoma[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"
   )
 )
 
@@ -62,6 +67,11 @@ head(uc_gse[, 1:3])
 ```
 
 ## 2. Extract and Process Sample Information
+
+The count parsed below covers every sample in a series regardless of group —
+cases, controls, and technical replicates — so treat it as an upper bound.
+Group sizes and balance (e.g., tumor vs. normal) must be verified from the
+sample annotations before a dataset is actually included in a meta-analysis.
 
 ```{r extract_info}
 uc_gse <- uc_gse |>
@@ -78,7 +88,7 @@ summary(uc_gse$number_of_samples)
 
 ## 3. Filter Datasets by Quality Criteria
 
-Apply stringent filters to select high-quality datasets suitable for
+Apply stringent filters to select candidate datasets suitable for
 meta-analysis.
 
 ```{r filter_quality}
@@ -90,7 +100,8 @@ uc_gse_filtered <- uc_gse |>
     str_detect(Type, regex("expression profiling", ignore_case = TRUE)),
     # Prefer microarray studies (exclude RNA-seq for now)
     str_detect(Type, regex("array", ignore_case = TRUE)),
-    # Exclude methylation studies
+    # Exclude methylation studies (defensive: no current GEO Type string
+    # passes the filters above, but this guards against future variants)
     !str_detect(Type, regex("methylation", ignore_case = TRUE)),
     # Exclude compound SuperSeries so each study has a single assay type
     !str_detect(Type, ";")
@@ -98,7 +109,7 @@ uc_gse_filtered <- uc_gse |>
   dplyr::arrange(desc(number_of_samples))
 
 cat(sprintf(
-  "\nFiltered to %d high-quality datasets (%.1f%% of original)\n",
+  "\nFiltered to %d candidate datasets (%.1f%% of original)\n",
   nrow(uc_gse_filtered),
   100 * nrow(uc_gse_filtered) / nrow(uc_gse)
 ))
@@ -142,6 +153,9 @@ cat(sprintf("Successfully downloaded %d datasets\n", length(expression_sets)))
 ## 5. Data Transformation
 
 Apply log transformation to ensure data comparability across datasets.
+`log_trans()` applies `log2(x + 1)` only when a GEO2R-style heuristic
+indicates the data are not already on a log scale — check the printed ranges
+to confirm each dataset was handled as intended.
 
 ```{r transform_data, eval = FALSE}
 expression_sets_log <- lapply(expression_sets, log_trans)
@@ -182,7 +196,7 @@ ggplot(expr_df, aes(x = sample, y = expression)) +
       names(expression_sets_log)[1]
     ),
     x = "Sample",
-    y = "Log2 Expression"
+    y = "Expression (log2 scale)"
   ) +
   theme_minimal() +
   theme(
@@ -245,6 +259,8 @@ ggplot(cor_df, aes(x = Sample1, y = Sample2, fill = Correlation)) +
   geom_tile() +
   scale_fill_gradient2(
     low = "blue", mid = "white", high = "red",
+    # Midpoint at the typical sample-correlation level on log expression;
+    # adjust to the observed range of your data
     midpoint = 0.8,
     limits = c(min(cor_df$Correlation), 1),
     name = "Pearson\nCorrelation"
@@ -294,17 +310,29 @@ write.csv(summary_table, "uc_expression_summary.csv", row.names = FALSE)
 
 ## 7. Data Integration Considerations
 
-When integrating multiple datasets for meta-analysis:
+**Probe identifiers are not gene identifiers.** `geo_matrix()` returns series
+matrices whose rows are platform probe IDs (check
+`Biobase::annotation(eset)` and the `featureData` slot). Intersecting
+rownames is only valid when all datasets come from the same — or a nested —
+platform. Across mixed platforms (e.g., Affymetrix and Illumina), map probes
+to genes with the platform annotation first, then intersect on gene
+identifiers.
 
 ```{r integration_tips, eval = FALSE}
-# 1. Check for common genes across datasets
+# 1. Inspect the platform annotation of each dataset, then find common
+#    features. Remember: intersecting rownames only works across the same
+#    (or nested) platforms; for mixed platforms, map probes to genes via
+#    the platform annotation (featureData / Bioconductor annotation
+#    packages) first.
+sapply(expression_sets_log, Biobase::annotation)
+
 common_genes <- Reduce(intersect, lapply(expression_sets_log, function(eset) {
   rownames(Biobase::exprs(eset))
 }))
 
-cat(sprintf("Common genes across all datasets: %d\n", length(common_genes)))
+cat(sprintf("Common features across all datasets: %d\n", length(common_genes)))
 
-# 2. Subset to common genes
+# 2. Subset to common features
 expression_sets_common <- lapply(expression_sets_log, function(eset) {
   eset[common_genes, ]
 })
@@ -351,7 +379,7 @@ ggplot(mean_expr_df, aes(x = mean_expression, color = dataset)) +
   geom_density(linewidth = 1, alpha = 0.7) +
   labs(
     title = "Mean Expression Distribution Across Datasets",
-    x = "Mean Log2 Expression",
+    x = "Mean expression (log2 scale)",
     y = "Density",
     color = "Dataset"
   ) +
