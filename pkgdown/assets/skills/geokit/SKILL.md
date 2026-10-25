@@ -10,7 +10,7 @@ license: MIT
 compatibility: >
   Requires R >= 3.5 with package geokit. Network access to NCBI GEO/Entrez is
   required for live queries and downloads. Biobase is required for geo_matrix()
-  ExpressionSet output. querychat and duckdb are required for geo_chat family.
+  ExpressionSet output. querychat plus a local SQL engine (duckdb or RSQLite) are required for the geo_chat family.
   Optional NCBI ENTREZ_KEY improves search rate limits.
 metadata:
   author: WangLabCSU
