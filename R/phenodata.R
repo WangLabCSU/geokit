@@ -126,15 +126,16 @@ parse_characteristics <- function(data, characteristic_cols, sep = ":") {
             # we extract the last "ch\\d*" pattern as the column
             # name, which is the first group defined by parentheses.
             # This is just the second column of `str_match`.
-            # Sometimes there may be a "\\.\\d*" tail
-            new_names <- paste0(
-                str_match(col, "(ch\\d*)(\\.\\d*)?(_\\d*)?$")[
-                    , 2L,
-                    drop = TRUE
-                ],
-                "_",
-                colnames(data)
-            )
+            # Sometimes there may be a "\\.\\d*" tail.
+            # Columns without a "ch\\d*" suffix (custom `fields`) have no
+            # match group; fall back to the column name itself as the prefix.
+            matched <- str_match(col, "(ch\\d*)(\\.\\d*)?(_\\d*)?$")
+            prefix <- if (ncol(matched) >= 2L) {
+                matched[, 2L, drop = TRUE]
+            } else {
+                col
+            }
+            new_names <- paste0(prefix, "_", colnames(data))
             colnames(data) <- new_names
             data
         } else {

@@ -42,12 +42,17 @@ str_match <- function(string, pattern, ..., fixed = FALSE) {
     )
     out <- regmatches(string, matches, invert = FALSE)
     # a non-matching element yields character(0); pad it with an all-NA row so
-    # the result always keeps one row (and one column per capture group) per
-    # input element, like stringr::str_match()
-    n_cols <- if (length(matches)) {
-        length(attr(matches[[1L]], "match.length"))
-    } else {
-        1L
+    # the result always keeps one row per input element, like
+    # stringr::str_match(). the column count (full match + capture groups)
+    # must come from an element that actually matched: a non-match reports a
+    # single -1 position and carries no group information, so when nothing
+    # matches the result degrades to one all-NA column
+    n_cols <- 1L
+    for (m in matches) {
+        if (m[[1L]] != -1L) {
+            n_cols <- length(attr(m, "match.length"))
+            break
+        }
     }
     out <- lapply(out, function(x) {
         if (!length(x)) rep(NA_character_, n_cols) else x
