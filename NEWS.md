@@ -6,7 +6,15 @@
 * Added a public Agent Skills file for AI agents, published with the pkgdown
   site at <https://wanglabcsu.github.io/geokit/skills/geokit/SKILL.md>.
 * Fixed `parse_sample_data()` ignoring its `sep` argument when parsing
-  characteristic key-value pairs.
+  characteristic key-value pairs, silently skipping non-contiguous
+  `characteristics_ch` columns, and crashing on custom `fields` names
+  without a `ch<N>` suffix (they now prefix parsed columns with the field
+  name).
+* Fixed plain-FTP downloads (`ftp_over_https = FALSE`) being deleted and
+  reported as failures after a success-detection regression.
+* Fixed a guaranteed crash in `geo_matrix()` when a platform annotation
+  download fails, and clarified the error when sample metadata lacks
+  `platform_id`.
 * CI resolves `querychat` from the posit-dev R-universe after its CRAN
   archive; workflows and the skill file keep working unchanged.
 
