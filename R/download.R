@@ -80,10 +80,18 @@ list_directory_url <- function(accession, format, ftp_over_https,
     urls
 }
 
-#' Download utils function with good message.
-#' @return If fail is `TRUE`, always return a character path if downloading
-#'   succeed, otherwise, stop with error message. If fail is `FALSE`, always
-#'   return a list.
+#' Download files with informative messages.
+#'
+#' Download `urls` into `ofiles`, remove partially downloaded files on
+#' failure, and optionally raise an error when any download fails.
+#'
+#' @param urls Character of URLs to download.
+#' @param ofiles Character of local destination paths, aligned with `urls`.
+#' @param handle_opts Options passed to [curl::multi_download()].
+#' @param error If `TRUE` (default), raise `geokit_download_error` when any
+#'   download fails.
+#' @return A list with elements `urls`, `paths`, and `success` (a logical
+#'   vector aligned with `urls`).
 #' @noRd
 download_inform <- function(urls, ofiles, handle_opts, error = TRUE) {
     out <- list(
@@ -111,10 +119,9 @@ download_inform <- function(urls, ofiles, handle_opts, error = TRUE) {
             urls = urls, destfiles = ofiles, resume = FALSE,
             !!!handle_opts
         ))
-        # FTP: 200L, 206L, 416L, 226L
-        # ADB: 200L, 206L, 416L
+        # success codes: HTTP 200/206/416 and FTP 226 (transfer complete)
         success <- !is.na(status$success) & status$success &
-            status$status_code == 200L
+            status$status_code %in% c(200L, 206L, 416L, 226L)
         removed <- !success & file.exists(ofiles)
         if (any(removed)) file.remove(ofiles[removed])
         if (!all(success) && error) {
@@ -132,10 +139,10 @@ download_inform <- function(urls, ofiles, handle_opts, error = TRUE) {
 }
 
 setup_handle_opts <- function(handle_opts) {
+    # the empty Expect header disables curl's default `Expect: 100-continue`,
+    # which otherwise stalls FTP transfers
     handle_opts$httpheader <- handle_opts$httpheader %||%
-        utils::getFromNamespace("format_request_headers", "curl")(
-            list("User-Agent" = "geokit")
-        )
+        c("User-Agent: geokit", "Expect: ")
     handle_opts$followlocation <- handle_opts$followlocation %||% TRUE
     handle_opts$connecttimeout <- handle_opts$connecttimeout %||% 60L
     # this is recommended by GEO FTP site

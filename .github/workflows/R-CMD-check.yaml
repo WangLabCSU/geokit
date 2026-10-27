@@ -23,7 +23,12 @@ jobs:
         config:
           - {os: macos-latest,   r: 'release'}
           - {os: windows-latest, r: 'release'}
-          - {os: ubuntu-latest,   r: 'devel', http-user-agent: 'release'}
+          # Pinned to 24.04: ubuntu-latest moved to 26.04 (resolute) on
+          # 2026-10-26, and RSPM does not yet serve R-devel binaries for
+          # duckdb there, forcing a ~1h source build that fails to install.
+          # R-release/oldrel-1 binaries on resolute are fine; revisit the
+          # pin once RSPM's resolute R-devel coverage matures.
+          - {os: ubuntu-24.04,   r: 'devel', http-user-agent: 'release'}
           - {os: ubuntu-latest,   r: 'release'}
           - {os: ubuntu-latest,   r: 'oldrel-1'}
 

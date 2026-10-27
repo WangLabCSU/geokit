@@ -9,14 +9,14 @@
 #' @param pattern character string containing a
 #' [regular expression][base::regex] to be matched in the supplementary file
 #' names.
-#' @return A list (or a character atomic verctor if only one `accession` is
+#' @return A list (or a character atomic vector if only one `accession` is
 #' provided) of the full file paths of the resulting downloaded files.
 #' @examples
 #' \donttest{
 #' geo_suppl("GSM1137", odir = tempdir())
 #' }
 #' @export
-geo_suppl <- function(accession, pattern = NULL, ftp_over_https = TRUE,
+geo_suppl <- function(accession, pattern = NULL, ftp_over_https = NULL,
                       handle_opts = list(), odir = getwd()) {
     odir <- dir_create(odir, recursive = TRUE)
     file_paths <- download_url_directory(

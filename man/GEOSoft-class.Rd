@@ -4,6 +4,7 @@
 \name{GEOSoft-class}
 \alias{GEOSoft-class}
 \alias{show,GEOSoft-method}
+\alias{print.GEOSoft}
 \alias{metadata}
 \alias{metadata<-}
 \alias{metadata,GEOSoft-method}
@@ -47,6 +48,8 @@
 \title{Virtual class for holding GEO series, samples, platforms, and datasets.}
 \usage{
 \S4method{show}{GEOSoft}(object)
+
+\method{print}{GEOSoft}(x, ...)
 
 metadata(object)
 
@@ -128,6 +131,15 @@ gpl(object) <- value
 \item{object}{A \link[=GEOSoft-class]{GEOSoft} Class Object.}
 
 \item{value}{A R object with the same class of corresponding slots.}
+}
+\value{
+The accessor generics return the value of the corresponding slot:
+\code{accession()}, \code{rcd_name()}, \code{rcd_type()} and \code{metadata()} return the
+record accession, name, type, and header metadata list; \code{columns()} and
+\code{datatable()} return the column descriptions and the data table as
+data.frames; \code{gsm()}, \code{gse()} and \code{gpl()} return lists of related
+\code{GEOSoft} objects where applicable. The replacement forms return the
+modified object.
 }
 \description{
 Virtual class for holding GEO series, samples, platforms, and datasets.

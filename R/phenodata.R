@@ -44,7 +44,7 @@ parse_sample_data.data.frame <- function(x, ..., fields = NULL, sep = ":") {
             }, logical(1L), USE.NAMES = FALSE)
             mean(have_sep, na.rm = TRUE) >= 0.5
         }, logical(1L), USE.NAMES = FALSE)
-        fields <- colnames(x)[cols[column_with_sep]]
+        fields <- colnames(x)[which(cols)[column_with_sep]]
     }
     if (length(fields) == 0L) {
         return(set_rownames(x, "geo_accession"))
@@ -121,20 +121,21 @@ parse_characteristics <- function(data, characteristic_cols, sep = ":") {
         ))
     }
     characteristics <- lapply(characteristic_cols, function(col) {
-        data <- parse_key_value_elements(.subset2(data, col), sep = ":")
+        data <- parse_key_value_elements(.subset2(data, col), sep = sep)
         if (nrow(data) && ncol(data)) {
             # we extract the last "ch\\d*" pattern as the column
             # name, which is the first group defined by parentheses.
             # This is just the second column of `str_match`.
-            # Sometimes there may be a "\\.\\d*" tail
-            new_names <- paste0(
-                str_match(col, "(ch\\d*)(\\.\\d*)?(_\\d*)?$")[
-                    , 2L,
-                    drop = TRUE
-                ],
-                "_",
-                colnames(data)
-            )
+            # Sometimes there may be a "\\.\\d*" tail.
+            # Columns without a "ch\\d*" suffix (custom `fields`) have no
+            # match group; fall back to the column name itself as the prefix.
+            matched <- str_match(col, "(ch\\d*)(\\.\\d*)?(_\\d*)?$")
+            prefix <- if (ncol(matched) >= 2L) {
+                matched[, 2L, drop = TRUE]
+            } else {
+                col
+            }
+            new_names <- paste0(prefix, "_", colnames(data))
             colnames(data) <- new_names
             data
         } else {

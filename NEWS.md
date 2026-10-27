@@ -1,8 +1,22 @@
 # geokit (development version)
 
-* Added a public Agent Skills file for AI agents, published once with the
-  pkgdown site at
-  <https://WangLabCSU.github.io/geokit/skills/geokit/SKILL.md>.
+* Added three vignettes: case studies for diabetic nephropathy and
+  urothelial cancer meta-analysis workflows, and a `geo_chat()` guide for
+  LLM-assisted exploration of GEO metadata.
+* Added a public Agent Skills file for AI agents, published with the pkgdown
+  site at <https://wanglabcsu.github.io/geokit/skills/geokit/SKILL.md>.
+* Fixed `parse_sample_data()` ignoring its `sep` argument when parsing
+  characteristic key-value pairs, silently skipping non-contiguous
+  `characteristics_ch` columns, and crashing on custom `fields` names
+  without a `ch<N>` suffix (they now prefix parsed columns with the field
+  name).
+* Fixed plain-FTP downloads (`ftp_over_https = FALSE`) being deleted and
+  reported as failures after a success-detection regression.
+* Fixed a guaranteed crash in `geo_matrix()` when a platform annotation
+  download fails, and clarified the error when sample metadata lacks
+  `platform_id`.
+* CI resolves `querychat` from the posit-dev R-universe after its CRAN
+  archive; workflows and the skill file keep working unchanged.
 
 # geokit 0.0.2
 

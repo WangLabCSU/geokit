@@ -7,7 +7,7 @@
 geo_suppl(
   accession,
   pattern = NULL,
-  ftp_over_https = TRUE,
+  ftp_over_https = NULL,
   handle_opts = list(),
   odir = getwd()
 )
@@ -37,7 +37,7 @@ access.}
 working directory.}
 }
 \value{
-A list (or a character atomic verctor if only one \code{accession} is
+A list (or a character atomic vector if only one \code{accession} is
 provided) of the full file paths of the resulting downloaded files.
 }
 \description{
