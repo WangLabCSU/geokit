@@ -32,8 +32,9 @@ we can get these records by following code, the returned object is a
 diabetes_gse_records <- geo_search(
   "diabetes[ALL] AND Homo sapiens[ORGN] AND GSE[ETYP]"
 )
-#> ■■■■■■■■■■■■■■■■■■■■■■■■         1500/1925 [524/s] | ETA:  1s
-#> Get records from NCBI for 1925 queries in 3.8s
+#> ■■■■■■■■■                        500/1925 [361/s] | ETA:  4s
+#> ■■■■■■■■■■■■■■■■■                1000/1925 [414/s] | ETA:  2s
+#> Get records from NCBI for 1925 queries in 5.1s
 #> 
 #> → Parsing GEO records
 head(diabetes_gse_records[1:5])
@@ -117,7 +118,7 @@ head(diabetes_nephropathy_gse_records[1:5, 1:5])
 #>                     Organism
 #> 1               Homo sapiens
 #> 2               Homo sapiens
-#> 3 Mus musculus; Homo sapiens
+#> 3 Homo sapiens; Mus musculus
 #> 4               Homo sapiens
 #> 5               Homo sapiens
 #>                                                                                                                          Type
@@ -152,11 +153,11 @@ for details.
 sessionInfo()
 #> R version 4.6.1 (2026-06-24)
 #> Platform: x86_64-pc-linux-gnu
-#> Running under: Ubuntu 24.04.5 LTS
+#> Running under: Ubuntu 26.04.1 LTS
 #> 
 #> Matrix products: default
 #> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
-#> LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0
+#> LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.32.so;  LAPACK version 3.12.0
 #> 
 #> locale:
 #>  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       

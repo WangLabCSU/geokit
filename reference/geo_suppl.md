@@ -11,7 +11,7 @@ files is attempted, since the file format is not generally knowable.
 geo_suppl(
   accession,
   pattern = NULL,
-  ftp_over_https = TRUE,
+  ftp_over_https = NULL,
   handle_opts = list(),
   odir = getwd()
 )
@@ -57,7 +57,7 @@ geo_suppl(
 
 ## Value
 
-A list (or a character atomic verctor if only one `accession` is
+A list (or a character atomic vector if only one `accession` is
 provided) of the full file paths of the resulting downloaded files.
 
 ## Examples
@@ -66,6 +66,6 @@ provided) of the full file paths of the resulting downloaded files.
 # \donttest{
 geo_suppl("GSM1137", odir = tempdir())
 #> Downloading 1 file
-#> [1] "/tmp/RtmpLP9jCA/GSM1137.CEL.gz"
+#> [1] "/tmp/Rtmpd9kvPx/GSM1137.CEL.gz"
 # }
 ```

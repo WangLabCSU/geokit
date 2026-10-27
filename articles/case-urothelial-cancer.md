@@ -56,22 +56,22 @@ uc_searches <- list(
 uc_gse <- unique(dplyr::bind_rows(uc_searches))
 
 cat(sprintf("Found %d unique urothelial cancer datasets\n", nrow(uc_gse)))
-#> Found 794 unique urothelial cancer datasets
+#> Found 795 unique urothelial cancer datasets
 head(uc_gse[, 1:3])
 #>                                                                                                                                                                       Title
-#> 1                                                                                                      E2F3 amplification primes bladder cancer cells for premature mitosis
-#> 2                                                                                                       RIP-seq and N6-methyladenosine RIP-seq (MeRIP-seq) in UM-UC-3 cells
-#> 3                                                                                                      ATHENA: Augmenting Therapeutic Effectiveness through Novel Analytics
-#> 4                                                                               Bulk RNA sequencing of human bladder cancer clinical specimens for transcriptomic analysis.
-#> 5 Morphological and Single-Cell Analyses of En Bloc Resected Non-Muscle invasive Bladder Cancer Reveal Structural and functional disruption of Tertiary lymphoid Structures
-#> 6                                                                                                                       snRNASeq of Metastatic Urothelial carcinoma samples
-#>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     Summary
-#> 1                                                     The E2F–RB pathway controls the G1/S checkpoint, and tumors often bypass it through RB1 or CDKN2A loss. Unlike these lesions, E2F3 amplification drives persistent excessive E2F-dependent transcription through S and G2 phases. This oncogene is frequently amplified in for example bladder cancer, but its impact on the cancer cell cycle remains unclear. Using isogenic bladder cancer models and patient data, we show that E2F3 amplification hyperactivates a mitotic gene expression program, including cyclin B1. more...
-#> 2                                                                                                                                                              Cisplatin resistance and tumor relapse are the leading causes of the mortality in muscle-invasive bladder cancer (MIBC). Preceding evidence supported that basal/squamous subtype, N6-methyladenosine (m6A) modifications and hypoxia are associated with a reduced chemotherapy response.  To explore the m6a modification in UM-UC-3 cells, we performed RNA immunoprecipitation with an antibody against m6a (No. more...
-#> 3                                                                                                                      With a yearly incidence of about 2500 new cases in Belgium, bladder cancer (BC) is a commonly-diagnosed cancer type. Furthermore, it is accompanied with high mortality rates, with ca. 70% of patients not surviving past five years (Richters et al., 2020). In order to reduce the risk of recurrence and progression, patients with non-muscle invasive bladder cancer (NMIBC) are monitored frequently, undergoing cystoscopy examination and cytology. more...
-#> 4                                                                                                                                                                                                                                                                                                              This study characterized transcriptomic features of human bladder cancer using bulk RNA sequencing of tumor specimens. Processed gene-expression data were analyzed to investigate biological features associated with the tumor microenvironment and tumor characteristics.
-#> 5                                                      Tertiary lymphoid structures (TLS) have emerged as critical immune niches within the tumor microenvironment across various cancers. However, their structural organization and functional roles in non–muscle-invasive bladder cancer (NMIBC) remain poorly characterized. In this study, we provide the first detailed characterization of TLS in NMIBC using en bloc resected specimens, enabling high-resolution spatial mapping and quantitative histological assessment across a large cohort of primary tumors (n=97). more...
-#> 6 Histological variation is a common feature of metastatic cancer but its clonal origins and impact on disease history remains poorly defined. In this study, we developed a first-in-kind metastatic bladder cancer (BLCA) rapid autopsy cohort enriched in rare histological subtypes to extensively profile individuals with terminal disease. By reconstructing the evolutionary history of patient tumors, we determined that metastasis-to-metastasis seeding was the dominant driver of cancer spread and that increased polyclonal migration contributed to poor prognosis. more...
+#> 1                                              Transcriptomic profiling of BCG-resistant bladder cancer cells and paired bladder tumor tissues before and after BCG therapy
+#> 2                                                                                                      E2F3 amplification primes bladder cancer cells for premature mitosis
+#> 3                                                                                                       RIP-seq and N6-methyladenosine RIP-seq (MeRIP-seq) in UM-UC-3 cells
+#> 4                                                                                                      ATHENA: Augmenting Therapeutic Effectiveness through Novel Analytics
+#> 5                                                                               Bulk RNA sequencing of human bladder cancer clinical specimens for transcriptomic analysis.
+#> 6 Morphological and Single-Cell Analyses of En Bloc Resected Non-Muscle invasive Bladder Cancer Reveal Structural and functional disruption of Tertiary lymphoid Structures
+#>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       Summary
+#> 1 This study investigated transcriptomic alterations associated with Bacillus Calmette-Guérin (BCG) resistance in bladder cancer. Bulk RNA sequencing was performed using paired bladder tumor tissues collected before and after BCG therapy from two patients, as well as parental T24 bladder cancer cells and a BCG-resistant T24-derived cell line (T24-BCG). Differential gene expression analyses were performed to identify transcriptional changes associated with BCG exposure and resistance and to compare molecular alterations between clinical tumor samples and the BCG-resistant cell model.
+#> 2                                                                       The E2F–RB pathway controls the G1/S checkpoint, and tumors often bypass it through RB1 or CDKN2A loss. Unlike these lesions, E2F3 amplification drives persistent excessive E2F-dependent transcription through S and G2 phases. This oncogene is frequently amplified in for example bladder cancer, but its impact on the cancer cell cycle remains unclear. Using isogenic bladder cancer models and patient data, we show that E2F3 amplification hyperactivates a mitotic gene expression program, including cyclin B1. more...
+#> 3                                                                                                                                                                                Cisplatin resistance and tumor relapse are the leading causes of the mortality in muscle-invasive bladder cancer (MIBC). Preceding evidence supported that basal/squamous subtype, N6-methyladenosine (m6A) modifications and hypoxia are associated with a reduced chemotherapy response.  To explore the m6a modification in UM-UC-3 cells, we performed RNA immunoprecipitation with an antibody against m6a (No. more...
+#> 4                                                                                                                                        With a yearly incidence of about 2500 new cases in Belgium, bladder cancer (BC) is a commonly-diagnosed cancer type. Furthermore, it is accompanied with high mortality rates, with ca. 70% of patients not surviving past five years (Richters et al., 2020). In order to reduce the risk of recurrence and progression, patients with non-muscle invasive bladder cancer (NMIBC) are monitored frequently, undergoing cystoscopy examination and cytology. more...
+#> 5                                                                                                                                                                                                                                                                                                                                This study characterized transcriptomic features of human bladder cancer using bulk RNA sequencing of tumor specimens. Processed gene-expression data were analyzed to investigate biological features associated with the tumor microenvironment and tumor characteristics.
+#> 6                                                                        Tertiary lymphoid structures (TLS) have emerged as critical immune niches within the tumor microenvironment across various cancers. However, their structural organization and functional roles in non–muscle-invasive bladder cancer (NMIBC) remain poorly characterized. In this study, we provide the first detailed characterization of TLS in NMIBC using en bloc resected specimens, enabling high-resolution spatial mapping and quantitative histological assessment across a large cohort of primary tumors (n=97). more...
 #>       Organism
 #> 1 Homo sapiens
 #> 2 Homo sapiens
@@ -103,8 +103,8 @@ cat("\nSample size summary:\n")
 #> 
 #> Sample size summary:
 summary(uc_gse$number_of_samples)
-#>     Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
-#>     1.00     6.00    12.00    83.99    45.75 16190.00
+#>    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#>     1.0     6.0    12.0    83.9    45.5 16190.0
 ```
 
 ## 3. Filter Datasets by Quality Criteria
@@ -136,7 +136,7 @@ cat(sprintf(
   100 * nrow(uc_gse_filtered) / nrow(uc_gse)
 ))
 #> 
-#> Filtered to 95 candidate datasets (12.0% of original)
+#> Filtered to 95 candidate datasets (11.9% of original)
 
 head(
   uc_gse_filtered[, c("Series Accession", "Title", "number_of_samples")],
@@ -512,11 +512,11 @@ expression meta-analysis in urothelial cancer research.
 sessionInfo()
 #> R version 4.6.1 (2026-06-24)
 #> Platform: x86_64-pc-linux-gnu
-#> Running under: Ubuntu 24.04.5 LTS
+#> Running under: Ubuntu 26.04.1 LTS
 #> 
 #> Matrix products: default
 #> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
-#> LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0
+#> LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.32.so;  LAPACK version 3.12.0
 #> 
 #> locale:
 #>  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       

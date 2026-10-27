@@ -8,6 +8,9 @@ Virtual class for holding GEO series, samples, platforms, and datasets.
 # S4 method for class 'GEOSoft'
 show(object)
 
+# S3 method for class 'GEOSoft'
+print(x, ...)
+
 metadata(object)
 
 metadata(object) <- value
@@ -114,6 +117,16 @@ gpl(object) <- value
 - value:
 
   A R object with the same class of corresponding slots.
+
+## Value
+
+The accessor generics return the value of the corresponding slot:
+`accession()`, `rcd_name()`, `rcd_type()` and `metadata()` return the
+record accession, name, type, and header metadata list; `columns()` and
+`datatable()` return the column descriptions and the data table as
+data.frames; `gsm()`, `gse()` and `gpl()` return lists of related
+`GEOSoft` objects where applicable. The replacement forms return the
+modified object.
 
 ## Slots
 

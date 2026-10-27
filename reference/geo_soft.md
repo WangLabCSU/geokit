@@ -79,7 +79,9 @@ geo_soft(
 
 A
 [GEOSoft](https://WangLabCSU.github.io/geokit/reference/GEOSoft-class.md)
-object
+object (or a list of them when multiple accessions are provided;
+subclasses `GEOPlatform` and `GEOSeries` are returned for GPL and GSE
+accessions respectively).
 
 ## Details
 
